@@ -1,6 +1,8 @@
 ---
 title: 2.4 The Euclidean Algorithm
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 ## 2.4.1 The Euclidean Algorithm $(a \le b < 0)$

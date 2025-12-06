@@ -1,6 +1,8 @@
 ---
 title: AWS workshop 2, WAF구성 테스트
 tags: aws
+categories:
+- aws
 ---
 
 ## AWS workshop 2, WAF구성 테스트
