@@ -1,6 +1,8 @@
 ---
 title: 2.3.3. relatively prime
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 ## Definition

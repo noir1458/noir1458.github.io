@@ -1,6 +1,8 @@
 ---
 title: 2.Divisibility theory in the integers
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 ## Theorem 2.1. Division Algorithm

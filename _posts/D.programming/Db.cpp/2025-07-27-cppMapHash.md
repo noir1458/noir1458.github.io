@@ -1,6 +1,8 @@
 ---
 title: C++ Map, Hash Tables, Dictionaries
 tags: cpp
+categories:
+- cpp
 ---
 
 ## Map

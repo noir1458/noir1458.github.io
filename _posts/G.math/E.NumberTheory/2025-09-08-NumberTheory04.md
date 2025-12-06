@@ -1,6 +1,8 @@
 ---
 title: 2.3.2.The Greatest Common Divisor
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 ## Definition

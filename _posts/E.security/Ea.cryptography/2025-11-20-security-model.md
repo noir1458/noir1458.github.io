@@ -1,6 +1,8 @@
 ---
 title: 공개키 암호 시스템의 security-model IND-CCA game
 tags: cryptography
+categories:
+- cryptography
 ---
 
 ## Security Model for Public Key Encryption
