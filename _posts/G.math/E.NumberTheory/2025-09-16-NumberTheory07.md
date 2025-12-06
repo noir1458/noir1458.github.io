@@ -3,6 +3,7 @@ title: 2.5 The Diophantine Equation ax+by=c
 tags: NumberTheory
 categories:
 - NumberTheory
+math: true
 ---
 
 ## The Diophantine Equation ax+by=c
