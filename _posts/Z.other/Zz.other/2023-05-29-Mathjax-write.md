@@ -1,7 +1,7 @@
 ---
 title: "Tex, LaTex 수식 문법"
 tags: blog
-categories: blog
+categories: [blog]
 ---
 
 Tex, LaTex 수식 문법 정리    
