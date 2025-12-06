@@ -3,6 +3,7 @@ title: 2.Divisibility theory in the integers
 tags: NumberTheory
 categories:
 - NumberTheory
+math: true
 ---
 
 ## Theorem 2.1. Division Algorithm

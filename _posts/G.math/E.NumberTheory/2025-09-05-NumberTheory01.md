@@ -3,6 +3,7 @@ title: 1.Mathematical Induction
 tags: NumberTheory
 categories:
 - NumberTheory
+math: true
 ---
 
 David M.Burton - Seventh Edition
