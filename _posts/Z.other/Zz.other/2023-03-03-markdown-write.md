@@ -129,10 +129,10 @@ categories: [blog]
 대괄호와 소괄호 순서대로 이름과 url을 작성한다.
 
 ```markdown
-[Google](http://www.google.com "구글")
+[Google](https://www.google.com "구글")
 ```
 
-[Google](http://www.google.com "구글")
+[Google](https://www.google.com "구글")
 
 ### 이미지
 
