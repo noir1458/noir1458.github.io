@@ -1,7 +1,7 @@
 ---
 title: "2025-05-01-Teachable-Machine"
 tags: blog
-categories: blog
+categories: [blog]
 ---
 
 https://teachablemachine.withgoogle.com/train/image  
