@@ -1,6 +1,8 @@
 ---
-title: "regular expression for Python"
+title: regular expression for Python
 tags: numpy_pandas
+categories:
+- numpy_pandas
 ---
 
 ## Python and regular expression

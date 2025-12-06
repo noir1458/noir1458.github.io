@@ -1,6 +1,8 @@
 ---
 title: 0.cryptography
 tags: cryptography
+categories:
+- cryptography
 ---
 
 ## 목차

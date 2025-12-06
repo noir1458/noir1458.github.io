@@ -1,6 +1,8 @@
 ---
 title: C++ string
 tags: cpp
+categories:
+- cpp
 ---
 
 ```cpp

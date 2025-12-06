@@ -1,6 +1,8 @@
 ---
 title: 1.Mathematical Induction
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 David M.Burton - Seventh Edition
