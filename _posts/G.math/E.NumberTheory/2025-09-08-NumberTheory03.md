@@ -3,6 +3,7 @@ title: 2.3.1.Divisor and Multiple
 tags: NumberTheory
 categories:
 - NumberTheory
+math: true
 ---
 
 ## Definition
