@@ -1,6 +1,8 @@
 ---
 title: 2.5 The Diophantine Equation ax+by=c
 tags: NumberTheory
+categories:
+- NumberTheory
 ---
 
 ## The Diophantine Equation ax+by=c

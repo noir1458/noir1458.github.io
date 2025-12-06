@@ -1,6 +1,8 @@
 ---
-title: "python을 이용한 주가 정보 크롤링"
+title: python을 이용한 주가 정보 크롤링
 tags: finance101
+categories:
+- finance101
 ---
 
 ## python을 이용한 주식 정보 크롤링

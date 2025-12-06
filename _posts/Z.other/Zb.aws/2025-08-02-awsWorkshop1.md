@@ -1,6 +1,8 @@
 ---
 title: AWS General Immersion Day workshop, BOB 트랙교육으로 7월을 보내며...
 tags: aws
+categories:
+- aws
 ---
 
 ## AWS General Immersion Day workshop

@@ -1,6 +1,8 @@
 ---
 title: AWS workshop 3..?
 tags: aws
+categories:
+- aws
 ---
 
 ## AWS workshop 3..? 대신 지난주를 보내며...
