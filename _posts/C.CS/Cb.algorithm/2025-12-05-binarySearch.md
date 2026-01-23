@@ -209,7 +209,9 @@ struct Item {
     int value;
 };
 
-std::vector<Item> items = {{1, 10}, {2, 20}, {3, 30}};
+std::vector<Item> items = {
+    {1, 10}, {2, 20}, {3, 30}
+    };
 
 // value 기준 정렬
 std::sort(items.begin(), items.end(), [](const Item& a, const Item& b) {
