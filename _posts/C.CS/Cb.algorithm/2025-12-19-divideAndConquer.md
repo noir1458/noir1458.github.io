@@ -158,7 +158,9 @@ Matrix matPow(Matrix A, long long n) {
 long long fibonacci(long long n) {
     if (n <= 1) return n;
 
-    Matrix M = {{1, 1}, {1, 0}};
+    Matrix M = {
+        {1, 1}, {1, 0}
+        };
     Matrix result = matPow(M, n - 1);
 
     return result[0][0];
