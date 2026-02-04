@@ -6,7 +6,7 @@ categories:
 math: true
 ---
 
-## 
+## 목적
 $r^2 \equiv a \pmod p$를 만족하는 $r$ 찾기
 
 ## case : $p = 4k+3$
@@ -23,6 +23,14 @@ $$r^2 \equiv 1 \cdot a \equiv a \pmod p$$
 ## case : $p = 4k+1$
 이건 (p+1)/4 가 정수가 아니다.  
 p-1에 있는 2의 거듭제곱을 하나씩 소모하며 강제로 지수를 정수로 만들기
+
+<img width="382" height="652" alt="Image" src="https://github.com/user-attachments/assets/bd34ebc9-49ca-4d51-8895-efa2f68993cd" />
+
+### update parameters
+- $m = i$
+- $c = b^2 \pmod p$
+- $t = t \cdot c \pmod p$
+- $r = r \cdot b \pmod p$
 
 ```python
 def TonelliShanks(n,p):
@@ -81,3 +89,11 @@ if __name__=="__main__":
     res = min(root, p-root)
     print(res)
 ```
+
+
+## 덧붙임
+
+- Mathematical Assumption: $p$는 소수여야 함. (합성수일 경우 Rabin Cryptosystem의 복호화 영역으로 넘어감)
+- Complexity: $O(\log^4 p)$ 혹은 최적화 시 $O(S^2 \log p)$.
+- Advanced Study:Tonelli-Shanks보다 더 범용적인 Cipolla's Algorithm.
+    - $p \equiv 1 \pmod 4$일 때 $-1$이 항상 Quadratic Residue인 이유 (제 1 보충법칙).
