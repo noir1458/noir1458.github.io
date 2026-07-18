@@ -1,5 +1,5 @@
 name: "Build and Deploy"
-# Redeploy marker: keeps GitHub Pages workflow triggerable after restoring history.
+# Redeploy marker: 2026-07-19 rollback rebuild.
 on:
   push:
     branches:
