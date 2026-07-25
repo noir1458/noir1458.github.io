@@ -1,0 +1,55 @@
+---
+import { SITE } from "@/config";
+import Icon from "@/components/Icon.astro";
+import ThemeControls from "@/components/ThemeControls.astro";
+---
+
+<header class="site-header">
+  <div class="title-row">
+    <a class="site-title" href="/">{SITE.title}</a>
+    <div class="header-actions">
+      <ThemeControls />
+    </div>
+  </div>
+
+  <div class="topbar">
+    <button
+      class="nav-toggle icon-button"
+      data-nav-toggle
+      type="button"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      aria-label="Open navigation"
+    >
+      <span class="nav-toggle-menu"><Icon name="menu" /></span>
+      <span class="nav-toggle-close"><Icon name="close" /></span>
+    </button>
+    <nav
+      id="primary-navigation"
+      class="primary-nav"
+      data-primary-nav
+      aria-label="Primary navigation"
+    >
+      <a href="/">Home</a>
+      <a href="/categories/">Categories</a>
+      <a href="/tags/">Tags</a>
+      <a href="/archives/">Archives</a>
+      <a href="/about/">About</a>
+    </nav>
+    <div class="search-shell" data-search-shell>
+      <form action="/search/" class="header-search" role="search">
+        <label class="sr-only" for="site-search">Search the blog</label>
+        <input id="site-search" name="q" placeholder="Search posts" type="search" />
+      </form>
+      <button
+        class="search-toggle icon-button"
+        data-search-toggle
+        type="button"
+        aria-expanded="false"
+        aria-label="Open search"
+      >
+        <Icon name="search" />
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,18 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Icon from "@/components/Icon.astro";
+---
+
+<BaseLayout title="Page not found" description="The requested page could not be found." noindex sidebar={false}>
+  <section class="not-found">
+    <div class="not-found-inner">
+      <div class="not-found-code" aria-hidden="true">404</div>
+      <div class="not-found-copy">
+        <span class="eyebrow">Lost page</span>
+        <h1>Page not found</h1>
+        <p>The page may have moved, or the address may be incorrect.</p>
+        <a class="primary-button" href="/"><Icon name="home" size={18} /> All posts</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

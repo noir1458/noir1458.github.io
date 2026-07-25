@@ -1,0 +1,514 @@
+---
+title: 4. 큐 (Queue) & 원형 큐
+slug: queue
+publishedAt: '2025-12-04'
+categories: datastructure
+math: false
+---
+
+## 개념
+
+큐는 FIFO(First In First Out) 원칙을 따르는 자료구조이다. 가장 먼저 삽입된 요소가 가장 먼저 삭제된다.
+
+- 뒤(rear)에서 삽입, 앞(front)에서 삭제가 일어난다
+- enqueue/push: 요소 삽입
+- dequeue/pop: 요소 삭제
+- front: 맨 앞 요소 확인
+- BFS, 작업 스케줄링, 버퍼 관리 등에 활용된다
+
+### 원형 큐 (Circular Queue)
+
+선형 큐는 dequeue 시 앞 공간이 낭비되는 문제가 있다. 원형 큐는 배열을 원형으로 사용하여 이 문제를 해결한다.
+
+## 핵심 연산 & 시간복잡도
+
+| 연산 | 시간복잡도 | 설명 |
+|------|-----------|------|
+| push/enqueue | O(1) | 뒤에 삽입 |
+| pop/dequeue | O(1) | 앞에서 삭제 |
+| front | O(1) | 맨 앞 확인 |
+| back | O(1) | 맨 뒤 확인 |
+| empty | O(1) | 비어있는지 확인 |
+| size | O(1) | 크기 확인 |
+
+## 구현 (No-STL)
+
+### 선형 큐 (배열 기반)
+
+```cpp
+const int MAX_SIZE = 100001;
+
+int queue[MAX_SIZE];
+int front_idx = 0;
+int rear_idx = 0;
+
+void init() {
+    front_idx = 0;
+    rear_idx = 0;
+}
+
+bool isEmpty() {
+    return front_idx == rear_idx;
+}
+
+bool isFull() {
+    return rear_idx == MAX_SIZE;
+}
+
+void push(int x) {
+    if (isFull()) return;
+    queue[rear_idx++] = x;
+}
+
+void pop() {
+    if (isEmpty()) return;
+    front_idx++;
+}
+
+int front() {
+    if (isEmpty()) return -1;
+    return queue[front_idx];
+}
+
+int back() {
+    if (isEmpty()) return -1;
+    return queue[rear_idx - 1];
+}
+
+int size() {
+    return rear_idx - front_idx;
+}
+```
+
+### 원형 큐 (배열 기반)
+
+```cpp
+const int MAX_SIZE = 100001;
+
+int queue[MAX_SIZE];
+int front_idx = 0;
+int rear_idx = 0;
+int cnt = 0;  // 현재 요소 개수
+
+void init() {
+    front_idx = 0;
+    rear_idx = 0;
+    cnt = 0;
+}
+
+bool isEmpty() {
+    return cnt == 0;
+}
+
+bool isFull() {
+    return cnt == MAX_SIZE;
+}
+
+void push(int x) {
+    if (isFull()) return;
+    queue[rear_idx] = x;
+    rear_idx = (rear_idx + 1) % MAX_SIZE;
+    cnt++;
+}
+
+void pop() {
+    if (isEmpty()) return;
+    front_idx = (front_idx + 1) % MAX_SIZE;
+    cnt--;
+}
+
+int front() {
+    if (isEmpty()) return -1;
+    return queue[front_idx];
+}
+
+int back() {
+    if (isEmpty()) return -1;
+    return queue[(rear_idx - 1 + MAX_SIZE) % MAX_SIZE];
+}
+
+int size() {
+    return cnt;
+}
+```
+
+### 원형 큐 (cnt 없이 구현)
+
+한 칸을 비워두어 full과 empty를 구분하는 방식이다.
+
+```cpp
+const int MAX_SIZE = 100002;  // 실제 용량 + 1
+
+int queue[MAX_SIZE];
+int front_idx = 0;
+int rear_idx = 0;
+
+void init() {
+    front_idx = 0;
+    rear_idx = 0;
+}
+
+bool isEmpty() {
+    return front_idx == rear_idx;
+}
+
+bool isFull() {
+    return (rear_idx + 1) % MAX_SIZE == front_idx;
+}
+
+void push(int x) {
+    if (isFull()) return;
+    queue[rear_idx] = x;
+    rear_idx = (rear_idx + 1) % MAX_SIZE;
+}
+
+void pop() {
+    if (isEmpty()) return;
+    front_idx = (front_idx + 1) % MAX_SIZE;
+}
+
+int front() {
+    if (isEmpty()) return -1;
+    return queue[front_idx];
+}
+
+int back() {
+    if (isEmpty()) return -1;
+    return queue[(rear_idx - 1 + MAX_SIZE) % MAX_SIZE];
+}
+
+int size() {
+    return (rear_idx - front_idx + MAX_SIZE) % MAX_SIZE;
+}
+```
+
+### 구조체로 캡슐화
+
+```cpp
+const int MAX_SIZE = 100001;
+
+struct Queue {
+    int data[MAX_SIZE];
+    int front_idx, rear_idx, cnt;
+
+    void init() {
+        front_idx = rear_idx = cnt = 0;
+    }
+
+    bool isEmpty() { return cnt == 0; }
+    bool isFull() { return cnt == MAX_SIZE; }
+
+    void push(int x) {
+        if (isFull()) return;
+        data[rear_idx] = x;
+        rear_idx = (rear_idx + 1) % MAX_SIZE;
+        cnt++;
+    }
+
+    void pop() {
+        if (isEmpty()) return;
+        front_idx = (front_idx + 1) % MAX_SIZE;
+        cnt--;
+    }
+
+    int front() {
+        if (isEmpty()) return -1;
+        return data[front_idx];
+    }
+
+    int back() {
+        if (isEmpty()) return -1;
+        return data[(rear_idx - 1 + MAX_SIZE) % MAX_SIZE];
+    }
+
+    int size() { return cnt; }
+};
+
+Queue q;
+```
+
+## STL
+
+### std::queue
+
+```cpp
+#include <queue>
+
+// 선언
+std::queue<int> q;
+
+// 주요 메서드
+q.push(10);        // 삽입 (뒤에)
+q.pop();           // 삭제 (앞에서, 반환값 없음)
+q.front();         // 맨 앞 요소
+q.back();          // 맨 뒤 요소
+q.empty();         // 비어있는지 확인
+q.size();          // 크기
+q.emplace(10);     // 생성자 직접 호출하여 삽입
+
+// 주의: pop()은 void 반환
+int val = q.front();  // 먼저 값 저장
+q.pop();              // 그 다음 삭제
+
+// 큐 비우기
+while (!q.empty()) {
+    q.pop();
+}
+// 또는
+q = std::queue<int>();  // 새 큐로 교체
+```
+
+### pair와 함께 사용
+
+```cpp
+#include <queue>
+#include <utility>
+
+std::queue<std::pair<int, int>> q;
+
+q.push({1, 2});
+q.push(std::make_pair(3, 4));
+q.emplace(5, 6);  // pair 직접 생성
+
+auto [x, y] = q.front();  // C++17 구조적 바인딩
+q.pop();
+```
+
+### 구조체와 함께 사용
+
+```cpp
+struct Node {
+    int x, y, dist;
+};
+
+std::queue<Node> q;
+q.push({0, 0, 0});
+q.emplace(1, 1, 1);
+
+Node cur = q.front();
+q.pop();
+```
+
+## 사용 예시
+
+### BFS (너비 우선 탐색)
+
+```cpp
+#include <queue>
+#include <vector>
+
+void bfs(int start, std::vector<std::vector<int>>& adj) {
+    int n = adj.size();
+    std::vector<bool> visited(n, false);
+    std::queue<int> q;
+
+    q.push(start);
+    visited[start] = true;
+
+    while (!q.empty()) {
+        int cur = q.front();
+        q.pop();
+
+        // cur 처리
+
+        for (int next : adj[cur]) {
+            if (!visited[next]) {
+                visited[next] = true;
+                q.push(next);
+            }
+        }
+    }
+}
+```
+
+### 2차원 BFS (미로 탐색)
+
+```cpp
+#include <queue>
+
+int dx[] = {-1, 1, 0, 0};
+int dy[] = {0, 0, -1, 1};
+
+int bfs(int sx, int sy, int ex, int ey,
+        std::vector<std::vector<int>>& maze) {
+    int n = maze.size();
+    int m = maze[0].size();
+    std::vector<std::vector<int>> dist(n, std::vector<int>(m, -1));
+    std::queue<std::pair<int, int>> q;
+
+    q.push({sx, sy});
+    dist[sx][sy] = 0;
+
+    while (!q.empty()) {
+        auto [x, y] = q.front();
+        q.pop();
+
+        if (x == ex && y == ey) {
+            return dist[x][y];
+        }
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+            if (maze[nx][ny] == 1) continue;  // 벽
+            if (dist[nx][ny] != -1) continue;  // 방문함
+
+            dist[nx][ny] = dist[x][y] + 1;
+            q.push({nx, ny});
+        }
+    }
+
+    return -1;  // 도달 불가
+}
+```
+
+### 레벨 순회 (트리)
+
+```cpp
+void levelOrder(Node* root) {
+    if (!root) return;
+
+    std::queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int levelSize = q.size();  // 현재 레벨의 노드 수
+
+        for (int i = 0; i < levelSize; i++) {
+            Node* cur = q.front();
+            q.pop();
+
+            // cur 처리
+
+            if (cur->left) q.push(cur->left);
+            if (cur->right) q.push(cur->right);
+        }
+        // 여기서 레벨 구분 가능
+    }
+}
+```
+
+### 멀티소스 BFS
+
+여러 시작점에서 동시에 BFS를 수행한다.
+
+```cpp
+int multiSourceBFS(std::vector<std::vector<int>>& grid,
+                   std::vector<std::pair<int, int>>& sources) {
+    int n = grid.size();
+    int m = grid[0].size();
+    std::vector<std::vector<int>> dist(n, std::vector<int>(m, -1));
+    std::queue<std::pair<int, int>> q;
+
+    // 모든 시작점을 큐에 삽입
+    for (auto [x, y] : sources) {
+        q.push({x, y});
+        dist[x][y] = 0;
+    }
+
+    int maxDist = 0;
+
+    while (!q.empty()) {
+        auto [x, y] = q.front();
+        q.pop();
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+            if (dist[nx][ny] != -1) continue;
+
+            dist[nx][ny] = dist[x][y] + 1;
+            maxDist = std::max(maxDist, dist[nx][ny]);
+            q.push({nx, ny});
+        }
+    }
+
+    return maxDist;
+}
+```
+
+## 주의사항 / Edge Cases
+
+### 빈 큐에서 pop/front
+
+```cpp
+std::queue<int> q;
+
+// 위험: Undefined Behavior
+// q.pop();    // 빈 큐에서 pop
+// q.front();  // 빈 큐에서 front
+
+// 안전한 코드
+if (!q.empty()) {
+    int val = q.front();
+    q.pop();
+}
+```
+
+### 선형 큐의 공간 낭비
+
+```cpp
+// 선형 큐: pop하면 앞 공간이 낭비됨
+int queue[1000];
+int front_idx = 0, rear_idx = 0;
+
+// 999번 push 후 999번 pop하면
+// front_idx = 999, rear_idx = 999
+// 배열은 비어있지만 더 이상 push 불가
+
+// 해결: 원형 큐 사용
+```
+
+### BFS에서 방문 체크 시점
+
+```cpp
+// 잘못된 코드: pop할 때 방문 체크
+while (!q.empty()) {
+    int cur = q.front();
+    q.pop();
+    if (visited[cur]) continue;  // 중복 방문 발생
+    visited[cur] = true;
+    // ...
+}
+
+// 올바른 코드: push할 때 방문 체크
+q.push(start);
+visited[start] = true;
+
+while (!q.empty()) {
+    int cur = q.front();
+    q.pop();
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            visited[next] = true;  // push 전에 체크
+            q.push(next);
+        }
+    }
+}
+```
+
+### 원형 큐 인덱스 계산
+
+```cpp
+// 음수 모듈러 주의
+int rear_idx = 0;
+rear_idx = (rear_idx - 1) % MAX_SIZE;  // 잘못됨: -1이 됨
+
+// 올바른 방법
+rear_idx = (rear_idx - 1 + MAX_SIZE) % MAX_SIZE;
+```
+
+## 추천 문제
+
+| 난이도 | 문제 | 링크 |
+|--------|------|------|
+| Silver | 큐 | [BOJ 10845](https://www.acmicpc.net/problem/10845) |
+| Silver | 요세푸스 문제 0 | [BOJ 11866](https://www.acmicpc.net/problem/11866) |
+| Silver | 미로 탐색 | [BOJ 2178](https://www.acmicpc.net/problem/2178) |
+| Gold | 토마토 | [BOJ 7576](https://www.acmicpc.net/problem/7576) |
+| Gold | 벽 부수고 이동하기 | [BOJ 2206](https://www.acmicpc.net/problem/2206) |
