@@ -66,7 +66,15 @@ const isProduction = import.meta.env.PROD;
           saved === "light" || saved === "dark" || saved === "system" ? saved : "system";
       })();
     </script>
-    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {
+      schema && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(schema).replaceAll("<", "\\u003c")}
+        />
+      )
+    }
     <slot name="head" />
   </head>
   <body data-pagefind-body={pagefindBody ? "" : undefined}>

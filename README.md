@@ -1,7 +1,8 @@
 # noir1458 Astro Blog
 
-`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 기존 Jekyll 글 136개의
-`/posts/<slug>/` 주소를 유지하면서 Markdown, 수식, 검색, 태그, 카테고리,
+`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 기존 Jekyll 글 136개를
+마이그레이션한 뒤 현재 134개의 공개 글을 제공하며
+`/posts/<slug>/` 주소를 유지합니다. Markdown, 수식, 검색, 태그, 카테고리,
 아카이브와 Giscus 댓글을 지원합니다.
 
 ```md

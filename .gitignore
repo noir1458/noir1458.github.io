@@ -7,3 +7,4 @@ dist/
 !.env.example
 coverage/
 *.log
+archive/unassigned-images/
