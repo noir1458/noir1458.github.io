@@ -1,0 +1,60 @@
+---
+title: BOJ 1309 동물원
+slug: BOJ1309
+publishedAt: '2026-02-10'
+categories: Baekjoon
+math: true
+---
+## 문제
+동물원 (https://www.acmicpc.net/problem/1309)
+2xN 크기의 격자에 사자를 배치하되, 가로/세로로 인접하지 않게 배치하는 모든 경우의 수를 구하는 문제. (사자가 0마리인 경우 포함)
+
+## 복잡도 분석
+- time complexity : $O(N)$ - 각 행마다 3가지 상태를 상수 시간 연산으로 결정하며 $N$번 반복함.
+- space complexity : $O(N)$ - $N \times 3$ 크기의 2차원 vector 사용. (직전 상태만 참조하므로 $O(1)$로 최적화 가능)
+
+## 접근법
+각 줄($i$)에 사자를 배치하는 상태를 3가지로 정의하여 DP를 적용함.
+
+| 상태 | 의미 | 전이 가능한 이전 상태 ($i-1$) |
+| :--- | :--- | :--- |
+| `dp[i][0]` | 사자 없음 | `dp[i-1][0]`, `dp[i-1][1]`, `dp[i-1][2]` |
+| `dp[i][1]` | 왼쪽 배치 | `dp[i-1][0]`, `dp[i-1][2]` |
+| `dp[i][2]` | 오른쪽 배치 | `dp[i-1][0]`, `dp[i-1][1]` |
+
+### 핵심 아이디어 요약
+$i$번째 줄을 비우는 경우는 이전 줄의 어떤 상태와도 충돌하지 않지만, 사자를 배치하는 경우(왼쪽/오른쪽)는 이전 줄의 같은 위치에 사자가 있는 경우를 제외해야 함.
+
+## 풀이
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MOD_NUM = 9901;
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    int N;
+    cin >> N;
+    vector<vector<int>> dp(N + 1, vector<int>(3));
+
+    // 초기값: N=1일 때 각 상태는 1가지 경우의 수를 가짐
+    fill(dp[1].begin(), dp[1].end(), 1);
+
+    for (int i = 2; i <= N; i++) {
+        dp[i][0] = (dp[i - 1][0] + dp[i - 1][1] + dp[i - 1][2]) % MOD_NUM;
+        dp[i][1] = (dp[i - 1][0] + dp[i - 1][2]) % MOD_NUM;
+        dp[i][2] = (dp[i - 1][0] + dp[i - 1][1]) % MOD_NUM;
+    }
+
+    cout << accumulate(dp[N].begin(), dp[N].end(), 0) % MOD_NUM;
+
+    return 0;
+}
+```
+
+## Code Review
+- **메모리 최적화:** `dp[i]`를 계산할 때 `dp[i-1]`만 필요하므로, `vector<int> prev(3), curr(3)` 두 개만 사용하여 공간 복잡도를 $O(1)$로 줄일 수 있습니다.
+- **가독성:** `std::accumulate`를 사용하여 마지막 행의 합을 구한 점이 C++ 표준 라이브러리를 잘 활용한 좋은 사례입니다.

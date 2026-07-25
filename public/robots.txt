@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://noir1458.github.io/sitemap-index.xml
