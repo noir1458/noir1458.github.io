@@ -1,0 +1,96 @@
+---
+title: BOJ 12015 가장 긴 증가하는 부분 수열 2
+slug: BOJ12015
+publishedAt: '2026-02-10'
+categories: BOJ
+math: true
+---
+## 문제
+가장 긴 증가하는 부분 수열 2 (https://www.acmicpc.net/problem/12015)
+$N = 1,000,000$인 수열에서 가장 긴 증가하는 부분 수열(LIS)의 길이를 출력하는 문제.
+
+## 복잡도 분석
+- time complexity : $O(N \log N)$ - $N$개의 원소에 대해 각각 이진 탐색(Lower Bound)을 수행함.
+- space complexity : $O(N)$ - 입력 수열 및 LIS 끝값 관리를 위한 벡터 저장 공간.
+
+## 접근법
+기존 $O(N^2)$ DP 방식으로는 시간 초과가 발생하므로, **이진 탐색**을 활용한 최적화가 필요함.
+`L[k]`를 "길이가 $k+1$인 증가하는 부분 수열 중 가장 작은 마지막 값"으로 정의하여 관리함.
+
+1. 새로운 값 $X$가 현재 최장 수열의 마지막 값보다 크면 `push_back`.
+2. $X$가 작거나 같다면, $L$ 내에서 $X$보다 크거나 같은 첫 번째 원소(Lower Bound)를 찾아 $X$로 교체.
+3. 이 교체 과정은 현재 길이를 늘리지는 않지만, 나중에 더 긴 수열이 만들어질 수 있도록 '끝값 문턱'을 낮추는 역할을 함.
+
+
+
+## 풀이
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+vector<int> v;
+vector<int> dp;
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>N;
+    v.assign(N,0);
+    dp.assign(N,1);
+    for(int i=0;i<N;i++){
+        cin >> v[i];
+    }
+
+    for(int i=0;i<N;i++){
+        for(int j=0;j<i;j++){
+            if (v[i] > v[j])
+                dp[i] = max(dp[i], dp[j]+1);
+        }
+    }
+
+    cout << *max_element(dp.begin(),dp.end());
+
+    return 0;
+}
+```
+이 방법은 시간초과 N^2라서
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    int N;
+    cin >> N;
+    vector<int> v(N);
+    for(int i = 0; i < N; i++) cin >> v[i];
+
+    vector<int> L;
+    for(int val : v) {
+        if(L.empty() || L.back() < val) {
+            L.push_back(val);
+        } else {
+            auto it = lower_bound(L.begin(), L.end(), val);
+            *it = val;
+        }
+    }
+
+    cout << L.size() << "\n";
+    return 0;
+}
+```
+
+## Code Review
+- **lower_bound:** 정렬된 상태를 유지하는 `L` 배열에서 $O(\log N)$으로 위치를 찾아 최적화함.
+
+## 유사 문제 추천
+- 가장 긴 증가하는 부분 수열 3 (BOJ 12738) - 음수 포함 버전
+- 가장 긴 증가하는 부분 수열 5 (BOJ 14003) - 실제 수열 출력 필요 (역추적)
+- 반도체 설계 (BOJ 2352) - LIS 응용
+- 꼬인 전깃줄 (BOJ 1365) - LIS 응용
+- 줄 세우기 (BOJ 2631) - LIS 응용

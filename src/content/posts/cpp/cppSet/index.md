@@ -1,0 +1,26 @@
+---
+title: 'C++ set, unorded_set'
+slug: cppSet
+publishedAt: '2025-07-28'
+categories: cpp
+math: false
+---
+
+## set
+
+```cpp
+#include<unordered_set>
+std::unordered_set<std::string> s;
+s.insert(”apple”);
+s.insert(”ba”);
+s.size();
+if(s.count(”apple”)==1)
+cout<< “존재함”<<”\n”;
+for(const auto& e:s) // 순서없이 출력됨
+cout <<e;
+```
+
+- 해시테이블
+- 정렬안됨
+- 평균 O(1)
+- 빠른 검색/삽입, 순서무관 목적

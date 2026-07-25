@@ -1,0 +1,57 @@
+---
+import Icon from "@/components/Icon.astro";
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath?: string;
+}
+
+const { currentPage, totalPages, basePath = "/" } = Astro.props;
+
+function pageHref(page: number) {
+  if (page === 1) return basePath;
+  return `${basePath}page/${page}/`;
+}
+
+const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+const end = Math.min(totalPages, Math.max(5, currentPage + 2));
+const pages = Array.from({ length: Math.max(0, end - start + 1) }, (_, index) => start + index);
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" aria-label="Pagination">
+    <div class="pagination-track">
+      {currentPage > 1 && (
+        <>
+          <a class="page-button page-arrow" href={pageHref(1)} aria-label="First page">
+            <Icon name="chevrons-left" size={18} />
+          </a>
+          <a class="page-button page-arrow" href={pageHref(currentPage - 1)} aria-label="Previous page">
+            <Icon name="chevron-left" size={18} />
+          </a>
+        </>
+      )}
+      {pages.map((page) => (
+        <a
+          class:list={["page-button", { active: page === currentPage }]}
+          href={pageHref(page)}
+          aria-current={page === currentPage ? "page" : undefined}
+        >
+          {page}
+        </a>
+      ))}
+      {currentPage < totalPages && (
+        <>
+          <a class="page-button page-arrow" href={pageHref(currentPage + 1)} aria-label="Next page">
+            <Icon name="chevron-right" size={18} />
+          </a>
+          <a class="page-button page-arrow" href={pageHref(totalPages)} aria-label="Last page">
+            <Icon name="chevrons-right" size={18} />
+          </a>
+        </>
+      )}
+    </div>
+    <span class="pagination-meta">Page {currentPage} of {totalPages}</span>
+  </nav>
+)}

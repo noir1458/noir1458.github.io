@@ -1,0 +1,547 @@
+---
+title: 5. 덱 (Deque)
+slug: deque
+publishedAt: '2025-12-05'
+categories: datastructure
+math: false
+---
+
+## 개념
+
+덱(Deque, Double-Ended Queue)은 양쪽 끝에서 삽입과 삭제가 모두 가능한 자료구조이다.
+
+- 스택과 큐의 특성을 모두 갖는다
+- 앞(front)과 뒤(rear) 모두에서 삽입/삭제가 O(1)
+- push_front, push_back, pop_front, pop_back 연산 지원
+- 슬라이딩 윈도우 최솟값/최댓값, 회문 검사 등에 활용된다
+
+### 스택/큐와의 비교
+
+| 자료구조 | 삽입 위치 | 삭제 위치 |
+|----------|-----------|-----------|
+| 스택 | 뒤(top) | 뒤(top) |
+| 큐 | 뒤(rear) | 앞(front) |
+| 덱 | 앞/뒤 모두 | 앞/뒤 모두 |
+
+## 핵심 연산 & 시간복잡도
+
+| 연산 | 시간복잡도 | 설명 |
+|------|-----------|------|
+| push_front | O(1) | 앞에 삽입 |
+| push_back | O(1) | 뒤에 삽입 |
+| pop_front | O(1) | 앞에서 삭제 |
+| pop_back | O(1) | 뒤에서 삭제 |
+| front | O(1) | 맨 앞 확인 |
+| back | O(1) | 맨 뒤 확인 |
+| empty | O(1) | 비어있는지 확인 |
+| size | O(1) | 크기 확인 |
+
+## 구현 (No-STL)
+
+### 원형 배열 기반 덱
+
+```cpp
+const int MAX_SIZE = 100001;
+
+int deque[MAX_SIZE];
+int front_idx = 0;
+int rear_idx = 0;
+int cnt = 0;
+
+void init() {
+    front_idx = 0;
+    rear_idx = 0;
+    cnt = 0;
+}
+
+bool isEmpty() {
+    return cnt == 0;
+}
+
+bool isFull() {
+    return cnt == MAX_SIZE;
+}
+
+void push_front(int x) {
+    if (isFull()) return;
+    front_idx = (front_idx - 1 + MAX_SIZE) % MAX_SIZE;
+    deque[front_idx] = x;
+    cnt++;
+}
+
+void push_back(int x) {
+    if (isFull()) return;
+    deque[rear_idx] = x;
+    rear_idx = (rear_idx + 1) % MAX_SIZE;
+    cnt++;
+}
+
+void pop_front() {
+    if (isEmpty()) return;
+    front_idx = (front_idx + 1) % MAX_SIZE;
+    cnt--;
+}
+
+void pop_back() {
+    if (isEmpty()) return;
+    rear_idx = (rear_idx - 1 + MAX_SIZE) % MAX_SIZE;
+    cnt--;
+}
+
+int front() {
+    if (isEmpty()) return -1;
+    return deque[front_idx];
+}
+
+int back() {
+    if (isEmpty()) return -1;
+    return deque[(rear_idx - 1 + MAX_SIZE) % MAX_SIZE];
+}
+
+int size() {
+    return cnt;
+}
+```
+
+### 구조체로 캡슐화
+
+```cpp
+const int MAX_SIZE = 100001;
+
+struct Deque {
+    int data[MAX_SIZE];
+    int front_idx, rear_idx, cnt;
+
+    void init() {
+        front_idx = rear_idx = cnt = 0;
+    }
+
+    bool isEmpty() { return cnt == 0; }
+    bool isFull() { return cnt == MAX_SIZE; }
+
+    void push_front(int x) {
+        if (isFull()) return;
+        front_idx = (front_idx - 1 + MAX_SIZE) % MAX_SIZE;
+        data[front_idx] = x;
+        cnt++;
+    }
+
+    void push_back(int x) {
+        if (isFull()) return;
+        data[rear_idx] = x;
+        rear_idx = (rear_idx + 1) % MAX_SIZE;
+        cnt++;
+    }
+
+    void pop_front() {
+        if (isEmpty()) return;
+        front_idx = (front_idx + 1) % MAX_SIZE;
+        cnt--;
+    }
+
+    void pop_back() {
+        if (isEmpty()) return;
+        rear_idx = (rear_idx - 1 + MAX_SIZE) % MAX_SIZE;
+        cnt--;
+    }
+
+    int front() {
+        if (isEmpty()) return -1;
+        return data[front_idx];
+    }
+
+    int back() {
+        if (isEmpty()) return -1;
+        return data[(rear_idx - 1 + MAX_SIZE) % MAX_SIZE];
+    }
+
+    int size() { return cnt; }
+};
+
+Deque dq;
+```
+
+### 이중 연결 리스트 기반 덱
+
+```cpp
+const int MAX_NODE = 100001;
+
+struct Node {
+    int data;
+    int prev;
+    int next;
+} node[MAX_NODE];
+
+int nodeCnt;
+int HEAD, TAIL;  // 더미 노드
+
+void init() {
+    nodeCnt = 0;
+    HEAD = nodeCnt++;
+    TAIL = nodeCnt++;
+    node[HEAD].next = TAIL;
+    node[TAIL].prev = HEAD;
+}
+
+int getNode(int data) {
+    node[nodeCnt].data = data;
+    return nodeCnt++;
+}
+
+void push_front(int x) {
+    int newNode = getNode(x);
+    int nextNode = node[HEAD].next;
+
+    node[newNode].prev = HEAD;
+    node[newNode].next = nextNode;
+    node[HEAD].next = newNode;
+    node[nextNode].prev = newNode;
+}
+
+void push_back(int x) {
+    int newNode = getNode(x);
+    int prevNode = node[TAIL].prev;
+
+    node[newNode].prev = prevNode;
+    node[newNode].next = TAIL;
+    node[prevNode].next = newNode;
+    node[TAIL].prev = newNode;
+}
+
+void pop_front() {
+    if (node[HEAD].next == TAIL) return;
+    int target = node[HEAD].next;
+    int nextNode = node[target].next;
+    node[HEAD].next = nextNode;
+    node[nextNode].prev = HEAD;
+}
+
+void pop_back() {
+    if (node[TAIL].prev == HEAD) return;
+    int target = node[TAIL].prev;
+    int prevNode = node[target].prev;
+    node[TAIL].prev = prevNode;
+    node[prevNode].next = TAIL;
+}
+
+int front() {
+    if (node[HEAD].next == TAIL) return -1;
+    return node[node[HEAD].next].data;
+}
+
+int back() {
+    if (node[TAIL].prev == HEAD) return -1;
+    return node[node[TAIL].prev].data;
+}
+
+bool isEmpty() {
+    return node[HEAD].next == TAIL;
+}
+```
+
+## STL
+
+### std::deque
+
+```cpp
+#include <deque>
+
+// 선언 및 초기화
+std::deque<int> dq;
+std::deque<int> dq2 = {1, 2, 3, 4, 5};
+std::deque<int> dq3(5, 10);  // 크기 5, 10으로 초기화
+
+// 주요 메서드
+dq.size();          // 크기
+dq.empty();         // 비어있는지 확인
+dq.clear();         // 전체 삭제
+
+// 삽입
+dq.push_front(1);   // 앞에 삽입
+dq.push_back(2);    // 뒤에 삽입
+dq.emplace_front(1); // 앞에 삽입 (생성자 직접 호출)
+dq.emplace_back(2);  // 뒤에 삽입
+
+// 삭제
+dq.pop_front();     // 앞에서 삭제
+dq.pop_back();      // 뒤에서 삭제
+
+// 접근
+dq.front();         // 맨 앞 요소
+dq.back();          // 맨 뒤 요소
+dq[i];              // 인덱스 접근 (범위 체크 X)
+dq.at(i);           // 인덱스 접근 (범위 체크 O)
+
+// 중간 삽입/삭제 (O(N))
+dq.insert(dq.begin() + 2, 100);  // 인덱스 2에 삽입
+dq.erase(dq.begin() + 2);        // 인덱스 2 삭제
+
+// 순회
+for (int x : dq) {
+    // x 처리
+}
+for (int i = 0; i < dq.size(); i++) {
+    // dq[i] 접근
+}
+```
+
+### vector와의 비교
+
+```cpp
+// std::vector
+// - 맨 뒤 삽입/삭제: O(1)
+// - 맨 앞 삽입/삭제: O(N)
+// - 연속된 메모리 보장
+
+// std::deque
+// - 맨 뒤 삽입/삭제: O(1)
+// - 맨 앞 삽입/삭제: O(1)
+// - 연속된 메모리 보장 X (청크 단위로 할당)
+// - 인덱스 접근은 vector보다 약간 느림
+
+// 선택 기준
+// - 앞쪽 삽입/삭제가 필요하면 deque
+// - 연속 메모리가 필요하면 vector
+// - 인덱스 접근이 빈번하면 vector
+```
+
+## 사용 예시
+
+### 슬라이딩 윈도우 최댓값 (Monotonic Deque)
+
+덱을 이용해 O(N)에 슬라이딩 윈도우의 최댓값을 구하는 대표 알고리즘이다.
+
+```cpp
+#include <deque>
+#include <vector>
+
+std::vector<int> slidingWindowMax(std::vector<int>& arr, int k) {
+    std::deque<int> dq;  // 인덱스 저장 (내림차순 유지)
+    std::vector<int> result;
+    int n = arr.size();
+
+    for (int i = 0; i < n; i++) {
+        // 윈도우 범위 벗어난 요소 제거
+        while (!dq.empty() && dq.front() <= i - k) {
+            dq.pop_front();
+        }
+
+        // 현재 요소보다 작은 요소들 제거 (뒤에서부터)
+        while (!dq.empty() && arr[dq.back()] < arr[i]) {
+            dq.pop_back();
+        }
+
+        dq.push_back(i);
+
+        // 윈도우가 k개 채워졌으면 최댓값 기록
+        if (i >= k - 1) {
+            result.push_back(arr[dq.front()]);
+        }
+    }
+
+    return result;
+}
+```
+
+### 슬라이딩 윈도우 최솟값
+
+```cpp
+std::vector<int> slidingWindowMin(std::vector<int>& arr, int k) {
+    std::deque<int> dq;  // 인덱스 저장 (오름차순 유지)
+    std::vector<int> result;
+    int n = arr.size();
+
+    for (int i = 0; i < n; i++) {
+        while (!dq.empty() && dq.front() <= i - k) {
+            dq.pop_front();
+        }
+
+        // 현재 요소보다 큰 요소들 제거
+        while (!dq.empty() && arr[dq.back()] > arr[i]) {
+            dq.pop_back();
+        }
+
+        dq.push_back(i);
+
+        if (i >= k - 1) {
+            result.push_back(arr[dq.front()]);
+        }
+    }
+
+    return result;
+}
+```
+
+### 회문 검사
+
+```cpp
+#include <deque>
+#include <string>
+
+bool isPalindrome(const std::string& s) {
+    std::deque<char> dq(s.begin(), s.end());
+
+    while (dq.size() > 1) {
+        if (dq.front() != dq.back()) {
+            return false;
+        }
+        dq.pop_front();
+        dq.pop_back();
+    }
+
+    return true;
+}
+```
+
+### 덱을 스택/큐처럼 사용
+
+```cpp
+#include <deque>
+
+std::deque<int> dq;
+
+// 스택처럼 사용 (LIFO)
+dq.push_back(1);
+dq.push_back(2);
+int top = dq.back();   // 2
+dq.pop_back();
+
+// 큐처럼 사용 (FIFO)
+dq.push_back(1);
+dq.push_back(2);
+int front = dq.front(); // 1
+dq.pop_front();
+```
+
+### 양방향 BFS (Bidirectional BFS)
+
+```cpp
+#include <deque>
+#include <unordered_set>
+
+int bidirectionalBFS(int start, int end,
+                     std::vector<std::vector<int>>& adj) {
+    if (start == end) return 0;
+
+    std::unordered_set<int> visitedStart, visitedEnd;
+    std::deque<int> qStart, qEnd;
+
+    qStart.push_back(start);
+    qEnd.push_back(end);
+    visitedStart.insert(start);
+    visitedEnd.insert(end);
+
+    int dist = 0;
+
+    while (!qStart.empty() && !qEnd.empty()) {
+        dist++;
+
+        // 더 작은 쪽에서 탐색
+        if (qStart.size() > qEnd.size()) {
+            std::swap(qStart, qEnd);
+            std::swap(visitedStart, visitedEnd);
+        }
+
+        int sz = qStart.size();
+        for (int i = 0; i < sz; i++) {
+            int cur = qStart.front();
+            qStart.pop_front();
+
+            for (int next : adj[cur]) {
+                if (visitedEnd.count(next)) {
+                    return dist;
+                }
+                if (!visitedStart.count(next)) {
+                    visitedStart.insert(next);
+                    qStart.push_back(next);
+                }
+            }
+        }
+    }
+
+    return -1;  // 도달 불가
+}
+```
+
+## 주의사항 / Edge Cases
+
+### 빈 덱에서 접근
+
+```cpp
+std::deque<int> dq;
+
+// 위험: Undefined Behavior
+// dq.front();     // 빈 덱에서 front
+// dq.back();      // 빈 덱에서 back
+// dq.pop_front(); // 빈 덱에서 pop
+// dq.pop_back();
+
+// 안전한 코드
+if (!dq.empty()) {
+    int val = dq.front();
+    dq.pop_front();
+}
+```
+
+### 원형 배열 인덱스 계산
+
+```cpp
+// 음수 모듈러 주의
+int front_idx = 0;
+front_idx = (front_idx - 1) % MAX_SIZE;  // 잘못됨: -1이 됨
+
+// 올바른 방법
+front_idx = (front_idx - 1 + MAX_SIZE) % MAX_SIZE;
+```
+
+### deque vs vector 성능
+
+```cpp
+// deque는 인덱스 접근이 vector보다 느림
+// 랜덤 액세스가 빈번하면 vector 권장
+
+std::deque<int> dq(1000000);
+std::vector<int> v(1000000);
+
+// vector가 더 빠름
+for (int i = 0; i < 1000000; i++) {
+    v[i];  // 더 빠름
+    dq[i]; // 약간 느림
+}
+
+// deque가 더 빠름
+for (int i = 0; i < 1000000; i++) {
+    dq.push_front(i);  // O(1)
+    // v.insert(v.begin(), i);  // O(N) - 매우 느림
+}
+```
+
+### Monotonic Deque 구현 실수
+
+```cpp
+// 잘못된 코드: 윈도우 범위 체크 누락
+while (!dq.empty() && arr[dq.back()] < arr[i]) {
+    dq.pop_back();
+}
+dq.push_back(i);
+// dq.front()가 윈도우 범위를 벗어날 수 있음
+
+// 올바른 코드: 범위 체크 먼저
+while (!dq.empty() && dq.front() <= i - k) {
+    dq.pop_front();  // 범위 벗어난 요소 먼저 제거
+}
+while (!dq.empty() && arr[dq.back()] < arr[i]) {
+    dq.pop_back();
+}
+dq.push_back(i);
+```
+
+## 추천 문제
+
+| 난이도 | 문제 | 링크 |
+|--------|------|------|
+| Silver | 덱 | [BOJ 10866](https://www.acmicpc.net/problem/10866) |
+| Silver | 회전하는 큐 | [BOJ 1021](https://www.acmicpc.net/problem/1021) |
+| Platinum | 최솟값 찾기 | [BOJ 11003](https://www.acmicpc.net/problem/11003) |
+| Platinum | 히스토그램에서 가장 큰 직사각형 | [BOJ 6549](https://www.acmicpc.net/problem/6549) |
+| Gold | AC | [BOJ 5430](https://www.acmicpc.net/problem/5430) |
