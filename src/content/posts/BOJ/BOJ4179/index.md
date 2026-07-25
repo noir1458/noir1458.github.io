@@ -1,0 +1,268 @@
+---
+title: BOJ 4179 불! (cpp inf?)
+slug: BOJ4179
+publishedAt: '2025-12-12'
+categories: BOJ
+math: false
+---
+
+## 문제
+
+미로에 지훈이랑 불이랑 같이 있고, 같은 시간에 한칸씩 이동할 수 있다.  
+밖으로 통과할수 있는지 없는지, 있다면 탈출시간을 알아보자
+
+## 접근법
+
+사람, 불 모두 같이 큐에 넣고 BFS 돌리는 방법으로 했다.  그냥 했을때는 틀렸고 몇가지 주의해야할 점이 있었는데.
+- 불의 좌표를 먼저 큐에 다 넣고 마지막에 지훈의 좌표를 넣어야 함. (불이 먼저 확산되어야 지훈이 죽는걸 판별하기 쉽다)
+- 불은 벽이 아니고 범위 안에 있다면 무조건 확산한다. visited 볼 필요도 없이 board내용을 F로 바꿔버린다. 지훈이 있던 자리라도 덮어 씌워버린다
+- 지훈은 벽이랑 불이 아닐때만 이동한다. 다시 돌아가면 안되므로 visited 배열 필요
+
+이게 불은 board를 태우고, 지훈은 visited를 체크해서 메모리가 절약된다는듯...
+
+## 풀이
+```cpp
+#include<bits/stdc++.h>
+#include<iostream>
+using namespace std;
+
+int R,C;
+int dy[4] = {1,0,-1,0};
+int dx[4] = {0,1,0,-1};
+
+int bfs(vector<vector<char>> &board, vector<vector<bool>> &visited){
+    deque<tuple<char,int,int,int>> q;
+    pair<int,int> tmp_j;
+
+    for (int i=0;i<R;i++){
+        for (int j=0;j<C;j++){
+            if (board[i][j] == 'F'){
+                q.push_back({'F',i,j,0});
+            }
+            if (board[i][j] == 'J'){
+                tmp_j.first = i;
+                tmp_j.second = j;
+                visited[i][j] = true;
+            }
+        }
+    }
+    // J 위치만 나중에 처리해야함
+    q.push_back({'J',tmp_j.first,tmp_j.second,0});
+
+    while (!q.empty()){
+        auto[c,ny,nx,t] = q.front();
+        q.pop_front();
+
+        for(int i=0;i<4;i++){
+            int y = ny + dy[i];
+            int x = nx + dx[i];
+            if (c=='F'){
+                // 불이 확산할때
+                if (y >= 0 && y < R && x>= 0 && x < C){
+                    if (board[y][x] != '#' && board[y][x] != 'F'){
+                        // visited 신경쓰지 않고 일단 태워보자
+                        board[y][x] = 'F';
+                        q.push_back({c,y,x,t+1});
+                    }
+                }
+            } else {
+                if (!(y >= 0 && y < R && x>= 0 && x < C)){
+                    return t+1;
+                } else {
+                    if (!visited[y][x] && board[y][x] != '#' && board[y][x] != 'F'){
+                        visited[y][x] = true;
+                        q.push_back({c,y,x,t+1});
+                    }
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> R >> C;
+    vector<vector<char>> board;
+    for(int i=0;i<R;i++){
+        vector<char> v;
+        for(int j=0;j<C;j++){
+            char x;
+            cin >> x;
+            v.push_back(x);
+        }
+        board.push_back(v);
+    }
+
+    vector<vector<bool>> visited;
+    for(int i=0;i<R;i++){
+        vector<bool> v(C);
+        visited.push_back(v);
+    }
+    int res = bfs(board, visited);
+    if (res==-1){
+        cout << "IMPOSSIBLE";
+    } else {
+        cout << res;
+    }
+}
+```
+문제 생겼던것부터 따져보면
+- 튜플은 {} 중괄호로 생성해도 됨 pair처럼
+
+```
+!board[y][x] == '#'
+```
+- 이건 !을 먼저 계산해서 틀리게 된다. != 이렇게 써야.. 왜 이렇게 썼는지는 기억이 잘...
+
+## 다른 방법
+
+방문 배열을 2개로 분리하고, 도착시간을 기록해서 내가 도착한 시간이 불보다 빠른지 검사하기.  
+불 BFS 먼저 돌리고, 그다음 지훈의 BFS를 돌리는것. 로직이 분리되어서 머리가 덜 아프고 visited가 꼬일 일은 더 적다고 함. 대신 BFS 2번 해야해서 코드가 길다
+
+```
+#include<bits/stdc++.h>
+#include<iostream>
+using namespace std;
+
+int R,C;
+int INF = 987654321;
+int dy[4] = {1,0,-1,0};
+int dx[4] = {0,1,0,-1};
+
+void bfs_f(vector<vector<char>> &board, vector<vector<int>> &visited_f){
+    deque <tuple<int,int,int>> q;
+
+    for (int i=0;i<R;i++){
+        for (int j=0;j<C;j++){
+            if (board[i][j] == 'F'){
+                q.push_back({i,j,0});
+                visited_f[i][j] = 0;
+            }
+        }
+    }
+
+    while(!q.empty()){
+        auto[ny,nx,t] = q.front(); q.pop_front();
+
+        for(int i=0;i<4;i++){
+            int y=ny+dy[i];
+            int x=nx+dx[i];
+            if(y >= 0 && y < R && x>= 0 && x < C){
+                if (board[y][x] != '#') {
+                    if (visited_f[y][x] == INF){
+                        visited_f[y][x] = t+1; 
+                        q.push_back({y,x,t+1});
+                    }
+                }
+            }
+        }
+    }
+}
+
+int bfs(vector<vector<char>> &board, vector<vector<int>> &visited_f, vector<vector<int>> &visited_j){
+    deque<tuple<int,int,int>> q;
+
+    for (int i=0;i<R;i++){
+        for (int j=0;j<C;j++){
+            if (board[i][j] == 'J'){
+                q.push_back({i,j,0});
+                visited_j[i][j] = true;
+            }
+        }
+    }
+
+    while (!q.empty()){
+        auto[ny,nx,t] = q.front();
+        q.pop_front();
+
+        for(int i=0;i<4;i++){
+            int y = ny + dy[i];
+            int x = nx + dx[i];
+            if (!(y >= 0 && y < R && x>= 0 && x < C)){
+                return t+1;
+            } else {
+                if (!visited_j[y][x] && board[y][x] != '#' && board[y][x] != 'F'){
+                    if (t+1 < visited_f[y][x]){
+                    visited_j[y][x] = true;
+                    q.push_back({y,x,t+1});
+                    }
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> R >> C;
+    vector<vector<char>> board;
+    for(int i=0;i<R;i++){
+        vector<char> v;
+        for(int j=0;j<C;j++){
+            char x;
+            cin >> x;
+            v.push_back(x);
+        }
+        board.push_back(v);
+    }
+
+    vector<vector<int>> visited_f(R,vector<int>(C,INF));
+    vector<vector<int>> visited_j(R,vector<int>(C,0));
+
+    bfs_f(board,visited_f);
+    int res = bfs(board, visited_f, visited_j);
+    if (res==-1){
+        cout << "IMPOSSIBLE";
+    } else {
+        cout << res;
+    }
+}
+```
+그리고 이쪽이 메모리도 많이 잡아먹고, 시간도 더 오래걸린다.  
+코드를 작성하면서 실수를 엄청 많이 했다. 
+
+```
+if (t+1 < visited_f[y][x])
+if (visited_j[y][x] < visited_f[y][x]) // 틀림
+```
+아래처럼 실수하기도 했었고, 처음에 INF로 초기화시키는것도 안했었다.
+
+## INF?
+```
+const int INF = 1e9 // 10억, 둘이 더해도 20억이라서 터지지 않는다
+
+const int INF = 0x3f3f3f3f // 10억 6천만? 둘이 더해도 21억 안넘음
+// memset함수로 배열 초기화를 1바이트씩 할때 0x3f로 도배시 나오는 숫자
+memset(visit, 0x3f, sizeof(visit)); // 이렇게 한 줄로 초기화 가능
+
+#include<climits>
+const int INF = INT_MAX; // 21억...
+// t+1하면 오버플로우
+```
+
+```
+int dist[1000][1000];
+for(int i=0; i<1000; i++){
+    for(int j=0; j<1000; j++){
+        dist[i][j] = 987654321; // 일일이 대입
+    }
+}
+
+#include <cstring> // memset 헤더
+
+int dist[1000][1000];
+// 0x3f는 십진수로 63입니다.
+memset(dist, 0x3f, sizeof(dist));
+```
+memset이 1바이트 단위로만 값을 채워서  
+4개 바이트에 똑같은 숫자를 넣었을때 INF처럼 큰 값을 찾은게 바로 0x3f라고 한다  
+최단거리 알고리즘, 다익스트라에서 자주 쓴다는듯
+
+
+

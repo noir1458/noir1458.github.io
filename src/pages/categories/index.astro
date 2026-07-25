@@ -1,0 +1,23 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { countTerms, getPublishedPosts } from "@/utils/content";
+
+const posts = await getPublishedPosts();
+const categories = countTerms(posts, "categories");
+---
+
+<BaseLayout title="Categories">
+  <header class="page-heading">
+    <span class="eyebrow">Index</span>
+    <h1>Categories</h1>
+    <p>Browse {categories.length} categories across {posts.length} published posts.</p>
+  </header>
+  <div class="term-grid">
+    {categories.map((category) => (
+      <a class="term-card" href={`/categories/${category.slug}/`}>
+        <span>{category.name}</span>
+        <span class="term-count">{category.count}</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

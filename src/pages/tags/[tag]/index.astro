@@ -1,0 +1,48 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostList from "@/components/PostList.astro";
+import Pagination from "@/components/Pagination.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import Icon from "@/components/Icon.astro";
+import {
+  countTerms,
+  getPublishedPosts,
+  paginatePosts,
+  postsWithTerm,
+  termNameFromSlug
+} from "@/utils/content";
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  return countTerms(posts, "tags").map((term) => ({
+    params: { tag: term.slug }
+  }));
+}) satisfies GetStaticPaths;
+
+const tagSlug = Astro.params.tag!;
+const allPosts = await getPublishedPosts();
+const filtered = postsWithTerm(allPosts, "tags", tagSlug);
+const tagName = termNameFromSlug(allPosts, "tags", tagSlug) ?? tagSlug;
+const page = paginatePosts(filtered, 1);
+---
+
+<BaseLayout title={`Tag: ${tagName}`} description={`Posts tagged ${tagName}`}>
+  <header class="page-heading taxonomy-heading">
+    <span class="eyebrow">Tag</span>
+    <h1><Icon name="tag" size={32} /> {tagName}</h1>
+    <p>{filtered.length} published {filtered.length === 1 ? "post" : "posts"}</p>
+  </header>
+  {filtered.length ? (
+    <>
+      <PostList posts={page.posts} />
+      <Pagination
+        currentPage={page.currentPage}
+        totalPages={page.totalPages}
+        basePath={`/tags/${tagSlug}/`}
+      />
+    </>
+  ) : (
+    <EmptyState />
+  )}
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SITE } from "@/config";
+---
+
+<BaseLayout title="About" sidebar={false}>
+  <header class="page-heading">
+    <span class="eyebrow">About</span>
+    <h1>{SITE.author.name}</h1>
+    <p>This blog collects study notes, problem solving, software work, and everyday thoughts.</p>
+  </header>
+  <div class="article-content">
+    <h2>Writing here</h2>
+    <p>
+      Posts are written in Markdown and built as a static Astro site. Mathematics is rendered with
+      KaTeX, code is highlighted with Shiki, and comments are provided by Giscus.
+    </p>
+    <p>
+      The archive was migrated from the previous Jekyll site while preserving existing post URLs.
+    </p>
+    <p><a href={SITE.author.github} rel="noopener noreferrer" target="_blank">View GitHub profile</a></p>
+  </div>
+</BaseLayout>

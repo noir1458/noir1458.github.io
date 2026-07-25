@@ -1,0 +1,97 @@
+---
+interface Props {
+  name:
+    | "archive"
+    | "arrow-left"
+    | "arrow-right"
+    | "calendar"
+    | "category"
+    | "chevron-down"
+    | "chevron-left"
+    | "chevron-right"
+    | "chevrons-left"
+    | "chevrons-right"
+    | "close"
+    | "github"
+    | "home"
+    | "menu"
+    | "moon"
+    | "rss"
+    | "search"
+    | "settings"
+    | "sun"
+    | "system"
+    | "tag"
+    | "user";
+  size?: number;
+  strokeWidth?: number;
+}
+
+const { name, size = 22, strokeWidth = 1.8 } = Astro.props;
+
+const paths: Record<Props["name"], string[]> = {
+  archive: ["M3 6h18", "M5 6v14h14V6", "M9 10h6"],
+  "arrow-left": ["m15 18-6-6 6-6"],
+  "arrow-right": ["m9 18 6-6-6-6"],
+  calendar: [
+    "M6 3v3",
+    "M18 3v3",
+    "M4 8h16",
+    "M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z"
+  ],
+  category: ["M3 7h6l2 2h10v10H3Z", "M3 7V5h7l2 2"],
+  "chevron-down": ["m6 9 6 6 6-6"],
+  "chevron-left": ["m15 18-6-6 6-6"],
+  "chevron-right": ["m9 18 6-6-6-6"],
+  "chevrons-left": ["m11 18-6-6 6-6", "m19 18-6-6 6-6"],
+  "chevrons-right": ["m5 18 6-6-6-6", "m13 18 6-6-6-6"],
+  close: ["M6 6l12 12", "M18 6 6 18"],
+  github: [
+    "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.2-.4 6.5-1.6 6.5-7A5.4 5.4 0 0 0 19 3.7 5 5 0 0 0 18.9 0S17.7-.4 15 1.5a13.4 13.4 0 0 0-7 0C5.3-.4 4.1 0 4.1 0A5 5 0 0 0 4 3.7a5.4 5.4 0 0 0-1.5 3.8c0 5.4 3.3 6.6 6.5 7A4.8 4.8 0 0 0 8 18v4",
+    "M8 19c-3 .9-3-1.5-4-2"
+  ],
+  home: ["M3 11.5 12 4l9 7.5", "M5.5 10.5V20h13v-9.5", "M9.5 20v-6h5v6"],
+  menu: ["M4 7h16", "M4 12h16", "M4 17h16"],
+  moon: ["M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"],
+  rss: ["M5 19h.01", "M5 11a8 8 0 0 1 8 8", "M5 5a14 14 0 0 1 14 14"],
+  search: ["m21 21-4.3-4.3", "M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"],
+  settings: [
+    "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z",
+    "M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.1 2.1-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-3v-.7a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L6.6 17l.1-.1A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.6-1H4v-3h1.4A1.7 1.7 0 0 0 7 10a1.7 1.7 0 0 0-.3-1.9L6.6 8l2.1-2.1.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V4h3v.7a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 8l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H22v3h-1a1.7 1.7 0 0 0-1.6 1Z"
+  ],
+  sun: [
+    "M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+    "M12 2v2",
+    "M12 20v2",
+    "m4.93 4.93 1.41 1.41",
+    "m17.66 17.66 1.41 1.41",
+    "M2 12h2",
+    "M20 12h2",
+    "m6.34 17.66-1.41 1.41",
+    "m19.07 4.93-1.41 1.41"
+  ],
+  system: ["M3 4h18v13H3Z", "M8 21h8", "M12 17v4"],
+  tag: ["M20 13 13 20 4 11V4h7Z", "M8.5 8.5h.01"],
+  user: ["M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z", "M4.5 21a7.5 7.5 0 0 1 15 0"]
+};
+---
+
+<svg
+  aria-hidden="true"
+  class="icon"
+  fill="none"
+  height={size}
+  viewBox="0 0 24 24"
+  width={size}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  {paths[name].map((path) => (
+    <path
+      d={path}
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width={strokeWidth}
+    />
+  ))}
+</svg>

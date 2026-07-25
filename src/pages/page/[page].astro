@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostList from "@/components/PostList.astro";
+import Pagination from "@/components/Pagination.astro";
+import { SITE } from "@/config";
+import { getPublishedPosts, paginatePosts } from "@/utils/content";
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  const totalPages = Math.ceil(posts.length / SITE.postsPerPage);
+
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => ({
+    params: { page: String(index + 2) }
+  }));
+}) satisfies GetStaticPaths;
+
+const currentPage = Number(Astro.params.page);
+const allPosts = await getPublishedPosts();
+const page = paginatePosts(allPosts, currentPage);
+---
+
+<BaseLayout title={`Page ${page.currentPage}`}>
+  <header class="page-heading">
+    <span class="eyebrow">Latest writing</span>
+    <h1>All posts</h1>
+    <p>Page {page.currentPage} of {page.totalPages}</p>
+  </header>
+  <PostList posts={page.posts} />
+  <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+</BaseLayout>

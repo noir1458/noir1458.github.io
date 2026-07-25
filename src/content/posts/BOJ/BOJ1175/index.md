@@ -1,0 +1,108 @@
+---
+title: BOJ 1175 배달
+slug: BOJ1175
+publishedAt: '2026-02-21'
+categories: BOJ
+math: true
+---
+## 문제
+배달 https://www.acmicpc.net/problem/1175
+- $N \times M$ 격자에서 두 개의 선물('C')을 모두 방문하는 최소 시간 탐색.
+- **제약**: 같은 방향으로 두 번 연속 이동 불가.
+
+## 복잡도 분석
+- time complexity : $O(N \cdot M \cdot 5 \cdot 4)$
+- space complexity : $O(N \cdot M \cdot 5 \cdot 4)$
+
+## 접근법
+- **상태 정의**: `visited[y][x][dir][bit]` 4차원 배열 사용.
+  - `dir`: 0~3 (방향), 4 (시작 시점의 무방향 상태).
+  - `bit`: 0~3 (선물 획득 상태를 비트마스크로 표현).
+- **중복 방지**: 단순히 선물 개수(`p+1`)를 세는 것이 아니라, 어떤 선물을 획득했는지 비트(`1<<id`)로 관리하여 동일한 선물을 중복 카운트하는 오류를 방지.
+
+## 풀이
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int dy[4] = {1, 0, -1, 0};
+int dx[4] = {0, 1, 0, -1};
+
+struct Pos { int y, x; };
+struct Pos_ { int y, x, dir, p; };
+
+int N, M;
+vector<vector<char>> board;
+vector<Pos> gift;
+int visited[50][50][5][4];
+
+bool pos_valid(Pos now) {
+    return (0 <= now.y && now.y < N && 0 <= now.x && now.x < M);
+}
+
+int bfs(Pos start) {
+    deque<Pos_> q;
+    q.push_back({start.y, start.x, 4, 0});
+    visited[start.y][start.x][4][0] = 0;
+
+    while (!q.empty()) {
+        Pos_ now = q.front(); q.pop_front();
+        
+        for (int i = 0; i < 4; i++) {
+            if (i == now.dir) continue; // 연속 같은 방향 금지
+
+            int ny = now.y + dy[i];
+            int nx = now.x + dx[i];
+
+            if (pos_valid({ny, nx}) && board[ny][nx] != '#') {
+                int next_p = now.p;
+                if (board[ny][nx] == 'C') {
+                    for (int id = 0; id < 2; id++) {
+                        if (ny == gift[id].y && nx == gift[id].x)
+                            next_p |= (1 << id);
+                    }
+                }
+
+                if (visited[ny][nx][i][next_p] == -1) {
+                    visited[ny][nx][i][next_p] = visited[now.y][now.x][now.dir][now.p] + 1;
+                    if (next_p == 3) return visited[ny][nx][i][next_p];
+                    q.push_back({ny, nx, i, next_p});
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> N >> M;
+    board.assign(N, vector<char>(M, ' '));
+    for (int i = 0; i < 50; ++i)
+        for (int j = 0; j < 50; ++j)
+            for (int d = 0; d < 5; ++d)
+                for (int b = 0; b < 4; ++b)
+                    visited[i][j][d][b] = -1;
+
+    Pos start;
+    for (int i = 0; i < N; i++) {
+        string s; cin >> s;
+        for (int j = 0; j < M; j++) {
+            board[i][j] = s[j];
+            if (s[j] == 'S') start = {i, j};
+            if (s[j] == 'C') gift.push_back({i, j});
+        }
+    }
+    cout << bfs(start);
+    return 0;
+}
+```
+선물이 그냥 단순히 2개 잡았다고 처리하면 안되고, 어떤 방향으로 어떤걸 잡았다 체크를 해야해서 visited 배열이 4차원이고  
+문자 C(선물배달) 만났을때도 몇번째 선물인지 체크를 해야 한다. 이걸 비트마스킹 해서 체크함..;
+
+## 유사 문제 추천
+- 달이 차오른다, 가자. (BOJ 1194)
+- 열쇠 (BOJ 9328)
+- 구슬 탈출 2 (BOJ 13460)
+- 로봇 (BOJ 1726)
+- 벽 부수고 이동하기 (BOJ 2206)
