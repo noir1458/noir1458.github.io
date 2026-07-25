@@ -1,0 +1,73 @@
+---
+import type { PostEntry } from "@/utils/content";
+import { countTerms } from "@/utils/content";
+import Icon from "@/components/Icon.astro";
+import { SITE } from "@/config";
+
+interface Props {
+  posts: PostEntry[];
+}
+
+const { posts } = Astro.props;
+const categories = countTerms(posts, "categories").slice(0, 12);
+---
+
+<div class="sidebar-region" data-sidebar-region>
+  <button
+    class="sidebar-toggle icon-button"
+    data-sidebar-toggle
+    type="button"
+    aria-expanded="true"
+    aria-label="Hide sidebar"
+    aria-controls="blog-sidebar"
+  >
+    <Icon name="chevron-right" />
+  </button>
+  <aside id="blog-sidebar" class="sidebar" data-sidebar aria-label="Blog navigation">
+    <nav class="sidebar-links" aria-label="Quick links">
+      <a
+        class="sidebar-link icon-button"
+        href={SITE.author.github}
+        rel="noopener noreferrer"
+        target="_blank"
+        aria-label="GitHub profile"
+        title="GitHub profile"
+      >
+        <Icon name="github" />
+      </a>
+      <a
+        class="sidebar-link icon-button"
+        href="/about/"
+        aria-label="Profile"
+        title="Profile"
+      >
+        <Icon name="user" />
+      </a>
+      <a
+        class="sidebar-link icon-button"
+        href="/rss.xml"
+        aria-label="RSS feed"
+        title="RSS feed"
+      >
+        <Icon name="rss" />
+      </a>
+    </nav>
+
+    <details class="sidebar-widget" open>
+      <summary>
+        <span>Categories</span>
+        <Icon name="chevron-down" size={20} />
+      </summary>
+      <ul class="term-list">
+        {categories.map((term) => (
+          <li>
+            <a href={`/categories/${term.slug}/`}>
+              <span>{term.name}</span>
+              <span class="term-count">{term.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  </aside>
+</div>

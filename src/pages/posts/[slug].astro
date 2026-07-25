@@ -1,0 +1,142 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Icon from "@/components/Icon.astro";
+import Giscus from "@/components/Giscus.astro";
+import { SITE } from "@/config";
+import {
+  formatDate,
+  getPublishedPosts,
+  postCover,
+  postDescription,
+  postUrl,
+  slugifyTerm
+} from "@/utils/content";
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post }
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const posts = await getPublishedPosts();
+const index = posts.findIndex((entry) => entry.id === post.id);
+const newer = index > 0 ? posts[index - 1] : undefined;
+const older = index < posts.length - 1 ? posts[index + 1] : undefined;
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const canonical = new URL(postUrl(post), SITE.url).toString();
+const cover = postCover(post);
+const description = postDescription(post);
+const coverUrl = cover
+  ? new URL(cover.src, SITE.url).toString()
+  : undefined;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description,
+  datePublished: post.data.publishedAt.toISOString(),
+  dateModified: (post.data.updatedAt ?? post.data.publishedAt).toISOString(),
+  mainEntityOfPage: canonical,
+  url: canonical,
+  author: {
+    "@type": "Person",
+    name: SITE.author.name,
+    url: SITE.author.github
+  },
+  publisher: {
+    "@type": "Person",
+    name: SITE.author.name
+  },
+  keywords: post.data.categories.join(", "),
+  ...(coverUrl ? { image: coverUrl } : {})
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={description}
+  image={coverUrl}
+  pagefindBody
+  schema={schema}
+>
+  <article>
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/" aria-label="Home"><Icon name="home" size={18} /></a>
+      {post.data.categories[0] && (
+        <>
+          <Icon name="chevron-right" size={16} />
+          <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
+            <Icon name="category" size={17} />
+            {post.data.categories[0]}
+          </a>
+        </>
+      )}
+    </nav>
+
+    <header class="article-header">
+      <h1 data-pagefind-meta="title">{post.data.title}</h1>
+      <div class="article-meta">
+        <span>
+          <Icon name="calendar" size={20} />
+          <time datetime={post.data.publishedAt.toISOString()}>
+            {formatDate(post.data.publishedAt)}
+          </time>
+        </span>
+        {post.data.updatedAt && (
+          <span>Updated {formatDate(post.data.updatedAt)}</span>
+        )}
+        <span>{Math.max(1, Math.ceil((post.body ?? "").split(/\s+/u).length / 260))} min read</span>
+      </div>
+    </header>
+
+    {tocHeadings.length > 0 && (
+      <details class="article-toc" open>
+        <summary>On this page</summary>
+        <ol>
+          {tocHeadings.map((heading) => (
+            <li class={`depth-${heading.depth}`}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    )}
+
+    <div class="article-content" data-pagefind-body>
+      <Content />
+    </div>
+
+    {post.data.tags.length > 0 && (
+      <div class="post-taxonomy" data-pagefind-ignore>
+        {post.data.tags.map((tag) => (
+          <a class="tag-chip" href={`/tags/${slugifyTerm(tag)}/`}>
+            <Icon name="tag" size={16} />
+            {tag}
+          </a>
+        ))}
+      </div>
+    )}
+
+    <nav class="post-navigation" aria-label="Post navigation" data-pagefind-ignore>
+      {newer ? (
+        <a href={postUrl(newer)} title={newer.data.title}>
+          <Icon name="arrow-left" size={18} /> Newer
+        </a>
+      ) : <span></span>}
+      <a class="all-posts" href="/"><Icon name="menu" size={18} /> All posts</a>
+      {older ? (
+        <a href={postUrl(older)} title={older.data.title}>
+          Older <Icon name="arrow-right" size={18} />
+        </a>
+      ) : <span></span>}
+    </nav>
+
+    <Giscus />
+  </article>
+</BaseLayout>

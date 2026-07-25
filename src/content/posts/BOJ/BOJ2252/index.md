@@ -1,0 +1,108 @@
+---
+title: BOJ 2252 줄 세우기 (위상 정렬)
+slug: BOJ2252
+publishedAt: '2026-04-01'
+categories: BOJ
+math: true
+---
+## 문제
+줄 세우기 [https://www.acmicpc.net/problem/2252](https://www.acmicpc.net/problem/2252)
+
+$N$명의 학생들을 키 순서대로 줄을 세워야 합니다. 두 학생의 키를 비교한 $M$개의 결과가 주어질 때, 이 조건을 만족하는 줄 세우기 결과를 출력하는 문제입니다.
+
+## 복잡도 분석
+- time complexity : $O(N + M)$
+  - 정점의 개수 $N$만큼 큐 작업이 발생하고, 모든 간선 $M$을 한 번씩 확인하므로 선형 시간에 해결됩니다.
+- space complexity : $O(N + M)$
+  - 인접 리스트 `v`에 $M$개의 간선을 저장하며, $N$ 크기의 진입 차수 배열 및 결과 벡터를 사용합니다.
+
+## 접근법
+이 문제는 전형적인 **위상 정렬(Topological Sort)** 문제입니다. 
+
+1. **그래프 구성**: 학생을 노드로, 비교 결과를 방향성이 있는 간선으로 표현합니다.
+2. **진입 차수(In-degree) 관리**: 각 노드로 들어오는 간선의 개수를 기록합니다.
+3. **Kahn's Algorithm**: 
+   - 진입 차수가 0인 노드(앞에 설 사람이 없는 학생)를 큐에 넣습니다.
+   - 큐에서 노드를 꺼내 결과 리스트에 담고, 해당 노드와 연결된 간선을 제거(연결된 노드의 진입 차수 감소)합니다.
+   - 새롭게 진입 차수가 0이 된 노드를 다시 큐에 넣는 과정을 반복합니다.
+
+### 데이터 흐름 (Example)
+$N=3, M=2$, (1 3), (2 3) 입력 시:
+
+| 단계 | 큐(q) 상태 | 결과(res) 상태 | 진입 차수(indeg) 상태 |
+|:---:|:---|:---|:---|
+| 초기화 | [1, 2] | [] | indeg[3] = 2 |
+| 1 처리 | [2] | [1] | indeg[3] = 1 |
+| 2 처리 | [3] | [1, 2] | indeg[3] = 0 (큐 삽입) |
+| 3 처리 | [] | [1, 2, 3] | - |
+
+## 풀이
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> v;
+vector<int> indeg;
+int N,M;
+
+deque<int> q;
+vector<int> res;
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>N>>M;
+    v.assign(N+1,vector<int> {});
+    indeg.assign(N+1,0);
+
+    for(int i=0;i<M;i++){
+        int a,b;cin>>a>>b;
+        v[a].push_back(b);
+        indeg[b]++;
+    }
+
+    // indeg == 0 에서 시작
+    for(int i=1;i<N+1;i++){
+        if (indeg[i]==0){
+            q.push_back(i);
+        }
+    }
+
+    // q가 비게 될때까지 진행, 방문시 indeg-- , indeg == 0 되면 q에 넣는다
+    while (!q.empty())
+    {
+        int cur = q.front();q.pop_front();
+        res.push_back(cur);
+        for(int nxt:v[cur]){
+            indeg[nxt]--;
+            if(indeg[nxt]==0){
+                q.push_back(nxt);
+            }
+        }
+    }
+
+    // 최종적으로 len(res) == n 체크, 아니라면 cycle exist
+    if(size(res) != N){
+        cout<<"Cycle exist";
+    } else {
+        for(auto e: res){
+            cout << e << " ";
+        }
+    }
+
+    return 0;
+}
+```
+
+## Code Review
+- **유연한 설계**: `size(res) != N`을 통해 위상 정렬의 성질인 '모든 정점 방문 여부'를 체크하여 사이클 존재 가능성을 염두에 둔 점이 훌륭합니다.
+- **STL 활용**: `vector::assign`과 `deque`를 활용하여 직관적인 구현을 완성했습니다.
+- **최적화 포인트**: 현재 $N$이 최대 32,000이므로 큰 영향은 없으나, 메모리 사용량을 줄이려면 `deque` 대신 `queue`를, 혹은 `vector<int> adj[32001]` 형태의 고정 배열을 고려해볼 수 있습니다.
+
+## 유사 문제 추천
+- 문제집 (BOJ 1766)
+- 작업 (BOJ 2056)
+- ACM Craft (BOJ 1005)
+- 임계경로 (BOJ 1948)
+- 최종 순위 (BOJ 3665)
