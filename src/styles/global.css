@@ -508,7 +508,7 @@ button {
 .page-heading h1,
 .article-header h1 {
   margin: 0;
-  font-size: clamp(2.1rem, 5vw, 4.8rem);
+  font-size: clamp(2.1rem, 5vw, 4rem);
   line-height: 1.08;
   letter-spacing: -0.055em;
 }
@@ -523,10 +523,6 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
-}
-
-.post-list {
-  border-top: 1px solid var(--line);
 }
 
 .post-row {
@@ -644,12 +640,6 @@ button {
 .page-button.active {
   background: var(--accent);
   color: #f8fbff;
-}
-
-.page-jump {
-  font-size: 0.82rem;
-  letter-spacing: -0.16em;
-  text-indent: -0.16em;
 }
 
 .pagination-meta {
@@ -1150,6 +1140,7 @@ button {
   .content-grid,
   .content-grid.sidebar-collapsed {
     grid-template-columns: 1fr;
+    gap: 36px;
   }
 
   .sidebar-region,
@@ -1163,43 +1154,25 @@ button {
     transform: none;
   }
 
-  .sidebar-toggle {
-    position: sticky;
-    top: 18px;
-    z-index: 12;
-    display: grid;
-    margin: 0 0 16px auto;
-  }
-
+  .sidebar-toggle,
   .sidebar-region.collapsed .sidebar-toggle {
-    position: sticky;
-    top: 18px;
-    right: auto;
-    margin: 0 0 0 auto;
+    display: none;
   }
 
-  .sidebar {
+  .sidebar,
+  .sidebar-region.collapsed .sidebar {
     position: static;
     display: block;
     width: 100%;
+    height: auto;
+    min-height: 0;
     padding: 24px;
+    border-color: var(--line);
     visibility: visible;
     opacity: 1;
     transform: none;
     pointer-events: auto;
-  }
-
-  .sidebar-region.collapsed .sidebar {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    display: block;
-    width: 100%;
-    padding: 24px;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateX(24px);
-    pointer-events: none;
+    transition: none;
   }
 
   .sidebar-widget {
