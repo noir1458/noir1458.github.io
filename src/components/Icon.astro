@@ -4,6 +4,7 @@ interface Props {
     | "archive"
     | "arrow-left"
     | "arrow-right"
+    | "arrow-up"
     | "calendar"
     | "category"
     | "chevron-down"
@@ -33,6 +34,7 @@ const paths: Record<Props["name"], string[]> = {
   archive: ["M3 6h18", "M5 6v14h14V6", "M9 10h6"],
   "arrow-left": ["m15 18-6-6 6-6"],
   "arrow-right": ["m9 18 6-6-6-6"],
+  "arrow-up": ["m6 15 6-6 6 6"],
   calendar: [
     "M6 3v3",
     "M18 3v3",
