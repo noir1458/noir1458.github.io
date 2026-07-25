@@ -1,6 +1,6 @@
 ---
 import type { PostEntry } from "@/utils/content";
-import { countTerms } from "@/utils/content";
+import { groupCategoriesBySource } from "@/utils/content";
 import Icon from "@/components/Icon.astro";
 import { SITE } from "@/config";
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { posts } = Astro.props;
-const categories = countTerms(posts, "categories").slice(0, 12);
+const categoryGroups = groupCategoriesBySource(posts);
 ---
 
 <div class="sidebar-region" data-sidebar-region>
@@ -59,13 +59,24 @@ const categories = countTerms(posts, "categories").slice(0, 12);
         <Icon name="chevron-down" size={20} />
       </summary>
       <ul class="term-list">
-        {categories.map((term) => (
-          <li>
-            <a href={`/categories/${term.slug}/`}>
-              <span>{term.name}</span>
-              <span class="term-count">{term.count}</span>
-            </a>
-          </li>
+        {categoryGroups.map((group, groupIndex) => (
+          <Fragment>
+            {groupIndex > 0 && (
+              <li
+                class="term-group-separator"
+                data-source-group={group.sourceFolder}
+                aria-hidden="true"
+              />
+            )}
+            {group.categories.map((term) => (
+              <li>
+                <a href={`/categories/${term.slug}/`}>
+                  <span>{term.name}</span>
+                  <span class="term-count">{term.count}</span>
+                </a>
+              </li>
+            ))}
+          </Fragment>
         ))}
       </ul>
     </details>

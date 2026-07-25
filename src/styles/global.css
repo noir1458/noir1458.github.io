@@ -453,8 +453,16 @@ button {
   list-style: none;
 }
 
-.term-list li + li {
+.term-list li:not(.term-group-separator) + li:not(.term-group-separator) {
   border-top: 1px solid var(--line);
+}
+
+.term-list .term-group-separator {
+  height: 6px;
+  margin: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  pointer-events: none;
 }
 
 .term-list a {
