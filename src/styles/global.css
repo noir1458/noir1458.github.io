@@ -786,12 +786,51 @@ button {
   font-size: 0.9em;
 }
 
-.article-content pre {
-  overflow-x: auto;
+.code-block {
+  position: relative;
   margin: 2em 0;
-  padding: 22px;
+}
+
+.article-content .code-block pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 52px 22px 22px;
   border: 1px solid var(--line);
   border-radius: 6px;
+}
+
+.code-copy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  min-width: 58px;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--surface-solid) 90%, transparent);
+  box-shadow: 0 5px 16px rgba(14, 18, 24, 0.08);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.code-copy:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  color: var(--text);
+}
+
+.code-copy.copied {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  background: var(--accent-soft);
+  color: var(--accent-ink);
 }
 
 :root[data-theme="dark"] .astro-code,
@@ -836,6 +875,63 @@ button {
   gap: 9px;
   padding: 25px 0;
   border-top: 1px solid var(--line);
+}
+
+.reading-progress {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.reading-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--accent);
+  will-change: transform;
+}
+
+.scroll-top {
+  position: fixed;
+  z-index: 50;
+  right: max(20px, calc((100vw - var(--content-width)) / 2 + 4px));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  width: 48px;
+  height: 48px;
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+  box-shadow: var(--glass-shadow);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  backdrop-filter: blur(18px) saturate(120%);
+  transition:
+    opacity 170ms ease,
+    transform 200ms ease,
+    visibility 0s linear 200ms,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.scroll-top.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.scroll-top:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  color: var(--accent-ink);
 }
 
 .tag-chip {
@@ -1366,6 +1462,18 @@ button {
 
   .article-content {
     padding: 44px 0;
+  }
+
+  .code-copy {
+    top: 8px;
+    right: 8px;
+  }
+
+  .scroll-top {
+    right: 14px;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
   }
 
   .post-navigation {

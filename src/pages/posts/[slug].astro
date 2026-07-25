@@ -65,6 +65,18 @@ const schema = {
   pagefindBody
   schema={schema}
 >
+  <div
+    class="reading-progress"
+    role="progressbar"
+    aria-label="Reading progress"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    data-reading-progress
+  >
+    <span></span>
+  </div>
+
   <article>
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="/" aria-label="Home"><Icon name="home" size={18} /></a>
@@ -108,7 +120,7 @@ const schema = {
       </details>
     )}
 
-    <div class="article-content" data-pagefind-body>
+    <div class="article-content" data-pagefind-body data-reading-article>
       <Content />
     </div>
 
@@ -139,4 +151,100 @@ const schema = {
 
     <Giscus />
   </article>
+
+  <button class="scroll-top icon-button" type="button" aria-label="Back to top" data-scroll-top>
+    <Icon name="arrow-up" size={21} />
+  </button>
+
+  <script>
+    const scrollTopButton = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+    const readingProgress = document.querySelector<HTMLElement>("[data-reading-progress]");
+    const readingProgressBar = readingProgress?.querySelector<HTMLElement>("span");
+    const readingArticle = document.querySelector<HTMLElement>("[data-reading-article]");
+    let scrollFrame = 0;
+
+    function syncArticleTools() {
+      const showScrollTop = window.scrollY > Math.max(520, window.innerHeight * 0.65);
+      scrollTopButton?.classList.toggle("visible", showScrollTop);
+
+      if (readingProgress && readingProgressBar && readingArticle) {
+        const bounds = readingArticle.getBoundingClientRect();
+        const articleStart = window.scrollY + bounds.top;
+        const articleEnd = articleStart + readingArticle.offsetHeight - window.innerHeight;
+        const distance = Math.max(1, articleEnd - articleStart);
+        const progress = Math.min(1, Math.max(0, (window.scrollY - articleStart) / distance));
+        readingProgressBar.style.transform = `scaleX(${progress})`;
+        readingProgress.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
+      }
+    }
+
+    function requestArticleToolsSync() {
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        syncArticleTools();
+        scrollFrame = 0;
+      });
+    }
+
+    scrollTopButton?.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+      });
+    });
+    window.addEventListener("scroll", requestArticleToolsSync, { passive: true });
+    window.addEventListener("resize", requestArticleToolsSync);
+    syncArticleTools();
+
+    async function copyText(text: string) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => {
+      if (pre.dataset.copyReady === "true") return;
+      pre.dataset.copyReady = "true";
+      const wrapper = document.createElement("div");
+      const button = document.createElement("button");
+      wrapper.className = "code-block";
+      button.className = "code-copy";
+      button.type = "button";
+      button.textContent = "Copy";
+      button.setAttribute("aria-label", "Copy code to clipboard");
+      button.setAttribute("aria-live", "polite");
+      pre.before(wrapper);
+      wrapper.append(pre, button);
+
+      let resetTimer = 0;
+      button.addEventListener("click", async () => {
+        window.clearTimeout(resetTimer);
+        try {
+          await copyText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "");
+          button.textContent = "Copied";
+          button.classList.add("copied");
+          button.setAttribute("aria-label", "Code copied to clipboard");
+        } catch {
+          button.textContent = "Retry";
+          button.classList.remove("copied");
+          button.setAttribute("aria-label", "Copy failed; retry");
+        }
+        resetTimer = window.setTimeout(() => {
+          button.textContent = "Copy";
+          button.classList.remove("copied");
+          button.setAttribute("aria-label", "Copy code to clipboard");
+        }, 1800);
+      });
+    });
+  </script>
 </BaseLayout>
