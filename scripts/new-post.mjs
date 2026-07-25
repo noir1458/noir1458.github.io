@@ -54,7 +54,38 @@ try {
   ).trim().toLowerCase();
   const primaryCategory = categories[0] || "uncategorized";
   const categoryDirectory = primaryCategory.replace(/[/\\]/g, "-");
-  const directory = path.join(contentRoot, categoryDirectory, slug);
+  const sourceGroups = fs
+    .readdirSync(contentRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && /^\\d+\\./u.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
+  const matchingGroups = sourceGroups.filter((group) =>
+    fs.existsSync(path.join(contentRoot, group, categoryDirectory))
+  );
+
+  let sourceGroup = matchingGroups[0];
+  if (!sourceGroup) {
+    const fallbackGroup = sourceGroups.includes("99.Other")
+      ? "99.Other"
+      : sourceGroups.at(-1);
+    const sourceGroupInput = (
+      await prompt.question(
+        `Source group (${sourceGroups.join(", ")}; ${fallbackGroup || "required"}): `
+      )
+    ).trim();
+    sourceGroup = sourceGroupInput || fallbackGroup;
+  }
+
+  if (!sourceGroup || !/^\\d+\\.[^/\\\\]+$/u.test(sourceGroup)) {
+    throw new Error("Source group must look like 01.DEV and cannot contain slashes.");
+  }
+
+  const directory = path.join(
+    contentRoot,
+    sourceGroup,
+    categoryDirectory,
+    slug
+  );
   const postPath = path.join(directory, "index.md");
 
   if (fs.existsSync(postPath)) {

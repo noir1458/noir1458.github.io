@@ -89,7 +89,9 @@ Existing post paths must continue to resolve at `/posts/<legacy-title>/`.
   - write a single category as scalar frontmatter and multiple categories as
     a YAML list;
   - create
-    `src/content/posts/<primary-category>/<slug>/index.md`;
+    `src/content/posts/<ordered-group>/<primary-category>/<slug>/index.md`;
+  - reuse the numbered source group that already contains the primary category,
+    or prompt for a group when the category is new;
   - keep post-specific images directly beside `index.md`;
   - use ISO dates and validated front matter.
 - `npm run dev`: local live preview.
@@ -181,8 +183,11 @@ Existing post paths must continue to resolve at `/posts/<legacy-title>/`.
   results use the same six-result page size with client-side navigation and
   load only the visible Pagefind result details for the active page.
 - Organize source posts as
-  `src/content/posts/<primary-category>/<post-slug>/index.md`. The folder
-  hierarchy is for authoring and asset colocation only; public URLs continue
+  `src/content/posts/<ordered-group>/<primary-category>/<post-slug>/index.md`.
+  Numbered top-level groups control sidebar category order and add double-line
+  group separators; second-level category folders control order within each
+  group. Only groups backed by published posts are rendered. The folder
+  hierarchy is otherwise for authoring and asset colocation only; public URLs continue
   to come from frontmatter `slug`, list order from `publishedAt`, and taxonomy
   pages from `categories`; tag routes remain as an empty compatibility surface.
 - Keep post-specific images directly beside that post's `index.md`, reference
