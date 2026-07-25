@@ -2,7 +2,7 @@
 title: BOJ 1309 동물원
 slug: BOJ1309
 publishedAt: '2026-02-10'
-categories: Baekjoon
+categories: BOJ
 math: true
 ---
 ## 문제

@@ -35,7 +35,10 @@ npm run new
 ```
 
 질문에 답하면
-`src/content/posts/<대표-category>/<slug>/index.md`가 생성됩니다. 초안은
+`src/content/posts/<번호-큰분류>/<대표-category>/<slug>/index.md`가 생성됩니다.
+기존 카테고리는 해당 큰 분류를 자동으로 재사용하고, 새 카테고리일 때만
+큰 분류를 묻습니다. 번호 큰 분류와 그 안의 카테고리 폴더 순서가 우측
+사이드바 순서가 되며 큰 분류 경계에는 두 줄 구분선이 표시됩니다. 초안은
 기본적으로 `draft: true`입니다. 확인이 끝나면 `draft` 줄을 제거합니다.
 글 분류에는 `categories`만 사용합니다. `description`은 선택 사항이며,
 생략하면 본문의 첫 번째 유효 문단이 글 목록, 검색, RSS와 SEO 설명으로
@@ -102,7 +105,7 @@ git push origin main
 
 ## 주요 경로
 
-- `src/content/posts/<category>/<slug>/` — Markdown 글과 글 전용 이미지
+- `src/content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로
