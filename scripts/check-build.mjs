@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import matter from "gray-matter";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
+const contentRoot = path.join(projectRoot, "src/content/posts");
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -70,8 +72,11 @@ for (const target of required) {
 const postPages = walk(path.join(distRoot, "posts"), (file) =>
   file.endsWith("/index.html")
 );
-if (postPages.length < 136) {
-  errors.push(`expected at least 136 post pages, found ${postPages.length}`);
+const expectedPostPages = walk(contentRoot, (file) => file.endsWith("/index.md")).filter(
+  (file) => !matter(fs.readFileSync(file, "utf8")).data.draft
+).length;
+if (postPages.length !== expectedPostPages) {
+  errors.push(`expected ${expectedPostPages} post pages, found ${postPages.length}`);
 }
 
 let postDescriptions = 0;
@@ -91,6 +96,7 @@ console.log(
   JSON.stringify(
     {
       htmlFiles: htmlFiles.length,
+      expectedPostPages,
       postPages: postPages.length,
       postDescriptions,
       checkedInternalLinks: checked.size,

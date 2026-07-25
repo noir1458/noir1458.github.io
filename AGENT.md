@@ -4,7 +4,7 @@
 
 Rebuild `noir1458.github.io` as an Astro static site that:
 
-- preserves the existing 136 Markdown posts and public post URLs;
+- preserves the current 134 published Markdown posts and public post URLs;
 - keeps search indexing, Giscus comment mapping, analytics, tags, categories, archives, RSS, sitemap, and 404 behavior;
 - supports Markdown, build-time KaTeX/MathML, syntax highlighting, tables, footnotes, and local images;
 - adopts the refined editorial design language from the Blogger skin without copying Blogger-specific XML or widget code;
@@ -125,7 +125,7 @@ Existing post paths must continue to resolve at `/posts/<legacy-title>/`.
 ## 10. Verification gates
 
 - Content migration completes with zero duplicate slugs
-- All 136 legacy posts are represented
+- All 134 currently published posts are represented
 - All referenced local images exist
 - Production Astro build passes
 - Generated HTML has no broken internal links
