@@ -1,0 +1,12 @@
+---
+import { SITE } from "@/config";
+---
+
+<footer class="site-footer">
+  <span>© {new Date().getFullYear()} {SITE.author.name}</span>
+  <nav aria-label="Footer navigation">
+    <a href="/rss.xml">RSS</a>
+    <a href="/sitemap-index.xml">Sitemap</a>
+    <a href={SITE.author.github} rel="noopener noreferrer" target="_blank">GitHub</a>
+  </nav>
+</footer>

@@ -1,0 +1,117 @@
+---
+title: BOJ 2583 영역 구하기
+slug: BOJ2583
+publishedAt: '2026-01-05'
+categories: BOJ
+math: true
+---
+
+## 문제
+$M \times N$ 격자 위에 그려진 $K$개의 직사각형을 제외한 나머지 영역의 개수와 각 영역의 넓이를 구하기.
+
+$M, N, K \le 100$: 격자의 크기가 매우 작으므로 $O(MN)$ 알고리즘으로 충분히 해결 가능.
+
+Time Limit: 1s / Memory Limit: 128MB.
+
+## 복잡도 분석
+Time Complexity: $O(M \times N + K \times (\text{avg area})) \approx O(MN)$. 모든 칸은 최대 한 번씩 방문됨.
+
+Space Complexity: $O(M \times N)$. 격자 정보를 담는 2차원 배열 공간.
+
+## 접근법
+좌표 주어진 것으로 칠하고 bfs 돌리면서 세면 됨
+
+주의할 점은 칠해지지 않은 부분을 세는것
+
+
+## 풀이
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+using pii = pair<int, int>;
+using pll = pair<ll, ll>;
+
+const int INF = 1e9;
+const ll LINF = 1e18;
+const int MOD = 998244353; // or 1e9 + 7
+
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
+#define all(x) (x).begin(), (x).end()
+
+int dy[4] = {1,0,-1,0};
+int dx[4] = {0,1,0,-1};
+int M,N,K;
+
+void print_v(vector<vector<int>> &board){
+    for(auto e:board){
+        for(auto e2:e){
+            cout << e2 << " ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+}
+
+int bfs(vector<vector<int>> &board, vector<vector<int>> &visited, int start_y, int start_x){
+    visited[start_y][start_x] = 1;
+    deque<pair<int,int>> q;
+    q.push_back({start_y,start_x});
+    int c=1;
+    while (!q.empty()){
+        auto [y,x] = q.front(); q.pop_front();
+        rep(i,0,4){
+            int ny = y+dy[i];
+            int nx = x+dx[i];
+            if (0<=ny && ny < M && 0<=nx && nx < N){
+                if (visited[ny][nx]==0 && board[ny][nx]==0){
+                    q.push_back({ny,nx});
+                    c++;
+                    visited[ny][nx] = 1;
+                }
+            }
+        }
+    }
+    return c;
+}
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>M>>N>>K;
+    vector<vector<int>> board(M,vector<int> (N));
+
+    rep(i,0,K){
+        // 왼쪽 아래, 오른쪽 위
+        int x1,y1,x2,y2; cin>>x1>>y1>>x2>>y2;
+        rep(j,y1,y2){ // y2-1, x2-1 까지만 칠해야함
+            rep(k,x1,x2){
+                board[j][k] = 1;
+            }
+        }
+    }
+
+    // 0 인 영역을 bfs로 카운트
+    vector<vector<int>> visited(M,vector<int> (N));
+    vector<int> area;
+    rep(i,0,M){
+        rep(j,0,N){
+            if (board[i][j]==0 && visited[i][j]==0){
+                int r = bfs(board,visited,i,j);
+                area.push_back(r);
+            }
+        }
+    }
+
+    sort(all(area));
+    cout << area.size() << "\n";
+    for(const auto &e:area) cout << e << " ";
+
+    return 0;
+}
+```
+좌표 주어졌을때 색칠할때 y2-y1 순으로 색칠하려고 했던것, 그리고 색칠할때 범위를 y2-1이 아닌 y2까지 칠해야 한다고 생각한 것에서만 한번 틀렸다.
+
+점이 아니라 좌표 안에 네모에 칠하는거라서...

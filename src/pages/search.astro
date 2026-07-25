@@ -1,0 +1,240 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPublishedPosts, postDescription, postUrl } from "@/utils/content";
+
+const fallbackPosts = (await getPublishedPosts()).map((post) => ({
+  title: post.data.title,
+  description: postDescription(post),
+  url: postUrl(post),
+  terms: post.data.categories.join(" "),
+  body: post.body
+}));
+const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003c");
+---
+
+<BaseLayout title="Search" description="Search all published posts." noindex>
+  <header class="page-heading">
+    <span class="eyebrow">Full-text search</span>
+    <h1>Search</h1>
+    <p>Search titles and article content.</p>
+  </header>
+  <form class="search-page-form" data-search-page-form role="search">
+    <label class="sr-only" for="search-query">Search posts</label>
+    <input id="search-query" name="q" type="search" placeholder="Type a keyword" autocomplete="off" />
+    <button class="primary-button" type="submit">Search</button>
+  </form>
+  <p class="search-status" data-search-status>Enter a keyword to begin.</p>
+  <div class="search-results" data-search-results aria-live="polite"></div>
+  <nav
+    class="pagination search-pagination"
+    data-search-pagination
+    aria-label="Search results pagination"
+    hidden
+  >
+    <div class="pagination-track" data-search-pagination-track></div>
+    <span class="pagination-meta" data-search-pagination-meta></span>
+  </nav>
+  <script
+    is:inline
+    id="fallback-search-data"
+    type="application/json"
+    set:html={fallbackSearchData}
+  ></script>
+  <script>
+    const form = document.querySelector<HTMLFormElement>("[data-search-page-form]");
+    const input = document.querySelector<HTMLInputElement>("#search-query");
+    const status = document.querySelector<HTMLElement>("[data-search-status]");
+    const resultsRoot = document.querySelector<HTMLElement>("[data-search-results]");
+    const pagination = document.querySelector<HTMLElement>("[data-search-pagination]");
+    const paginationTrack = document.querySelector<HTMLElement>("[data-search-pagination-track]");
+    const paginationMeta = document.querySelector<HTMLElement>("[data-search-pagination-meta]");
+    const params = new URLSearchParams(location.search);
+    const initialQuery = params.get("q") ?? "";
+    const resultsPerPage = 6;
+    let currentQuery = initialQuery;
+    let currentPage = Math.max(1, Number(params.get("page")) || 1);
+    let resultCount = 0;
+    let searchSequence = 0;
+    let loadPageResults = async (_page: number) =>
+      [] as Array<{ url: string; title: string; excerpt: string }>;
+    if (input) input.value = initialQuery;
+    const fallbackDataElement = document.querySelector<HTMLScriptElement>("#fallback-search-data");
+    const fallbackPosts = JSON.parse(fallbackDataElement?.textContent ?? "[]") as Array<{
+      title: string;
+      description: string;
+      url: string;
+      terms: string;
+      body: string;
+    }>;
+
+    function escapeHtml(value: string) {
+      return value.replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character] ?? character);
+    }
+
+    function fallbackSearch(query: string) {
+      const keywords = query.toLocaleLowerCase().split(/\s+/u).filter(Boolean);
+
+      return fallbackPosts
+        .filter((post) => {
+          const searchable = `${post.title} ${post.description} ${post.terms} ${post.body}`
+            .toLocaleLowerCase();
+          return keywords.every((keyword) => searchable.includes(keyword));
+        })
+        .map((post) => ({
+          url: post.url,
+          title: post.title,
+          excerpt: escapeHtml(post.description)
+        }));
+    }
+
+    function pageRange(page: number, totalPages: number) {
+      const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+      const end = Math.min(totalPages, Math.max(5, page + 2));
+      return Array.from(
+        { length: Math.max(0, end - start + 1) },
+        (_, index) => start + index
+      );
+    }
+
+    function updateUrl(query: string, page: number) {
+      const nextParams = new URLSearchParams();
+      if (query) nextParams.set("q", query);
+      if (page > 1) nextParams.set("page", String(page));
+      const search = nextParams.toString();
+      history.replaceState({}, "", search ? `/search/?${search}` : "/search/");
+    }
+
+    function renderPagination(page: number, totalPages: number) {
+      if (!pagination || !paginationTrack || !paginationMeta) return;
+      if (totalPages <= 1) {
+        pagination.hidden = true;
+        paginationTrack.replaceChildren();
+        paginationMeta.textContent = "";
+        return;
+      }
+
+      const buttons = [
+        page > 1
+          ? `<button class="page-button page-arrow page-jump" type="button" data-search-page="1" aria-label="First page">&lt;&lt;</button>
+             <button class="page-button page-arrow" type="button" data-search-page="${page - 1}" aria-label="Previous page">&lt;</button>`
+          : "",
+        ...pageRange(page, totalPages).map((pageNumber) => `
+          <button
+            class="page-button${pageNumber === page ? " active" : ""}"
+            type="button"
+            data-search-page="${pageNumber}"
+            ${pageNumber === page ? 'aria-current="page"' : ""}
+          >${pageNumber}</button>
+        `),
+        page < totalPages
+          ? `<button class="page-button page-arrow" type="button" data-search-page="${page + 1}" aria-label="Next page">&gt;</button>
+             <button class="page-button page-arrow page-jump" type="button" data-search-page="${totalPages}" aria-label="Last page">&gt;&gt;</button>`
+          : ""
+      ];
+
+      paginationTrack.innerHTML = buttons.join("");
+      paginationMeta.textContent = `Page ${page} of ${totalPages}`;
+      pagination.hidden = false;
+    }
+
+    async function renderPage(page: number, sequence = searchSequence) {
+      if (!status || !resultsRoot) return;
+      const totalPages = Math.max(1, Math.ceil(resultCount / resultsPerPage));
+      currentPage = Math.min(Math.max(1, page), totalPages);
+      status.textContent = "Loading results…";
+      const results = await loadPageResults(currentPage);
+      if (sequence !== searchSequence) return;
+
+      status.textContent = `${resultCount} result${resultCount === 1 ? "" : "s"} found.`;
+      resultsRoot.innerHTML = results.map((result) => `
+        <article class="search-result">
+          <h2><a href="${escapeHtml(result.url)}">${escapeHtml(result.title)}</a></h2>
+          <p>${result.excerpt}</p>
+        </article>
+      `).join("");
+      renderPagination(currentPage, totalPages);
+      updateUrl(currentQuery, currentPage);
+    }
+
+    function resetSearch() {
+      if (!status || !resultsRoot || !pagination) return;
+      resultCount = 0;
+      currentPage = 1;
+      status.textContent = "Enter a keyword to begin.";
+      resultsRoot.replaceChildren();
+      pagination.hidden = true;
+      updateUrl("", 1);
+    }
+
+    async function search(query: string, requestedPage = 1) {
+      if (!status || !resultsRoot) return;
+      const normalizedQuery = query.trim();
+      if (!normalizedQuery) {
+        resetSearch();
+        return;
+      }
+
+      const sequence = ++searchSequence;
+      currentQuery = normalizedQuery;
+      status.textContent = "Searching…";
+      resultsRoot.replaceChildren();
+      if (pagination) pagination.hidden = true;
+
+      try {
+        const pagefindUrl = "/pagefind/pagefind.js";
+        const pagefind = await import(/* @vite-ignore */ pagefindUrl);
+        await pagefind.options({ excerptLength: 24 });
+        const response = await pagefind.search(normalizedQuery);
+        if (sequence !== searchSequence) return;
+        resultCount = response.results.length;
+        loadPageResults = async (page) => {
+          const start = (page - 1) * resultsPerPage;
+          const pageResults = await Promise.all(
+            response.results
+              .slice(start, start + resultsPerPage)
+              .map((result: { data: () => Promise<unknown> }) => result.data())
+          ) as Array<{ url: string; meta: { title?: string }; excerpt: string }>;
+
+          return pageResults.map((result) => ({
+            url: result.url,
+            title: result.meta.title ?? result.url,
+            excerpt: result.excerpt
+          }));
+        };
+      } catch {
+        const results = fallbackSearch(normalizedQuery);
+        if (sequence !== searchSequence) return;
+        resultCount = results.length;
+        loadPageResults = async (page) => {
+          const start = (page - 1) * resultsPerPage;
+          return results.slice(start, start + resultsPerPage);
+        };
+      }
+
+      await renderPage(requestedPage, sequence);
+    }
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = input?.value.trim() ?? "";
+      void search(query, 1);
+    });
+
+    paginationTrack?.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-search-page]");
+      if (!button) return;
+      const page = Number(button.dataset.searchPage);
+      if (!Number.isFinite(page) || page === currentPage) return;
+      void renderPage(page);
+      resultsRoot?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    if (initialQuery) void search(initialQuery, currentPage);
+  </script>
+</BaseLayout>

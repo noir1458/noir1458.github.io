@@ -1,0 +1,22 @@
+---
+import Icon from "@/components/Icon.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "No posts found",
+  description = "There are no published posts to show here."
+} = Astro.props;
+---
+
+<section class="empty-state" aria-labelledby="empty-state-title">
+  <span class="empty-icon"><Icon name="search" size={28} /></span>
+  <div>
+    <h1 id="empty-state-title">{title}</h1>
+    <p>{description}</p>
+  </div>
+  <a class="outline-button" href="/">All posts <Icon name="arrow-right" size={18} /></a>
+</section>

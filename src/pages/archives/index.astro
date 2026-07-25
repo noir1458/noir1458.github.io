@@ -1,0 +1,34 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate, getPublishedPosts, groupPostsByYear, postUrl } from "@/utils/content";
+
+const posts = await getPublishedPosts();
+const groups = groupPostsByYear(posts);
+---
+
+<BaseLayout title="Archive">
+  <header class="page-heading">
+    <span class="eyebrow">Chronology</span>
+    <h1>Archive</h1>
+    <p>{posts.length} posts collected by publication year.</p>
+  </header>
+  <div class="archive-list">
+    {groups.map(([year, entries]) => (
+      <section class="archive-group" id={`year-${year}`}>
+        <h2 class="archive-year">{year}</h2>
+        <ol class="archive-posts">
+          {entries.map((post) => (
+            <li>
+              <a href={postUrl(post)}>
+                <time datetime={post.data.publishedAt.toISOString()}>
+                  {formatDate(post.data.publishedAt, { year: undefined })}
+                </time>
+                <span>{post.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

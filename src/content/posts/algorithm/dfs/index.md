@@ -1,0 +1,676 @@
+---
+title: 8. DFS (깊이 우선 탐색)
+slug: dfs
+publishedAt: '2025-12-08'
+categories: algorithm
+math: false
+---
+
+## 개념
+
+그래프에서 한 경로를 끝까지 탐색한 후 되돌아와 다른 경로를 탐색하는 알고리즘이다.
+
+### 핵심 특징
+
+- **깊이 우선 탐색**: 더 이상 갈 곳이 없을 때까지 깊이 들어감
+- **스택(Stack) 또는 재귀 사용**: LIFO 특성
+- **백트래킹의 기반**: 모든 경로/조합 탐색에 활용
+
+### 동작 원리
+
+```
+그래프:
+    1 --- 2 --- 5
+    |     |
+    3 --- 4
+
+시작: 1
+
+스택: [1]           방문: {1}
+→ 1 방문, 인접 2 선택 (또는 3)
+
+스택: [1, 2]        방문: {1, 2}
+→ 2 방문, 인접 5 선택 (또는 4)
+
+스택: [1, 2, 5]     방문: {1, 2, 5}
+→ 5 방문, 더 이상 갈 곳 없음, 백트래킹
+
+스택: [1, 2]
+→ 2에서 미방문 4 선택
+
+스택: [1, 2, 4]     방문: {1, 2, 5, 4}
+→ 4 방문, 인접 중 미방문 3
+
+스택: [1, 2, 4, 3]  방문: {1, 2, 5, 4, 3}
+→ 3 방문, 완료
+
+방문 순서: 1 → 2 → 5 → 4 → 3
+```
+
+### DFS의 특징
+
+| 특성 | 설명 |
+|------|------|
+| 완전 탐색 | 모든 정점 방문 가능 |
+| 메모리 효율 | 경로 길이만큼만 저장 (O(깊이)) |
+| 최단 경로 | 보장 안 됨 |
+| 사이클 탐지 | 가능 (방문 중인 정점 재방문) |
+
+## 핵심 연산 & 시간복잡도
+
+| 연산 | 인접 리스트 | 인접 행렬 |
+|------|-------------|-----------|
+| 전체 탐색 | **O(V + E)** | O(V²) |
+| 정점 방문 | O(1) | O(1) |
+| 인접 정점 확인 | O(degree) | O(V) |
+
+- V: 정점 수, E: 간선 수
+- 공간복잡도: O(V) (방문 배열 + 스택/재귀)
+
+## 구현 (No-STL)
+
+### 재귀 버전
+
+```cpp
+const int MAX_V = 100001;
+
+int adj[MAX_V][100];
+int adjSize[MAX_V];
+bool visited[MAX_V];
+
+void dfs(int cur) {
+    visited[cur] = true;
+
+    // cur 처리
+    // ...
+
+    for (int i = 0; i < adjSize[cur]; i++) {
+        int next = adj[cur][i];
+        if (!visited[next]) {
+            dfs(next);
+        }
+    }
+}
+```
+
+### 스택 버전 (명시적 스택)
+
+```cpp
+const int MAX_V = 100001;
+
+int adj[MAX_V][100];
+int adjSize[MAX_V];
+bool visited[MAX_V];
+
+int stack[MAX_V];
+int top = -1;
+
+void push(int x) { stack[++top] = x; }
+int pop() { return stack[top--]; }
+bool isEmpty() { return top == -1; }
+
+void dfsStack(int start) {
+    push(start);
+
+    while (!isEmpty()) {
+        int cur = pop();
+
+        if (visited[cur]) continue;
+        visited[cur] = true;
+
+        // cur 처리
+        // ...
+
+        // 역순으로 넣어야 작은 번호부터 방문
+        for (int i = adjSize[cur] - 1; i >= 0; i--) {
+            int next = adj[cur][i];
+            if (!visited[next]) {
+                push(next);
+            }
+        }
+    }
+}
+```
+
+## STL
+
+### 재귀 버전
+
+```cpp
+#include <vector>
+
+std::vector<int> adj[MAX_V];
+bool visited[MAX_V];
+
+void dfs(int cur) {
+    visited[cur] = true;
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            dfs(next);
+        }
+    }
+}
+```
+
+### 스택 버전
+
+```cpp
+#include <stack>
+#include <vector>
+
+std::vector<int> adj[MAX_V];
+bool visited[MAX_V];
+
+void dfsStack(int start) {
+    std::stack<int> st;
+    st.push(start);
+
+    while (!st.empty()) {
+        int cur = st.top();
+        st.pop();
+
+        if (visited[cur]) continue;
+        visited[cur] = true;
+
+        for (int next : adj[cur]) {
+            if (!visited[next]) {
+                st.push(next);
+            }
+        }
+    }
+}
+```
+
+### 경로 추적
+
+```cpp
+#include <vector>
+
+std::vector<int> adj[MAX_V];
+bool visited[MAX_V];
+std::vector<int> path;
+
+void dfsWithPath(int cur, int target) {
+    visited[cur] = true;
+    path.push_back(cur);
+
+    if (cur == target) {
+        // 경로 찾음: path에 저장됨
+        return;
+    }
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            dfsWithPath(next, target);
+        }
+    }
+
+    path.pop_back();  // 백트래킹
+}
+```
+
+### 2차원 그리드 DFS
+
+```cpp
+int N, M;
+int grid[1001][1001];
+bool visited[1001][1001];
+
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+void dfsGrid(int x, int y) {
+    visited[x][y] = true;
+
+    for (int d = 0; d < 4; d++) {
+        int nx = x + dx[d];
+        int ny = y + dy[d];
+
+        if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
+        if (grid[nx][ny] == 0) continue;
+        if (visited[nx][ny]) continue;
+
+        dfsGrid(nx, ny);
+    }
+}
+```
+
+## 사용 예시
+
+### 연결 요소 개수 & 크기
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int N, M;
+vector<int> adj[1001];
+bool visited[1001];
+
+int dfs(int cur) {
+    visited[cur] = true;
+    int size = 1;
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            size += dfs(next);
+        }
+    }
+
+    return size;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> N >> M;
+
+    for (int i = 0; i < M; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    int components = 0;
+    vector<int> sizes;
+
+    for (int i = 1; i <= N; i++) {
+        if (!visited[i]) {
+            sizes.push_back(dfs(i));
+            components++;
+        }
+    }
+
+    cout << "연결 요소 개수: " << components << '\n';
+    return 0;
+}
+```
+
+### 사이클 탐지 (무향 그래프)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1001];
+bool visited[1001];
+
+// parent: 직전에 방문한 정점 (무향 그래프에서 역방향 간선 구분)
+bool hasCycleDFS(int cur, int parent) {
+    visited[cur] = true;
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            if (hasCycleDFS(next, cur)) {
+                return true;
+            }
+        } else if (next != parent) {
+            // 이미 방문한 정점인데 부모가 아님 → 사이클
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool hasCycle(int n) {
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            if (hasCycleDFS(i, -1)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+```
+
+### 사이클 탐지 (유향 그래프)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1001];
+int state[1001];  // 0: 미방문, 1: 방문 중, 2: 방문 완료
+
+bool hasCycleDFS(int cur) {
+    state[cur] = 1;  // 방문 중
+
+    for (int next : adj[cur]) {
+        if (state[next] == 1) {
+            // 방문 중인 정점 재방문 → 사이클
+            return true;
+        }
+        if (state[next] == 0) {
+            if (hasCycleDFS(next)) {
+                return true;
+            }
+        }
+    }
+
+    state[cur] = 2;  // 방문 완료
+    return false;
+}
+```
+
+### 경로 존재 여부
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1001];
+bool visited[1001];
+
+bool hasPath(int cur, int target) {
+    if (cur == target) return true;
+
+    visited[cur] = true;
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            if (hasPath(next, target)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+```
+
+### 모든 경로 찾기
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1001];
+bool visited[1001];
+vector<int> path;
+vector<vector<int>> allPaths;
+
+void findAllPaths(int cur, int target) {
+    visited[cur] = true;
+    path.push_back(cur);
+
+    if (cur == target) {
+        allPaths.push_back(path);
+    } else {
+        for (int next : adj[cur]) {
+            if (!visited[next]) {
+                findAllPaths(next, target);
+            }
+        }
+    }
+
+    path.pop_back();
+    visited[cur] = false;  // 백트래킹: 다른 경로에서 재방문 가능
+}
+```
+
+### 섬의 개수 (2D 그리드)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int N, M;
+int grid[1001][1001];
+bool visited[1001][1001];
+
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+void dfs(int x, int y) {
+    visited[x][y] = true;
+
+    for (int d = 0; d < 4; d++) {
+        int nx = x + dx[d];
+        int ny = y + dy[d];
+
+        if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
+        if (grid[nx][ny] == 0) continue;
+        if (visited[nx][ny]) continue;
+
+        dfs(nx, ny);
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> N >> M;
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    int islands = 0;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            if (grid[i][j] == 1 && !visited[i][j]) {
+                dfs(i, j);
+                islands++;
+            }
+        }
+    }
+
+    cout << islands << '\n';
+    return 0;
+}
+```
+
+### 트리의 지름
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+vector<pair<int, int>> adj[100001];  // {정점, 가중치}
+bool visited[100001];
+int farthestNode, maxDist;
+
+void dfs(int cur, int dist) {
+    visited[cur] = true;
+
+    if (dist > maxDist) {
+        maxDist = dist;
+        farthestNode = cur;
+    }
+
+    for (auto [next, weight] : adj[cur]) {
+        if (!visited[next]) {
+            dfs(next, dist + weight);
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> N;
+
+    for (int i = 0; i < N - 1; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+
+    // 1. 임의의 정점에서 가장 먼 정점 찾기
+    maxDist = 0;
+    dfs(1, 0);
+
+    // 2. 찾은 정점에서 가장 먼 정점까지의 거리 = 지름
+    memset(visited, false, sizeof(visited));
+    maxDist = 0;
+    dfs(farthestNode, 0);
+
+    cout << maxDist << '\n';
+    return 0;
+}
+```
+
+## 주의사항 / Edge Cases
+
+### 스택 오버플로우
+
+```cpp
+// 재귀 깊이가 깊으면 스택 오버플로우 발생
+// 해결 1: 스택 크기 늘리기 (컴파일 옵션)
+// 해결 2: 명시적 스택 사용
+
+// Linux에서 스택 크기 늘리기
+// ulimit -s unlimited
+
+// 코드에서 설정 (POSIX)
+#include <sys/resource.h>
+void setStackSize() {
+    rlimit rl;
+    getrlimit(RLIMIT_STACK, &rl);
+    rl.rlim_cur = 256 * 1024 * 1024;  // 256MB
+    setrlimit(RLIMIT_STACK, &rl);
+}
+```
+
+### 재귀 vs 스택 방문 순서 차이
+
+```cpp
+// 재귀: 인접 리스트 순서대로 방문
+// 스택: 나중에 넣은 것 먼저 방문 (역순)
+
+// 같은 순서로 방문하려면 스택에 역순으로 삽입
+for (int i = adj[cur].size() - 1; i >= 0; i--) {
+    st.push(adj[cur][i]);
+}
+```
+
+### 백트래킹 시 방문 해제
+
+```cpp
+// 모든 경로 탐색 시
+void dfs(int cur) {
+    visited[cur] = true;
+    path.push_back(cur);
+
+    // ... 탐색 ...
+
+    path.pop_back();
+    visited[cur] = false;  // 다른 경로에서 재방문 허용
+}
+
+// 단순 도달 가능성 시
+void dfs(int cur) {
+    visited[cur] = true;
+    // visited를 해제하지 않음
+}
+```
+
+### 무향 그래프 사이클 판별
+
+```cpp
+// 직전 정점(parent)을 기억해야 함
+// 그렇지 않으면 양방향 간선을 사이클로 오인
+
+// 잘못된 코드
+if (visited[next]) return true;  // 모든 간선을 사이클로 판단
+
+// 올바른 코드
+if (visited[next] && next != parent) return true;
+```
+
+### 그래프가 비연결인 경우
+
+```cpp
+// 모든 정점에서 DFS 시작해야 함
+for (int i = 1; i <= N; i++) {
+    if (!visited[i]) {
+        dfs(i);
+    }
+}
+```
+
+## 면접 포인트
+
+### 자주 나오는 질문
+
+**Q1. DFS의 시간복잡도가 O(V + E)인 이유는?**
+> - 모든 정점을 한 번씩 방문: O(V)
+> - 각 간선을 한 번씩 확인: O(E)
+> - 합: O(V + E)
+
+**Q2. 재귀 DFS vs 스택 DFS의 차이점?**
+> - 재귀: 코드 간결, 스택 오버플로우 위험
+> - 스택: 코드 복잡, 깊이 제한 없음
+> - 방문 순서가 다를 수 있음 (스택은 역순 삽입 필요)
+
+**Q3. DFS로 최단 경로를 구할 수 없는 이유는?**
+> - DFS는 깊이 우선으로 탐색하므로 먼저 찾은 경로가 최단이 아닐 수 있음
+> - 모든 경로를 탐색하고 비교하면 가능하지만 비효율적
+> - 최단 경로는 BFS (무가중치) 또는 다익스트라 (가중치) 사용
+
+**Q4. 무향 그래프와 유향 그래프에서 사이클 탐지 차이는?**
+> - 무향: parent 체크 필요 (양방향 간선 구분)
+> - 유향: 방문 상태를 3단계로 (미방문/방문중/완료)
+>   - 방문 중인 정점을 다시 만나면 사이클
+
+**Q5. DFS를 사용하는 대표적인 알고리즘은?**
+> - 위상 정렬 (역순 완료 순서)
+> - SCC (강한 연결 요소)
+> - 단절점/단절선
+> - 백트래킹 (순열, 조합, N-Queen 등)
+
+### 코드 체크리스트
+
+```cpp
+// 1. 방문 배열 초기화
+memset(visited, false, sizeof(visited));
+
+// 2. 재귀 DFS
+void dfs(int cur) {
+    visited[cur] = true;
+
+    for (int next : adj[cur]) {
+        if (!visited[next]) {
+            dfs(next);
+        }
+    }
+}
+
+// 3. 비연결 그래프 처리
+for (int i = 1; i <= N; i++) {
+    if (!visited[i]) {
+        dfs(i);
+    }
+}
+
+// 4. 백트래킹 (모든 경로)
+void dfs(int cur) {
+    visited[cur] = true;
+    // ... 처리 ...
+    visited[cur] = false;  // 복원
+}
+```
+
+## 추천 문제
+
+| 난이도 | 문제 | 링크 | 핵심 |
+|--------|------|------|------|
+| Silver | DFS와 BFS | [BOJ 1260](https://www.acmicpc.net/problem/1260) | 기본 |
+| Silver | 바이러스 | [BOJ 2606](https://www.acmicpc.net/problem/2606) | 연결 요소 |
+| Silver | 연결 요소의 개수 | [BOJ 11724](https://www.acmicpc.net/problem/11724) | 연결 요소 |
+| Silver | 유기농 배추 | [BOJ 1012](https://www.acmicpc.net/problem/1012) | 2D DFS |
+| Silver | 단지번호붙이기 | [BOJ 2667](https://www.acmicpc.net/problem/2667) | 2D + 크기 |
+| Gold | 트리의 지름 | [BOJ 1167](https://www.acmicpc.net/problem/1167) | 트리 DFS |
+| Gold | 사이클 게임 | [BOJ 20040](https://www.acmicpc.net/problem/20040) | 사이클 탐지 |
+| Gold | 텀 프로젝트 | [BOJ 9466](https://www.acmicpc.net/problem/9466) | 유향 사이클 |

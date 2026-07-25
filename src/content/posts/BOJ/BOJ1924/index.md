@@ -1,0 +1,37 @@
+---
+title: BOJ1924 2007년
+slug: BOJ1924
+publishedAt: '2025-07-28'
+categories: BOJ
+math: false
+---
+
+https://www.acmicpc.net/problem/1924
+
+```cpp
+#include <iostream>
+#include <bits/stdc++.h>
+
+using namespace std;
+
+char *days[] = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
+int dfin[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+
+int main() {
+	cin.tie(0); cout.tie(0);
+	ios::sync_with_stdio(0);
+    int x,y;
+    cin >> x >> y;
+    int d1[13] = {-1,1};
+    for(int i=2;i<13;i++){
+        d1[i] = (d1[i-1] + dfin[i-1])%7;
+    }
+    cout << days[(d1[x] + y-1)%7];
+	return 0;
+}
+```
+
+dfin[i] 라고 해서 9월 2일 결과가 틀리게 나왔었다.  
+처음에는 전부 switch case로 숫자에서 요일을 출력했는데, 배열 이용하면 줄일 수 있다.
+
+다른사람들 풀이는 월별로 날짜를 누적해가면서 더하고 그것 이용해서 계산했다. mod 하면 나랑 다른점이 없는것 같지만...

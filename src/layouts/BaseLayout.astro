@@ -1,0 +1,248 @@
+---
+import "katex/dist/katex.min.css";
+import "@/styles/global.css";
+import { SITE } from "@/config";
+import Header from "@/components/Header.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import Footer from "@/components/Footer.astro";
+import { getPublishedPosts } from "@/utils/content";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  sidebar?: boolean;
+  pagefindBody?: boolean;
+  schema?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image,
+  noindex = false,
+  sidebar = true,
+  pagefindBody = false,
+  schema
+} = Astro.props;
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const canonical = new URL(Astro.url.pathname, SITE.url);
+const socialImage = image ? new URL(image, SITE.url) : undefined;
+const posts = sidebar ? await getPublishedPosts() : [];
+const isProduction = import.meta.env.PROD;
+---
+
+<!doctype html>
+<html lang={SITE.language} data-theme="system">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161719" media="(prefers-color-scheme: dark)" />
+    <meta name="google-site-verification" content={SITE.googleVerification} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={SITE.locale.replace("-", "_")} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem("color-theme");
+        document.documentElement.dataset.theme =
+          saved === "light" || saved === "dark" || saved === "system" ? saved : "system";
+      })();
+    </script>
+    {
+      schema && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(schema).replaceAll("<", "\\u003c")}
+        />
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body data-pagefind-body={pagefindBody ? "" : undefined}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-shell">
+      <Header />
+      <div class:list={["content-grid", { "without-sidebar": !sidebar }]} data-layout>
+        <main id="main-content" class="main-content">
+          <slot />
+        </main>
+        {sidebar && <Sidebar posts={posts} />}
+      </div>
+      <Footer />
+    </div>
+    <script>
+      const root = document.documentElement;
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const themeButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")];
+
+      function resolvedTheme() {
+        return root.dataset.theme === "system"
+          ? media.matches
+            ? "dark"
+            : "light"
+          : root.dataset.theme;
+      }
+
+      function syncTheme({ broadcast = true } = {}) {
+        const selected = root.dataset.theme ?? "system";
+        root.dataset.resolvedTheme = resolvedTheme();
+        themeButtons.forEach((button) => {
+          const active = button.dataset.themeValue === selected;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+        if (broadcast) {
+          document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
+            {
+              giscus: {
+                setConfig: {
+                  theme: root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light"
+                }
+              }
+            },
+            "https://giscus.app"
+          );
+        }
+      }
+
+      themeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const theme = button.dataset.themeValue ?? "system";
+          root.dataset.theme = theme;
+          localStorage.setItem("color-theme", theme);
+          syncTheme();
+        });
+      });
+      media.addEventListener("change", () => syncTheme());
+      syncTheme({ broadcast: false });
+
+      const searchShell = document.querySelector<HTMLElement>("[data-search-shell]");
+      const searchToggle = document.querySelector<HTMLButtonElement>("[data-search-toggle]");
+      const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
+      const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
+      const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+
+      function closeSearch() {
+        searchShell?.classList.remove("open");
+        searchToggle?.setAttribute("aria-expanded", "false");
+      }
+
+      function setNavigation(open: boolean) {
+        primaryNav?.classList.toggle("open", open);
+        navToggle?.classList.toggle("open", open);
+        navToggle?.setAttribute("aria-expanded", String(open));
+        navToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+        if (open) closeSearch();
+      }
+
+      searchToggle?.addEventListener("click", () => {
+        const open = !searchShell?.classList.contains("open");
+        if (open) setNavigation(false);
+        searchShell?.classList.toggle("open", open);
+        searchToggle.setAttribute("aria-expanded", String(open));
+        if (open) window.setTimeout(() => searchInput?.focus(), 120);
+      });
+
+      navToggle?.addEventListener("click", () => {
+        setNavigation(!primaryNav?.classList.contains("open"));
+      });
+
+      primaryNav?.addEventListener("click", (event) => {
+        if ((event.target as Element).closest("a")) setNavigation(false);
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (searchShell && !searchShell.contains(event.target as Node)) closeSearch();
+        if (
+          primaryNav?.classList.contains("open") &&
+          !primaryNav.contains(event.target as Node) &&
+          !navToggle?.contains(event.target as Node)
+        ) {
+          setNavigation(false);
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeSearch();
+          if (primaryNav?.classList.contains("open")) {
+            setNavigation(false);
+            navToggle?.focus();
+          }
+        }
+      });
+
+      const mobileNavigation = window.matchMedia("(max-width: 700px)");
+      mobileNavigation.addEventListener("change", (event) => {
+        if (!event.matches) setNavigation(false);
+      });
+
+      const layout = document.querySelector<HTMLElement>("[data-layout]");
+      const sidebarToggle = document.querySelector<HTMLButtonElement>("[data-sidebar-toggle]");
+      const sidebarRegion = document.querySelector<HTMLElement>("[data-sidebar-region]");
+      const sidebarIcon = sidebarToggle?.querySelector("svg");
+
+      function setSidebar(collapsed: boolean) {
+        layout?.classList.toggle("sidebar-collapsed", collapsed);
+        sidebarRegion?.classList.toggle("collapsed", collapsed);
+        sidebarToggle?.setAttribute("aria-expanded", String(!collapsed));
+        sidebarToggle?.setAttribute("aria-label", collapsed ? "Show sidebar" : "Hide sidebar");
+        sidebarIcon?.classList.toggle("flip", collapsed);
+        localStorage.setItem("sidebar-collapsed", String(collapsed));
+      }
+
+      sidebarToggle?.addEventListener("click", () => {
+        setSidebar(!layout?.classList.contains("sidebar-collapsed"));
+      });
+
+      if (localStorage.getItem("sidebar-collapsed") === "true" && window.innerWidth >= 1080) {
+        setSidebar(true);
+      }
+
+      document.querySelectorAll<HTMLDetailsElement>(".sidebar-widget").forEach((details) => {
+        details.addEventListener("toggle", () => {
+          const icon = details.querySelector<SVGElement>("summary svg");
+          icon?.classList.toggle("open", details.open);
+        });
+        details.querySelector<SVGElement>("summary svg")?.classList.toggle("open", details.open);
+      });
+
+      window.addEventListener("message", (event) => {
+        if (event.origin === "https://giscus.app") syncTheme();
+      });
+
+      if ("serviceWorker" in navigator && import.meta.env.PROD) {
+        window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));
+      }
+    </script>
+    {isProduction && SITE.analyticsId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.analyticsId}`}></script>
+        <script is:inline define:vars={{ analyticsId: SITE.analyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag("js", new Date());
+          gtag("config", analyticsId);
+        </script>
+      </>
+    )}
+  </body>
+</html>
