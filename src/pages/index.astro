@@ -1,0 +1,26 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostList from "@/components/PostList.astro";
+import Pagination from "@/components/Pagination.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import { getPublishedPosts, paginatePosts } from "@/utils/content";
+
+const allPosts = await getPublishedPosts();
+const page = paginatePosts(allPosts, 1);
+---
+
+<BaseLayout>
+  {page.posts.length ? (
+    <>
+      <header class="page-heading">
+        <span class="eyebrow">Latest writing</span>
+        <h1>All posts</h1>
+        <p>Page {page.currentPage} of {page.totalPages}</p>
+      </header>
+      <PostList posts={page.posts} />
+      <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+    </>
+  ) : (
+    <EmptyState />
+  )}
+</BaseLayout>

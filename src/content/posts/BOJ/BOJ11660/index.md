@@ -1,0 +1,120 @@
+---
+title: BOJ 11660 구간 합 구하기 5
+slug: BOJ11660
+publishedAt: '2026-01-13'
+categories: BOJ
+math: true
+---
+
+## 문제
+$N \times N$ 표에서 다수의 구간 합 쿼리($M$)를 처리해야 함.
+
+$N=1024, M=100,000$. 단순 반복문으로 합을 구하면 $O(M \times N^2)$으로 시간 초과 발생.
+
+## 복잡도 분석
+
+Time Complexity: $O(N^2 + M)$. 전처리 $O(N^2)$, 쿼리당 $O(1)$. 약 $10^6$ 연산으로 1초 이내 통과.
+
+Space Complexity: $O(N^2)$.
+
+
+## 접근법
+2차원 누적 합을 전처리하여 각 쿼리를 $O(1)$에 처리.
+
+### 포함-배제의 원리(Inclusion-Exclusion Principle)
+
+전처리 (Prefix Sum 생성): $S[i][j] = S[i-1][j] + S[i][j-1] - S[i-1][j-1] + V[i][j]$
+
+쿼리 (구간 합 추출): $Sum = S[x2][y2] - S[x1-1][y2] - S[x2][y1-1] + S[x1-1][y1-1]$
+
+
+## 풀이
+```cpp
+#include<bits/stdc++.h>
+#include<iostream>
+using namespace std;
+
+#define rep(i,a,b) for(int i = (a);i < (b);++i)
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    int N,M;cin>>N>>M;
+    vector<vector<int>> v (N+1,vector<int>(N+1,0));
+    vector<vector<int>> s (N+1,vector<int>(N+1,0));
+    rep(i,1,N+1){
+        rep(j,1,N+1){
+            cin>>v[i][j];
+        }
+    }
+
+    rep(i,1,N+1){
+        rep(j,1,N+1){
+            // 위쪽 합 + 왼쪽 합 - 중복된 대각선 합 + 현재 원소 값
+            s[i][j] = v[i][j] + s[i-1][j] + s[i][j-1] - s[i-1][j-1];
+        }
+    }
+
+    int x1,y1,x2,y2;
+    rep(i,0,M){
+        cin>>x1>>y1>>x2>>y2;
+        // 전체 큰 직사각형 - 위쪽 제외 - 왼쪽 제외 + 중복 제거된 모서리 다시 더하기
+        int res = s[x2][y2] - s[x1-1][y2] - s[x2][y1-1] + s[x1-1][y1-1];
+        cout << res << "\n";
+    }
+    return 0;
+}
+```
+이해가 안가서 방치했던 문제인데 포함 배제의 원리 이야기를 들으니까 이해가 된다.
+
+처음 작성한 코드는 인덱스 0 부터 잡아서 if 문이 3개씩 들어가는 코드였지만, 패딩을 넣어서 1번부터 사용하게 해서 식을 한줄로 쓸 수 있다.
+
+## 전역 배열 사용
+## 캐시 지역성 (Cache Locality):
+
+- vector<vector<int>>는 각 행(Row)이 힙 영역의 여기저기에 파편화되어 저장될 수 있습니다.
+- 전역 배열 int s[1025][1025]는 메모리상에 단 하나의 거대한 일렬 블록으로 존재합니다. CPU가 메모리를 읽을 때 주변 데이터도 같이 가져오는(Cache line) 특성상, 연속된 메모리 구조가 훨씬 빠릅니다.
+
+## 이중 참조 오버헤드 (Indirection):
+
+- 벡터는 s[i]를 참조해서 해당 행의 주소를 찾고, 다시 그 주소에서 [j]를 찾는 두 번의 점프가 필요합니다.
+- 전역 배열은 컴파일 타임에 (시작 주소) + (i * 가로크기 + j) * sizeof(int)로 위치가 딱 정해져 있어 연산이 단순합니다.
+
+현업에서는 $N$이 얼마나 들어올지 모르는데 int arr[1000001]처럼 선언하는 것을 **'Magic Number'**이자 **'Potential Buffer Overflow'**의 근원으로 보아 매우 기피합니다. 반면 PS는 문제에서 **Constraint($N \le 1,024$)**를 명시해주므로, 그 최대치에 맞춘 전역 배열은 가장 빠르고 안전한 선택이 됩니다.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// 1. 최대 제약 조건에 5~10 정도의 여유(Padding)를 두어 선언
+// 2. 전역 변수는 자동으로 0으로 초기화됨 (BSS 영역)
+int s[1030][1030]; 
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+
+    int N, M; cin >> N >> M;
+
+    for (int i = 1; i <= N; ++i) {
+        for (int j = 1; j <= N; ++j) {
+            int val; cin >> val;
+            // 누적 합 전처리
+            s[i][j] = val + s[i-1][j] + s[i][j-1] - s[i-1][j-1];
+        }
+    }
+
+    while (M--) {
+        int x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        // O(1) 구간 합 쿼리
+        cout << s[x2][y2] - s[x1-1][y2] - s[x2][y1-1] + s[x1-1][y1-1] << "\n";
+    }
+    return 0;
+}
+```
+성능을 쥐어짜야 할때는 전역배열이 유리하다. 근데 이렇게까지 할 필요는 없을듯. 대부분 문제는 벡터로 통과된다고 하니
+
+선형 체(Linear Sieve)의 작동 원리와 최소 소인수(SPF)를 활용한 $O(\log N)$ 소인수분해, 그리고 이를 응용해 오일러 피 함수($\phi(n)$)와 약수의 개수($d(n)$) 같은 곱셈적 함수를 $O(N)$에 구하는 알고리즘
+
+은 나중에 하자...

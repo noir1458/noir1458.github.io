@@ -1,0 +1,54 @@
+---
+import type { PostEntry } from "@/utils/content";
+import {
+  formatDate,
+  postCover,
+  postDescription,
+  postUrl,
+  slugifyTerm
+} from "@/utils/content";
+import Icon from "@/components/Icon.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  posts: PostEntry[];
+  headingLevel?: "h2" | "h3";
+}
+
+const { posts, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+const entries = posts.map((post) => ({
+  post,
+  cover: postCover(post),
+  description: postDescription(post)
+}));
+---
+
+<div class="post-list" data-pagefind-ignore>
+  {entries.map(({ post, cover, description }) => (
+    <article class="post-row">
+      <div class="post-row-copy">
+        <Heading class="post-row-title">
+          <a href={postUrl(post)}>{post.data.title}</a>
+        </Heading>
+        <p class="post-row-description">{description}</p>
+        <div class="post-row-meta">
+          <span><Icon name="calendar" size={17} /> {formatDate(post.data.publishedAt)}</span>
+          {post.data.categories[0] && (
+            <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
+              <Icon name="category" size={17} />
+              {post.data.categories[0]}
+            </a>
+          )}
+        </div>
+      </div>
+      <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
+        {cover ? (
+          <Image alt="" loading="lazy" src={cover} />
+        ) : (
+          <span aria-hidden="true"><Icon name="arrow-right" size={22} /></span>
+        )}
+      </a>
+    </article>
+  ))}
+</div>
