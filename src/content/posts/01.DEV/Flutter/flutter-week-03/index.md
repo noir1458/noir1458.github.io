@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 3주차 정리'
 slug: flutter-week-03
-description: 'Flutter 폰트, 공통 스타일 파일과 ListView 사용법을 정리한 3주차 수업 기록.'
+description: '3주차 수업 폰트, 공통 스타일 파일과 ListView'
 publishedAt: '2024-09-16'
 categories: Flutter
 math: false

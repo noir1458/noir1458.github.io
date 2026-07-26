@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 2주차 정리'
 slug: flutter-week-02
-description: 'Flutter 이미지 위젯과 상태 갱신을 실습하며 정리한 2주차 수업 기록.'
+description: '2주차 수업 이미지 위젯과 상태 갱신'
 publishedAt: '2024-09-09'
 categories: Flutter
 math: false

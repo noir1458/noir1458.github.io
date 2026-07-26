@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 8주차 정리'
 slug: flutter-week-08
-description: 'Flutter 중간고사와 일급 객체 개념을 정리한 8주차 수업 기록.'
+description: '8주차 수업 중간고사와 일급 객체'
 publishedAt: '2024-10-21'
 categories: Flutter
 math: false

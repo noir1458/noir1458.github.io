@@ -1,7 +1,7 @@
 ---
 title: 'Database System 13주차 정리'
 slug: database-system-week-13
-description: '잠금 프로토콜과 2단계 잠금을 중심으로 정리한 13주차 수업 기록.'
+description: '13주차 수업 잠금 프로토콜과 2단계 잠금'
 publishedAt: '2025-06-18'
 categories: DatabaseSystem
 math: false

@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 7주차 정리'
 slug: flutter-week-07
-description: 'Flutter Form, Gesture와 Animation 실습을 정리한 7주차 수업 기록.'
+description: '7주차 수업 Form, Gesture와 Animation'
 publishedAt: '2024-10-14'
 categories: Flutter
 math: false

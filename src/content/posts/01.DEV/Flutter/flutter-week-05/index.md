@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 5주차 정리'
 slug: flutter-week-05
-description: 'Flutter 입력 위젯을 이용해 사용자 정보를 받는 방법을 정리한 5주차 수업 기록.'
+description: '5주차 수업 입력 위젯과 사용자 정보'
 publishedAt: '2024-09-30'
 categories: Flutter
 math: false

@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 13주차 정리'
 slug: flutter-week-13
-description: 'Cloud Firestore를 이용한 Flutter 채팅 앱 구현을 정리한 13주차 수업 기록.'
+description: '13주차 수업 Cloud Firestore 채팅 앱'
 publishedAt: '2024-11-25'
 categories: Flutter
 math: false
