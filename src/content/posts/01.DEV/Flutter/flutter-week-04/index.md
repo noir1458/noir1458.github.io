@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 4주차 정리'
 slug: flutter-week-04
-description: 'Flutter PageView, TabBarView와 하단 내비게이션 구성을 정리한 4주차 수업 기록.'
+description: '4주차 수업 PageView, TabBarView와 하단 내비게이션'
 publishedAt: '2024-09-23'
 categories: Flutter
 math: false

@@ -1,7 +1,7 @@
 ---
 title: 'Database System 6주차 정리'
 slug: database-system-week-06
-description: '동적 해싱과 질의 처리 기초를 중심으로 정리한 6주차 수업 기록.'
+description: '6주차 수업 동적 해싱과 질의 처리 기초'
 publishedAt: '2025-04-12'
 categories: DatabaseSystem
 math: false

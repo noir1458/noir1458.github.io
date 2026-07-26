@@ -1,7 +1,7 @@
 ---
 title: 'Database System 4주차 정리'
 slug: database-system-week-04
-description: 'B+ 트리 인덱스의 탐색·삽입·삭제를 중심으로 정리한 4주차 수업 기록.'
+description: '4주차 수업 B+ 트리 인덱스의 탐색·삽입·삭제'
 publishedAt: '2025-04-03'
 categories: DatabaseSystem
 math: false
