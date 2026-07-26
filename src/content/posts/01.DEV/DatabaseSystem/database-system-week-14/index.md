@@ -2,7 +2,7 @@
 title: 'Database System 14주차 정리'
 slug: database-system-week-14
 description: '14주차 수업 데이터베이스 복구와 체크포인트'
-publishedAt: '2025-06-18'
+publishedAt: '2025-06-04'
 categories: DatabaseSystem
 math: false
 ---
