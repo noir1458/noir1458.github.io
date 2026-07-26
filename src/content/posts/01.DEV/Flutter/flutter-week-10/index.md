@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 10주차 정리'
 slug: flutter-week-10
-description: 'Flutter Provider를 이용한 상태 관리 방식을 정리한 10주차 수업 기록.'
+description: '10주차 수업 Provider를 이용한 상태 관리'
 publishedAt: '2024-11-04'
 categories: Flutter
 math: false

@@ -1,7 +1,7 @@
 ---
 title: 'Database System 7주차 정리'
 slug: database-system-week-07
-description: '선택 연산과 외부 정렬 알고리즘을 중심으로 정리한 7주차 수업 기록.'
+description: '7주차 수업 선택 연산과 외부 정렬 알고리즘'
 publishedAt: '2025-04-23'
 categories: DatabaseSystem
 math: false

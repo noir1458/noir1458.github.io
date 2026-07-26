@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 15주차 정리'
 slug: flutter-week-15
-description: 'Web API 데이터 요청과 FutureBuilder 사용법을 정리한 15주차 수업 기록.'
+description: '15주차 수업 Web API 데이터 요청과 FutureBuilder'
 publishedAt: '2024-12-09'
 categories: Flutter
 math: false

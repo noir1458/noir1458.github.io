@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 6주차 정리'
 slug: flutter-week-06
-description: 'Flutter Key의 역할과 위젯 순서 변경 사례를 정리한 6주차 수업 기록.'
+description: '6주차 수업 Key의 역할과 위젯 순서 변경'
 publishedAt: '2024-10-07'
 categories: Flutter
 math: false

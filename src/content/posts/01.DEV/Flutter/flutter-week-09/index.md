@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 9주차 정리'
 slug: flutter-week-09
-description: 'Flutter 화면 라우팅과 데이터 전달 예제를 정리한 9주차 수업 기록.'
+description: '9주차 수업 화면 라우팅과 데이터 전달'
 publishedAt: '2024-10-28'
 categories: Flutter
 math: false

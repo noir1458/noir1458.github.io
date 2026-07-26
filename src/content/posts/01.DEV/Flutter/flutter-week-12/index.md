@@ -1,7 +1,7 @@
 ---
 title: 'Flutter 12주차 정리'
 slug: flutter-week-12
-description: 'Firebase Authentication을 이용한 로그인과 로그아웃 구현을 정리한 12주차 수업 기록.'
+description: '12주차 수업 Firebase Authentication 로그인과 로그아웃'
 publishedAt: '2024-11-18'
 categories: Flutter
 math: false
