@@ -1,6 +1,7 @@
 ---
 title: BOJ 2096 내려가기
 slug: BOJ2096
+description: '세 칸으로 이루어진 각 줄을 이동하며 최대·최소 점수를 구하는 동적 계획법 풀이'
 publishedAt: '2026-01-01'
 categories: BOJ
 math: true

@@ -32,7 +32,10 @@ const categoryName =
 const page = paginatePosts(filtered, currentPage);
 ---
 
-<BaseLayout title={`${categoryName} · Page ${page.currentPage}`}>
+<BaseLayout
+  title={`${categoryName} · Page ${page.currentPage}`}
+  description={`${categoryName} 카테고리 글 목록 ${page.currentPage}페이지`}
+>
   <header class="page-heading">
     <span class="eyebrow">Category</span>
     <h1>{categoryName}</h1>

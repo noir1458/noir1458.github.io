@@ -8,7 +8,7 @@ math: false
 ---
 ## 연습문제 풀이
 
-Database System 연습문제 Q2의 풀이 과정이다.
+해시 파일의 overflow bucket과 B+ 트리의 구조를 다룬 문제다. clustered·non-clustered index, secondary index와 탐색에 필요한 노드 접근 횟수를 함께 확인했다.
 
 ![Database System 5주차 연습문제 Q2 풀이 1](./database-system-week-05-q2-001.webp)
 ![Database System 5주차 연습문제 Q2 풀이 2](./database-system-week-05-q2-002.webp)

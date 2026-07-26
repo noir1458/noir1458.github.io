@@ -202,8 +202,8 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 }
 ```
-![](./flutter-week-13-01.png)
-![](./flutter-week-13-02.png)
+![Flutter Cloud Firestore 채팅 앱 화면 1](./flutter-week-13-01.png)
+![Flutter Cloud Firestore 채팅 앱 화면 2](./flutter-week-13-02.png)
 
 
 https://pub.dev/packages/flutter_chat_bubble
@@ -418,5 +418,5 @@ class _NewMessageState extends State<NewMessage> {
   }
 }
 ```
-![](./flutter-week-13-03.png)
-![](./flutter-week-13-04.png)
+![Flutter Cloud Firestore 채팅 앱 화면 3](./flutter-week-13-03.png)
+![Flutter Cloud Firestore 채팅 앱 화면 4](./flutter-week-13-04.png)

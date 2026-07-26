@@ -6,6 +6,12 @@ publishedAt: '2025-06-18'
 categories: DatabaseSystem
 math: false
 ---
+## 학습 범위
+
+- 로그 기반 복구와 undo·redo
+- checkpoint를 이용한 복구 범위 결정
+- 데이터베이스 장애 유형과 복구 알고리즘
+
 ## 14주차1st ch19
 
 ![Database System 14주차 수업 자료 1](./database-system-week-14-001.webp)

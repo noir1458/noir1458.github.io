@@ -98,7 +98,7 @@ def testplot2():
     return None
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-05-58-55.png)
+![Matplotlib 막대그래프 출력](./2023-06-11-pyplot01-2025-05-04-05-58-55.png)
 
 ### test3 (graph)
 
@@ -146,7 +146,7 @@ def testplot3():
     return None
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-06-00-08.png)
+![Matplotlib 선 그래프 출력](./2023-06-11-pyplot01-2025-05-04-06-00-08.png)
 
 ### test4 (histogram)
 
@@ -194,7 +194,7 @@ def testplot4():
     return None
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-06-00-34.png)
+![Matplotlib 히스토그램 출력](./2023-06-11-pyplot01-2025-05-04-06-00-34.png)
 
 ### test5 (annotate)
 
@@ -240,7 +240,7 @@ def testplot5():
     return None
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-06-00-54.png)
+![Matplotlib 그래프 주석 표시](./2023-06-11-pyplot01-2025-05-04-06-00-54.png)
 
 ### test6 (scatter & correlation)
 
@@ -290,7 +290,7 @@ def testplot6():
     return None
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-06-01-23.png)
+![Matplotlib 산점도와 상관관계 출력](./2023-06-11-pyplot01-2025-05-04-06-01-23.png)
 
 ```
 [[1.         0.98102799]
@@ -348,4 +348,4 @@ if __name__ =='__main__':
     main()
 ```
 
-![](./2023-06-11-pyplot01-2025-05-04-06-01-42.png)
+![Matplotlib 박스 플롯 출력](./2023-06-11-pyplot01-2025-05-04-06-01-42.png)

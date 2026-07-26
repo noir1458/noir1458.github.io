@@ -179,5 +179,5 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 ```
-![](./flutter-week-05-01.png)
-![](./flutter-week-05-02.png)
+![Flutter 사용자 정보 입력 화면](./flutter-week-05-01.png)
+![Flutter 입력값 확인 화면](./flutter-week-05-02.png)

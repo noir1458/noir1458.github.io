@@ -1,6 +1,7 @@
 ---
 title: BOJ 11727 2×n 타일링 2
 slug: BOJ11727
+description: '2×n 직사각형을 타일로 채우는 동적 계획법 풀이'
 publishedAt: '2026-01-03'
 categories: BOJ
 math: true

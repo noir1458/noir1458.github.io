@@ -107,7 +107,7 @@ class UniqueColorGenerator {
 }
 
 ```
-![](./flutter-week-06-01.png)
+![Flutter Key 실습 화면 1](./flutter-week-06-01.png)
 
 ```dart
 import 'dart:math';
@@ -187,5 +187,5 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 ```
-![](./flutter-week-06-02.png)
-![](./flutter-week-06-03.png)
+![Flutter Key를 사용한 위젯 순서 변경 화면 1](./flutter-week-06-02.png)
+![Flutter Key를 사용한 위젯 순서 변경 화면 2](./flutter-week-06-03.png)
