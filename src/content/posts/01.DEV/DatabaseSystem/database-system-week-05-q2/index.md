@@ -1,0 +1,37 @@
+---
+title: 'Database System 5주차 과제 Q2 정리'
+slug: database-system-week-05-q2
+description: 'Database System 5주차 과제 Q2 풀이 과정을 정리한 기록.'
+publishedAt: '2025-04-23'
+categories: DatabaseSystem
+math: false
+---
+## 과제 풀이
+
+Database System 과제 Q2의 풀이 과정이다.
+
+![Database System 5주차 과제 Q2 풀이 1](./database-system-week-05-q2-001.webp)
+![Database System 5주차 과제 Q2 풀이 2](./database-system-week-05-q2-002.webp)
+
+![Database System 5주차 과제 Q2 풀이 3](./database-system-week-05-q2-003.webp)
+![Database System 5주차 과제 Q2 풀이 4](./database-system-week-05-q2-004.webp)
+
+![Database System 5주차 과제 Q2 풀이 5](./database-system-week-05-q2-005.webp)
+
+![Database System 5주차 과제 Q2 풀이 6](./database-system-week-05-q2-006.webp)
+
+![Database System 5주차 과제 Q2 풀이 7](./database-system-week-05-q2-007.webp)
+![Database System 5주차 과제 Q2 풀이 8](./database-system-week-05-q2-008.webp)
+
+![Database System 5주차 과제 Q2 풀이 9](./database-system-week-05-q2-009.webp)
+![Database System 5주차 과제 Q2 풀이 10](./database-system-week-05-q2-010.webp)
+
+![Database System 5주차 과제 Q2 풀이 11](./database-system-week-05-q2-011.webp)
+![Database System 5주차 과제 Q2 풀이 12](./database-system-week-05-q2-012.webp)
+
+![Database System 5주차 과제 Q2 풀이 13](./database-system-week-05-q2-013.webp)
+![Database System 5주차 과제 Q2 풀이 14](./database-system-week-05-q2-014.webp)
+
+![Database System 5주차 과제 Q2 풀이 15](./database-system-week-05-q2-015.webp)
+
+![Database System 5주차 과제 Q2 풀이 16](./database-system-week-05-q2-016.webp)
