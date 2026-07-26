@@ -2,7 +2,7 @@
 title: 'Database System 5주차 정리'
 slug: database-system-week-05
 description: '5주차 수업 복합 인덱스와 인덱스 활용 방식'
-publishedAt: '2025-04-06'
+publishedAt: '2025-04-02'
 categories: DatabaseSystem
 math: false
 ---

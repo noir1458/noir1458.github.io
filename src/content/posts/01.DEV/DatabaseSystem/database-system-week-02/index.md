@@ -2,7 +2,7 @@
 title: 'Database System 2주차 정리'
 slug: database-system-week-02
 description: '2주차 수업 레코드와 페이지 구조, 파일 구성 방식'
-publishedAt: '2025-04-22'
+publishedAt: '2025-03-12'
 categories: DatabaseSystem
 math: false
 ---

@@ -2,7 +2,7 @@
 title: 'Database System 1주차 정리'
 slug: database-system-week-01
 description: '1주차 수업 데이터베이스 저장장치와 파일 구조'
-publishedAt: '2025-04-22'
+publishedAt: '2025-03-05'
 categories: DatabaseSystem
 math: false
 ---

@@ -2,7 +2,7 @@
 title: 'Database System 3주차 정리'
 slug: database-system-week-03
 description: '3주차 수업 버퍼 관리와 파일 구성, 인덱스 기초'
-publishedAt: '2025-04-22'
+publishedAt: '2025-03-19'
 categories: DatabaseSystem
 math: false
 ---
