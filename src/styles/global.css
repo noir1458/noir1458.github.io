@@ -699,6 +699,7 @@ button {
 .article-content {
   width: 100%;
   max-width: 900px;
+  margin-inline: auto;
   padding: clamp(42px, 7vw, 88px) 0;
   color: var(--text-soft);
   font-size: clamp(1.02rem, 1.4vw, 1.15rem);
