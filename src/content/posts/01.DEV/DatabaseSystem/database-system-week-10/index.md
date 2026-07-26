@@ -2,7 +2,7 @@
 title: 'Database System 10주차 정리'
 slug: database-system-week-10
 description: '10주차 수업 집합 연산과 질의 최적화 기초'
-publishedAt: '2025-06-11'
+publishedAt: '2025-05-07'
 categories: DatabaseSystem
 math: false
 ---

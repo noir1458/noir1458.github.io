@@ -2,7 +2,7 @@
 title: 'Database System 12주차 정리'
 slug: database-system-week-12
 description: '12주차 수업 트랜잭션 상태와 동시성 제어, 직렬 가능성'
-publishedAt: '2025-06-18'
+publishedAt: '2025-05-21'
 categories: DatabaseSystem
 math: false
 ---

@@ -2,7 +2,7 @@
 title: 'Database System 9주차 정리'
 slug: database-system-week-09
 description: '9주차 수업 중첩 루프·병합·해시 조인'
-publishedAt: '2025-05-25'
+publishedAt: '2025-04-30'
 categories: DatabaseSystem
 math: false
 ---

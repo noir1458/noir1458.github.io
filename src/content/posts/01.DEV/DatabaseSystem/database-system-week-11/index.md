@@ -2,7 +2,7 @@
 title: 'Database System 11주차 정리'
 slug: database-system-week-11
 description: '11주차 수업 질의 비용 추정과 최적화, 트랜잭션 기초'
-publishedAt: '2025-05-19'
+publishedAt: '2025-05-14'
 categories: DatabaseSystem
 math: false
 ---
