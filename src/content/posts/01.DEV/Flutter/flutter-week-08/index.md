@@ -7,8 +7,8 @@ categories: Flutter
 math: false
 ---
 
-![](./flutter-week-08-01.png)
-![](./flutter-week-08-02.png)
+![Flutter 8주차 중간고사 문제 1](./flutter-week-08-01.png)
+![Flutter 8주차 중간고사 문제 2](./flutter-week-08-02.png)
 
 **일급 객체(First-class Object)**
 

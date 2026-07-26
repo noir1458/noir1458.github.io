@@ -6,6 +6,12 @@ publishedAt: '2025-06-18'
 categories: DatabaseSystem
 math: false
 ---
+## 학습 범위
+
+- 트랜잭션의 상태 변화와 동시성 제어
+- 직렬 스케줄과 충돌 직렬 가능성
+- recoverable schedule과 cascading rollback
+
 ## 12주차1st ch17
 
 ### 트랜젝션 상태

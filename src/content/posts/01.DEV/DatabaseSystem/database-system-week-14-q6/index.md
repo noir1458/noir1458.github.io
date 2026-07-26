@@ -8,7 +8,7 @@ math: false
 ---
 ## 연습문제 풀이
 
-Database System 연습문제 Q6의 풀이 과정이다.
+로그를 이용한 데이터베이스 복구와 checkpoint를 다룬 문제다. immediate modification에서 필요한 로그 기록과 장애 시 undo·redo 대상을 함께 확인했다.
 
 ![Database System 14주차 연습문제 Q6 풀이 1](./database-system-week-14-q6-001.webp)
 

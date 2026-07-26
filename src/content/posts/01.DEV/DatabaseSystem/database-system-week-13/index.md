@@ -6,6 +6,12 @@ publishedAt: '2025-06-18'
 categories: DatabaseSystem
 math: false
 ---
+## 학습 범위
+
+- shared lock과 exclusive lock
+- locking protocol과 lock compatibility
+- 2단계 잠금 프로토콜(2PL)과 serializability
+
 ## 13주차1st ch18
 
 ### Locking protocol

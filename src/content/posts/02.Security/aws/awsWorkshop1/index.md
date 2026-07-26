@@ -8,9 +8,9 @@ math: false
 
 ## AWS General Immersion Day workshop
 
-![](./2025-08-02-CloudWorkShopBasic-2025-08-02-02-02-14.png)
+![AWS General Immersion Day 워크숍 자료](./2025-08-02-CloudWorkShopBasic-2025-08-02-02-02-14.png)
 
-![](./2025-08-02-CloudWorkShopBasic-2025-08-02-02-01-44.png)
+![AWS General Immersion Day 워크숍 현장](./2025-08-02-CloudWorkShopBasic-2025-08-02-02-01-44.png)
 
 BOB에서 수업을 듣고 aws workshop을 무료로 진행할수 있도록 어카운트를 받아서 Basic Modules 까지 진행했다.  
 끝까지 하다보면 Advanced로 넘어갈 수 있는 링크도 나오는데, 마지막 CloudFormation 부분부터는 거의 머리를 비운상태로 진행해서 이 뒤로 진행하기에는 지금 실력으로나 시간상으로나 힘들다고 생각되어서 여기까지 했다.

@@ -20,7 +20,10 @@ const allPosts = await getPublishedPosts();
 const page = paginatePosts(allPosts, currentPage);
 ---
 
-<BaseLayout title={`Page ${page.currentPage}`}>
+<BaseLayout
+  title={`Page ${page.currentPage}`}
+  description={`전체 글 목록 ${page.currentPage}페이지`}
+>
   <header class="page-heading">
     <span class="eyebrow">Latest writing</span>
     <h1>All posts</h1>

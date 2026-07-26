@@ -14,6 +14,7 @@ interface Props {
   noindex?: boolean;
   sidebar?: boolean;
   pagefindBody?: boolean;
+  ogType?: "website" | "article";
   schema?: Record<string, unknown>;
 }
 
@@ -24,6 +25,7 @@ const {
   noindex = false,
   sidebar = true,
   pagefindBody = false,
+  ogType = "website",
   schema
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
@@ -48,7 +50,7 @@ const isProduction = import.meta.env.PROD;
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
     <link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={SITE.locale.replace("-", "_")} />
     <meta property="og:site_name" content={SITE.title} />
     <meta property="og:title" content={pageTitle} />

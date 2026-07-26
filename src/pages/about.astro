@@ -3,7 +3,11 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config";
 ---
 
-<BaseLayout title="About" sidebar={false}>
+<BaseLayout
+  title="About"
+  description="noir1458의 공부 기록과 개발 블로그 소개"
+  sidebar={false}
+>
   <header class="page-heading">
     <span class="eyebrow">About</span>
     <h1>{SITE.author.name}</h1>

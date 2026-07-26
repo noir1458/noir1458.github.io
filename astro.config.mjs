@@ -8,7 +8,11 @@ export default defineConfig({
   site: "https://noir1458.github.io",
   output: "static",
   trailingSlash: "always",
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => new URL(page).pathname !== "/search/"
+    })
+  ],
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],

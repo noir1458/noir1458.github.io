@@ -124,4 +124,4 @@ class _MyHomePageState extends State<MyHomePage> {
 
 ```
 
-![](./flutter-week-02-01.png)
+![Flutter 이미지 위젯과 상태 갱신 실습 화면](./flutter-week-02-01.png)

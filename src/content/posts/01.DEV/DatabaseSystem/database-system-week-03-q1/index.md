@@ -8,7 +8,7 @@ math: false
 ---
 ## 연습문제 풀이
 
-Database System 연습문제 Q1의 풀이 과정이다.
+레코드의 slotted-page 구조와 저장 공간 계산, B+ 트리 노드의 포인터 수를 묻는 문제다. 고정·가변 길이 레코드의 표현 방식과 blocking factor도 함께 확인했다.
 
 ![Database System 3주차 연습문제 Q1 풀이 1](./database-system-week-03-q1-001.webp)
 ![Database System 3주차 연습문제 Q1 풀이 2](./database-system-week-03-q1-002.webp)

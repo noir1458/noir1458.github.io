@@ -233,8 +233,8 @@ class StudentResult {
   }
 }
 ```
-![](./flutter-week-07-01.png)
-![](./flutter-week-07-02.png)
+![Flutter Form 실습 화면 1](./flutter-week-07-01.png)
+![Flutter Form 실습 화면 2](./flutter-week-07-02.png)
 
 ```dart
 import 'package:flutter/material.dart';
@@ -327,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 ```
-![](./flutter-week-07-03.png)
-![](./flutter-week-07-04.png)
-![](./flutter-week-07-05.png)
-![](./flutter-week-07-06.png)
+![Flutter Gesture와 Animation 실습 화면 1](./flutter-week-07-03.png)
+![Flutter Gesture와 Animation 실습 화면 2](./flutter-week-07-04.png)
+![Flutter Gesture와 Animation 실습 화면 3](./flutter-week-07-05.png)
+![Flutter Gesture와 Animation 실습 화면 4](./flutter-week-07-06.png)
