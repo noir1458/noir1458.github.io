@@ -21,4 +21,20 @@ const posts = defineCollection({
   })
 });
 
-export const collections = { posts };
+const pages = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pages" }),
+  schema: z.object({
+    title: z.string().min(1),
+    description: z.string().min(1).max(220),
+    eyebrow: z.string().min(1).default("About"),
+    heading: z.string().min(1),
+    lead: z.string().min(1).optional(),
+    links: z.array(z.object({
+      label: z.string().min(1),
+      href: z.url(),
+      icon: z.enum(["github", "linkedin"]).optional()
+    })).default([])
+  })
+});
+
+export const collections = { posts, pages };
