@@ -693,20 +693,26 @@ button {
 }
 
 .article-content {
+  width: 100%;
   max-width: 900px;
   padding: clamp(42px, 7vw, 88px) 0;
   color: var(--text-soft);
   font-size: clamp(1.02rem, 1.4vw, 1.15rem);
   line-height: 1.9;
+  transition: max-width 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .article-toc {
-  max-width: 900px;
+  width: 100%;
   margin-top: 32px;
   padding: 22px 24px;
   border: 1px solid var(--line);
   border-radius: 2px;
   background: var(--surface);
+}
+
+.content-grid.sidebar-collapsed .article-content {
+  max-width: 1080px;
 }
 
 .article-toc summary {
@@ -805,6 +811,8 @@ button {
   padding: 52px 22px 22px;
   border: 1px solid var(--line);
   border-radius: 6px;
+  font-size: 0.9em;
+  line-height: 1.75;
 }
 
 .code-copy {
@@ -1220,6 +1228,16 @@ button {
 .site-footer nav {
   display: flex;
   gap: 18px;
+}
+
+@media (min-width: 1400px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 1200px) {
