@@ -21,26 +21,26 @@ $ \Rightarrow \text{There exists } x,y \in \mathbb{Z} \text{ such that } ax + by
 
 $ gcd(a,b) = 1 \Longleftrightarrow \exists x,y \in \mathbb{Z} \text{ s.t. }ax+by = 1 $  
 
-![](./2025-09-09-NumberTheory05-2025-09-09-16-23-08.png)
+![서로소와 베주 항등식](./2025-09-09-NumberTheory05-2025-09-09-16-23-08.png)
 
 ## Corollary of Theorem 2.4
 
 ### 2.4.1
 
-![](./2025-09-09-NumberTheory05-2025-09-09-16-23-26.png)
+![서로소 정리 2.4.1](./2025-09-09-NumberTheory05-2025-09-09-16-23-26.png)
 
 ### 2.4.2
-![](./2025-09-09-NumberTheory05-2025-09-09-16-23-47.png)
+![서로소 정리 2.4.2](./2025-09-09-NumberTheory05-2025-09-09-16-23-47.png)
 
 - The condition "$gcd(a,b)=1$" is necessary
 
 Note that $ 6\mid 24$ and $8 \mid 24$. BUT $ (6 \cdot 8) \nmid 24 $
 
 ## Theorem 2.5 Euclid's lemma
-![](./2025-09-09-NumberTheory05-2025-09-09-16-57-50.png)
+![유클리드 보조정리](./2025-09-09-NumberTheory05-2025-09-09-16-57-50.png)
 
 ## Theorem 2.6 The Gratest Common Divisor
-![](./2025-09-09-NumberTheory05-2025-09-09-16-58-13.png)
+![최대공약수 정리 2.6](./2025-09-09-NumberTheory05-2025-09-09-16-58-13.png)
 
 그래서 $d=12$ 였다면 원래 정의에서는 d보다 작은 값이 다 될수 있었는데, 사실 d의 약수 $c=1,2,3,4,6,12 $ 만 생각하면 된다.
 

@@ -21,7 +21,7 @@ In this case we write $d=gcd(a,b)$
 
 ## some value of -12x + 30y for $ x,y \in \mathbb{Z}$
 
-![](./2025-09-05-NumberTheory04-2025-09-08-19-44-04.png)
+![최대공약수와 정수 선형결합](./2025-09-05-NumberTheory04-2025-09-08-19-44-04.png)
 
 observation
 - There exist $ x,y \in \mathbb{Z}$ such that $-12x +30y = 6$
@@ -39,14 +39,14 @@ Given $a,b \in \mathbb{Z} \left(a \neq 0 \text{ or } b\neq 0 \right), \text{let 
 $ \Rightarrow $ There exists $x,y \in \mathbb{Z}$ such that $ax+by = d$
 
 ### 표의 숫자는 유일하지 않음
-![](./2025-09-05-NumberTheory04-2025-09-08-19-44-30.png)
+![베주 항등식의 정수 해](./2025-09-05-NumberTheory04-2025-09-08-19-44-30.png)
 
 $ax+by=d$ 식에서 $ab$ 를 더하고 빼면 다른 답을 얻을 수 있다.
 
 ### pf
-![](./2025-09-05-NumberTheory04-2025-09-08-20-30-24.png)
+![베주 항등식 해의 성질](./2025-09-05-NumberTheory04-2025-09-08-20-30-24.png)
 
-![](./2025-09-05-NumberTheory04-2025-09-08-20-30-47.png)
+![최대공약수 정리의 증명](./2025-09-05-NumberTheory04-2025-09-08-20-30-47.png)
 
 그래서 $ax+by$ 는 최대공약수가 되는 $x,y$가 항상 존재한다.
 
@@ -56,7 +56,7 @@ $ \\{ax+by \mid x,y \in \mathbb{Z}\\} = \\{kd \mid k \in \mathbb{Z}\\} $
 
 표의 모든 숫자 $(ax+by)$ 는 $a,b$의 최대공약수의 배수들로 이루어진 숫자이다.
 
-![](./2025-09-08-NumberTheory04-2025-09-09-15-11-01.png)
+![최대공약수와 정수 선형결합 따름정리](./2025-09-08-NumberTheory04-2025-09-09-15-11-01.png)
 
 ## 정리
 

@@ -8,7 +8,7 @@ math: false
 ---
 ## 연습문제 풀이
 
-Database System 연습문제 Q4의 풀이 과정이다.
+테이블과 인덱스의 크기를 바탕으로 selection과 join의 I/O 비용을 계산하는 문제다. hash join과 block nested-loop join, RAID의 특성도 함께 확인했다.
 
 ![Database System 11주차 연습문제 Q4 풀이 1](./database-system-week-11-q4-001.webp)
 

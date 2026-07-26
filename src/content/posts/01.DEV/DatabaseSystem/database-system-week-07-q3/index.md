@@ -8,7 +8,7 @@ math: false
 ---
 ## 연습문제 풀이
 
-Database System 연습문제 Q3의 풀이 과정이다.
+외부 정렬에서 초기 run 수와 merge pass 수, 전체 블록 접근 비용을 계산하는 문제다.
 
 ![Database System 7주차 연습문제 Q3 풀이 1](./database-system-week-07-q3-001.webp)
 ![Database System 7주차 연습문제 Q3 풀이 2](./database-system-week-07-q3-002.webp)

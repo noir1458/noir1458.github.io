@@ -156,7 +156,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 }
 ```
-![](./flutter-week-12-01.png)
+![Flutter Firebase Authentication 로그인 화면](./flutter-week-12-01.png)
 
 ChatPage.dart
 ```dart
@@ -232,7 +232,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 ```
-![](./flutter-week-12-02.png)
+![Flutter Firebase Authentication 회원가입 화면](./flutter-week-12-02.png)
 
 RegisterPage.dart
 ```dart
@@ -334,7 +334,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 }
 ```
-![](./flutter-week-12-03.png)
+![Flutter Firebase Authentication 인증 상태 확인 화면](./flutter-week-12-03.png)
 
 SuccessRegister.dart
 ```dart
@@ -375,4 +375,4 @@ class _SuccessRegisterPageState extends State<SuccessRegisterPage> {
   }
 }
 ```
-![](./flutter-week-12-04.png)
+![Flutter Firebase Authentication 로그아웃 화면](./flutter-week-12-04.png)

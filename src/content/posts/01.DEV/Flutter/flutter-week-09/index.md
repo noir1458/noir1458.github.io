@@ -297,8 +297,8 @@ class StudentResult {
   }
 }
 ```
-![](./flutter-week-09-01.png)
-![](./flutter-week-09-02.png)
+![Flutter 화면 라우팅 실습 화면 1](./flutter-week-09-01.png)
+![Flutter 화면 라우팅 실습 화면 2](./flutter-week-09-02.png)
 
 ```dart
 import 'package:flutter/material.dart';
@@ -662,6 +662,6 @@ class StudentResult {
   }
 }
 ```
-![](./flutter-week-09-03.png)
-![](./flutter-week-09-04.png)
-![](./flutter-week-09-05.png)
+![Flutter 라우트 데이터 전달 실습 화면 1](./flutter-week-09-03.png)
+![Flutter 라우트 데이터 전달 실습 화면 2](./flutter-week-09-04.png)
+![Flutter 라우트 데이터 전달 실습 화면 3](./flutter-week-09-05.png)

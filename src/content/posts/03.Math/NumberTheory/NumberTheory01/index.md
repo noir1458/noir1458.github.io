@@ -25,10 +25,10 @@ $\text{(b)} k \in S \text{, then } k+1 \in S$
 $ \text{Then } S = \mathbb{N}$
 
 ### pf
-![](./2025-09-05-NumberTheory01-2025-09-05-17-00-00.png)
+![수학적 귀납법 정리의 증명](./2025-09-05-NumberTheory01-2025-09-05-17-00-00.png)
 
 ### ex
-![](./2025-09-05-NumberTheory01-2025-09-05-17-07-41.png)
+![수학적 귀납법 연습문제](./2025-09-05-NumberTheory01-2025-09-05-17-07-41.png)
 
 ## 1.2. Binomial Theorem
 식만 기억해도 된다

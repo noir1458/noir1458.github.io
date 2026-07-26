@@ -193,4 +193,4 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-![](./flutter-week-15-01.png)
+![Flutter FutureBuilder Web API 데이터 표시 화면](./flutter-week-15-01.png)

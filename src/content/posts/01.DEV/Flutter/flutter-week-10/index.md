@@ -138,7 +138,7 @@ class ScorePanel extends StatelessWidget {
   }
 }
 ```
-![](./flutter-week-10-01.png)
+![Flutter Provider 상태 관리 실습 화면 1](./flutter-week-10-01.png)
 
 editpage.dart
 ```dart
@@ -211,4 +211,4 @@ class EditPanel extends StatelessWidget {
   }
 }
 ```
-![](./flutter-week-10-02.png)
+![Flutter Provider 상태 관리 실습 화면 2](./flutter-week-10-02.png)

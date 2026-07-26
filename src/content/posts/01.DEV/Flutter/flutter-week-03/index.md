@@ -78,7 +78,7 @@ class MyHomePage extends StatelessWidget {
   }
 }
 ```
-![](./flutter-week-03-01.png)
+![Flutter 폰트와 공통 스타일 적용 화면](./flutter-week-03-01.png)
 
 
 ```dart
@@ -222,4 +222,4 @@ class MyHomePage extends StatelessWidget {
   }
 }
 ```
-![](./flutter-week-03-02.png)
+![Flutter ListView 실행 화면](./flutter-week-03-02.png)

@@ -7,23 +7,23 @@ math: true
 ---
 
 ## 2.4.1 The Euclidean Algorithm $(a \le b < 0)$
-![](./2025-09-12-NumberTheory06-2025-09-12-15-30-04.png)
+![유클리드 호제법 계산 과정 1](./2025-09-12-NumberTheory06-2025-09-12-15-30-04.png)
 
-![](./2025-09-12-NumberTheory06-2025-09-12-15-30-32.png)
+![유클리드 호제법 계산 과정 2](./2025-09-12-NumberTheory06-2025-09-12-15-30-32.png)
 
 ### Lemma (will be proved)
 $ a =qb + r \Rightarrow gcd(a,b) = gcd(b,r) $
 
 ### Proof of $gcd(a,b) = r_{n}$
-![](./2025-09-12-NumberTheory06-2025-09-12-15-31-16.png)
+![유클리드 호제법 최대공약수 증명](./2025-09-12-NumberTheory06-2025-09-12-15-31-16.png)
 
 ### pf
-![](./2025-09-12-NumberTheory06-2025-09-12-15-31-28.png)
+![유클리드 호제법 정리의 증명](./2025-09-12-NumberTheory06-2025-09-12-15-31-28.png)
 
 ## example
 숫자가 클수록 모든 positive divisor을 구하기는 어렵다
 
-![](./2025-09-12-NumberTheory06-2025-09-12-15-31-44.png)
+![유클리드 호제법 계산 예제](./2025-09-12-NumberTheory06-2025-09-12-15-31-44.png)
 
 ## 정리
 - prove the Euclidean Algorithm
@@ -33,15 +33,15 @@ $ a =qb + r \Rightarrow gcd(a,b) = gcd(b,r) $
 ## 2.4.2 Find $x,y \in \mathbb{Z} \text{ with } ax+by=gcd(a,b)$
 유클리드 호제법의 응용
 
-![](./2025-09-12-NumberTheory06-2025-09-12-16-10-41.png)
+![확장 유클리드 호제법 계산 과정 1](./2025-09-12-NumberTheory06-2025-09-12-16-10-41.png)
 
-![](./2025-09-12-NumberTheory06-2025-09-12-16-10-55.png)
+![확장 유클리드 호제법 계산 과정 2](./2025-09-12-NumberTheory06-2025-09-12-16-10-55.png)
 
 답중의 하나를 위의 방법으로 구할 수 있다.
 
 
 ## Theorem 2.7
-![](./2025-09-12-NumberTheory06-2025-09-12-16-11-13.png)
+![확장 유클리드 호제법 정리 2.7](./2025-09-12-NumberTheory06-2025-09-12-16-11-13.png)
 
 Euclidean Algorithm 이용해서 증명함
 

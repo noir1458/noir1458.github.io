@@ -131,7 +131,7 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
 ==3035==ABORTING
 ```
 
-![](./2025-12-31-BOJ9465.png)
+![BOJ 9465 풀이 코드의 AddressSanitizer 실행 결과](./2025-12-31-BOJ9465.png)
 
 터졌다
 

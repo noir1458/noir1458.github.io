@@ -31,7 +31,10 @@ const tagName = termNameFromSlug(allPosts, "tags", tagSlug) ?? tagSlug;
 const page = paginatePosts(filtered, currentPage);
 ---
 
-<BaseLayout title={`${tagName} · Page ${page.currentPage}`}>
+<BaseLayout
+  title={`${tagName} · Page ${page.currentPage}`}
+  description={`${tagName} 태그 글 목록 ${page.currentPage}페이지`}
+>
   <header class="page-heading">
     <span class="eyebrow">Tag</span>
     <h1>{tagName}</h1>

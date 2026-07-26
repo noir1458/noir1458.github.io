@@ -130,5 +130,5 @@ class MyHomePage extends StatelessWidget {
 }
 ```
 
-![](./flutter-week-04-01.png)
-![](./flutter-week-04-02.png)
+![Flutter PageView 실습 화면](./flutter-week-04-01.png)
+![Flutter TabBarView와 하단 내비게이션 실습 화면](./flutter-week-04-02.png)

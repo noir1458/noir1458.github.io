@@ -3,13 +3,27 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostList from "@/components/PostList.astro";
 import Pagination from "@/components/Pagination.astro";
 import EmptyState from "@/components/EmptyState.astro";
+import { SITE } from "@/config";
 import { getPublishedPosts, paginatePosts } from "@/utils/content";
 
 const allPosts = await getPublishedPosts();
 const page = paginatePosts(allPosts, 1);
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.title,
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: SITE.language,
+  author: {
+    "@type": "Person",
+    name: SITE.author.name,
+    url: SITE.author.github
+  }
+};
 ---
 
-<BaseLayout>
+<BaseLayout schema={schema}>
   {page.posts.length ? (
     <>
       <header class="page-heading">
