@@ -213,6 +213,18 @@ const schema = {
       textarea.remove();
     }
 
+    const copyIcon = `
+      <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    `;
+    const copiedIcon = `
+      <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6"></path>
+      </svg>
+    `;
+
     document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => {
       if (pre.dataset.copyReady === "true") return;
       pre.dataset.copyReady = "true";
@@ -221,7 +233,8 @@ const schema = {
       wrapper.className = "code-block";
       button.className = "code-copy";
       button.type = "button";
-      button.textContent = "Copy";
+      button.innerHTML = copyIcon;
+      button.title = "Copy code";
       button.setAttribute("aria-label", "Copy code to clipboard");
       button.setAttribute("aria-live", "polite");
       pre.before(wrapper);
@@ -232,17 +245,22 @@ const schema = {
         window.clearTimeout(resetTimer);
         try {
           await copyText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "");
-          button.textContent = "Copied";
+          button.innerHTML = copiedIcon;
           button.classList.add("copied");
+          button.classList.remove("failed");
+          button.title = "Copied";
           button.setAttribute("aria-label", "Code copied to clipboard");
         } catch {
-          button.textContent = "Retry";
           button.classList.remove("copied");
+          button.classList.add("failed");
+          button.title = "Copy failed";
           button.setAttribute("aria-label", "Copy failed; retry");
         }
         resetTimer = window.setTimeout(() => {
-          button.textContent = "Copy";
+          button.innerHTML = copyIcon;
           button.classList.remove("copied");
+          button.classList.remove("failed");
+          button.title = "Copy code";
           button.setAttribute("aria-label", "Copy code to clipboard");
         }, 1800);
       });
