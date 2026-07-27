@@ -104,7 +104,20 @@ const schema = {
         {post.data.updatedAt && (
           <span>Updated {formatDate(post.data.updatedAt)}</span>
         )}
-        <span>{Math.max(1, Math.ceil((post.body ?? "").split(/\s+/u).length / 260))} min read</span>
+        <span>
+          <Icon name="clock" size={18} />
+          {Math.max(1, Math.ceil((post.body ?? "").split(/\s+/u).length / 260))} min read
+        </span>
+        {post.data.tags.length > 0 && (
+          <span class="article-meta-tags" data-pagefind-ignore>
+            <Icon name="tag" size={18} />
+            <span class="article-meta-tag-list">
+              {post.data.tags.map((tag) => (
+                <a href={`/tags/${slugifyTerm(tag)}/`}>{tag}</a>
+              ))}
+            </span>
+          </span>
+        )}
       </div>
     </header>
 
@@ -124,17 +137,6 @@ const schema = {
     <div class="article-content" data-pagefind-body data-reading-article>
       <Content />
     </div>
-
-    {post.data.tags.length > 0 && (
-      <div class="post-taxonomy" data-pagefind-ignore>
-        {post.data.tags.map((tag) => (
-          <a class="tag-chip" href={`/tags/${slugifyTerm(tag)}/`}>
-            <Icon name="tag" size={16} />
-            {tag}
-          </a>
-        ))}
-      </div>
-    )}
 
     <nav class="post-navigation" aria-label="Post navigation" data-pagefind-ignore>
       {newer ? (

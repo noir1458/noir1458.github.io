@@ -454,6 +454,12 @@ button {
   transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@media (min-width: 961px) {
+  .sidebar-region {
+    margin-top: -28px;
+  }
+}
+
 .sidebar-region.collapsed {
   width: 0;
   min-height: 44px;
@@ -637,6 +643,10 @@ button {
   margin-bottom: 28px;
   padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
+}
+
+.page-heading:has(+ .post-list) {
+  margin-bottom: 0;
 }
 
 .eyebrow {
@@ -827,10 +837,30 @@ button {
   font-size: 0.92rem;
 }
 
-.article-meta span {
+.article-meta > span {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.article-meta-tags {
+  min-width: 0;
+  font-size: 0.86rem;
+}
+
+.article-meta-tag-list {
+  display: inline-flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 3px 0.4em;
+}
+
+.article-meta-tag-list a:not(:last-child)::after {
+  content: ",";
+}
+
+.article-meta-tag-list a:hover {
+  color: var(--accent-ink);
 }
 
 .article-content {
@@ -1112,14 +1142,6 @@ button {
   padding: 8px 0;
 }
 
-.post-taxonomy {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  padding: 25px 0;
-  border-top: 1px solid var(--line);
-}
-
 .reading-progress {
   position: fixed;
   z-index: 100;
@@ -1177,27 +1199,11 @@ button {
   color: var(--accent-ink);
 }
 
-.tag-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--text-soft);
-  font-size: 0.85rem;
-}
-
-.tag-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-
 .post-navigation {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  min-height: 108px;
+  min-height: 72px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -1206,8 +1212,9 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 44px;
   min-width: 0;
-  padding: 22px;
+  padding: 10px 22px;
   color: var(--text-soft);
   font-size: 0.9rem;
   font-weight: 680;
@@ -1654,7 +1661,14 @@ button {
   }
 
   .search-shell.open .search-toggle {
-    margin-left: -43px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    margin-left: 0;
+  }
+
+  .search-shell.open .header-search input {
+    padding-right: 48px;
   }
 
   .content-grid {
@@ -1742,7 +1756,7 @@ button {
   }
 
   .post-navigation a {
-    padding: 16px 10px;
+    padding: 10px 8px;
   }
 
   .comments {
