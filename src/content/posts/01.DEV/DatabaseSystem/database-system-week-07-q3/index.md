@@ -2,7 +2,7 @@
 title: 'Database System 7주차 연습문제 Q3 정리'
 slug: database-system-week-07-q3
 description: '7주차 연습문제 Q3 풀이'
-publishedAt: '2025-04-15'
+publishedAt: '2025-04-17'
 categories: DatabaseSystem
 math: false
 ---

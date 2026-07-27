@@ -2,7 +2,7 @@
 title: 'Database System 3주차 연습문제 Q1 정리'
 slug: database-system-week-03-q1
 description: '3주차 연습문제 Q1 풀이'
-publishedAt: '2025-03-18'
+publishedAt: '2025-03-20'
 categories: DatabaseSystem
 math: false
 ---

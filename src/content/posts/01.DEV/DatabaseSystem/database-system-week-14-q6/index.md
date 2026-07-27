@@ -2,7 +2,7 @@
 title: 'Database System 14주차 연습문제 Q6 정리'
 slug: database-system-week-14-q6
 description: '14주차 연습문제 Q6 풀이'
-publishedAt: '2025-06-03'
+publishedAt: '2025-06-05'
 categories: DatabaseSystem
 math: false
 ---
