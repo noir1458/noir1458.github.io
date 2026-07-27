@@ -396,7 +396,7 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 교재 16장 practice ex16.6 앞에서 조인 결과크기 추정의 연습문제로도 이 문제를 했었는데 조인 순서 관련해서도 질문하고 있는 문제다.
 
-## 11주차3rd ch17
+## 11주차3rd ch17 - 타이핑 못함
 
 ![Database System 11주차 수업 자료 50](./database-system-week-11-050.webp)
 
@@ -404,13 +404,22 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 ![Database System 11주차 수업 자료 52](./database-system-week-11-052.webp)
 
+트랜잭션은 여러 데이터 항목을 읽고 쓰는 프로그램 실행의 한 단위이다.
+예를 들어 A 계좌에서 50을 빼고 B 계좌에 50을 더하는 여러 연산을 하나의 트랜잭션으로 본다.
+
+이 중간에 장애가 나면 A에서만 돈이 빠지는 문제가 생길수 있다. 그래서 트랜잭션의 연산은 전부 반영되거나 전부 취소되어야 하고, 여러 트랜잭션이 동시에 실행될때도 데이터가 틀어지지 않게 관리해야 한다.
+
 ![Database System 11주차 수업 자료 53](./database-system-week-11-053.webp)
 
 ![Database System 11주차 수업 자료 54](./database-system-week-11-054.webp)
 
 ![Database System 11주차 수업 자료 55](./database-system-week-11-055.webp)
 
+DBMS의 transaction manager는 장애가 나더라도 데이터베이스를 일관된 상태로 유지하는 일을 맡는다. 그 안의 concurrency-control manager는 동시에 실행되는 트랜잭션들의 상호작용을 제어한다.
+
 ![Database System 11주차 수업 자료 56](./database-system-week-11-056.webp)
+
+하나의 응용프로그램에는 여러 트랜잭션이 들어갈수 있고, 하나의 트랜잭션은 다시 여러 SQL문으로 구성될수 있다. 어느 범위까지를 한꺼번에 성공하거나 실패시킬 것인지 정하는 단위가 트랜잭션이다.
 
 ![Database System 11주차 수업 자료 57](./database-system-week-11-057.webp)
 
@@ -422,7 +431,11 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 ![Database System 11주차 수업 자료 61](./database-system-week-11-061.webp)
 
-### 연습문제
+read(X)를 하면 디스크의 X가 버퍼를 거쳐 트랜잭션의 작업영역으로 들어온다. 작업영역에서 값을 바꾼 다음 write(X)를 하면 변경값이 다시 버퍼에 놓이고, 실제 디스크로 내보내는 output은 나중에 일어날수 있다.
+
+그러므로 프로그램에서 write를 실행했다는것과 디스크에 값이 영구적으로 기록되었다는것은 같은 이야기가 아니다. 이 차이를 고려해서 장애가 발생해도 트랜잭션의 결과를 복구할수 있어야 한다.
+
+### 트랜잭션의 ACID 특성
 
 ![Database System 11주차 수업 자료 62](./database-system-week-11-062.webp)
 
@@ -442,6 +455,8 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 ![Database System 11주차 수업 자료 70](./database-system-week-11-070.webp)
 
+계좌이체에서 A의 변경값을 먼저 write하고 B를 나중에 write한다고 했을때, 그 사이에 장애가 나면 데이터베이스에는 일부 결과만 남을수 있다. 이렇게 부분 실행된 트랜잭션의 변경은 전부 원래대로 돌려놓아야 한다.
+
 ![Database System 11주차 수업 자료 71](./database-system-week-11-071.webp)
 
 ![Database System 11주차 수업 자료 72](./database-system-week-11-072.webp)
@@ -456,6 +471,8 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 ![Database System 11주차 수업 자료 77](./database-system-week-11-077.webp)
 
+원자성 atomicity는 트랜잭션의 연산이 전부 반영되거나 하나도 반영되지 않게 하는 성질이다. 반대로 트랜잭션이 commit되었다면 그 뒤에 시스템 장애가 나더라도 결과가 사라지면 안되는데, 이것이 지속성 durability이다.
+
 ![Database System 11주차 수업 자료 78](./database-system-week-11-078.webp)
 
 ![Database System 11주차 수업 자료 79](./database-system-week-11-079.webp)
@@ -466,12 +483,18 @@ s테이블의 레코드가 있을때 A=100이다, 조인짝이 있다면 r에서
 
 ![Database System 11주차 수업 자료 82](./database-system-week-11-082.webp)
 
+일관성 consistency는 트랜잭션 실행 전후에 데이터베이스의 무결성 조건이 유지되어야 한다는 뜻이다. 계좌이체 도중에는 A+B의 합이 잠깐 맞지 않을수 있지만, 트랜잭션이 성공적으로 끝났을때는 원래 합계로 돌아와야 한다.
+
 ![Database System 11주차 수업 자료 83](./database-system-week-11-083.webp)
 
 ![Database System 11주차 수업 자료 84](./database-system-week-11-084.webp)
 
 ![Database System 11주차 수업 자료 85](./database-system-week-11-085.webp)
 
+고립성 isolation은 동시에 실행되는 다른 트랜잭션의 중간상태가 보이지 않게 하는 성질이다. 결과적으로 각 트랜잭션은 다른 트랜잭션들이 자신보다 전부 먼저 또는 전부 나중에 실행된것처럼 보여야 한다.
+
 ![Database System 11주차 수업 자료 86](./database-system-week-11-086.webp)
 
 ![Database System 11주차 수업 자료 87](./database-system-week-11-087.webp)
+
+정리하면 DBMS의 트랜잭션 관리는 atomicity, consistency, isolation, durability의 ACID 성질을 보장하는 일이다. 다음부터는 특히 동시에 실행되는 트랜잭션의 고립성과 장애가 났을때의 원자성, 지속성을 어떻게 구현하는지 공부한다.
