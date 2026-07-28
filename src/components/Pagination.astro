@@ -27,7 +27,7 @@ const pages = Array.from({ length: Math.max(0, end - start + 1) }, (_, index) =>
           <a class="page-button page-arrow" href={pageHref(1)} aria-label="First page">
             <Icon name="chevrons-left" size={18} />
           </a>
-          <a class="page-button page-arrow" href={pageHref(currentPage - 1)} aria-label="Previous page">
+          <a class="page-button page-arrow page-arrow-step" href={pageHref(currentPage - 1)} aria-label="Previous page">
             <Icon name="chevron-left" size={18} />
           </a>
         </>
@@ -43,7 +43,7 @@ const pages = Array.from({ length: Math.max(0, end - start + 1) }, (_, index) =>
       ))}
       {currentPage < totalPages && (
         <>
-          <a class="page-button page-arrow" href={pageHref(currentPage + 1)} aria-label="Next page">
+          <a class="page-button page-arrow page-arrow-step" href={pageHref(currentPage + 1)} aria-label="Next page">
             <Icon name="chevron-right" size={18} />
           </a>
           <a class="page-button page-arrow" href={pageHref(totalPages)} aria-label="Last page">
