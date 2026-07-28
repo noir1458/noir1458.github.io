@@ -22,7 +22,7 @@
   --glass-shadow:
     0 12px 34px rgba(51, 65, 85, 0.07),
     0 0 20px rgba(129, 140, 248, 0.04);
-  --content-width: 1600px;
+  --content-width: 1400px;
   --sidebar-width: 300px;
   --reading-width: 1080px;
   --font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -906,7 +906,7 @@ button {
 .article-content {
   width: 100%;
   min-width: 0;
-  max-width: 900px;
+  max-width: 840px;
   margin-inline: auto;
   padding: clamp(42px, 7vw, 88px) 0;
   color: var(--body-ink);
@@ -925,7 +925,7 @@ button {
 }
 
 .content-grid.sidebar-collapsed .article-content {
-  max-width: 1080px;
+  max-width: 900px;
 }
 
 .article-toc summary {
@@ -1511,6 +1511,14 @@ button {
 
   body {
     font-size: 16px;
+  }
+
+  .article-header h1 {
+    font-size: 3.7rem;
+  }
+
+  .article-content {
+    font-size: 1.1rem;
   }
 }
 
