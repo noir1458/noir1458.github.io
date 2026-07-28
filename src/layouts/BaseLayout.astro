@@ -190,10 +190,23 @@ const isProduction = import.meta.env.PROD;
       const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
       const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
       const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+      let searchCloseTimer: number | undefined;
 
-      function closeSearch() {
+      function closeSearch({ restoreFocus = false } = {}) {
+        const wasOpen = Boolean(searchShell?.classList.contains("open"));
         searchShell?.classList.remove("open");
+        if (wasOpen) {
+          searchShell?.classList.add("closing");
+          window.clearTimeout(searchCloseTimer);
+          searchCloseTimer = window.setTimeout(() => {
+            searchShell?.classList.remove("closing");
+            if (restoreFocus) searchToggle?.focus();
+          }, 240);
+        } else if (restoreFocus) {
+          searchToggle?.focus();
+        }
         searchToggle?.setAttribute("aria-expanded", "false");
+        searchToggle?.setAttribute("aria-label", "Open search");
       }
 
       function setNavigation(open: boolean) {
@@ -206,10 +219,17 @@ const isProduction = import.meta.env.PROD;
 
       searchToggle?.addEventListener("click", () => {
         const open = !searchShell?.classList.contains("open");
-        if (open) setNavigation(false);
-        searchShell?.classList.toggle("open", open);
-        searchToggle.setAttribute("aria-expanded", String(open));
-        if (open) window.setTimeout(() => searchInput?.focus(), 120);
+        if (!open) {
+          closeSearch();
+          return;
+        }
+        setNavigation(false);
+        window.clearTimeout(searchCloseTimer);
+        searchShell?.classList.remove("closing");
+        searchShell?.classList.add("open");
+        searchToggle.setAttribute("aria-expanded", "true");
+        searchToggle.setAttribute("aria-label", "Close search");
+        window.setTimeout(() => searchInput?.focus(), 80);
       });
 
       navToggle?.addEventListener("click", () => {
@@ -237,7 +257,9 @@ const isProduction = import.meta.env.PROD;
           if (getThemeMenu()?.classList.contains("open")) {
             closeThemeMenu({ restoreFocus: true });
           }
-          closeSearch();
+          closeSearch({
+            restoreFocus: Boolean(searchShell?.classList.contains("open"))
+          });
           if (primaryNav?.classList.contains("open")) {
             setNavigation(false);
             navToggle?.focus();

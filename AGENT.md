@@ -198,9 +198,14 @@ Existing post paths must continue to resolve at `/posts/<legacy-title>/`.
   be associated with a post belong in the non-deployed
   `archive/unassigned-images/` folder until reviewed.
 - Pagination exposes first, previous, numbered, next, and last navigation when
-  those destinations exist. The desktop sidebar toggle keeps its chevron
-  optically centered and uses the same rightward motion curve as the sidebar.
+  those destinations exist. At `700px` and below, hide the single-step previous
+  and next controls while keeping first, numbered, and last navigation compact.
+  The desktop sidebar toggle keeps its chevron optically centered and uses the
+  same rightward motion curve as the sidebar.
 - Keep the title row focused on site identity and theme selection; repository
   access belongs in the footer rather than a separate header icon.
 - When mobile search expands, it fills the top bar's usable width and covers
-  the navigation trigger area so no partial menu icon remains visible.
+  the navigation trigger area so no partial menu icon remains visible. Keep the
+  search toggle and field inside one pill: the closed toggle starts at the
+  right edge, moves to the pill's left side as it expands, and reveals the
+  field to its right with the same motion curve used by the Blogger skin.
