@@ -38,18 +38,20 @@ import ThemeControls from "@/components/ThemeControls.astro";
     </nav>
     <div class="search-shell" data-search-shell>
       <form action="/search/" class="header-search" role="search">
-        <label class="sr-only" for="site-search">Search the blog</label>
-        <input id="site-search" name="q" placeholder="Search posts" type="search" />
+        <button
+          class="search-toggle icon-button"
+          data-search-toggle
+          type="button"
+          aria-expanded="false"
+          aria-label="Open search"
+        >
+          <Icon name="search" />
+        </button>
+        <div class="header-search-field">
+          <label class="sr-only" for="site-search">Search the blog</label>
+          <input id="site-search" name="q" placeholder="Search posts" type="search" />
+        </div>
       </form>
-      <button
-        class="search-toggle icon-button"
-        data-search-toggle
-        type="button"
-        aria-expanded="false"
-        aria-label="Open search"
-      >
-        <Icon name="search" />
-      </button>
     </div>
   </div>
 </header>

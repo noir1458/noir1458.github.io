@@ -139,7 +139,7 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
       const buttons = [
         page > 1
           ? `<button class="page-button page-arrow" type="button" data-search-page="1" aria-label="First page">${paginationIcons.first}</button>
-             <button class="page-button page-arrow" type="button" data-search-page="${page - 1}" aria-label="Previous page">${paginationIcons.previous}</button>`
+             <button class="page-button page-arrow page-arrow-step" type="button" data-search-page="${page - 1}" aria-label="Previous page">${paginationIcons.previous}</button>`
           : "",
         ...pageRange(page, totalPages).map((pageNumber) => `
           <button
@@ -150,7 +150,7 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
           >${pageNumber}</button>
         `),
         page < totalPages
-          ? `<button class="page-button page-arrow" type="button" data-search-page="${page + 1}" aria-label="Next page">${paginationIcons.next}</button>
+          ? `<button class="page-button page-arrow page-arrow-step" type="button" data-search-page="${page + 1}" aria-label="Next page">${paginationIcons.next}</button>
              <button class="page-button page-arrow" type="button" data-search-page="${totalPages}" aria-label="Last page">${paginationIcons.last}</button>`
           : ""
       ];
