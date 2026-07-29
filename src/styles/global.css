@@ -1,9 +1,9 @@
 :root {
   color-scheme: light;
-  --bg: #fbfcfb;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-solid: #ffffff;
-  --surface-strong: #f3f7f4;
+  --surface-strong: #f7f9f7;
   --text: #334139;
   --body-ink: #3f4d45;
   --text-soft: color-mix(in srgb, #687a70 50%, #334139);
@@ -90,12 +90,12 @@ body {
   background:
     radial-gradient(
       circle at 88% -8%,
-      color-mix(in srgb, var(--accent) 4%, transparent),
+      color-mix(in srgb, var(--accent) 2%, transparent),
       transparent 34rem
     ),
     radial-gradient(
       circle at -12% 58%,
-      color-mix(in srgb, var(--accent-secondary) 3%, transparent),
+      color-mix(in srgb, var(--accent-secondary) 1.5%, transparent),
       transparent 38rem
     ),
     var(--bg);
@@ -491,6 +491,7 @@ button {
   top: 18px;
   width: var(--sidebar-width);
   min-width: 0;
+  padding-top: 60px;
   transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -506,12 +507,14 @@ button {
 }
 
 .sidebar-toggle {
-  position: relative;
+  position: absolute;
   z-index: 4;
+  top: 0;
+  right: 0;
   display: grid;
   place-items: center;
   padding: 0;
-  margin: 0 0 16px auto;
+  margin: 0;
   border-color: var(--line);
   background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
   box-shadow: var(--glass-shadow);
@@ -520,10 +523,6 @@ button {
 }
 
 .sidebar-region.collapsed .sidebar-toggle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
   visibility: visible;
   opacity: 1;
 }
