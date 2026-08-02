@@ -1,11 +1,11 @@
 ---
 import "katex/dist/katex.min.css";
 import "@/styles/global.css";
-import { SITE } from "@/config";
+import { LANGUAGES, SITE, type SupportedLanguage } from "@/config";
 import Header from "@/components/Header.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import Footer from "@/components/Footer.astro";
-import { getPublishedPosts } from "@/utils/content";
+import { getPublishedPosts, type PostTranslation } from "@/utils/content";
 
 interface Props {
   title?: string;
@@ -16,6 +16,8 @@ interface Props {
   pagefindBody?: boolean;
   ogType?: "website" | "article";
   schema?: Record<string, unknown>;
+  language?: SupportedLanguage;
+  translations?: PostTranslation[];
 }
 
 const {
@@ -26,17 +28,22 @@ const {
   sidebar = true,
   pagefindBody = false,
   ogType = "website",
-  schema
+  schema,
+  language = SITE.language,
+  translations = []
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, SITE.url);
-const socialImage = image ? new URL(image, SITE.url) : undefined;
+const socialImage = new URL(image ?? SITE.socialImage, SITE.url);
 const posts = sidebar ? await getPublishedPosts() : [];
 const isProduction = import.meta.env.PROD;
+const xDefaultTranslation =
+  translations.find((translation) => translation.lang === SITE.language)
+  ?? translations[0];
 ---
 
 <!doctype html>
-<html lang={SITE.language} data-theme="system">
+<html lang={language} data-theme="system">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -51,28 +58,84 @@ const isProduction = import.meta.env.PROD;
     <link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta property="og:type" content={ogType} />
-    <meta property="og:locale" content={SITE.locale.replace("-", "_")} />
+    <meta property="og:locale" content={LANGUAGES[language].ogLocale} />
+    {translations
+      .filter((translation) => translation.lang !== language)
+      .map((translation) => (
+        <meta property="og:locale:alternate" content={LANGUAGES[translation.lang].ogLocale} />
+      ))}
     <meta property="og:site_name" content={SITE.title} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {socialImage && <meta property="og:image" content={socialImage} />}
-    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content={pageTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={pageTitle} />
+    {translations.map((translation) => (
+      <link
+        rel="alternate"
+        hreflang={translation.lang}
+        href={new URL(translation.href, SITE.url)}
+      />
+    ))}
+    {translations.length > 1 && xDefaultTranslation && (
+      <link
+        rel="alternate"
+        hreflang="x-default"
+        href={new URL(xDefaultTranslation.href, SITE.url)}
+      />
+    )}
+    {pagefindBody && <meta data-pagefind-meta="language" content={language} />}
     <title>{pageTitle}</title>
     <script is:inline>
       (() => {
+        const root = document.documentElement;
         const saved = localStorage.getItem("color-theme");
         const theme = saved === "neon"
           ? "dark"
           : saved === "light" || saved === "dark" || saved === "system"
             ? saved
             : "system";
-        document.documentElement.dataset.theme = theme;
+        root.dataset.theme = theme;
+        root.dataset.sidebarCollapsed = String(
+          window.matchMedia("(min-width: 961px)").matches
+          && localStorage.getItem("sidebar-collapsed") === "true"
+        );
         if (saved === "neon") localStorage.setItem("color-theme", "dark");
       })();
     </script>
+    {!isProduction && (
+      <script is:inline>
+        (() => {
+          if (!("serviceWorker" in navigator) || !("caches" in window)) return;
+
+          const reloadMarker = "noir1458-dev-cache-cleaned";
+          Promise.all([navigator.serviceWorker.getRegistrations(), caches.keys()])
+            .then(async ([registrations, cacheNames]) => {
+              const blogCaches = cacheNames.filter((name) => name.startsWith("noir1458-blog-"));
+              if (registrations.length === 0 && blogCaches.length === 0) {
+                sessionStorage.removeItem(reloadMarker);
+                return;
+              }
+
+              await Promise.all([
+                ...registrations.map((registration) => registration.unregister()),
+                ...blogCaches.map((name) => caches.delete(name))
+              ]);
+
+              if (sessionStorage.getItem(reloadMarker) !== "true") {
+                sessionStorage.setItem(reloadMarker, "true");
+                location.reload();
+              }
+            })
+            .catch((error) => console.warn("Unable to clear the development cache.", error));
+        })();
+      </script>
+    )}
     {
       schema && (
         <script
@@ -87,7 +150,7 @@ const isProduction = import.meta.env.PROD;
   <body data-pagefind-body={pagefindBody ? "" : undefined}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
-      <Header />
+      <Header language={language} translations={translations} />
       <div class:list={["content-grid", { "without-sidebar": !sidebar }]} data-layout>
         <main id="main-content" class="main-content">
           <slot />
@@ -97,218 +160,9 @@ const isProduction = import.meta.env.PROD;
       <Footer />
     </div>
     <script>
-      const root = document.documentElement;
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const getThemeButtons = () => [
-        ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")
-      ];
-      const getThemePicker = () =>
-        document.querySelector<HTMLElement>("[data-theme-picker]");
-      const getThemeToggle = () =>
-        document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-      const getThemeMenu = () =>
-        document.querySelector<HTMLElement>("[data-theme-menu]");
-      const getThemeIcons = () => [
-        ...document.querySelectorAll<HTMLElement>("[data-theme-icon]")
-      ];
-
-      function closeThemeMenu({ restoreFocus = false } = {}) {
-        getThemeMenu()?.classList.remove("open");
-        const toggle = getThemeToggle();
-        toggle?.setAttribute("aria-expanded", "false");
-        if (restoreFocus) toggle?.focus();
-      }
-
-      function resolvedTheme() {
-        return root.dataset.theme === "system"
-          ? media.matches
-            ? "dark"
-            : "light"
-          : root.dataset.theme;
-      }
-
-      function syncTheme({ broadcast = true } = {}) {
-        const selected = root.dataset.theme ?? "system";
-        root.dataset.resolvedTheme = resolvedTheme();
-        getThemeButtons().forEach((button) => {
-          const active = button.dataset.themeValue === selected;
-          button.classList.toggle("active", active);
-          button.setAttribute("aria-pressed", String(active));
-        });
-        getThemeIcons().forEach((icon) => {
-          icon.hidden = icon.dataset.themeIcon !== selected;
-        });
-        const selectedLabel = selected === "system"
-          ? "Auto"
-          : selected.charAt(0).toUpperCase() + selected.slice(1);
-        getThemeToggle()?.setAttribute(
-          "aria-label",
-          `Choose color theme, current: ${selectedLabel}`
-        );
-        if (broadcast) {
-          document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
-            {
-              giscus: {
-                setConfig: {
-                  theme: root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light"
-                }
-              }
-            },
-            "https://giscus.app"
-          );
-        }
-      }
-
-      document.addEventListener("click", (event) => {
-        if (!(event.target instanceof Element)) return;
-
-        const themeButton = event.target.closest<HTMLButtonElement>("[data-theme-value]");
-        if (themeButton) {
-          const theme = themeButton.dataset.themeValue ?? "system";
-          root.dataset.theme = theme;
-          localStorage.setItem("color-theme", theme);
-          syncTheme();
-          closeThemeMenu({ restoreFocus: true });
-          return;
-        }
-
-        const toggle = event.target.closest<HTMLButtonElement>("[data-theme-toggle]");
-        if (!toggle) return;
-        const menu = getThemeMenu();
-        const open = !menu?.classList.contains("open");
-        menu?.classList.toggle("open", open);
-        toggle.setAttribute("aria-expanded", String(open));
-        if (open) {
-          getThemeButtons().find((button) => button.classList.contains("active"))?.focus();
-        }
-      });
-      media.addEventListener("change", () => syncTheme());
-      syncTheme({ broadcast: false });
-
-      const searchShell = document.querySelector<HTMLElement>("[data-search-shell]");
-      const searchToggle = document.querySelector<HTMLButtonElement>("[data-search-toggle]");
-      const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
-      const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
-      const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
-      let searchCloseTimer: number | undefined;
-
-      function closeSearch({ restoreFocus = false } = {}) {
-        const wasOpen = Boolean(searchShell?.classList.contains("open"));
-        searchShell?.classList.remove("open");
-        if (wasOpen) {
-          searchShell?.classList.add("closing");
-          window.clearTimeout(searchCloseTimer);
-          searchCloseTimer = window.setTimeout(() => {
-            searchShell?.classList.remove("closing");
-            if (restoreFocus) searchToggle?.focus();
-          }, 240);
-        } else if (restoreFocus) {
-          searchToggle?.focus();
-        }
-        searchToggle?.setAttribute("aria-expanded", "false");
-        searchToggle?.setAttribute("aria-label", "Open search");
-      }
-
-      function setNavigation(open: boolean) {
-        primaryNav?.classList.toggle("open", open);
-        navToggle?.classList.toggle("open", open);
-        navToggle?.setAttribute("aria-expanded", String(open));
-        navToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-        if (open) closeSearch();
-      }
-
-      searchToggle?.addEventListener("click", () => {
-        const open = !searchShell?.classList.contains("open");
-        if (!open) {
-          closeSearch();
-          return;
-        }
-        setNavigation(false);
-        window.clearTimeout(searchCloseTimer);
-        searchShell?.classList.remove("closing");
-        searchShell?.classList.add("open");
-        searchToggle.setAttribute("aria-expanded", "true");
-        searchToggle.setAttribute("aria-label", "Close search");
-        window.setTimeout(() => searchInput?.focus(), 80);
-      });
-
-      navToggle?.addEventListener("click", () => {
-        setNavigation(!primaryNav?.classList.contains("open"));
-      });
-
-      primaryNav?.addEventListener("click", (event) => {
-        if ((event.target as Element).closest("a")) setNavigation(false);
-      });
-
-      document.addEventListener("pointerdown", (event) => {
-        const themePicker = getThemePicker();
-        if (themePicker && !themePicker.contains(event.target as Node)) closeThemeMenu();
-        if (searchShell && !searchShell.contains(event.target as Node)) closeSearch();
-        if (
-          primaryNav?.classList.contains("open") &&
-          !primaryNav.contains(event.target as Node) &&
-          !navToggle?.contains(event.target as Node)
-        ) {
-          setNavigation(false);
-        }
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          if (getThemeMenu()?.classList.contains("open")) {
-            closeThemeMenu({ restoreFocus: true });
-          }
-          closeSearch({
-            restoreFocus: Boolean(searchShell?.classList.contains("open"))
-          });
-          if (primaryNav?.classList.contains("open")) {
-            setNavigation(false);
-            navToggle?.focus();
-          }
-        }
-      });
-
-      const mobileNavigation = window.matchMedia("(max-width: 700px)");
-      mobileNavigation.addEventListener("change", (event) => {
-        if (!event.matches) setNavigation(false);
-      });
-
-      const layout = document.querySelector<HTMLElement>("[data-layout]");
-      const sidebarToggle = document.querySelector<HTMLButtonElement>("[data-sidebar-toggle]");
-      const sidebarRegion = document.querySelector<HTMLElement>("[data-sidebar-region]");
-      const sidebarIcon = sidebarToggle?.querySelector("svg");
-
-      function setSidebar(collapsed: boolean) {
-        layout?.classList.toggle("sidebar-collapsed", collapsed);
-        sidebarRegion?.classList.toggle("collapsed", collapsed);
-        sidebarToggle?.setAttribute("aria-expanded", String(!collapsed));
-        sidebarToggle?.setAttribute("aria-label", collapsed ? "Show sidebar" : "Hide sidebar");
-        sidebarIcon?.classList.toggle("flip", collapsed);
-        localStorage.setItem("sidebar-collapsed", String(collapsed));
-      }
-
-      sidebarToggle?.addEventListener("click", () => {
-        setSidebar(!layout?.classList.contains("sidebar-collapsed"));
-      });
-
-      if (localStorage.getItem("sidebar-collapsed") === "true" && window.innerWidth >= 1080) {
-        setSidebar(true);
-      }
-
-      document.querySelectorAll<HTMLDetailsElement>(".sidebar-widget").forEach((details) => {
-        details.addEventListener("toggle", () => {
-          const icon = details.querySelector<SVGElement>("summary svg");
-          icon?.classList.toggle("open", details.open);
-        });
-        details.querySelector<SVGElement>("summary svg")?.classList.toggle("open", details.open);
-      });
-
-      window.addEventListener("message", (event) => {
-        if (event.origin === "https://giscus.app") syncTheme();
-      });
-
-      if ("serviceWorker" in navigator && import.meta.env.PROD) {
-        window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));
-      }
+      import "@/scripts/theme";
+      import "@/scripts/navigation";
+      import "@/scripts/service-worker";
     </script>
     {isProduction && SITE.analyticsId && (
       <>

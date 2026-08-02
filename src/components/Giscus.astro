@@ -1,5 +1,11 @@
 ---
-import { SITE } from "@/config";
+import { SITE, type SupportedLanguage } from "@/config";
+
+interface Props {
+  language?: SupportedLanguage;
+}
+
+const { language = SITE.language } = Astro.props;
 ---
 
 <section class="comments" aria-labelledby="comments-heading">
@@ -21,7 +27,7 @@ import { SITE } from "@/config";
       data-emit-metadata="0"
       data-input-position="top"
       data-theme="preferred_color_scheme"
-      data-lang="ko"
+      data-lang={language}
       crossorigin="anonymous"
       async
     ></script>

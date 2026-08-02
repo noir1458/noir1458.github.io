@@ -1,13 +1,15 @@
 ---
 import type { GetStaticPaths } from "astro";
 import PostPage from "@/components/PostPage.astro";
-import { SITE } from "@/config";
+import { SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
 import { getPublishedPosts } from "@/utils/content";
 
 export const getStaticPaths = (async () => {
-  const posts = await getPublishedPosts(SITE.language);
+  const languages = SUPPORTED_LANGUAGE_CODES.filter((language) => language !== SITE.language);
+  const posts = (await Promise.all(languages.map((language) => getPublishedPosts(language)))).flat();
+
   return posts.map((post) => ({
-    params: { slug: post.data.slug },
+    params: { lang: post.data.lang, slug: post.data.slug },
     props: { post }
   }));
 }) satisfies GetStaticPaths;

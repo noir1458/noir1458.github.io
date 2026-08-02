@@ -1,11 +1,25 @@
+export const SUPPORTED_LANGUAGE_CODES = ["ko", "en", "ja"] as const;
+
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGE_CODES)[number];
+
+export const LANGUAGES: Record<
+  SupportedLanguage,
+  { label: string; locale: string; ogLocale: string; pathPrefix: string }
+> = {
+  ko: { label: "한국어", locale: "ko-KR", ogLocale: "ko_KR", pathPrefix: "" },
+  en: { label: "English", locale: "en-US", ogLocale: "en_US", pathPrefix: "/en" },
+  ja: { label: "日本語", locale: "ja-JP", ogLocale: "ja_JP", pathPrefix: "/ja" }
+};
+
 export const SITE = {
   title: "noir1458's blog",
   description:
     "Computer science, software, cybersecurity, cryptography, mathematics, problem solving, and personal notes.",
   url: "https://noir1458.github.io",
   locale: "ko-KR",
-  language: "ko",
+  language: "ko" as SupportedLanguage,
   timeZone: "Asia/Seoul",
+  socialImage: "/assets/img/social-card.png",
   postsPerPage: 6,
   author: {
     name: "noir1458",
