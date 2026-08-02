@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import readline from "node:readline/promises";
 import matter from "gray-matter";
+import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "src/content/posts");
@@ -46,6 +47,16 @@ try {
     throw new Error("Slug cannot contain spaces, slashes, ?, or #.");
   }
 
+  const languageInput = (
+    await prompt.question(
+      `Language [${SUPPORTED_LANGUAGE_CODES.join("/")}] (${SITE.language}): `
+    )
+  ).trim().toLowerCase();
+  const language = languageInput || SITE.language;
+  if (!SUPPORTED_LANGUAGE_CODES.includes(language)) {
+    throw new Error(`Language must be one of: ${SUPPORTED_LANGUAGE_CODES.join(", ")}.`);
+  }
+
   const categories = splitTerms(
     await prompt.question("Categories (comma separated): ")
   );
@@ -86,7 +97,8 @@ try {
     categoryDirectory,
     slug
   );
-  const postPath = path.join(directory, "index.md");
+  const filename = language === SITE.language ? "index.md" : `${language}.md`;
+  const postPath = path.join(directory, filename);
 
   if (fs.existsSync(postPath)) {
     throw new Error(`Post already exists: ${postPath}`);
@@ -97,6 +109,8 @@ try {
   const frontmatter = {
     title,
     slug,
+    ...(language === SITE.language ? {} : { lang: language }),
+    ...(language === SITE.language ? {} : { translationKey: slug }),
     publishedAt: todayInSeoul(),
     categories: categories.length === 1 ? categories[0] : categories,
     draft: true,

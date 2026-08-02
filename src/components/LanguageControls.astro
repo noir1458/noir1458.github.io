@@ -1,0 +1,42 @@
+---
+import type { PostTranslation } from "@/utils/content";
+import type { SupportedLanguage } from "@/config";
+
+interface Props {
+  currentLanguage: SupportedLanguage;
+  translations: PostTranslation[];
+}
+
+const { currentLanguage, translations } = Astro.props;
+---
+
+{
+  translations.length > 1 && (
+    <details class="language-picker" data-language-picker>
+      <summary
+        class="language-picker-toggle icon-button"
+        aria-label="Choose article language"
+        title="Article language"
+      >
+        <span aria-hidden="true">{currentLanguage.toUpperCase()}</span>
+      </summary>
+      <nav class="language-menu" aria-label="Article translations">
+        {translations.map((translation) => (
+          <a
+            class:list={{ active: translation.lang === currentLanguage }}
+            href={translation.href}
+            hreflang={translation.lang}
+            lang={translation.lang}
+            aria-label={`Switch article language to ${translation.label}`}
+            aria-current={translation.lang === currentLanguage ? "page" : undefined}
+            title={translation.label}
+          >
+            <span class="language-code" aria-hidden="true">
+              {translation.lang.toUpperCase()}
+            </span>
+          </a>
+        ))}
+      </nav>
+    </details>
+  )
+}

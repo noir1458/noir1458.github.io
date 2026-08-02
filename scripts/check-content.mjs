@@ -1,9 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "src/content/posts");
+const supportedLanguages = [...SUPPORTED_LANGUAGE_CODES];
+const defaultLanguage = SITE.language;
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -14,9 +17,10 @@ function walk(directory, predicate = () => true) {
   });
 }
 
-const files = walk(contentRoot, (file) => file.endsWith("/index.md"));
+const files = walk(contentRoot, (file) => file.endsWith(".md"));
 const errors = [];
-const slugs = new Map();
+const entries = [];
+const routes = new Map();
 let imageReferences = 0;
 let mathPosts = 0;
 
@@ -30,9 +34,25 @@ for (const file of files) {
     continue;
   }
 
-  const { title, slug, description, publishedAt, tags, categories } = parsed.data;
+  const { title, slug, description, publishedAt, tags, categories, translationKey } = parsed.data;
+  const lang = parsed.data.lang ?? defaultLanguage;
+  const filename = path.basename(file);
+  const expectedFilename = lang === defaultLanguage ? "index.md" : `${lang}.md`;
+
   if (!title || typeof title !== "string") errors.push(`${relative}: title is required`);
   if (!slug || typeof slug !== "string") errors.push(`${relative}: slug is required`);
+  if (!supportedLanguages.includes(lang)) {
+    errors.push(`${relative}: unsupported lang "${lang}"`);
+  }
+  if (
+    translationKey !== undefined
+    && (typeof translationKey !== "string" || !translationKey.trim() || /[/\\?#\s]/u.test(translationKey))
+  ) {
+    errors.push(`${relative}: translationKey must be a non-empty URL-safe identifier`);
+  }
+  if (filename !== expectedFilename) {
+    errors.push(`${relative}: filename must match lang (${expectedFilename})`);
+  }
   if (description !== undefined && (typeof description !== "string" || !description.trim())) {
     errors.push(`${relative}: description must be a non-empty string when provided`);
   }
@@ -40,16 +60,10 @@ for (const file of files) {
   if (tags !== undefined && !Array.isArray(tags)) {
     errors.push(`${relative}: tags must be an array when provided`);
   }
-  if (
-    typeof categories !== "string"
-    && !Array.isArray(categories)
-  ) {
+  if (typeof categories !== "string" && !Array.isArray(categories)) {
     errors.push(`${relative}: categories must be a string or an array`);
   }
-  if (
-    typeof categories === "string"
-    && !categories.trim()
-  ) {
+  if (typeof categories === "string" && !categories.trim()) {
     errors.push(`${relative}: categories cannot be empty`);
   }
   if (
@@ -62,11 +76,23 @@ for (const file of files) {
     errors.push(`${relative}: unsupported Jekyll/Liquid syntax`);
   }
 
-  if (slugs.has(slug)) {
-    errors.push(`${relative}: duplicate slug "${slug}" also used by ${slugs.get(slug)}`);
+  const routeKey = `${lang}:${slug}`;
+  if (routes.has(routeKey)) {
+    errors.push(`${relative}: duplicate ${lang} slug "${slug}" also used by ${routes.get(routeKey)}`);
   } else {
-    slugs.set(slug, relative);
+    routes.set(routeKey, relative);
   }
+
+  entries.push({
+    file,
+    relative,
+    directory: path.dirname(file),
+    filename,
+    lang,
+    slug,
+    translationKey: translationKey ?? slug,
+    draft: parsed.data.draft === true
+  });
 
   if (parsed.data.math) mathPosts += 1;
   const references = [
@@ -84,9 +110,47 @@ for (const file of files) {
   }
 }
 
+const groups = new Map();
+for (const entry of entries) {
+  const group = groups.get(entry.translationKey) ?? [];
+  group.push(entry);
+  groups.set(entry.translationKey, group);
+}
+
+for (const [translationKey, group] of groups) {
+  const directories = new Set(group.map((entry) => entry.directory));
+  const slugs = new Set(group.map((entry) => entry.slug));
+  const draftStates = new Set(group.map((entry) => entry.draft));
+  const languages = new Map();
+
+  for (const entry of group) {
+    const existing = languages.get(entry.lang);
+    if (existing) {
+      errors.push(
+        `${entry.relative}: duplicate ${entry.lang} translation for "${translationKey}" also used by ${existing.relative}`
+      );
+    } else {
+      languages.set(entry.lang, entry);
+    }
+  }
+
+  if (directories.size > 1) {
+    errors.push(`translationKey "${translationKey}" must be colocated in one post directory`);
+  }
+  if (slugs.size > 1) {
+    errors.push(`translationKey "${translationKey}" has mismatched slugs: ${[...slugs].join(", ")}`);
+  }
+  if (draftStates.size > 1) {
+    errors.push(`translationKey "${translationKey}" has inconsistent draft states`);
+  }
+}
+
+const translations = entries.length - groups.size;
 const result = {
-  posts: files.length,
-  uniqueSlugs: slugs.size,
+  logicalPosts: groups.size,
+  translations,
+  contentEntries: entries.length,
+  uniqueRoutes: routes.size,
   mathPosts,
   imageReferences,
   errors

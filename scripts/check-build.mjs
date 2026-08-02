@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { SITE } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
 const contentRoot = path.join(projectRoot, "src/content/posts");
+const siteOrigin = SITE.url;
+const defaultLanguage = SITE.language;
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -19,10 +22,29 @@ function resolvesPublicPath(urlPath) {
   const clean = decodeURI(urlPath.split(/[?#]/)[0]);
   const candidate = path.join(distRoot, clean.replace(/^\//, ""));
   return (
-    fs.existsSync(candidate) ||
-    fs.existsSync(`${candidate}.html`) ||
-    fs.existsSync(path.join(candidate, "index.html"))
+    fs.existsSync(candidate)
+    || fs.existsSync(`${candidate}.html`)
+    || fs.existsSync(path.join(candidate, "index.html"))
   );
+}
+
+function postPath(entry) {
+  const prefix = entry.lang === defaultLanguage ? "" : `/${entry.lang}`;
+  return `${prefix}/posts/${entry.slug}/`;
+}
+
+function outputFileForPath(urlPath) {
+  return path.join(distRoot, urlPath.replace(/^\//, ""), "index.html");
+}
+
+function tagAttribute(tag, name) {
+  return tag.match(new RegExp(`\\s${name}=["']([^"']+)["']`, "i"))?.[1];
+}
+
+function findTag(html, tagName, attribute, value) {
+  return [...html.matchAll(new RegExp(`<${tagName}\\b[^>]*>`, "gi"))]
+    .map((match) => match[0])
+    .find((tag) => tagAttribute(tag, attribute) === value);
 }
 
 if (!fs.existsSync(distRoot)) {
@@ -38,10 +60,10 @@ for (const file of htmlFiles) {
   for (const match of html.matchAll(/\shref=["']([^"']+)["']/g)) {
     const href = match[1];
     if (
-      !href.startsWith("/") ||
-      href.startsWith("//") ||
-      href.startsWith("/_pagefind/") ||
-      checked.has(href)
+      !href.startsWith("/")
+      || href.startsWith("//")
+      || href.startsWith("/_pagefind/")
+      || checked.has(href)
     ) {
       continue;
     }
@@ -69,35 +91,125 @@ for (const target of required) {
   }
 }
 
-const postPages = walk(path.join(distRoot, "posts"), (file) =>
-  file.endsWith("/index.html")
-);
-const expectedPostPages = walk(contentRoot, (file) => file.endsWith("/index.md")).filter(
-  (file) => !matter(fs.readFileSync(file, "utf8")).data.draft
-).length;
-if (postPages.length !== expectedPostPages) {
-  errors.push(`expected ${expectedPostPages} post pages, found ${postPages.length}`);
+const contentEntries = walk(contentRoot, (file) => file.endsWith(".md"))
+  .map((file) => {
+    const data = matter(fs.readFileSync(file, "utf8")).data;
+    return {
+      file,
+      filename: path.basename(file),
+      slug: data.slug,
+      lang: data.lang ?? defaultLanguage,
+      translationKey: data.translationKey ?? data.slug,
+      draft: data.draft === true
+    };
+  })
+  .filter((entry) => !entry.draft);
+
+const groups = new Map();
+for (const entry of contentEntries) {
+  const group = groups.get(entry.translationKey) ?? [];
+  group.push(entry);
+  groups.set(entry.translationKey, group);
+}
+
+const sitemap = walk(distRoot, (file) => /^sitemap-.*\.xml$/u.test(path.basename(file)))
+  .map((file) => fs.readFileSync(file, "utf8"))
+  .join("\n");
+for (const entry of contentEntries) {
+  const expectedLocation = `<loc>${siteOrigin}${postPath(entry)}</loc>`;
+  if (!sitemap.includes(expectedLocation)) {
+    errors.push(`sitemap is missing post URL: ${postPath(entry)}`);
+  }
 }
 
 let postDescriptions = 0;
-for (const file of postPages) {
-  const html = fs.readFileSync(file, "utf8");
-  const description = html.match(
-    /<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i
-  )?.[1]?.trim();
-  if (!description) {
-    errors.push(`${path.relative(distRoot, file)}: missing generated meta description`);
+let multilingualPostPages = 0;
+for (const entry of contentEntries) {
+  const urlPath = postPath(entry);
+  const outputFile = outputFileForPath(urlPath);
+  if (!fs.existsSync(outputFile)) {
+    errors.push(`missing generated post page: ${urlPath}`);
     continue;
   }
-  postDescriptions += 1;
+
+  const html = fs.readFileSync(outputFile, "utf8");
+  const relativeOutput = path.relative(distRoot, outputFile);
+  const htmlLanguage = html.match(/<html\b[^>]*\slang=["']([^"']+)["']/i)?.[1];
+  if (htmlLanguage !== entry.lang) {
+    errors.push(`${relativeOutput}: expected html lang ${entry.lang}, found ${htmlLanguage ?? "none"}`);
+  }
+
+  const canonicalTag = findTag(html, "link", "rel", "canonical");
+  const canonical = canonicalTag ? tagAttribute(canonicalTag, "href") : undefined;
+  const expectedCanonical = `${siteOrigin}${urlPath}`;
+  if (canonical !== expectedCanonical) {
+    errors.push(`${relativeOutput}: expected canonical ${expectedCanonical}, found ${canonical ?? "none"}`);
+  }
+
+  const description = html.match(
+    /<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i
+  )?.[1]?.trim();
+  if (!description) {
+    errors.push(`${relativeOutput}: missing generated meta description`);
+  } else {
+    postDescriptions += 1;
+  }
+
+  const ogImageTag = findTag(html, "meta", "property", "og:image");
+  const twitterImageTag = findTag(html, "meta", "name", "twitter:image");
+  if (!ogImageTag || !tagAttribute(ogImageTag, "content")) {
+    errors.push(`${relativeOutput}: missing Open Graph image`);
+  }
+  if (!twitterImageTag || !tagAttribute(twitterImageTag, "content")) {
+    errors.push(`${relativeOutput}: missing Twitter image`);
+  }
+
+  const group = groups.get(entry.translationKey) ?? [];
+  if (group.length > 1) {
+    multilingualPostPages += 1;
+    for (const translation of group) {
+      const alternateTag = [...html.matchAll(/<link\b[^>]*>/gi)]
+        .map((match) => match[0])
+        .find((tag) => (
+          tagAttribute(tag, "rel") === "alternate"
+          && tagAttribute(tag, "hreflang") === translation.lang
+        ));
+      const expectedHref = `${siteOrigin}${postPath(translation)}`;
+      if (!alternateTag || tagAttribute(alternateTag, "href") !== expectedHref) {
+        errors.push(`${relativeOutput}: missing reciprocal hreflang ${translation.lang}`);
+      }
+    }
+    const xDefaultTag = [...html.matchAll(/<link\b[^>]*>/gi)]
+      .map((match) => match[0])
+      .find((tag) => (
+        tagAttribute(tag, "rel") === "alternate"
+        && tagAttribute(tag, "hreflang") === "x-default"
+      ));
+    if (!xDefaultTag) {
+      errors.push(`${relativeOutput}: missing hreflang x-default`);
+    }
+    if (!html.includes('class="language-menu"')) {
+      errors.push(`${relativeOutput}: missing article language selector`);
+    }
+  }
+}
+
+const generatedPostPages = walk(distRoot, (file) => (
+  file.endsWith("/index.html") && /(?:^|\/)posts\//u.test(path.relative(distRoot, file))
+));
+if (generatedPostPages.length !== contentEntries.length) {
+  errors.push(
+    `expected ${contentEntries.length} post pages, found ${generatedPostPages.length}`
+  );
 }
 
 console.log(
   JSON.stringify(
     {
       htmlFiles: htmlFiles.length,
-      expectedPostPages,
-      postPages: postPages.length,
+      expectedPostPages: contentEntries.length,
+      postPages: generatedPostPages.length,
+      multilingualPostPages,
       postDescriptions,
       checkedInternalLinks: checked.size,
       errors

@@ -1,6 +1,11 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
-import { SITE } from "@/config";
+import {
+  LANGUAGES,
+  SITE,
+  SUPPORTED_LANGUAGE_CODES,
+  type SupportedLanguage
+} from "@/config";
 
 export type PostEntry = CollectionEntry<"posts">;
 
@@ -24,7 +29,7 @@ export function postCover(post: PostEntry): ImageMetadata | undefined {
 
   const postDirectory = post.filePath
     .replaceAll("\\", "/")
-    .replace(/\/index\.md$/i, "");
+    .replace(/\/[^/]+\.md$/i, "");
   const imagePath = `/${postDirectory}/${localReference.replace(/^\.\//, "")}`;
 
   return localPostImages[imagePath];
@@ -72,7 +77,7 @@ export function postDescription(post: PostEntry): string {
   return truncateDescription(firstParagraph ?? post.data.title);
 }
 
-export async function getPublishedPosts(): Promise<PostEntry[]> {
+export async function getAllPublishedPosts(): Promise<PostEntry[]> {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
 
   return posts.sort(
@@ -80,12 +85,52 @@ export async function getPublishedPosts(): Promise<PostEntry[]> {
   );
 }
 
-export function postUrl(post: PostEntry): string {
-  return `/posts/${post.data.slug}/`;
+export async function getPublishedPosts(
+  language: SupportedLanguage = SITE.language
+): Promise<PostEntry[]> {
+  return (await getAllPublishedPosts()).filter((post) => post.data.lang === language);
 }
 
-export function formatDate(date: Date, options?: Intl.DateTimeFormatOptions): string {
-  return new Intl.DateTimeFormat(SITE.locale, {
+export function postUrl(post: PostEntry): string {
+  const prefix = LANGUAGES[post.data.lang].pathPrefix;
+  return `${prefix}/posts/${post.data.slug}/`;
+}
+
+export function postTranslationKey(post: PostEntry): string {
+  return post.data.translationKey ?? post.data.slug;
+}
+
+export interface PostTranslation {
+  lang: SupportedLanguage;
+  label: string;
+  href: string;
+  post: PostEntry;
+}
+
+export function getPostTranslations(
+  post: PostEntry,
+  posts: PostEntry[]
+): PostTranslation[] {
+  const key = postTranslationKey(post);
+  const order = new Map(SUPPORTED_LANGUAGE_CODES.map((lang, index) => [lang, index]));
+
+  return posts
+    .filter((entry) => postTranslationKey(entry) === key)
+    .map((entry) => ({
+      lang: entry.data.lang,
+      label: LANGUAGES[entry.data.lang].label,
+      href: postUrl(entry),
+      post: entry
+    }))
+    .sort((a, b) => (order.get(a.lang) ?? 99) - (order.get(b.lang) ?? 99));
+}
+
+export function formatDate(
+  date: Date,
+  options?: Intl.DateTimeFormatOptions,
+  language: SupportedLanguage = SITE.language
+): string {
+  return new Intl.DateTimeFormat(LANGUAGES[language].locale, {
     year: "numeric",
     month: "short",
     day: "2-digit",
