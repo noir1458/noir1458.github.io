@@ -14,9 +14,12 @@
     "astro": "astro",
     "new": "node scripts/new-post.mjs",
     "migrate": "node scripts/migrate-jekyll.mjs",
+    "translate:snapshot": "node scripts/translation-safety.mjs snapshot",
+    "translate:verify": "node scripts/translation-safety.mjs verify",
+    "check:translation": "node --test scripts/translation-safety.test.mjs",
     "check:content": "node scripts/check-content.mjs",
     "check:build": "node scripts/check-build.mjs",
-    "check": "npm run check:content && astro check && npm run build && npm run check:build",
+    "check": "npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build",
     "publish": "node scripts/publish.mjs"
   },
   "dependencies": {

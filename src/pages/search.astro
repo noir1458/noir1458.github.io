@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getPublishedPosts, postDescription, postUrl } from "@/utils/content";
+import { getAllPublishedPosts, postDescription, postUrl } from "@/utils/content";
 
-const fallbackPosts = (await getPublishedPosts()).map((post) => ({
+const fallbackPosts = (await getAllPublishedPosts()).map((post) => ({
   title: post.data.title,
   description: postDescription(post),
   url: postUrl(post),
-  terms: post.data.categories.join(" "),
+  terms: `${post.data.lang} ${post.data.categories.join(" ")}`,
   body: post.body
 }));
 const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003c");
@@ -41,6 +41,8 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     set:html={fallbackSearchData}
   ></script>
   <script>
+    import { SUPPORTED_LANGUAGE_CODES } from "@/config";
+
     const form = document.querySelector<HTMLFormElement>("[data-search-page-form]");
     const input = document.querySelector<HTMLInputElement>("#search-query");
     const status = document.querySelector<HTMLElement>("[data-search-status]");
@@ -206,14 +208,26 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
       try {
         const pagefindUrl = "/pagefind/pagefind.js";
         const pagefind = await import(/* @vite-ignore */ pagefindUrl);
-        await pagefind.options({ excerptLength: 24 });
-        const response = await pagefind.search(normalizedQuery);
+        const responses = await Promise.allSettled(
+          SUPPORTED_LANGUAGE_CODES.map(async (language) => {
+            const instance = pagefind.createInstance({ language });
+            await instance.options({ excerptLength: 24 });
+            return instance.search(normalizedQuery);
+          })
+        );
+        const responseResults = responses
+          .filter((response) => response.status === "fulfilled")
+          .flatMap((response) => response.value.results)
+          .sort((a, b) => b.score - a.score);
+        if (responses.every((response) => response.status === "rejected")) {
+          throw new Error("No Pagefind language index could be loaded.");
+        }
         if (sequence !== searchSequence) return;
-        resultCount = response.results.length;
+        resultCount = responseResults.length;
         loadPageResults = async (page) => {
           const start = (page - 1) * resultsPerPage;
           const pageResults = await Promise.all(
-            response.results
+            responseResults
               .slice(start, start + resultsPerPage)
               .map((result: { data: () => Promise<unknown> }) => result.data())
           ) as Array<{ url: string; meta: { title?: string }; excerpt: string }>;

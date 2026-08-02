@@ -1,4 +1,4 @@
-const CACHE_NAME = "noir1458-blog-v1";
+const CACHE_NAME = "noir1458-blog-v2";
 const CORE = ["/", "/404.html", "/favicon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

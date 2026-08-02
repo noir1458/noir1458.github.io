@@ -2,12 +2,23 @@
 import { SITE } from "@/config";
 import Icon from "@/components/Icon.astro";
 import ThemeControls from "@/components/ThemeControls.astro";
+import LanguageControls from "@/components/LanguageControls.astro";
+import type { SupportedLanguage } from "@/config";
+import type { PostTranslation } from "@/utils/content";
+
+interface Props {
+  language?: SupportedLanguage;
+  translations?: PostTranslation[];
+}
+
+const { language = SITE.language, translations = [] } = Astro.props;
 ---
 
 <header class="site-header">
   <div class="title-row">
     <a class="site-title" href="/">{SITE.title}</a>
     <div class="header-actions">
+      <LanguageControls currentLanguage={language} translations={translations} />
       <ThemeControls />
     </div>
   </div>
