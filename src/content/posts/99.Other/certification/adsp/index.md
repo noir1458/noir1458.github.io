@@ -638,7 +638,7 @@ https://www.youtube.com/watch?v=mgck3KJQGGI&list=PLWtr7MRpQi5CW-jFYgAsX4jZcSp77O
         - SST : 전체의 변동 (SST = SSE + SSR)
         - SSE : 모형에 의해 설명되지 않는 변동
         - SSR : 모형에 의해 설명되는 변동
-        - R^2 = SSR / SST = 1 - SSR/SST
+        - R^2 = SSR / SST = 1 - SSE / SST
 - 회귀분석 종류
     - 단순회귀
     - 다중회귀 : 2개 이상의 독립변수
