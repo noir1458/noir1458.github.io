@@ -73,6 +73,35 @@ cover: ./cover.png
 `public/`은 파비콘처럼 여러 페이지에서 고정 주소로 공유하는 전역 정적
 파일에만 사용합니다.
 
+## 프로젝트
+
+프로젝트는 `content/projects/<project-slug>.md`에 추가합니다. 파일명이
+`/projects/<project-slug>/` URL이 됩니다.
+
+```md
+---
+title: 프로젝트 이름
+description: 프로젝트를 설명하는 짧은 문장
+repository: https://github.com/username/project
+demo:
+image: /images/projects/project.webp
+tags:
+  - Astro
+  - TypeScript
+featured: true
+order: 1
+---
+
+프로젝트에 관한 자세한 설명을 Markdown으로 작성합니다.
+```
+
+`repository`, `demo`, `image`는 선택 사항이며 빈 값은 화면에서 숨겨집니다.
+프로젝트 이미지는 `public/images/projects/`에 둡니다. `featured: true`인
+프로젝트가 먼저 나오고, 그 안에서는 `order`가 작은 순서로 정렬됩니다.
+공개 전에는 `draft: true`를 사용합니다. 프로젝트 화면을 표시하려면
+`config/features.yaml`의 `projects`를 `true`로 바꾸면 설정된 Projects 메뉴와
+목록·상세 페이지가 함께 생성됩니다.
+
 ## 글 언어와 번역본
 
 지원 언어는 한국어(`ko`), 영어(`en`), 일본어(`ja`)입니다. 기존 글처럼
@@ -210,6 +239,8 @@ git push origin main
 ## 주요 경로
 
 - `content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
+- `content/projects/<slug>.md` — 프로젝트 정보와 상세 Markdown
+- `config/` — 사이트, 내비게이션, 소셜 링크와 기능 설정
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로
@@ -221,9 +252,8 @@ git push origin main
 
 ## 설정
 
-사이트 주소, 작성자, Giscus, Google Analytics와 Search Console 값은
-`src/config.ts`에 있습니다. 공개 설정만 두고 토큰이나 비밀키는 커밋하지
-않습니다.
+사이트 주소, 작성자, Giscus, Google Analytics와 Search Console 값은 루트
+`config/`에 있습니다. 공개 설정만 두고 토큰이나 비밀키는 커밋하지 않습니다.
 
 ## 기존 Jekyll에서 다시 가져오기
 

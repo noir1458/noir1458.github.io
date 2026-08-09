@@ -1,0 +1,107 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Icon from "@/components/Icon.astro";
+import { FEATURES, SITE } from "@/config";
+import {
+  getPublishedProjects,
+  projectUrl,
+  type ProjectEntry
+} from "@/utils/projects";
+
+export async function getStaticPaths() {
+  if (!FEATURES.projects) return [];
+
+  return (await getPublishedProjects()).map((project) => ({
+    params: { slug: project.id },
+    props: { project }
+  }));
+}
+
+interface Props {
+  project: ProjectEntry;
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const canonical = new URL(projectUrl(project), SITE.url).toString();
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: project.data.title,
+  description: project.data.description,
+  url: canonical,
+  author: {
+    "@type": "Person",
+    name: SITE.author.name
+  },
+  ...(project.data.repository ? { codeRepository: project.data.repository } : {}),
+  ...(project.data.image
+    ? { image: new URL(project.data.image, SITE.url).toString() }
+    : {})
+};
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  image={project.data.image}
+  sidebar={false}
+  schema={schema}
+>
+  <article class="project-detail">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/" aria-label="Home"><Icon name="home" size={18} /></a>
+      <Icon name="chevron-right" size={16} />
+      <a href="/projects/">Projects</a>
+    </nav>
+
+    <header class="article-header">
+      <span class="eyebrow">Project</span>
+      <h1>{project.data.title}</h1>
+      <p class="project-lead">{project.data.description}</p>
+      {project.data.tags.length > 0 && (
+        <ul class="project-tags" aria-label="Technologies">
+          {project.data.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      )}
+      <div class="project-actions">
+        {project.data.repository && (
+          <a
+            class="outline-button"
+            href={project.data.repository}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Repository
+          </a>
+        )}
+        {project.data.demo && (
+          <a
+            class="primary-button"
+            href={project.data.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Live demo
+          </a>
+        )}
+      </div>
+    </header>
+
+    {project.data.image && (
+      <img
+        class="project-hero"
+        src={project.data.image}
+        alt=""
+        loading="eager"
+      />
+    )}
+
+    {project.body?.trim() && (
+      <div class="article-content project-content">
+        <Content />
+      </div>
+    )}
+  </article>
+</BaseLayout>
