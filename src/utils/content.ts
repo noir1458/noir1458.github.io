@@ -10,7 +10,7 @@ import {
 export type PostEntry = CollectionEntry<"posts">;
 
 const localPostImages = import.meta.glob<ImageMetadata>(
-  "/src/content/posts/**/*.{avif,gif,jpeg,jpg,png,webp}",
+  "/content/posts/**/*.{avif,gif,jpeg,jpg,png,webp}",
   { eager: true, import: "default" }
 );
 

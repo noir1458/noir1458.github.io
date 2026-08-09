@@ -6,7 +6,7 @@ import { SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
 const posts = defineCollection({
   loader: glob({
     pattern: "**/*.md",
-    base: "./src/content/posts",
+    base: "./content/posts",
     generateId: ({ entry }) => entry.replace(/\.md$/u, "")
   }),
   schema: ({ image }) => z.object({
