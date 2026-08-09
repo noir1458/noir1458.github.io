@@ -33,6 +33,9 @@ const publicPath = nonEmptyString.refine(
 ).refine(
   (value) => !value.split("/").includes(".."),
   "must not contain parent-directory segments"
+).refine(
+  (value) => !value.includes("\\") && !/[?#]/u.test(value),
+  "must not contain backslashes, a query, or a fragment"
 );
 
 const languageCode = z.string().regex(

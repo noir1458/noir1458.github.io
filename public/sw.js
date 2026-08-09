@@ -1,5 +1,5 @@
 const CACHE_NAME = "astro-blog-v3";
-const CORE = ["/", "/404.html", "/favicon.svg", "/manifest.webmanifest"];
+const CORE = ["/", "/404.html", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE)));

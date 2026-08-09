@@ -9,12 +9,12 @@ site:
 author:
   name: noir1458
   displayName: noir1458
-  profileImage: /assets/img/avatar.png
+  profileImage: /images/profile/profile.png
 
 branding:
-  favicon: /assets/img/favicons/favicon.ico
-  manifestIcon: /favicon.svg
-  defaultOgImage: /assets/img/social-card.png
+  favicon: /images/site/favicon.ico
+  manifestIcon: /images/site/icon.svg
+  defaultOgImage: /images/site/og-default.png
 
 languages:
   ko:

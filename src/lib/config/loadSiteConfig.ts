@@ -16,6 +16,9 @@ import type { ProfileConfig, UserConfig } from "./types.ts";
 const DEFAULT_CONFIG_DIRECTORY = fileURLToPath(
   new URL("../../../config/", import.meta.url)
 );
+const DEFAULT_PUBLIC_DIRECTORY = fileURLToPath(
+  new URL("../../../public/", import.meta.url)
+);
 const CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE = "ASTRO_BLOG_CONFIG_DIR";
 
 export class SiteConfigError extends Error {
@@ -115,7 +118,7 @@ function loadProfile(configDirectory: string): ProfileConfig {
   };
 }
 
-function validateCombinedConfig(config: UserConfig): void {
+function validateCombinedConfig(config: UserConfig, publicDirectory: string): void {
   const errors: string[] = [];
   const { language, timeZone } = config.site;
   const languageEntries = Object.entries(config.languages);
@@ -150,11 +153,29 @@ function validateCombinedConfig(config: UserConfig): void {
     );
   }
 
+  const publicAssets = [
+    ["author.profileImage", config.author.profileImage],
+    ["branding.favicon", config.branding.favicon],
+    ["branding.manifestIcon", config.branding.manifestIcon],
+    ["branding.defaultOgImage", config.branding.defaultOgImage]
+  ] as const;
+  for (const [field, publicPath] of publicAssets) {
+    const filePath = path.join(publicDirectory, publicPath.slice(1));
+    try {
+      if (!fs.statSync(filePath).isFile()) {
+        errors.push(`config/site.yaml: ${field}: public asset is not a file (${publicPath})`);
+      }
+    } catch {
+      errors.push(`config/site.yaml: ${field}: public asset does not exist (${publicPath})`);
+    }
+  }
+
   if (errors.length > 0) throw new SiteConfigError(errors.join("\n"));
 }
 
 export interface LoadSiteConfigOptions {
   configDirectory?: string;
+  publicDirectory?: string;
 }
 
 export function loadSiteConfig(
@@ -164,6 +185,9 @@ export function loadSiteConfig(
     options.configDirectory
       ?? process.env[CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE]
       ?? DEFAULT_CONFIG_DIRECTORY
+  );
+  const publicDirectory = path.resolve(
+    options.publicDirectory ?? DEFAULT_PUBLIC_DIRECTORY
   );
   const site = loadYaml(configDirectory, "site.yaml", siteFileSchema);
   const navigation = loadYaml(
@@ -183,6 +207,6 @@ export function loadSiteConfig(
     supportedLanguageCodes: Object.keys(site.languages)
   };
 
-  validateCombinedConfig(config);
+  validateCombinedConfig(config, publicDirectory);
   return config;
 }
