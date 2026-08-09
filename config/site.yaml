@@ -1,0 +1,43 @@
+site:
+  title: noir1458's blog
+  description: Computer science, software, cybersecurity, cryptography, mathematics, problem solving, and personal notes.
+  url: https://noir1458.github.io
+  language: ko
+  timeZone: Asia/Seoul
+  postsPerPage: 6
+
+author:
+  name: noir1458
+  displayName: noir1458
+  profileImage: /assets/img/avatar.png
+
+branding:
+  favicon: /assets/img/favicons/favicon.ico
+  manifestIcon: /favicon.svg
+  defaultOgImage: /assets/img/social-card.png
+
+languages:
+  ko:
+    label: 한국어
+    locale: ko-KR
+    ogLocale: ko_KR
+    pathPrefix: ''
+  en:
+    label: English
+    locale: en-US
+    ogLocale: en_US
+    pathPrefix: /en
+  ja:
+    label: 日本語
+    locale: ja-JP
+    ogLocale: ja_JP
+    pathPrefix: /ja
+
+integrations:
+  analyticsId: G-DR2Z1J9NQ4
+  googleSiteVerification: yLWIwMLKZv5QhvnUzTwIhY46AnghOhoCDKUSEM6Tsvk
+  giscus:
+    repo: noir1458/noir1458.github.io
+    repoId: R_kgDOQj5fXQ
+    category: Announcements
+    categoryId: DIC_kwDOQj5fXc4Czey2

@@ -16,10 +16,11 @@
     "migrate": "node scripts/migrate-jekyll.mjs",
     "translate:snapshot": "node scripts/translation-safety.mjs snapshot",
     "translate:verify": "node scripts/translation-safety.mjs verify",
+    "check:config": "node --test scripts/config.test.mjs && node scripts/check-config.mjs",
     "check:translation": "node --test scripts/translation-safety.test.mjs",
     "check:content": "node scripts/check-content.mjs",
     "check:build": "node scripts/check-build.mjs",
-    "check": "npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build",
+    "check": "npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build",
     "publish": "node scripts/publish.mjs"
   },
   "dependencies": {
@@ -31,7 +32,9 @@
     "katex": "^0.16.0",
     "pagefind": "^1.0.0",
     "rehype-katex": "^7.0.0",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
