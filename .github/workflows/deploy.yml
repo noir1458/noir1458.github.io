@@ -1,22 +1,24 @@
-name: Deploy Astro site to GitHub Pages
+name: Validate and deploy Astro site
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
     steps:
@@ -32,27 +34,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate content
-        run: npm run check:content
-
-      - name: Check Astro and TypeScript
-        run: npx astro check
-
-      - name: Build site and search index
-        run: npm run build
-
-      - name: Validate generated site
-        run: npm run check:build
+      - name: Validate and build
+        run: npm run check
 
       - name: Configure Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

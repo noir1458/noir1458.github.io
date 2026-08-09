@@ -5,6 +5,47 @@
 `/posts/<slug>/` 주소를 유지합니다. Markdown, 수식, 검색, 태그, 카테고리,
 아카이브와 Giscus 댓글을 지원합니다.
 
+> 사이트를 운영할 때 수정하는 영역은 `config/`, `content/`,
+> `public/images/` 세 곳뿐입니다.
+
+일반 사용자는 `astro.config.mjs`, `package.json`, `src/**/*.ts`,
+`src/**/*.astro`, `src/content.config.ts`, `.github/workflows/deploy.yml`을 수정하지
+않아도 사이트 정보, 글, 프로젝트, 이미지와 GitHub Pages 배포를 관리할 수
+있습니다.
+
+## 사용자 편집 영역
+
+| 경로 | 용도 |
+| --- | --- |
+| `config/` | 사이트 정보, 프로필, 메뉴, 소셜 링크, 기능 켜기/끄기 |
+| `content/` | 게시물 Markdown, 글 전용 이미지, 프로젝트 Markdown |
+| `public/images/` | 프로필, 프로젝트, favicon, manifest, 기본 OG 이미지 |
+
+## 주요 기능
+
+- Astro 정적 빌드와 GitHub Pages 자동 배포
+- 기존 Jekyll permalink를 보존한 Markdown 게시물
+- 카테고리, 태그, 아카이브, 페이지네이션과 Pagefind 검색
+- RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
+- 한국어·영어·일본어 번역 경로와 `hreflang`
+- 다크 모드, 수식, 코드 하이라이팅, 목차와 Giscus 댓글
+- 설정으로 노출을 제어하는 프로젝트 목록과 상세 페이지
+
+## 기본 설정
+
+`config/README.md`의 순서대로 다음 파일을 수정합니다.
+
+1. `config/site.yaml`: 사이트 URL, 제목, 설명, 언어, 시간대, 작성자, 공용 이미지,
+   Analytics·Search Console·Giscus 공개 식별자
+2. `config/navigation.yaml`: header, sidebar, footer 메뉴와 순서
+3. `config/social.yaml`: GitHub, LinkedIn, 이메일, 이력서 링크
+4. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, 프로젝트, 댓글
+5. `config/profile.md`: About 제목과 소개 Markdown
+
+빈 선택 값은 화면에서 자동으로 숨겨집니다. 메뉴의 `requiresFeature`를 사용하면
+기능이 꺼졌을 때 연결된 메뉴도 함께 숨길 수 있습니다. YAML과 Markdown 설정은
+빌드 전에 스키마와 파일 경로를 검증합니다.
+
 ```md
 ---
 title: 글 제목
@@ -15,7 +56,7 @@ math: false
 ---
 ```
 
-## 준비
+## 로컬 실행
 
 - Node.js 24 이상
 - npm
@@ -227,9 +268,16 @@ npm run check
 
 ## 배포
 
-GitHub 저장소의 **Settings → Pages → Build and deployment → Source**를
-`GitHub Actions`로 설정합니다. `main` 브랜치에 push하면
-`.github/workflows/deploy.yml`이 검증 후 GitHub Pages에 배포합니다.
+최초 한 번 GitHub 저장소의 **Settings → Pages → Build and deployment →
+Source**를 **GitHub Actions**로 설정합니다. 그다음 `config/site.yaml`의
+`site.url`이 실제 공개 주소인지 확인하고 `main`에 push합니다.
+
+`.github/workflows/deploy.yml`은 다음을 자동으로 수행합니다.
+
+- pull request: 읽기 전용 권한으로 `npm ci`와 전체 `npm run check`
+- `main` push 또는 수동 실행: 같은 검증 후 Pages artifact 생성과 배포
+- deploy job만 `pages: write`와 `id-token: write` 사용
+- 모든 외부 GitHub Action을 전체 commit SHA로 고정
 
 ```bash
 npm run publish
@@ -239,6 +287,51 @@ git push origin main
 ```
 
 `npm run publish`는 실제 push를 실행하지 않고 검사와 명령 안내만 합니다.
+
+배포가 시작되지 않으면 Pages Source가 **GitHub Actions**인지, Actions 탭에서
+workflow 실행이 허용됐는지, 기본 브랜치가 `main`인지 확인합니다. URL이 잘못된
+경우 `config/site.yaml`만 고친 뒤 다시 push합니다.
+
+## 커스텀 도메인
+
+1. `config/site.yaml`의 `site.url`을 `https://example.com`처럼 실제 도메인으로
+   변경하고 push합니다.
+2. GitHub 저장소의 **Settings → Pages → Custom domain**에 같은 도메인을
+   저장합니다.
+3. DNS 제공자에서 subdomain은 `<username>.github.io`를 향하는 `CNAME`, apex
+   domain은 GitHub가 안내하는 `A`/`AAAA` 또는 `ALIAS`/`ANAME` 레코드를
+   설정합니다.
+4. DNS 적용 후 **Enforce HTTPS**를 켭니다.
+
+GitHub Actions 방식에서는 저장소의 `CNAME` 파일이 필요하지 않습니다. 도메인
+탈취를 막기 위해 계정의 Pages 설정에서 도메인을 검증하고 wildcard DNS는
+사용하지 않는 것을 권장합니다. 자세한 절차는
+[GitHub Pages custom domain 문서](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)를
+따릅니다.
+
+## 설정 오류 해결
+
+- `config/*.yaml` 오류: 메시지에 표시된 파일과 필드의 들여쓰기·필수값을 확인
+- `site.url` 오류: `https://`를 포함한 전체 공개 URL 사용
+- `public asset does not exist`: `config/site.yaml`의 이미지 경로와
+  `public/images/`의 실제 파일명 일치 여부 확인
+- 게시물 날짜 오류: `publishedAt: 'YYYY-MM-DD'` 형식 사용
+- 중복 slug 오류: 같은 언어의 게시물마다 고유한 `slug` 사용
+- 프로젝트 URL 오류: `repository`와 `demo`에 `http://` 또는 `https://` 사용
+- 빈 프로젝트 경고: `content/projects/`가 비어 있고 projects 기능이 꺼진 운영
+  블로그에서는 정상이며 build 실패가 아님
+
+문제를 고친 뒤 `npm run check`를 다시 실행하면 설정, 콘텐츠, 타입, production
+build, 링크와 기능 플래그를 한 번에 재검증합니다.
+
+## 공개 설정과 비밀값
+
+`config/`에는 브라우저에 공개되어도 되는 값만 둡니다. Analytics 측정 ID,
+Search Console verification 문자열, Giscus repository/category ID는 공개
+클라이언트 설정입니다. API token, 비밀번호, private key 같은 비밀값은 절대
+`config/`, Markdown 또는 `.env.example`에 실제 값으로 커밋하지 않습니다.
+향후 비밀값이 필요한 자동화를 추가할 때는 GitHub Actions Secrets와 환경변수를
+사용합니다.
 
 ## 주요 경로
 
@@ -255,7 +348,12 @@ git push origin main
 - `archive/migration/` — 일회성 Jekyll 변환기와 당시 결과 기록
 - `AGENT.md` — 구현·검증 계획과 유지보수 기준
 
-## 설정
+## 고급 사용자와 라이선스
 
-사이트 주소, 작성자, Giscus, Google Analytics와 Search Console 값은 루트
-`config/`에 있습니다. 공개 설정만 두고 토큰이나 비밀키는 커밋하지 않습니다.
+레이아웃이나 기능 자체를 바꾸려는 고급 사용자만 `src/`와 내부 Astro 설정을
+수정합니다. 일반적인 사이트 운영에는 해당 변경이 필요하지 않습니다.
+
+현재 개인 블로그 저장소의 코드와 콘텐츠에는 별도 재사용 라이선스가 지정되어
+있지 않습니다. 공개 템플릿 저장소를 추출할 때 코드·예제 asset에 적용할
+라이선스를 별도로 확정해야 하며, 이 개인 블로그의 실제 글과 이미지는 템플릿에
+포함하지 않습니다.

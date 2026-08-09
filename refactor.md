@@ -18,8 +18,9 @@
 - 4단계 프로필과 기능 설정 연결: 완료 (`237d8bb`)
 - 5단계 콘텐츠를 루트 사용자 영역으로 이동: 완료 (`7ef9a66`)
 - 6단계 프로젝트 콘텐츠 지원: 완료 (`d6555bf`)
-- 7단계 공용 이미지와 잔여 하드코딩 정리: 완료
-- 다음 작업: 8단계 배포와 사용자 문서 완성
+- 7단계 공용 이미지와 잔여 하드코딩 정리: 완료 (`f81766a`)
+- 8단계 배포와 사용자 문서 완성: 완료
+- 다음 작업: 9단계 개인 블로그 최종 회귀 검증
 
 ## 1. 현재 기준선
 
@@ -432,6 +433,21 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 검증: workflow 구문 검토, 로컬 `npm ci && npm run check`.
 
+실행 결과:
+
+- README 첫 부분에 일반 사용자의 편집 영역 세 곳과 수정하지 않아도 되는 내부
+  파일을 명시하고, 설정·콘텐츠·프로젝트·이미지 흐름을 사용자 관점으로 정리했다.
+- GitHub Pages 최초 활성화, push 배포, custom domain과 DNS, 오류 해결, 공개
+  설정과 secret의 경계를 문서화했다.
+- workflow에 pull request 이벤트를 추가해 배포 없이 전체 `npm run check`를
+  실행하고, main push와 수동 실행에서만 Pages artifact를 업로드하도록 했다.
+- 전역 권한은 `contents: read`만 유지하고 실제 deploy job에만 `pages: write`와
+  `id-token: write`를 부여했다. build job은 `contents/pages: read`만 사용한다.
+- workflow YAML 구조, 세 이벤트, job 권한, 전체 검사 실행, PR deploy 차단,
+  외부 Action 5개의 40자리 SHA 고정을 `npm run check:workflow`로 검증한다.
+- 개인 블로그에는 별도 라이선스가 없음을 명시하고, 템플릿 추출 단계에서 코드와
+  예제 asset의 라이선스를 수동 확정해야 할 항목으로 남겼다.
+
 ### 9단계: 개인 블로그 최종 회귀 검증
 
 예상 커밋: `test: verify refactored blog compatibility`
@@ -511,8 +527,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **8단계: 배포와 사용자 문서 완성**이다. 사용자가 수정하는 영역을
-README 첫 부분에 명시하고 설정·콘텐츠·이미지·GitHub Pages·custom domain·오류
-해결·secret 관리 절차를 초보자 관점에서 정리한다. 현재 Pages workflow의 권한과
-이벤트를 감사한 뒤 push 배포와 pull request 검증을 분리하고, 내부 파일 수정이
-필요하지 않은 흐름을 전체 검사한다.
+다음 작업은 **9단계: 개인 블로그 최종 회귀 검증**이다. 깨끗한 `npm ci` 환경에서
+전체 검사를 다시 실행하고 기준선의 114개 게시물 URL과 새 build URL manifest를
+비교한다. 설정 경계·공용 이미지·RSS·sitemap·검색·legacy asset·GitHub Pages
+workflow를 최종 확인한 뒤 템플릿 추출을 시작할 수 있는 개인 블로그 기준점을
+고정한다.
