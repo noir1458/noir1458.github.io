@@ -10,7 +10,12 @@ const temporaryRoot = fs.mkdtempSync(
 );
 const configDirectory = path.join(temporaryRoot, "config");
 const outputDirectory = path.join(temporaryRoot, "dist");
+const projectsOutputDirectory = path.join(temporaryRoot, "dist-projects");
 const astroEntry = path.join(projectRoot, "node_modules/astro/bin/astro.mjs");
+const projectFixture = path.join(
+  projectRoot,
+  "content/projects/feature-build-fixture.md"
+);
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -31,6 +36,7 @@ try {
       "sitemap: false",
       "darkMode: false",
       "tableOfContents: false",
+      "projects: false",
       "comments: false",
       ""
     ].join("\n")
@@ -58,6 +64,7 @@ try {
   assert.equal(fs.existsSync(path.join(outputDirectory, "search/index.html")), false);
   assert.equal(fs.existsSync(path.join(outputDirectory, "rss.xml")), false);
   assert.equal(fs.existsSync(path.join(outputDirectory, "sitemap-index.xml")), false);
+  assert.equal(fs.existsSync(path.join(outputDirectory, "projects/index.html")), false);
 
   const indexHtml = fs.readFileSync(path.join(outputDirectory, "index.html"), "utf8");
   const robots = fs.readFileSync(path.join(outputDirectory, "robots.txt"), "utf8");
@@ -75,6 +82,76 @@ try {
   assert.equal(postHtml.includes('class="article-toc"'), false);
   assert.equal(postHtml.includes('class="comments"'), false);
 
+  assert.equal(fs.existsSync(projectFixture), false, "feature fixture already exists");
+  fs.writeFileSync(
+    projectFixture,
+    [
+      "---",
+      "title: Feature Build Project",
+      "description: Verifies project list and detail generation.",
+      "repository: https://github.com/example/project",
+      "demo: https://example.com/project",
+      "tags:",
+      "  - Astro",
+      "featured: true",
+      "order: 1",
+      "---",
+      "",
+      "## Project overview",
+      "",
+      "This body verifies Markdown rendering.",
+      ""
+    ].join("\n")
+  );
+  fs.writeFileSync(
+    path.join(configDirectory, "features.yaml"),
+    [
+      "search: false",
+      "rss: false",
+      "sitemap: false",
+      "darkMode: false",
+      "tableOfContents: false",
+      "projects: true",
+      "comments: false",
+      ""
+    ].join("\n")
+  );
+
+  const projectBuild = spawnSync(
+    process.execPath,
+    [astroEntry, "build", "--outDir", projectsOutputDirectory],
+    {
+      cwd: projectRoot,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        ASTRO_BLOG_CONFIG_DIR: configDirectory
+      }
+    }
+  );
+
+  if (projectBuild.status !== 0) {
+    process.stdout.write(projectBuild.stdout ?? "");
+    process.stderr.write(projectBuild.stderr ?? "");
+    throw new Error(`project-feature build exited with status ${projectBuild.status}`);
+  }
+
+  const projectsHtml = fs.readFileSync(
+    path.join(projectsOutputDirectory, "projects/index.html"),
+    "utf8"
+  );
+  const projectHtml = fs.readFileSync(
+    path.join(
+      projectsOutputDirectory,
+      "projects/feature-build-fixture/index.html"
+    ),
+    "utf8"
+  );
+  assert.equal(projectsHtml.includes("Feature Build Project"), true);
+  assert.equal(projectHtml.includes("Project overview"), true);
+  assert.equal(projectHtml.includes("https://github.com/example/project"), true);
+  assert.equal(projectHtml.includes("https://example.com/project"), true);
+
   console.log(JSON.stringify({
     disabledFeatures: [
       "search",
@@ -82,11 +159,14 @@ try {
       "sitemap",
       "darkMode",
       "tableOfContents",
+      "projects",
       "comments"
     ],
+    enabledProjectRoutes: 2,
     generatedPostPages: postHtmlFiles.length,
     errors: []
   }, null, 2));
 } finally {
+  if (fs.existsSync(projectFixture)) fs.rmSync(projectFixture);
   fs.rmSync(temporaryRoot, { recursive: true, force: true });
 }

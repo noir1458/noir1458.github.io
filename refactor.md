@@ -16,8 +16,9 @@
 - 저장소 리팩터링 지침 기록: 완료 (`bfb5e98`)
 - 3단계 사이트·SEO·내비게이션 하드코딩 제거: 완료 (`775540e`)
 - 4단계 프로필과 기능 설정 연결: 완료 (`237d8bb`)
-- 5단계 콘텐츠를 루트 사용자 영역으로 이동: 완료
-- 다음 작업: 6단계 프로젝트 콘텐츠 지원
+- 5단계 콘텐츠를 루트 사용자 영역으로 이동: 완료 (`7ef9a66`)
+- 6단계 프로젝트 콘텐츠 지원: 완료
+- 다음 작업: 7단계 공용 이미지와 잔여 하드코딩 정리
 
 ## 1. 현재 기준선
 
@@ -371,6 +372,17 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 검증: 잘못된 repository/demo URL, 필수 제목 누락, order 정렬, 빈 컬렉션 build.
 
+실행 결과:
+
+- `content/projects/*.md`의 파일명을 URL slug로 사용한다.
+- title, description, repository/demo URL, public image 경로, tags, featured,
+  order, draft를 스키마로 검증한다.
+- 현재 확인 가능한 실제 프로젝트 데이터가 없어 개인 블로그에서는 빈 컬렉션과
+  `projects: false`를 유지한다.
+- 기능 off 빌드에서는 메뉴와 `/projects/` 경로가 생성되지 않는다.
+- 검증 중에만 임시 프로젝트를 생성한 on 빌드에서 목록·상세 2개 경로,
+  Markdown 본문, repository/demo 링크를 확인하고 임시 파일을 제거한다.
+
 ### 7단계: 공용 이미지와 잔여 하드코딩 정리
 
 예상 커밋: `refactor: organize user-replaceable images and remove stale files`
@@ -479,7 +491,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **6단계: 프로젝트 콘텐츠 지원**이다. `content/projects/` 컬렉션과
-최소 스키마를 추가하고 기존 디자인 언어로 목록 페이지를 구현한다. 현재
-저장소에서 확인할 수 있는 실제 프로젝트 정보만 개인 블로그 콘텐츠로 사용하며,
-프로젝트가 없거나 기능을 끈 경우에도 build와 navigation이 일관되도록 만든다.
+다음 작업은 **7단계: 공용 이미지와 잔여 하드코딩 정리**이다. 현재 실제로
+사용되는 프로필·favicon·OG·manifest 이미지를 `public/images/`의 역할별 폴더로
+옮기고 설정 경로를 함께 갱신한다. 참조되지 않는 avatar와 migration 산출물은
+사용처와 Git 이력을 확인한 뒤 유지·보관·삭제를 결정하며, 역사적 URL 호환
+asset은 이름만 보고 제거하지 않는다.

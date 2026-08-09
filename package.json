@@ -18,7 +18,7 @@
     "translate:verify": "node scripts/translation-safety.mjs verify",
     "check:config": "node --test scripts/config.test.mjs && node scripts/check-config.mjs",
     "check:translation": "node --test scripts/translation-safety.test.mjs",
-    "check:content": "node scripts/check-content.mjs",
+    "check:content": "node --test scripts/project-content.test.mjs && node scripts/check-content.mjs",
     "check:build": "node scripts/check-build.mjs",
     "check:features": "node scripts/check-feature-build.mjs",
     "check": "npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build && npm run check:features",

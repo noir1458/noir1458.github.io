@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 import { SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
+import { projectSchema } from "@/lib/content/projectSchema";
 
 const posts = defineCollection({
   loader: glob({
@@ -28,4 +29,13 @@ const posts = defineCollection({
   })
 });
 
-export const collections = { posts };
+const projects = defineCollection({
+  loader: glob({
+    pattern: "*.md",
+    base: "./content/projects",
+    generateId: ({ entry }) => entry.replace(/\.md$/u, "")
+  }),
+  schema: projectSchema
+});
+
+export const collections = { posts, projects };

@@ -95,7 +95,8 @@ const required = [
   "pagefind/pagefind.js",
   ...(FEATURES.rss ? ["rss.xml"] : []),
   ...(FEATURES.sitemap ? ["sitemap-index.xml"] : []),
-  ...(FEATURES.search ? ["search/index.html"] : [])
+  ...(FEATURES.search ? ["search/index.html"] : []),
+  ...(FEATURES.projects ? ["projects/index.html"] : [])
 ];
 for (const target of required) {
   if (!fs.existsSync(path.join(distRoot, target))) {
@@ -130,6 +131,13 @@ if (indexHtml.includes("data-theme-picker") !== FEATURES.darkMode) {
 
 if (indexHtml.includes('type="application/rss+xml"') !== FEATURES.rss) {
   errors.push(`index.html: RSS metadata does not match features.rss=${FEATURES.rss}`);
+}
+
+if (
+  !FEATURES.projects
+  && fs.existsSync(path.join(distRoot, "projects/index.html"))
+) {
+  errors.push("projects/index.html: generated while features.projects is disabled");
 }
 
 if (
