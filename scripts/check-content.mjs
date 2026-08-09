@@ -4,7 +4,7 @@ import matter from "gray-matter";
 import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
-const contentRoot = path.join(projectRoot, "src/content/posts");
+const contentRoot = path.join(projectRoot, "content/posts");
 const supportedLanguages = [...SUPPORTED_LANGUAGE_CODES];
 const defaultLanguage = SITE.language;
 

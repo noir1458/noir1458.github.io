@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { snapshot, verify } from "./translation-safety.mjs";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
-const postsRoot = path.join(projectRoot, "src/content/posts");
+const postsRoot = path.join(projectRoot, "content/posts");
 
 function languageFilename(language) {
   return language === "ko" ? "index.md" : `${language}.md`;

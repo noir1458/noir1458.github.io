@@ -5,7 +5,7 @@ import { FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
-const contentRoot = path.join(projectRoot, "src/content/posts");
+const contentRoot = path.join(projectRoot, "content/posts");
 const siteOrigin = SITE.url;
 const defaultLanguage = SITE.language;
 

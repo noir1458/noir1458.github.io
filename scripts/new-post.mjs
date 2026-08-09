@@ -6,7 +6,7 @@ import matter from "gray-matter";
 import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
-const contentRoot = path.join(projectRoot, "src/content/posts");
+const contentRoot = path.join(projectRoot, "content/posts");
 const prompt = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -25,12 +25,12 @@ function splitTerms(value) {
   return [...new Set(value.split(",").map((item) => item.trim()).filter(Boolean))];
 }
 
-function todayInSeoul() {
+function todayInConfiguredTimeZone() {
   return new Intl.DateTimeFormat("en-CA", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-    timeZone: "Asia/Seoul"
+    timeZone: SITE.timeZone
   }).format(new Date());
 }
 
@@ -111,7 +111,7 @@ try {
     slug,
     ...(language === SITE.language ? {} : { lang: language }),
     ...(language === SITE.language ? {} : { translationKey: slug }),
-    publishedAt: todayInSeoul(),
+    publishedAt: todayInConfiguredTimeZone(),
     categories: categories.length === 1 ? categories[0] : categories,
     draft: true,
     math: ["y", "yes"].includes(mathInput)
