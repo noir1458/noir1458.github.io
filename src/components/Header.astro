@@ -1,5 +1,5 @@
 ---
-import { SITE } from "@/config";
+import { FEATURES, NAVIGATION, SITE } from "@/config";
 import Icon from "@/components/Icon.astro";
 import ThemeControls from "@/components/ThemeControls.astro";
 import LanguageControls from "@/components/LanguageControls.astro";
@@ -12,6 +12,9 @@ interface Props {
 }
 
 const { language = SITE.language, translations = [] } = Astro.props;
+const headerLinks = NAVIGATION.header.filter(
+  (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
+);
 ---
 
 <header class="site-header">
@@ -41,11 +44,15 @@ const { language = SITE.language, translations = [] } = Astro.props;
       data-primary-nav
       aria-label="Primary navigation"
     >
-      <a href="/">Home</a>
-      <a href="/categories/">Categories</a>
-      <a href="/tags/">Tags</a>
-      <a href="/archives/">Archives</a>
-      <a href="/about/">About</a>
+      {headerLinks.map((link) => (
+        <a
+          href={link.href}
+          rel={link.external ? "noopener noreferrer" : undefined}
+          target={link.external ? "_blank" : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
     </nav>
     <div class="search-shell" data-search-shell>
       <form action="/search/" class="header-search" role="search">

@@ -1,12 +1,22 @@
 ---
-import { SITE } from "@/config";
+import { FEATURES, NAVIGATION, SITE } from "@/config";
+
+const footerLinks = NAVIGATION.footer.filter(
+  (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
+);
 ---
 
 <footer class="site-footer">
   <span>© {new Date().getFullYear()} {SITE.author.name}</span>
   <nav aria-label="Footer navigation">
-    <a href="/rss.xml">RSS</a>
-    <a href="/sitemap-index.xml">Sitemap</a>
-    <a href={SITE.author.github} rel="noopener noreferrer" target="_blank">GitHub</a>
+    {footerLinks.map((link) => (
+      <a
+        href={link.href}
+        rel={link.external ? "noopener noreferrer" : undefined}
+        target={link.external ? "_blank" : undefined}
+      >
+        {link.label}
+      </a>
+    ))}
   </nav>
 </footer>

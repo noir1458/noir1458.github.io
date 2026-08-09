@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { SITE } from "../src/config.ts";
+import { FEATURES, NAVIGATION, SITE } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
@@ -47,6 +47,16 @@ function findTag(html, tagName, attribute, value) {
     .find((tag) => tagAttribute(tag, attribute) === value);
 }
 
+function escapeXml(value) {
+  return value.replace(/[&<>"']/gu, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&apos;"
+  })[character] ?? character);
+}
+
 if (!fs.existsSync(distRoot)) {
   throw new Error("dist does not exist. Run npm run build first.");
 }
@@ -78,6 +88,8 @@ const required = [
   "index.html",
   "404.html",
   "rss.xml",
+  "robots.txt",
+  "manifest.webmanifest",
   "sitemap-index.xml",
   "search/index.html",
   "tags/index.html",
@@ -88,6 +100,61 @@ const required = [
 for (const target of required) {
   if (!fs.existsSync(path.join(distRoot, target))) {
     errors.push(`missing required build artifact: ${target}`);
+  }
+}
+
+const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
+const visibleNavigationLinks = [
+  ...NAVIGATION.header,
+  ...NAVIGATION.sidebar,
+  ...NAVIGATION.footer
+].filter((link) => !link.requiresFeature || FEATURES[link.requiresFeature]);
+
+for (const link of visibleNavigationLinks) {
+  if (!indexHtml.includes(`href="${link.href}"`)) {
+    errors.push(`index.html: configured navigation link is missing: ${link.href}`);
+  }
+}
+
+if (!indexHtml.includes(`rel="icon" href="${SITE.favicon}"`)) {
+  errors.push(`index.html: configured favicon is missing: ${SITE.favicon}`);
+}
+
+if (
+  SITE.googleVerification
+  && !indexHtml.includes(`content="${SITE.googleVerification}"`)
+) {
+  errors.push("index.html: configured Google site verification is missing");
+}
+
+const robots = fs.readFileSync(path.join(distRoot, "robots.txt"), "utf8");
+const sitemapUrl = new URL("/sitemap-index.xml", SITE.url).toString();
+if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
+  errors.push(`robots.txt: configured sitemap URL is missing: ${sitemapUrl}`);
+}
+
+const rssFeed = fs.readFileSync(path.join(distRoot, "rss.xml"), "utf8");
+if (!rssFeed.includes(`<dc:creator>${escapeXml(SITE.author.name)}</dc:creator>`)) {
+  errors.push("rss.xml: configured author is missing");
+}
+
+let manifest;
+try {
+  manifest = JSON.parse(
+    fs.readFileSync(path.join(distRoot, "manifest.webmanifest"), "utf8")
+  );
+} catch (error) {
+  errors.push(`manifest.webmanifest: invalid JSON (${error.message})`);
+}
+if (manifest) {
+  if (manifest.name !== SITE.title) {
+    errors.push(`manifest.webmanifest: expected name ${SITE.title}`);
+  }
+  if (manifest.short_name !== SITE.author.displayName) {
+    errors.push(`manifest.webmanifest: expected short_name ${SITE.author.displayName}`);
+  }
+  if (manifest.icons?.[0]?.src !== SITE.manifestIcon) {
+    errors.push(`manifest.webmanifest: expected icon ${SITE.manifestIcon}`);
   }
 }
 

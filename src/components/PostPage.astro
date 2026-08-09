@@ -3,7 +3,7 @@ import { render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Icon from "@/components/Icon.astro";
 import Giscus from "@/components/Giscus.astro";
-import { SITE } from "@/config";
+import { FEATURES, SITE } from "@/config";
 import {
   formatDate,
   getAllPublishedPosts,
@@ -50,7 +50,7 @@ const schema = {
   author: {
     "@type": "Person",
     name: SITE.author.name,
-    url: SITE.author.github
+    ...(SITE.author.url ? { url: SITE.author.url } : {})
   },
   publisher: {
     "@type": "Person",
@@ -157,7 +157,7 @@ const schema = {
       ) : <span></span>}
     </nav>
 
-    <Giscus language={post.data.lang} />
+    {FEATURES.comments && SITE.giscus && <Giscus language={post.data.lang} />}
   </article>
 
   <button class="scroll-top icon-button" type="button" aria-label="Back to top" data-scroll-top>

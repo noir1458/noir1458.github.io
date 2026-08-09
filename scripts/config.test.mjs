@@ -31,19 +31,16 @@ afterEach(() => {
 });
 test("the repository configuration is valid", () => {
   const config = loadSiteConfig();
-  assert.equal(config.site.url, "https://noir1458.github.io");
+  assert.match(config.site.url, /^https:\/\//u);
   assert.deepEqual(config.supportedLanguageCodes, ["ko", "en", "ja"]);
   assert.equal(config.social.email, undefined);
 });
 
 test("an invalid site URL reports its file and field", () => {
   const directory = configFixture();
-  replaceInFile(
-    directory,
-    "site.yaml",
-    "url: https://noir1458.github.io",
-    "url: not-a-url"
-  );
+  const sitePath = path.join(directory, "site.yaml");
+  const source = fs.readFileSync(sitePath, "utf8");
+  fs.writeFileSync(sitePath, source.replace(/^  url: .*$/mu, "  url: not-a-url"));
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
