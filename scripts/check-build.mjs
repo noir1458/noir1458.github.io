@@ -104,6 +104,31 @@ for (const target of required) {
   }
 }
 
+const configuredPublicAssets = [
+  SITE.author.profileImage,
+  SITE.favicon,
+  SITE.manifestIcon,
+  SITE.socialImage
+];
+for (const publicPath of configuredPublicAssets) {
+  const target = publicPath.replace(/^\/+/, "");
+  if (!fs.existsSync(path.join(distRoot, target))) {
+    errors.push(`missing configured public asset: ${publicPath}`);
+  }
+}
+
+const legacyPublicAssets = [
+  "assets/img/avatar.png",
+  "assets/img/social-card.png",
+  "assets/img/favicons/favicon.ico",
+  "favicon.svg"
+];
+for (const target of legacyPublicAssets) {
+  if (!fs.existsSync(path.join(distRoot, target))) {
+    errors.push(`missing legacy public asset: /${target}`);
+  }
+}
+
 const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
 const visibleNavigationLinks = [
   ...NAVIGATION.header,
@@ -119,6 +144,11 @@ for (const link of visibleNavigationLinks) {
 
 if (!indexHtml.includes(`rel="icon" href="${SITE.favicon}"`)) {
   errors.push(`index.html: configured favicon is missing: ${SITE.favicon}`);
+}
+const indexOgImage = findTag(indexHtml, "meta", "property", "og:image");
+const expectedOgImage = new URL(SITE.socialImage, SITE.url).toString();
+if (!indexOgImage || tagAttribute(indexOgImage, "content") !== expectedOgImage) {
+  errors.push(`index.html: expected default Open Graph image ${expectedOgImage}`);
 }
 
 if (indexHtml.includes("data-search-shell") !== FEATURES.search) {
@@ -169,6 +199,9 @@ if (!aboutHtml.includes(`>${SITE.author.displayName}</h1>`)) {
 }
 if (!PROFILE.body || !aboutHtml.includes('class="profile-copy"')) {
   errors.push("about/index.html: configured profile Markdown is missing");
+}
+if (!aboutHtml.includes(`src="${SITE.author.profileImage}"`)) {
+  errors.push(`about/index.html: configured profile image is missing: ${SITE.author.profileImage}`);
 }
 for (const href of Object.values(SOCIAL).filter(Boolean)) {
   const renderedHref = href === SOCIAL.email ? `mailto:${href}` : href;

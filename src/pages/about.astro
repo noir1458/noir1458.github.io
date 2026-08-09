@@ -55,23 +55,34 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
 >
   <header class="page-heading">
     <span class="eyebrow">{PROFILE.data.eyebrow}</span>
-    <h1>{SITE.author.displayName}</h1>
-    <div class="profile-copy" set:html={profileHtml} />
-    {
-      profileLinks.length > 0 && (
-        <nav class="about-links" aria-label="Profile links">
-          {profileLinks.map((link) => (
-            <a
-              href={link.href}
-              data-icon={link.icon}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-      )
-    }
+    <div class="about-profile">
+      <img
+        class="profile-image"
+        src={SITE.author.profileImage}
+        alt={`${SITE.author.displayName} profile`}
+        width="184"
+        height="184"
+      />
+      <div class="about-profile-copy">
+        <h1>{SITE.author.displayName}</h1>
+        <div class="profile-copy" set:html={profileHtml} />
+        {
+          profileLinks.length > 0 && (
+            <nav class="about-links" aria-label="Profile links">
+              {profileLinks.map((link) => (
+                <a
+                  href={link.href}
+                  data-icon={link.icon}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          )
+        }
+      </div>
+    </div>
   </header>
 </BaseLayout>

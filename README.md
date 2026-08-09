@@ -1,7 +1,7 @@
 # noir1458 Astro Blog
 
-`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 기존 Jekyll 글 136개를
-마이그레이션한 뒤 현재 134개의 공개 글을 제공하며
+`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 기존 Jekyll 블로그를
+마이그레이션한 뒤 현재 112개 논리 글과 번역을 포함한 114개 글 경로를 제공하며
 `/posts/<slug>/` 주소를 유지합니다. Markdown, 수식, 검색, 태그, 카테고리,
 아카이브와 Giscus 댓글을 지원합니다.
 
@@ -70,8 +70,12 @@ cover: ./cover.png
 ![설명](./diagram.png)
 ```
 
-`public/`은 파비콘처럼 여러 페이지에서 고정 주소로 공유하는 전역 정적
-파일에만 사용합니다.
+`public/images/`는 여러 페이지에서 공유하는 사용자 교체 이미지에 사용합니다.
+프로필 이미지는 `public/images/profile/`, 프로젝트 이미지는
+`public/images/projects/`, 파비콘·manifest 아이콘·기본 OG 이미지는
+`public/images/site/`에 둡니다. 실제 파일 경로는 `config/site.yaml`의
+`author.profileImage`와 `branding` 설정에서 지정합니다. 글 전용 이미지는 계속
+각 글 폴더에 둡니다.
 
 ## 프로젝트
 
@@ -199,10 +203,10 @@ Astro가 생성된 언어별 URL을 자동으로 포함합니다.
 Giscus는 기존 댓글을 보존하기 위해 pathname 매핑을 유지하므로 번역 URL의
 댓글은 한국어 원문과 분리됩니다.
 
-지원 언어를 늘릴 때는 `src/config.ts`의 `SUPPORTED_LANGUAGE_CODES`와
-`LANGUAGES`에 언어 코드, 표시 이름, locale, URL prefix를 추가합니다. 라우트와
-콘텐츠 스키마는 이 설정을 공통으로 사용합니다. 기본 한국어만 `index.md`를
-사용하고 다른 언어 파일명은 언어 코드와 같아야 합니다.
+지원 언어를 늘릴 때는 `config/site.yaml`의 `languages`에 언어 코드, 표시 이름,
+locale, OG locale, URL prefix를 추가합니다. 라우트와 콘텐츠 스키마는 이 설정을
+공통으로 사용합니다. 기본 언어만 `index.md`를 사용하고 다른 언어 파일명은 언어
+코드와 같아야 합니다.
 
 ## 검사
 
@@ -241,28 +245,17 @@ git push origin main
 - `content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
 - `content/projects/<slug>.md` — 프로젝트 정보와 상세 Markdown
 - `config/` — 사이트, 내비게이션, 소셜 링크와 기능 설정
+- `public/images/` — 프로필, 프로젝트, favicon과 기본 OG 이미지
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로
 - `src/styles/global.css` — 디자인 토큰과 반응형 스타일
-- `scripts/` — 마이그레이션·새 글·검증·배포 안내
+- `scripts/` — 새 글·번역·검증·배포 안내
 - `archive/unassigned-images/` — 글과 연결되지 않은 Jekyll 가져오기 이미지
-- `reports/migration.json` — Jekyll 마이그레이션 결과
+- `archive/migration/` — 일회성 Jekyll 변환기와 당시 결과 기록
 - `AGENT.md` — 구현·검증 계획과 유지보수 기준
 
 ## 설정
 
 사이트 주소, 작성자, Giscus, Google Analytics와 Search Console 값은 루트
 `config/`에 있습니다. 공개 설정만 두고 토큰이나 비밀키는 커밋하지 않습니다.
-
-## 기존 Jekyll에서 다시 가져오기
-
-마이그레이션은 현재 프로젝트의 글을 덮어쓰지 않는 것이 기본값입니다.
-
-```bash
-npm run migrate
-node scripts/migrate-jekyll.mjs --source /path/to/jekyll
-```
-
-의도적으로 다시 생성할 때만 `--force`를 사용합니다. 먼저 Git 커밋으로
-복구 지점을 만든 뒤 실행하세요.
