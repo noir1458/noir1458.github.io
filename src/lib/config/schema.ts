@@ -149,6 +149,52 @@ export const featuresFileSchema = z.object({
   comments: z.boolean()
 }).strict();
 
+const categorySlug = nonEmptyString.regex(
+  /^[\p{Letter}\p{Number}]+(?:-[\p{Letter}\p{Number}]+)*$/u,
+  "must be a category URL slug such as web-development"
+).transform((value) => value.normalize("NFKC").toLocaleLowerCase("en-US"));
+
+export const categoriesFileSchema = z.object({
+  sidebar: z.object({
+    groups: z.array(z.object({
+      categories: z.array(categorySlug).min(1)
+    }).strict()).default([]),
+    hidden: z.array(categorySlug).default([])
+  }).strict()
+}).strict().superRefine((config, context) => {
+  const locations = new Map<string, Array<string | number>>();
+
+  config.sidebar.groups.forEach((group, groupIndex) => {
+    group.categories.forEach((category, categoryIndex) => {
+      const path = ["sidebar", "groups", groupIndex, "categories", categoryIndex];
+      const existing = locations.get(category);
+      if (existing) {
+        context.addIssue({
+          code: "custom",
+          path,
+          message: `duplicates ${existing.join(".")}`
+        });
+      } else {
+        locations.set(category, path);
+      }
+    });
+  });
+
+  config.sidebar.hidden.forEach((category, categoryIndex) => {
+    const path = ["sidebar", "hidden", categoryIndex];
+    const existing = locations.get(category);
+    if (existing) {
+      context.addIssue({
+        code: "custom",
+        path,
+        message: `duplicates ${existing.join(".")}`
+      });
+    } else {
+      locations.set(category, path);
+    }
+  });
+});
+
 export const profileFrontmatterSchema = z.object({
   title: nonEmptyString,
   eyebrow: nonEmptyString.default("About"),

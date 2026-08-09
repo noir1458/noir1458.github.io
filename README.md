@@ -17,7 +17,7 @@
 
 | 경로 | 용도 |
 | --- | --- |
-| `config/` | 사이트 정보, 프로필, 메뉴, 소셜 링크, 기능 켜기/끄기 |
+| `config/` | 사이트 정보, 프로필, 메뉴, 카테고리 묶음, 소셜 링크, 기능 켜기/끄기 |
 | `content/` | 게시물 Markdown, 글 전용 이미지, 프로젝트 Markdown |
 | `public/images/` | 프로필, 프로젝트, favicon, manifest, 기본 OG 이미지 |
 
@@ -38,9 +38,10 @@
 1. `config/site.yaml`: 사이트 URL, 제목, 설명, 언어, 시간대, 작성자, 공용 이미지,
    Analytics·Search Console·Giscus 공개 식별자
 2. `config/navigation.yaml`: header, sidebar, footer 메뉴와 순서
-3. `config/social.yaml`: GitHub, LinkedIn, 이메일, 이력서 링크
-4. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, 프로젝트, 댓글
-5. `config/profile.md`: About 제목과 소개 Markdown
+3. `config/categories.yaml`: 사이드바 카테고리 묶음, 순서, 숨김
+4. `config/social.yaml`: GitHub, LinkedIn, 이메일, 이력서 링크
+5. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, 프로젝트, 댓글
+6. `config/profile.md`: About 제목과 소개 Markdown
 
 빈 선택 값은 화면에서 자동으로 숨겨집니다. 메뉴의 `requiresFeature`를 사용하면
 기능이 꺼졌을 때 연결된 메뉴도 함께 숨길 수 있습니다. YAML과 Markdown 설정은
@@ -78,9 +79,11 @@ npm run new
 질문에 답하면 `content/posts/<번호-큰분류>/<대표-category>/<slug>/` 아래에
 한국어는 `index.md`, 영어는 `en.md`, 일본어는 `ja.md`로 생성됩니다.
 기존 카테고리는 해당 큰 분류를 자동으로 재사용하고, 새 카테고리일 때만
-큰 분류를 묻습니다. 번호 큰 분류와 그 안의 카테고리 폴더 순서가 우측
-사이드바 순서가 되며 큰 분류 경계에는 두 줄 구분선이 표시됩니다. 초안은
-기본적으로 `draft: true`입니다. 확인이 끝나면 `draft` 줄을 제거합니다.
+큰 분류를 묻습니다. 이 폴더 구조는 소스 정리용이며 우측 사이드바의 묶음과
+순서는 `config/categories.yaml`에서 관리합니다. `groups`와 `hidden` 어디에도
+없는 카테고리는 마지막 묶음에 자동 표시되고 검사 결과에도 출력됩니다.
+`hidden`은 사이드바에서만 숨깁니다. 초안은 기본적으로 `draft: true`입니다.
+확인이 끝나면 `draft` 줄을 제거합니다.
 글 분류에는 `categories`만 사용합니다. `description`은 선택 사항이며,
 생략하면 본문의 첫 번째 유효 문단이 글 목록, 검색, RSS와 SEO 설명으로
 자동 사용됩니다. Tags 화면은 호환성을 위해 유지되지만 태그를 지정하지

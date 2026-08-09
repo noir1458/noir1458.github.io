@@ -16,5 +16,7 @@ console.log(JSON.stringify({
     + config.navigation.sidebar.length
     + config.navigation.footer.length,
   configuredSocialLinks,
+  sidebarCategoryGroups: config.categories.sidebar.groups.length,
+  hiddenSidebarCategories: config.categories.sidebar.hidden.length,
   enabledFeatures
 }, null, 2));
