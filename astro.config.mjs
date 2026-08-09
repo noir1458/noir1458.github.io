@@ -3,17 +3,17 @@ import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import { SITE } from "./src/config.ts";
+import { FEATURES, SITE } from "./src/config.ts";
 
 export default defineConfig({
   site: SITE.url,
   output: "static",
   trailingSlash: "always",
-  integrations: [
-    sitemap({
+  integrations: FEATURES.sitemap
+    ? [sitemap({
       filter: (page) => new URL(page).pathname !== "/search/"
-    })
-  ],
+    })]
+    : [],
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],

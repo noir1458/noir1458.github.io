@@ -43,7 +43,11 @@ const xDefaultTranslation =
 ---
 
 <!doctype html>
-<html lang={language} data-theme="system">
+<html
+  lang={language}
+  data-theme={FEATURES.darkMode ? "system" : "light"}
+  data-theme-enabled={String(FEATURES.darkMode)}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -98,18 +102,23 @@ const xDefaultTranslation =
     <script is:inline>
       (() => {
         const root = document.documentElement;
-        const saved = localStorage.getItem("color-theme");
-        const theme = saved === "neon"
-          ? "dark"
-          : saved === "light" || saved === "dark" || saved === "system"
-            ? saved
-            : "system";
-        root.dataset.theme = theme;
+        if (root.dataset.themeEnabled === "true") {
+          const saved = localStorage.getItem("color-theme");
+          const theme = saved === "neon"
+            ? "dark"
+            : saved === "light" || saved === "dark" || saved === "system"
+              ? saved
+              : "system";
+          root.dataset.theme = theme;
+          if (saved === "neon") localStorage.setItem("color-theme", "dark");
+        } else {
+          root.dataset.theme = "light";
+          root.dataset.resolvedTheme = "light";
+        }
         root.dataset.sidebarCollapsed = String(
           window.matchMedia("(min-width: 961px)").matches
           && localStorage.getItem("sidebar-collapsed") === "true"
         );
-        if (saved === "neon") localStorage.setItem("color-theme", "dark");
       })();
     </script>
     {!isProduction && (

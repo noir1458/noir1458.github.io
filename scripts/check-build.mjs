@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { FEATURES, NAVIGATION, SITE } from "../src/config.ts";
+import { FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
@@ -87,15 +87,15 @@ for (const file of htmlFiles) {
 const required = [
   "index.html",
   "404.html",
-  "rss.xml",
   "robots.txt",
   "manifest.webmanifest",
-  "sitemap-index.xml",
-  "search/index.html",
   "tags/index.html",
   "categories/index.html",
   "archives/index.html",
-  "pagefind/pagefind.js"
+  "pagefind/pagefind.js",
+  ...(FEATURES.rss ? ["rss.xml"] : []),
+  ...(FEATURES.sitemap ? ["sitemap-index.xml"] : []),
+  ...(FEATURES.search ? ["search/index.html"] : [])
 ];
 for (const target of required) {
   if (!fs.existsSync(path.join(distRoot, target))) {
@@ -120,6 +120,18 @@ if (!indexHtml.includes(`rel="icon" href="${SITE.favicon}"`)) {
   errors.push(`index.html: configured favicon is missing: ${SITE.favicon}`);
 }
 
+if (indexHtml.includes("data-search-shell") !== FEATURES.search) {
+  errors.push(`index.html: search UI does not match features.search=${FEATURES.search}`);
+}
+
+if (indexHtml.includes("data-theme-picker") !== FEATURES.darkMode) {
+  errors.push(`index.html: theme UI does not match features.darkMode=${FEATURES.darkMode}`);
+}
+
+if (indexHtml.includes('type="application/rss+xml"') !== FEATURES.rss) {
+  errors.push(`index.html: RSS metadata does not match features.rss=${FEATURES.rss}`);
+}
+
 if (
   SITE.googleVerification
   && !indexHtml.includes(`content="${SITE.googleVerification}"`)
@@ -129,13 +141,32 @@ if (
 
 const robots = fs.readFileSync(path.join(distRoot, "robots.txt"), "utf8");
 const sitemapUrl = new URL("/sitemap-index.xml", SITE.url).toString();
-if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
+if (FEATURES.sitemap && !robots.includes(`Sitemap: ${sitemapUrl}`)) {
   errors.push(`robots.txt: configured sitemap URL is missing: ${sitemapUrl}`);
 }
+if (!FEATURES.sitemap && robots.includes("Sitemap:")) {
+  errors.push("robots.txt: sitemap is present while features.sitemap is disabled");
+}
 
-const rssFeed = fs.readFileSync(path.join(distRoot, "rss.xml"), "utf8");
-if (!rssFeed.includes(`<dc:creator>${escapeXml(SITE.author.name)}</dc:creator>`)) {
-  errors.push("rss.xml: configured author is missing");
+if (FEATURES.rss) {
+  const rssFeed = fs.readFileSync(path.join(distRoot, "rss.xml"), "utf8");
+  if (!rssFeed.includes(`<dc:creator>${escapeXml(SITE.author.name)}</dc:creator>`)) {
+    errors.push("rss.xml: configured author is missing");
+  }
+}
+
+const aboutHtml = fs.readFileSync(path.join(distRoot, "about/index.html"), "utf8");
+if (!aboutHtml.includes(`>${SITE.author.displayName}</h1>`)) {
+  errors.push("about/index.html: configured author display name is missing");
+}
+if (!PROFILE.body || !aboutHtml.includes('class="profile-copy"')) {
+  errors.push("about/index.html: configured profile Markdown is missing");
+}
+for (const href of Object.values(SOCIAL).filter(Boolean)) {
+  const renderedHref = href === SOCIAL.email ? `mailto:${href}` : href;
+  if (!aboutHtml.includes(`href="${renderedHref}"`)) {
+    errors.push(`about/index.html: configured social link is missing: ${renderedHref}`);
+  }
 }
 
 let manifest;
@@ -179,13 +210,15 @@ for (const entry of contentEntries) {
   groups.set(entry.translationKey, group);
 }
 
-const sitemap = walk(distRoot, (file) => /^sitemap-.*\.xml$/u.test(path.basename(file)))
-  .map((file) => fs.readFileSync(file, "utf8"))
-  .join("\n");
-for (const entry of contentEntries) {
-  const expectedLocation = `<loc>${siteOrigin}${postPath(entry)}</loc>`;
-  if (!sitemap.includes(expectedLocation)) {
-    errors.push(`sitemap is missing post URL: ${postPath(entry)}`);
+if (FEATURES.sitemap) {
+  const sitemap = walk(distRoot, (file) => /^sitemap-.*\.xml$/u.test(path.basename(file)))
+    .map((file) => fs.readFileSync(file, "utf8"))
+    .join("\n");
+  for (const entry of contentEntries) {
+    const expectedLocation = `<loc>${siteOrigin}${postPath(entry)}</loc>`;
+    if (!sitemap.includes(expectedLocation)) {
+      errors.push(`sitemap is missing post URL: ${postPath(entry)}`);
+    }
   }
 }
 

@@ -794,6 +794,26 @@ button {
   color: var(--text-soft);
 }
 
+.profile-copy {
+  max-width: 720px;
+  margin-top: 13px;
+  color: var(--text-soft);
+}
+
+.profile-copy > :first-child {
+  margin-top: 0;
+}
+
+.profile-copy > :last-child {
+  margin-bottom: 0;
+}
+
+.profile-copy a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .taxonomy-heading h1 {
   display: flex;
   align-items: center;
