@@ -5,10 +5,17 @@ This folder is the user-facing source for site settings.
 1. Edit `site.yaml` for the site identity, author, branding, languages, and
    public service integrations.
 2. Edit `navigation.yaml` to change visible links and their order.
-3. Edit `social.yaml` to add or remove profile links. Empty values are hidden.
-4. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
+3. Edit `categories.yaml` to group, order, or hide sidebar categories. Categories
+   omitted from both `groups` and `hidden` appear automatically in a final group.
+4. Edit `social.yaml` to add or remove profile links. Empty values are hidden.
+5. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
    article tables of contents, projects, and comments.
-5. Write the About page introduction in `profile.md`.
+6. Write the About page introduction in `profile.md`.
+
+Category values in `categories.yaml` use the URL slug shown after
+`/categories/`. The build reports categories that are displayed automatically
+because they are not configured. `hidden` only removes a category from the
+sidebar; its page and post links remain available.
 
 Paths beginning with `/` refer to files or pages in this site. Replace the
 profile image in `public/images/profile/`, project images in

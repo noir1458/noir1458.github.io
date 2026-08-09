@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
+import { CATEGORY_SIDEBAR, SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
+import {
+  arrangeSidebarCategories,
+  slugifyTermValue
+} from "../src/lib/content/sidebarCategories.ts";
 import { projectSchema } from "../src/lib/content/projectSchema.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
@@ -94,7 +98,9 @@ for (const file of files) {
     lang,
     slug,
     translationKey: translationKey ?? slug,
-    draft: parsed.data.draft === true
+    draft: parsed.data.draft === true,
+    categories: (Array.isArray(categories) ? categories : [categories])
+      .filter((category) => typeof category === "string" && category.trim())
   });
 
   if (parsed.data.math) mathPosts += 1;
@@ -149,6 +155,27 @@ for (const [translationKey, group] of groups) {
 }
 
 const translations = entries.length - groups.size;
+const sidebarCategoryCounts = new Map();
+for (const entry of entries) {
+  if (entry.draft || entry.lang !== defaultLanguage) continue;
+  for (const category of new Set(entry.categories)) {
+    const slug = slugifyTermValue(category);
+    const current = sidebarCategoryCounts.get(slug);
+    sidebarCategoryCounts.set(slug, {
+      name: current?.name ?? category,
+      slug,
+      count: (current?.count ?? 0) + 1
+    });
+  }
+}
+const sidebarCategories = [...sidebarCategoryCounts.values()];
+const { unconfigured: unconfiguredSidebarCategories } = arrangeSidebarCategories(
+  sidebarCategories,
+  CATEGORY_SIDEBAR
+);
+const warnings = unconfiguredSidebarCategories.length > 0
+  ? [`config/categories.yaml: unconfigured sidebar categories: ${unconfiguredSidebarCategories.map((category) => category.slug).join(", ")}`]
+  : [];
 const projectFiles = walk(projectContentRoot, (file) => file.endsWith(".md"));
 let publishedProjects = 0;
 
@@ -202,6 +229,10 @@ const result = {
   publishedProjects,
   mathPosts,
   imageReferences,
+  unconfiguredSidebarCategories: unconfiguredSidebarCategories.map(
+    (category) => category.slug
+  ),
+  warnings,
   errors
 };
 console.log(JSON.stringify(result, null, 2));

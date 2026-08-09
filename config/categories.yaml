@@ -1,0 +1,28 @@
+sidebar:
+  groups:
+    - categories:
+        - blog
+
+    - categories:
+        - atcoder
+        - boj
+        - cpp
+        - databasesystem
+        - flutter
+        - numpy-pandas
+        - programmers
+
+    - categories:
+        - aws
+        - cryptography
+        - cryptohack
+
+    - categories:
+        - numbertheory
+
+    - categories:
+        - certification
+        - finance101
+
+  # Hidden categories still keep their category pages and post links.
+  hidden: []

@@ -16,7 +16,7 @@
     "translate:snapshot": "node scripts/translation-safety.mjs snapshot",
     "translate:verify": "node scripts/translation-safety.mjs verify",
     "check:workflow": "node scripts/check-workflow.mjs",
-    "check:config": "node --test scripts/config.test.mjs && node scripts/check-config.mjs && node scripts/check-user-boundaries.mjs",
+    "check:config": "node --test scripts/config.test.mjs scripts/sidebar-categories.test.mjs && node scripts/check-config.mjs && node scripts/check-user-boundaries.mjs",
     "check:translation": "node --test scripts/translation-safety.test.mjs",
     "check:content": "node --test scripts/project-content.test.mjs && node scripts/check-content.mjs",
     "check:build": "node scripts/check-build.mjs",

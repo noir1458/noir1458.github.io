@@ -1,6 +1,6 @@
 ---
 import type { PostEntry } from "@/utils/content";
-import { groupCategoriesBySource } from "@/utils/content";
+import { groupCategoriesForSidebar } from "@/utils/content";
 import Icon from "@/components/Icon.astro";
 import { FEATURES, NAVIGATION } from "@/config";
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { posts } = Astro.props;
-const categoryGroups = groupCategoriesBySource(posts);
+const categoryGroups = groupCategoriesForSidebar(posts);
 const sidebarLinks = NAVIGATION.sidebar.filter(
   (link) => link.icon && (!link.requiresFeature || FEATURES[link.requiresFeature])
 );
@@ -53,7 +53,7 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
             {groupIndex > 0 && (
               <li
                 class="term-group-separator"
-                data-source-group={group.sourceFolder}
+                data-automatic-group={group.automatic ? "true" : undefined}
                 aria-hidden="true"
               />
             )}
