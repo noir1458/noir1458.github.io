@@ -19,8 +19,9 @@
 - 5단계 콘텐츠를 루트 사용자 영역으로 이동: 완료 (`7ef9a66`)
 - 6단계 프로젝트 콘텐츠 지원: 완료 (`d6555bf`)
 - 7단계 공용 이미지와 잔여 하드코딩 정리: 완료 (`f81766a`)
-- 8단계 배포와 사용자 문서 완성: 완료
-- 다음 작업: 9단계 개인 블로그 최종 회귀 검증
+- 8단계 배포와 사용자 문서 완성: 완료 (`66ea345`)
+- 9단계 개인 블로그 최종 회귀 검증: 완료
+- 다음 작업: 10단계 깨끗한 템플릿 작업 트리 추출
 
 ## 1. 현재 기준선
 
@@ -459,6 +460,33 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 - 컴포넌트와 내부 코드에서 개인정보 잔존 검색을 수행한다.
 - 운영 블로그에서만 필요한 legacy 호환 요소와 남은 기술 부채를 기록한다.
 
+실행 결과:
+
+- `7ef9a66` 이후 `content/posts/` byte diff가 0임을 확인해 콘텐츠 이동 당시
+  URL 집합이 유지됐음을 검증했다.
+- 기존 공개 게시물 114개를 개인 블로그 전용
+  `tests/baselines/legacy-post-routes.txt`로 고정했다. 새 글 추가는 허용하면서 이
+  manifest의 기존 경로가 build에서 하나라도 사라지면 실패한다.
+- manifest는 번역 경로 2개를 포함한 114개 고유 URL이며 정렬된 경로와 마지막
+  newline 기준 SHA-256은
+  `bbbbbb4ecfd5f36589bbc77df8f49cd36835ba2f35f02a06ed5fff422aa1ec5a`이다.
+- homepage와 모든 게시물의 canonical 및 JSON-LD 구조·URL·작성자·언어를
+  검사하고, RSS 제목·설명·작성자·기본 언어 item 수를 검증한다.
+- 404 noindex와 Pagefind loader, sitemap의 모든 게시물 URL, robots sitemap,
+  기본 OG/Twitter 이미지, manifest, 새 공용 이미지와 legacy asset을 검사한다.
+
+남아 있는 기술 부채와 의도적인 운영 전용 요소:
+
+- `document.execCommand("copy")` deprecation hint 1개가 남아 있다. clipboard API
+  fallback이라 현재 동작에는 영향이 없지만 추후 교체 대상이다.
+- 개인 블로그에 프로젝트 Markdown이 없어 Astro glob loader가 빈 컬렉션 경고를
+  출력한다. `projects: false`와 on/off fixture build는 정상이며 오류가 아니다.
+- `/assets/img/...`, `/favicon.svg`와 `archive/migration/`은 기존 공개 URL 및
+  마이그레이션 기록 보존을 위한 개인 블로그 전용 요소다. 템플릿에는 포함하지
+  않는다.
+- 개인 블로그의 코드·콘텐츠 라이선스는 아직 정하지 않았다. 템플릿 공개 전
+  코드와 예제 asset 라이선스 선택이 수동 결정으로 남아 있다.
+
 ### 10단계: 깨끗한 템플릿 작업 트리 추출
 
 예상 커밋: 새 템플릿 저장소의 최초 커밋
@@ -527,8 +555,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **9단계: 개인 블로그 최종 회귀 검증**이다. 깨끗한 `npm ci` 환경에서
-전체 검사를 다시 실행하고 기준선의 114개 게시물 URL과 새 build URL manifest를
-비교한다. 설정 경계·공용 이미지·RSS·sitemap·검색·legacy asset·GitHub Pages
-workflow를 최종 확인한 뒤 템플릿 추출을 시작할 수 있는 개인 블로그 기준점을
-고정한다.
+다음 작업은 **10단계: 깨끗한 템플릿 작업 트리 추출**이다. 저장소 이름은 아직
+확정하지 않고 임시 로컬 디렉터리명을 사용한다. 현재 검증된 최신 작업 트리에서
+`.git`, `node_modules`, `dist`, `.astro`를 제외해 복사하고 새 Git 저장소로
+초기화한다. 개인 블로그의 콘텐츠·개인정보·legacy 전용 파일은 이어지는 템플릿
+예제화 단계에서 제거하며 기존 개인 블로그 이력은 복사하거나 재작성하지 않는다.
