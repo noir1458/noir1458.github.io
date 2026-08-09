@@ -14,8 +14,9 @@
 - 1단계 감사와 기준선 기록: 완료 (`f8bd297`)
 - 2단계 사용자 설정 파일과 공통 로더 추가: 완료 (`bd94595`)
 - 저장소 리팩터링 지침 기록: 완료 (`bfb5e98`)
-- 3단계 사이트·SEO·내비게이션 하드코딩 제거: 완료
-- 다음 작업: 4단계 프로필과 기능 설정 연결
+- 3단계 사이트·SEO·내비게이션 하드코딩 제거: 완료 (`775540e`)
+- 4단계 프로필과 기능 설정 연결: 완료
+- 다음 작업: 5단계 콘텐츠를 루트 사용자 영역으로 이동
 
 ## 1. 현재 기준선
 
@@ -316,10 +317,14 @@ YAML 파서는 transitive dependency에 기대지 않고 직접 dependency로 �
   About 페이지에서 렌더링한다.
 - 프로필 링크는 `social.yaml`과 중복되지 않도록 한 출처만 사용한다.
 - 실제로 안전하게 조건부 처리할 수 있는 기능만 `features.yaml`에 노출한다.
-- 우선 후보는 comments, table of contents, search UI, RSS 링크, projects이다.
+- comments, table of contents, search, RSS, sitemap, dark mode만 공개한다.
+- 아직 구현되지 않은 projects 플래그는 프로젝트 콘텐츠를 추가하는 6단계까지
+  공개 설정에서 제외한다.
 - 비활성화 시 링크만 숨고 깨진 페이지가 남는 식의 불일치를 만들지 않는다.
 
-검증: 각 공개 기능 플래그의 on/off build를 모두 실행.
+검증: 기본 on 상태와 모든 공개 기능을 off로 만든 임시 설정에서 production
+build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성되지 않고,
+테마 UI·목차·댓글도 렌더링되지 않는지 자동 검사한다.
 
 ### 5단계: 콘텐츠를 루트 사용자 영역으로 이동
 
@@ -328,7 +333,7 @@ YAML 파서는 transitive dependency에 기대지 않고 직접 dependency로 �
 - `src/content/posts/`를 `content/posts/`로 이동한다.
 - Content Collections glob, 이미지 glob, 새 글/번역/검증/마이그레이션 스크립트의
   경로를 함께 갱신한다.
-- 기존 114개 Markdown과 923개 게시물 이미지 파일을 보존한다.
+- 기존 114개 Markdown과 922개 로컬 이미지 참조를 보존한다.
 - frontmatter와 본문은 경로 갱신에 필요한 경우 외에는 수정하지 않는다.
 - 이동 전후의 `(lang, slug)` 집합과 생성 URL 집합을 자동 비교한다.
 
@@ -462,7 +467,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **4단계: 프로필과 기능 설정 연결**이다. `config/profile.md`의
-frontmatter와 Markdown 본문을 About 페이지에서 렌더링하고, `social.yaml`의 빈
-값을 자동으로 숨긴다. 이어서 공개한 기능 플래그가 실제 화면과 생성 경로에
-일관되게 적용되는지 on/off 양쪽 production build로 검증한다.
+다음 작업은 **5단계: 콘텐츠를 루트 사용자 영역으로 이동**이다.
+`src/content/posts/`를 `content/posts/`로 옮기되 Markdown 본문과 frontmatter는
+바꾸지 않는다. Content Collections와 글 작성·번역·검증 스크립트의 기준 경로를
+함께 갱신하고, 이동 전후 `(lang, slug)` 및 공개 URL 집합이 완전히 같은지
+검증한다.

@@ -16,6 +16,7 @@ import type { ProfileConfig, UserConfig } from "./types.ts";
 const DEFAULT_CONFIG_DIRECTORY = fileURLToPath(
   new URL("../../../config/", import.meta.url)
 );
+const CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE = "ASTRO_BLOG_CONFIG_DIR";
 
 export class SiteConfigError extends Error {
   constructor(message: string, options?: ErrorOptions) {
@@ -101,9 +102,16 @@ function loadProfile(configDirectory: string): ProfileConfig {
     throw new SiteConfigError(formatSchemaIssues(fileLabel, parsedData.error));
   }
 
+  const body = parsedMatter.content.trim();
+  if (!body) {
+    throw new SiteConfigError(
+      `${fileLabel}: body: must contain the About page introduction`
+    );
+  }
+
   return {
     data: parsedData.data,
-    body: parsedMatter.content.trim()
+    body
   };
 }
 
@@ -153,7 +161,9 @@ export function loadSiteConfig(
   options: LoadSiteConfigOptions = {}
 ): UserConfig {
   const configDirectory = path.resolve(
-    options.configDirectory ?? DEFAULT_CONFIG_DIRECTORY
+    options.configDirectory
+      ?? process.env[CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE]
+      ?? DEFAULT_CONFIG_DIRECTORY
   );
   const site = loadYaml(configDirectory, "site.yaml", siteFileSchema);
   const navigation = loadYaml(

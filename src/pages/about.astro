@@ -1,33 +1,71 @@
 ---
-import { getEntry } from "astro:content";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { PROFILE, SITE, SOCIAL } from "@/config";
 
-const about = await getEntry("pages", "about");
-
-if (!about) {
-  throw new Error("About page content was not found.");
+interface ProfileLink {
+  label: string;
+  href: string;
+  icon?: "github" | "linkedin";
+  external?: boolean;
 }
+
+const profileLinks: ProfileLink[] = [];
+if (SOCIAL.github) {
+  profileLinks.push({
+    label: "GitHub",
+    href: SOCIAL.github,
+    icon: "github",
+    external: true
+  });
+}
+if (SOCIAL.linkedin) {
+  profileLinks.push({
+    label: "LinkedIn",
+    href: SOCIAL.linkedin,
+    icon: "linkedin",
+    external: true
+  });
+}
+if (SOCIAL.email) {
+  profileLinks.push({
+    label: "Email",
+    href: `mailto:${SOCIAL.email}`
+  });
+}
+if (SOCIAL.resume) {
+  profileLinks.push({
+    label: "CV",
+    href: SOCIAL.resume,
+    external: true
+  });
+}
+
+const markdown = await createMarkdownProcessor({ syntaxHighlight: false });
+const { code: profileHtml } = await markdown.render(PROFILE.body, {
+  fileURL: new URL("../../config/profile.md", import.meta.url)
+});
 
 ---
 
 <BaseLayout
-  title={about.data.title}
-  description={about.data.description}
+  title={PROFILE.data.title}
+  description={PROFILE.data.subtitle ?? SITE.description}
   sidebar={false}
 >
   <header class="page-heading">
-    <span class="eyebrow">{about.data.eyebrow}</span>
-    <h1>{about.data.heading}</h1>
-    {about.data.lead && <p>{about.data.lead}</p>}
+    <span class="eyebrow">{PROFILE.data.eyebrow}</span>
+    <h1>{SITE.author.displayName}</h1>
+    <div class="profile-copy" set:html={profileHtml} />
     {
-      about.data.links.length > 0 && (
+      profileLinks.length > 0 && (
         <nav class="about-links" aria-label="Profile links">
-          {about.data.links.map((link) => (
+          {profileLinks.map((link) => (
             <a
               href={link.href}
               data-icon={link.icon}
-              target="_blank"
-              rel="noreferrer"
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
             >
               {link.label}
             </a>

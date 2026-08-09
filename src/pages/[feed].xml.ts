@@ -1,6 +1,10 @@
 import rss from "@astrojs/rss";
-import { SITE } from "@/config";
+import { FEATURES, SITE } from "@/config";
 import { getPublishedPosts, postDescription, postUrl } from "@/utils/content";
+
+export function getStaticPaths() {
+  return FEATURES.rss ? [{ params: { feed: "rss" } }] : [];
+}
 
 function escapeXml(value: string): string {
   return value.replace(/[&<>"']/gu, (character) => ({

@@ -20,7 +20,10 @@ function configFixture() {
 function replaceInFile(directory, filename, from, to) {
   const filePath = path.join(directory, filename);
   const source = fs.readFileSync(filePath, "utf8");
-  assert.ok(source.includes(from), `${filename} fixture did not contain ${from}`);
+  const containsPattern = typeof from === "string"
+    ? source.includes(from)
+    : from.test(source);
+  assert.ok(containsPattern, `${filename} fixture did not contain ${from}`);
   fs.writeFileSync(filePath, source.replace(from, to));
 }
 
@@ -82,5 +85,35 @@ test("broken YAML reports the configuration filename", () => {
     () => loadSiteConfig({ configDirectory: directory }),
     (error) => error instanceof SiteConfigError
       && /config\/features\.yaml:/u.test(error.message)
+  );
+});
+
+test("an empty profile body reports the configuration file", () => {
+  const directory = configFixture();
+  fs.writeFileSync(
+    path.join(directory, "profile.md"),
+    "---\ntitle: About\neyebrow: About\n---\n"
+  );
+
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) => error instanceof SiteConfigError
+      && /config\/profile\.md: body:/u.test(error.message)
+  );
+});
+
+test("comments require a complete Giscus configuration", () => {
+  const directory = configFixture();
+  replaceInFile(
+    directory,
+    "site.yaml",
+    /  giscus:\n(?:    .*\n?)+$/u,
+    "  giscus:\n"
+  );
+
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) => error instanceof SiteConfigError
+      && /comments: requires integrations\.giscus/u.test(error.message)
   );
 });

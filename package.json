@@ -20,7 +20,8 @@
     "check:translation": "node --test scripts/translation-safety.test.mjs",
     "check:content": "node scripts/check-content.mjs",
     "check:build": "node scripts/check-build.mjs",
-    "check": "npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build",
+    "check:features": "node scripts/check-feature-build.mjs",
+    "check": "npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build && npm run check:features",
     "publish": "node scripts/publish.mjs"
   },
   "dependencies": {
