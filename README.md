@@ -1,9 +1,8 @@
 # noir1458 Astro Blog
 
-`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 기존 Jekyll 블로그를
-마이그레이션한 뒤 현재 112개 논리 글과 번역을 포함한 114개 글 경로를 제공하며
-`/posts/<slug>/` 주소를 유지합니다. Markdown, 수식, 검색, 태그, 카테고리,
-아카이브와 Giscus 댓글을 지원합니다.
+`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 현재 112개 논리 글과
+번역을 포함한 114개 글 경로를 제공하며 `/posts/<slug>/` 주소를 유지합니다.
+Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을 지원합니다.
 
 > 사이트를 운영할 때 수정하는 영역은 `config/`, `content/`,
 > `public/images/` 세 곳뿐입니다.
@@ -24,7 +23,7 @@
 ## 주요 기능
 
 - Astro 정적 빌드와 GitHub Pages 자동 배포
-- 기존 Jekyll permalink를 보존한 Markdown 게시물
+- 안정적인 `/posts/<slug>/` 주소를 사용하는 Markdown 게시물
 - 카테고리, 태그, 아카이브, 페이지네이션과 Pagefind 검색
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
 - 한국어·영어·일본어 번역 경로와 `hreflang`
@@ -267,8 +266,8 @@ npm run check
 - 프로덕션 빌드와 Pagefind 색인
 - 생성된 내부 링크, 언어별 페이지와 상호 hreflang
 - canonical, html lang과 기본 Open Graph 이미지
-- RSS, sitemap, search, archive, 404와 기존 글 페이지
-- 개인 블로그 기준선의 legacy 게시물 URL 114개
+- RSS, sitemap, search, archive, 404와 게시물 페이지
+- 공개 게시물 URL 기준선 114개
 
 ## 배포
 
@@ -348,9 +347,7 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 - `src/pages/` — 정적 페이지와 동적 경로
 - `src/styles/global.css` — 디자인 토큰과 반응형 스타일
 - `scripts/` — 새 글·번역·검증·배포 안내
-- `archive/migration/` — 일회성 Jekyll 변환기와 당시 결과 기록
-- `tests/baselines/legacy-post-routes.txt` — 기존 게시물 URL 보존 기준선
-- `AGENT.md` — 구현·검증 계획과 유지보수 기준
+- `tests/baselines/published-post-routes.txt` — 공개 게시물 URL 보존 기준선
 
 ## 고급 사용자와 라이선스
 
@@ -358,6 +355,5 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 수정합니다. 일반적인 사이트 운영에는 해당 변경이 필요하지 않습니다.
 
 현재 개인 블로그 저장소의 코드와 콘텐츠에는 별도 재사용 라이선스가 지정되어
-있지 않습니다. 공개 템플릿 저장소를 추출할 때 코드·예제 asset에 적용할
-라이선스를 별도로 확정해야 하며, 이 개인 블로그의 실제 글과 이미지는 템플릿에
-포함하지 않습니다.
+있지 않습니다. 공개용 `astro_blog_template` 저장소는 MIT 라이선스를 사용하며,
+이 개인 블로그의 실제 글과 이미지는 템플릿에 포함하지 않습니다.
