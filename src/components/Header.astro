@@ -22,7 +22,7 @@ const headerLinks = NAVIGATION.header.filter(
     <a class="site-title" href="/">{SITE.title}</a>
     <div class="header-actions">
       <LanguageControls currentLanguage={language} translations={translations} />
-      <ThemeControls />
+      {FEATURES.darkMode && <ThemeControls />}
     </div>
   </div>
 
@@ -54,22 +54,24 @@ const headerLinks = NAVIGATION.header.filter(
         </a>
       ))}
     </nav>
-    <div class="search-shell" data-search-shell>
-      <form action="/search/" class="header-search" role="search">
-        <button
-          class="search-toggle icon-button"
-          data-search-toggle
-          type="button"
-          aria-expanded="false"
-          aria-label="Open search"
-        >
-          <Icon name="search" />
-        </button>
-        <div class="header-search-field">
-          <label class="sr-only" for="site-search">Search the blog</label>
-          <input id="site-search" name="q" placeholder="Search posts" type="search" />
-        </div>
-      </form>
-    </div>
+    {FEATURES.search && (
+      <div class="search-shell" data-search-shell>
+        <form action="/search/" class="header-search" role="search">
+          <button
+            class="search-toggle icon-button"
+            data-search-toggle
+            type="button"
+            aria-expanded="false"
+            aria-label="Open search"
+          >
+            <Icon name="search" />
+          </button>
+          <div class="header-search-field">
+            <label class="sr-only" for="site-search">Search the blog</label>
+            <input id="site-search" name="q" placeholder="Search posts" type="search" />
+          </div>
+        </form>
+      </div>
+    )}
   </div>
 </header>

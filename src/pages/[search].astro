@@ -1,7 +1,11 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { SUPPORTED_LANGUAGE_CODES } from "@/config";
+import { FEATURES, SUPPORTED_LANGUAGE_CODES } from "@/config";
 import { getAllPublishedPosts, postDescription, postUrl } from "@/utils/content";
+
+export function getStaticPaths() {
+  return FEATURES.search ? [{ params: { search: "search" } }] : [];
+}
 
 const fallbackPosts = (await getAllPublishedPosts()).map((post) => ({
   title: post.data.title,
