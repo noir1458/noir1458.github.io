@@ -21,7 +21,11 @@
 - 7단계 공용 이미지와 잔여 하드코딩 정리: 완료 (`f81766a`)
 - 8단계 배포와 사용자 문서 완성: 완료 (`66ea345`)
 - 9단계 개인 블로그 최종 회귀 검증: 완료
-- 다음 작업: 10단계 깨끗한 템플릿 작업 트리 추출
+- 10단계 깨끗한 템플릿 작업 트리 추출: 완료
+- 11단계 개인정보 제거와 예제화: 완료
+- 12단계 새 사용자 흐름 및 원격 저장소 검증: 완료 (`6e2f467`)
+- 템플릿 MIT 라이선스 선택·원격 반영 및 검증: 완료 (`c956875`)
+- 사이드바 카테고리 설정 분리 및 템플릿 동기화: 로컬 구현·검증 완료
 
 ## 1. 현재 기준선
 
@@ -410,8 +414,9 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 - About 화면이 `author.profileImage`를 실제로 렌더링하도록 연결했다.
 - 설정 로더에서 프로필·favicon·manifest·기본 OG 이미지의 파일 존재 여부를
   필드별 오류로 검증하고, 빌드 결과에서도 동일 asset을 확인한다.
-- 기존 `/assets/img/...`와 `/favicon.svg`는 공개 URL 호환용 사본으로 유지하고
-  해당 이유를 `public/assets/README.md`에 기록했다.
+- 기존 `/assets/img/...`와 `/favicon.svg`는 표준 `public/images/` 파일과 동일한
+  복사본이며 현재 코드·콘텐츠에서 참조되지 않음을 재확인했다. 사용자가 과거
+  공개 경로 호환이 필요하지 않다고 확인해 제거했다.
 - 일회성 Jekyll 변환기와 당시 보고서는 운영 스크립트에서 제거해
   `archive/migration/`으로 분류 3 보관했다. 현재 글 작성기가 사용하지 않던
   `template/index.md`는 제거했다.
@@ -446,8 +451,8 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
   `id-token: write`를 부여했다. build job은 `contents/pages: read`만 사용한다.
 - workflow YAML 구조, 세 이벤트, job 권한, 전체 검사 실행, PR deploy 차단,
   외부 Action 5개의 40자리 SHA 고정을 `npm run check:workflow`로 검증한다.
-- 개인 블로그에는 별도 라이선스가 없음을 명시하고, 템플릿 추출 단계에서 코드와
-  예제 asset의 라이선스를 수동 확정해야 할 항목으로 남겼다.
+- 개인 블로그에는 별도 라이선스가 없음을 명시했다. 추출한 템플릿의 코드와 예제
+  asset에는 MIT 라이선스를 적용했다.
 
 ### 9단계: 개인 블로그 최종 회귀 검증
 
@@ -481,11 +486,10 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
   fallback이라 현재 동작에는 영향이 없지만 추후 교체 대상이다.
 - 개인 블로그에 프로젝트 Markdown이 없어 Astro glob loader가 빈 컬렉션 경고를
   출력한다. `projects: false`와 on/off fixture build는 정상이며 오류가 아니다.
-- `/assets/img/...`, `/favicon.svg`와 `archive/migration/`은 기존 공개 URL 및
-  마이그레이션 기록 보존을 위한 개인 블로그 전용 요소다. 템플릿에는 포함하지
-  않는다.
-- 개인 블로그의 코드·콘텐츠 라이선스는 아직 정하지 않았다. 템플릿 공개 전
-  코드와 예제 asset 라이선스 선택이 수동 결정으로 남아 있다.
+- `archive/migration/`은 마이그레이션 기록 보존을 위한 개인 블로그 전용
+  요소다. 운영 코드에서는 실행되거나 참조되지 않으며 템플릿에는 포함하지 않는다.
+- 개인 블로그의 코드·콘텐츠 라이선스는 별도로 정하지 않았다. 독립 템플릿의
+  코드와 예제 asset에는 MIT 라이선스를 적용했다.
 
 ### 10단계: 깨끗한 템플릿 작업 트리 추출
 
@@ -499,7 +503,7 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 실행 결과:
 
-- 임시 경로 `/private/tmp/astro-blog-template.Z9ayfE`에 `.git`, `node_modules`,
+- 최종 경로 `/Users/noir1458/git/astro_blog_template`에 `.git`, `node_modules`,
   `dist`, `.astro`를 제외한 최신 작업 트리를 복사했다.
 - 복사 직후 원본과 checksum 비교 결과 콘텐츠 차이는 0건이었다.
 - `git init -b main`으로 개인 블로그와 무관한 새 이력을 만들었고, 기존 이력은
@@ -520,8 +524,8 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 - 실제 글 1,037개 파일과 개인 이미지, migration archive, legacy URL baseline을
   템플릿에서만 제거했다. 개인 블로그 원본에는 그대로 남아 있다.
-- 일반 예제 게시물 3개(공개 2, 초안 1), 프로젝트 2개와 직접 만든 SVG 및 일반
-  placeholder 이미지를 추가했다.
+- 일반 예제 게시물 3개(공개 2, 초안 1), 프로젝트 2개와 일반 예제 이미지를
+  추가했다. 프로필과 파비콘은 템플릿 전용으로 생성한 이미지다.
 - 사이트·작성자·내비게이션·소셜·integration을 일반 예제값으로 바꾸고 package
   이름을 `astro-personal-blog-template`로 변경했다.
 - 파일명과 PNG 등 바이너리를 포함한 95개 파일에서 실제 이름, `noir1458`, 개인
@@ -539,8 +543,8 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 - 새 게시물과 프로젝트 Markdown을 추가하고 이미지를 교체한 뒤 다시 build한다.
 - 이 과정에서 `astro.config.mjs`, `package.json`, `src/**/*.ts`,
   `src/**/*.astro`, workflow를 수정하지 않는다.
-- GitHub Pages 활성화의 수동 UI 단계와 GitHub Template Repository 활성화는
-  저장소 생성 후 사용자가 GitHub에서 수행할 작업으로 명확히 보고한다.
+- GitHub Pages 활성화의 수동 UI 단계와 GitHub Template Repository 활성화를
+  저장소 생성 후 각각 검증한다.
 
 실행 결과:
 
@@ -553,9 +557,14 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
   생성됐고 내부 링크 오류는 0개였다.
 - 기본 템플릿에서도 전체 검사가 성공했다. 공개 게시물 2개, 프로젝트 2개,
   HTML 16개, Pagefind 2페이지가 생성됐다.
-- 템플릿의 깨끗한 최초 커밋은 `d1785dd`이며 Git commit 수는 1개다.
-- 남은 수동 결정은 템플릿 저장소 이름과 라이선스다. 이후 GitHub 원격 저장소를
-  만들고 push한 뒤 Pages Source와 Template Repository 설정을 활성화해야 한다.
+- 템플릿은 `https://github.com/noir1458/astro_blog_template`에 게시했다.
+- 개인정보 이미지가 포함됐던 이전 루트는 교체했고, 현재 최초 커밋은
+  `6e2f467`이며 Git commit 수는 1개다. 이전 커밋을 가리키던 Actions 실행 기록도
+  삭제했다.
+- 새 최초 커밋의 GitHub Actions 전체 검사가 성공했다.
+- 저장소의 Template Repository 설정을 활성화했다. 원본 템플릿의 GitHub Pages는
+  의도적으로 비활성 상태이며, 템플릿 사용자가 만든 저장소에서 활성화한다.
+- 템플릿은 `Copyright (c) 2026 noir1458` 표기의 MIT 라이선스를 사용한다.
 
 ## 6. 주요 위험과 대응
 
@@ -594,8 +603,7 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-로컬 구현과 검증은 완료됐다. 다음 단계는 사용자가 **템플릿 저장소 이름과
-라이선스**를 정하는 것이다. 결정 후 임시 템플릿 디렉터리에 라이선스를 추가하고
-별도 GitHub 저장소를 생성·push한 다음, GitHub UI에서 Pages Source를 GitHub
-Actions로, 저장소를 Template Repository로 활성화한다. 원격 생성과 배포는 별도
-승인 전에는 실행하지 않는다.
+로컬 구현, 독립 저장소 생성, 원격 게시, GitHub Actions 검증과 Template
+Repository 활성화까지 완료됐다. 원본 템플릿의 Pages는 활성화하지 않는다.
+템플릿은 MIT 라이선스를 사용하며 `LICENSE`, README, package metadata에 같은
+정보를 반영했다.
