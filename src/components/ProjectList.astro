@@ -1,0 +1,59 @@
+---
+import Icon from "@/components/Icon.astro";
+import { projectUrl, type ProjectEntry } from "@/utils/projects";
+
+interface Props {
+  projects: ProjectEntry[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="project-grid" data-pagefind-ignore>
+  {projects.map((project) => (
+    <article class="project-card">
+      {project.data.image && (
+        <a
+          class="project-card-image"
+          href={projectUrl(project)}
+          aria-label={`View ${project.data.title}`}
+        >
+          <img src={project.data.image} alt="" loading="lazy" />
+        </a>
+      )}
+      <div class="project-card-copy">
+        {project.data.featured && <span class="project-featured">Featured</span>}
+        <h2><a href={projectUrl(project)}>{project.data.title}</a></h2>
+        <p>{project.data.description}</p>
+        {project.data.tags.length > 0 && (
+          <ul class="project-tags" aria-label="Technologies">
+            {project.data.tags.map((tag) => <li>{tag}</li>)}
+          </ul>
+        )}
+        <div class="project-actions">
+          <a href={projectUrl(project)}>
+            Details <Icon name="arrow-right" size={17} />
+          </a>
+          {project.data.repository && (
+            <a
+              href={project.data.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Repository
+            </a>
+          )}
+          {project.data.demo && (
+            <a
+              href={project.data.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Live demo
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  ))}
+</div>

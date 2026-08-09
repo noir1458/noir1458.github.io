@@ -2,9 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
+import { projectSchema } from "../src/lib/content/projectSchema.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "content/posts");
+const projectContentRoot = path.join(projectRoot, "content/projects");
 const supportedLanguages = [...SUPPORTED_LANGUAGE_CODES];
 const defaultLanguage = SITE.language;
 
@@ -21,6 +23,7 @@ const files = walk(contentRoot, (file) => file.endsWith(".md"));
 const errors = [];
 const entries = [];
 const routes = new Map();
+const projectRoutes = new Map();
 let imageReferences = 0;
 let mathPosts = 0;
 
@@ -146,11 +149,57 @@ for (const [translationKey, group] of groups) {
 }
 
 const translations = entries.length - groups.size;
+const projectFiles = walk(projectContentRoot, (file) => file.endsWith(".md"));
+let publishedProjects = 0;
+
+for (const file of projectFiles) {
+  const relative = path.relative(projectRoot, file);
+  const nestedPath = path.relative(projectContentRoot, file);
+  if (path.dirname(nestedPath) !== ".") {
+    errors.push(`${relative}: project Markdown files must be directly under content/projects`);
+  }
+
+  let parsed;
+  try {
+    parsed = matter(fs.readFileSync(file, "utf8"));
+  } catch (error) {
+    errors.push(`${relative}: invalid front matter (${error.message})`);
+    continue;
+  }
+
+  const result = projectSchema.safeParse(parsed.data);
+  if (!result.success) {
+    for (const issue of result.error.issues) {
+      const field = issue.path.length > 0 ? issue.path.join(".") : "<root>";
+      errors.push(`${relative}: ${field}: ${issue.message}`);
+    }
+    continue;
+  }
+
+  const slug = path.basename(file, ".md");
+  const existing = projectRoutes.get(slug);
+  if (existing) {
+    errors.push(`${relative}: duplicate project slug "${slug}" also used by ${existing}`);
+  } else {
+    projectRoutes.set(slug, relative);
+  }
+
+  if (!result.data.draft) publishedProjects += 1;
+  if (result.data.image) {
+    const imagePath = path.join(projectRoot, "public", result.data.image.slice(1));
+    if (!fs.existsSync(imagePath)) {
+      errors.push(`${relative}: missing project image ${result.data.image}`);
+    }
+  }
+}
+
 const result = {
   logicalPosts: groups.size,
   translations,
   contentEntries: entries.length,
   uniqueRoutes: routes.size,
+  projectEntries: projectFiles.length,
+  publishedProjects,
   mathPosts,
   imageReferences,
   errors

@@ -7,6 +7,9 @@ header:
     href: /tags/
   - label: Archives
     href: /archives/
+  - label: Projects
+    href: /projects/
+    requiresFeature: projects
   - label: About
     href: /about/
 

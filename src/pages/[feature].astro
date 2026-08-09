@@ -1,0 +1,17 @@
+---
+import ProjectIndexPage from "@/components/ProjectIndexPage.astro";
+import SearchPage from "@/components/SearchPage.astro";
+import { FEATURES } from "@/config";
+
+export function getStaticPaths() {
+  return [
+    ...(FEATURES.search ? [{ params: { feature: "search" } }] : []),
+    ...(FEATURES.projects ? [{ params: { feature: "projects" } }] : [])
+  ];
+}
+
+const { feature } = Astro.params;
+---
+
+{feature === "search" && <SearchPage />}
+{feature === "projects" && <ProjectIndexPage />}
