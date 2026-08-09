@@ -265,6 +265,7 @@ npm run check
 - 생성된 내부 링크, 언어별 페이지와 상호 hreflang
 - canonical, html lang과 기본 Open Graph 이미지
 - RSS, sitemap, search, archive, 404와 기존 글 페이지
+- 개인 블로그 기준선의 legacy 게시물 URL 114개
 
 ## 배포
 
@@ -344,8 +345,8 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 - `src/pages/` — 정적 페이지와 동적 경로
 - `src/styles/global.css` — 디자인 토큰과 반응형 스타일
 - `scripts/` — 새 글·번역·검증·배포 안내
-- `archive/unassigned-images/` — 글과 연결되지 않은 Jekyll 가져오기 이미지
 - `archive/migration/` — 일회성 Jekyll 변환기와 당시 결과 기록
+- `tests/baselines/legacy-post-routes.txt` — 기존 게시물 URL 보존 기준선
 - `AGENT.md` — 구현·검증 계획과 유지보수 기준
 
 ## 고급 사용자와 라이선스
