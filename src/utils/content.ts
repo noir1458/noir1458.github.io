@@ -1,11 +1,17 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import {
+  CATEGORY_SIDEBAR,
   LANGUAGES,
   SITE,
   SUPPORTED_LANGUAGE_CODES,
   type SupportedLanguage
 } from "@/config";
+import {
+  arrangeSidebarCategories,
+  type SidebarCategoryGroup,
+  slugifyTermValue
+} from "@/lib/content/sidebarCategories";
 
 export type PostEntry = CollectionEntry<"posts">;
 
@@ -140,14 +146,7 @@ export function formatDate(
 }
 
 export function slugifyTerm(term: string): string {
-  const slug = term
-    .normalize("NFKC")
-    .trim()
-    .toLocaleLowerCase("en-US")
-    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
-    .replace(/^-+|-+$/g, "");
-
-  return slug || "untitled";
+  return slugifyTermValue(term);
 }
 
 export function countTerms(
@@ -175,83 +174,11 @@ export function countTerms(
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, SITE.locale));
 }
 
-export interface CategorySourceGroup {
-  sourceFolder: string;
-  categories: Array<{ name: string; slug: string; count: number }>;
-}
-
-const sourceFolderCollator = new Intl.Collator(SITE.locale, {
-  numeric: true,
-  sensitivity: "base"
-});
-
-function postSourceFolders(post: PostEntry) {
-  const sourcePath = (post.filePath ?? post.id).replaceAll("\\", "/");
-  const parts = sourcePath.split("/").filter(Boolean);
-  const postsIndex = parts.lastIndexOf("posts");
-
-  if (postsIndex < 0 || parts.length < postsIndex + 4) return undefined;
-
-  return {
-    groupFolder: parts[postsIndex + 1],
-    categoryFolder: parts[postsIndex + 2]
-  };
-}
-
-/**
- * Groups visible categories by the first two source folders below `posts/`.
- *
- * Example: `posts/01.DEV/BOJ/some-post/index.md` becomes group `01.DEV`
- * and category `BOJ`. Only categories backed by published posts are returned.
- */
-export function groupCategoriesBySource(posts: PostEntry[]): CategorySourceGroup[] {
-  const categoryCounts = new Map<
-    string,
-    {
-      name: string;
-      count: number;
-      groupFolder: string;
-      categoryFolder: string;
-    }
-  >();
-
-  for (const post of posts) {
-    const source = postSourceFolders(post);
-    const seenInPost = new Set<string>();
-
-    for (const category of post.data.categories) {
-      const slug = slugifyTerm(category);
-      if (seenInPost.has(slug)) continue;
-      seenInPost.add(slug);
-
-      const current = categoryCounts.get(slug);
-      categoryCounts.set(slug, {
-        name: current?.name ?? category,
-        count: (current?.count ?? 0) + 1,
-        groupFolder: current?.groupFolder ?? source?.groupFolder ?? "99.Other",
-        categoryFolder: current?.categoryFolder ?? source?.categoryFolder ?? category
-      });
-    }
-  }
-
-  const groups = new Map<string, CategorySourceGroup["categories"]>();
-
-  for (const [slug, category] of categoryCounts) {
-    const group = groups.get(category.groupFolder) ?? [];
-    group.push({ name: category.name, slug, count: category.count });
-    groups.set(category.groupFolder, group);
-  }
-
-  return [...groups.entries()]
-    .sort(([a], [b]) => sourceFolderCollator.compare(a, b))
-    .map(([sourceFolder, categories]) => ({
-      sourceFolder,
-      categories: categories.sort((a, b) => {
-        const aFolder = categoryCounts.get(a.slug)?.categoryFolder ?? a.name;
-        const bFolder = categoryCounts.get(b.slug)?.categoryFolder ?? b.name;
-        return sourceFolderCollator.compare(aFolder, bFolder);
-      })
-    }));
+export function groupCategoriesForSidebar(posts: PostEntry[]): SidebarCategoryGroup[] {
+  return arrangeSidebarCategories(
+    countTerms(posts, "categories"),
+    CATEGORY_SIDEBAR
+  ).groups;
 }
 
 export function groupPostsByYear(posts: PostEntry[]) {
