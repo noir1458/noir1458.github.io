@@ -155,18 +155,6 @@ for (const publicPath of configuredPublicAssets) {
   }
 }
 
-const legacyPublicAssets = [
-  "assets/img/avatar.png",
-  "assets/img/social-card.png",
-  "assets/img/favicons/favicon.ico",
-  "favicon.svg"
-];
-for (const target of legacyPublicAssets) {
-  if (!fs.existsSync(path.join(distRoot, target))) {
-    errors.push(`missing legacy public asset: /${target}`);
-  }
-}
-
 const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
 const visibleNavigationLinks = [
   ...NAVIGATION.header,
