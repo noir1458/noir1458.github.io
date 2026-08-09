@@ -794,6 +794,25 @@ button {
   color: var(--text-soft);
 }
 
+.about-profile {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+}
+
+.about-profile-copy {
+  min-width: 0;
+}
+
+.profile-image {
+  width: 184px;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .profile-copy {
   max-width: 720px;
   margin-top: 13px;
@@ -1960,6 +1979,16 @@ button {
 
   .page-heading {
     padding-bottom: 22px;
+  }
+
+  .about-profile {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .profile-image {
+    width: 112px;
   }
 
   .post-row {

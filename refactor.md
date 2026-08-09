@@ -17,8 +17,9 @@
 - 3단계 사이트·SEO·내비게이션 하드코딩 제거: 완료 (`775540e`)
 - 4단계 프로필과 기능 설정 연결: 완료 (`237d8bb`)
 - 5단계 콘텐츠를 루트 사용자 영역으로 이동: 완료 (`7ef9a66`)
-- 6단계 프로젝트 콘텐츠 지원: 완료
-- 다음 작업: 7단계 공용 이미지와 잔여 하드코딩 정리
+- 6단계 프로젝트 콘텐츠 지원: 완료 (`d6555bf`)
+- 7단계 공용 이미지와 잔여 하드코딩 정리: 완료
+- 다음 작업: 8단계 배포와 사용자 문서 완성
 
 ## 1. 현재 기준선
 
@@ -56,7 +57,8 @@ npm run check
 - 내부 링크, canonical, hreflang, RSS, sitemap, 검색 인덱스 검사: 통과
 - production build: 성공
 
-README와 `reports/migration.json`에는 과거 마이그레이션 시점의 136개가 기록되어
+초기 README와 현재 `archive/migration/migration.json`에는 과거 마이그레이션
+시점의 136개가 기록되어
 있지만 현재 작업 트리에는 논리 게시물 112개가 있다. Git 기록에는
 `content: clean up personal blog posts`, `feat: organize categories by content groups`
 등의 의도적인 콘텐츠 정리 이력이 있다. 따라서 136개를 자동 복원하지 않고,
@@ -101,9 +103,10 @@ README의 오래된 개수 표기는 이후 문서 정리 단계에서 현재 �
 개인 LinkedIn 경로, CV 링크, 분석/검증/댓글 서비스 식별자가 개인정보 제거
 대상이다. 게시물 본문과 첨부 이미지는 템플릿 추출 단계에서 전부 제외한다.
 
-`SITE.repository`는 현재 선언만 있고 화면이나 빌드에서 사용되지 않는다.
-`public/assets/img/avatar.png`는 현재 렌더링되지 않는다. 공개 SVG 아이콘 두 개는
-About 링크 스타일에서 사용되므로 제거 대상이 아니다.
+초기 감사에서 `SITE.repository`는 선언만 있고 화면이나 빌드에서 사용되지 않아
+설정 일반화 과정에서 제거했다. 당시 렌더링되지 않던
+`public/assets/img/avatar.png`는 7단계에서 표준 프로필 경로로 복제해 About 화면에
+연결했다. 공개 SVG 아이콘 두 개는 About 링크 스타일에서 사용하므로 유지한다.
 
 ### 콘텐츠
 
@@ -398,6 +401,23 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 검증: 정적 asset 경로, favicon/manifest, OG 이미지, 전체 build.
 
+실행 결과:
+
+- 사용자가 교체하는 이미지를 `public/images/profile/`, `projects/`, `site/`로
+  분리하고 `config/site.yaml`의 표준 경로를 갱신했다.
+- About 화면이 `author.profileImage`를 실제로 렌더링하도록 연결했다.
+- 설정 로더에서 프로필·favicon·manifest·기본 OG 이미지의 파일 존재 여부를
+  필드별 오류로 검증하고, 빌드 결과에서도 동일 asset을 확인한다.
+- 기존 `/assets/img/...`와 `/favicon.svg`는 공개 URL 호환용 사본으로 유지하고
+  해당 이유를 `public/assets/README.md`에 기록했다.
+- 일회성 Jekyll 변환기와 당시 보고서는 운영 스크립트에서 제거해
+  `archive/migration/`으로 분류 3 보관했다. 현재 글 작성기가 사용하지 않던
+  `template/index.md`는 제거했다.
+- 내부 구현 51개 파일에서 설정에 들어 있는 사용자 식별값 12개를 검사했으며
+  하드코딩 위반은 0개였다. 이 검사를 `npm run check:config`에 포함했다.
+- 직접 의존성은 현재 Astro 설정, 페이지, 콘텐츠/설정 로더, 검사 명령에서 모두
+  사용 중이므로 제거하지 않았고 버전도 변경하지 않았다.
+
 ### 8단계: 배포와 문서 완성
 
 예상 커밋: `docs: document customization and harden pages workflow`
@@ -491,8 +511,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **7단계: 공용 이미지와 잔여 하드코딩 정리**이다. 현재 실제로
-사용되는 프로필·favicon·OG·manifest 이미지를 `public/images/`의 역할별 폴더로
-옮기고 설정 경로를 함께 갱신한다. 참조되지 않는 avatar와 migration 산출물은
-사용처와 Git 이력을 확인한 뒤 유지·보관·삭제를 결정하며, 역사적 URL 호환
-asset은 이름만 보고 제거하지 않는다.
+다음 작업은 **8단계: 배포와 사용자 문서 완성**이다. 사용자가 수정하는 영역을
+README 첫 부분에 명시하고 설정·콘텐츠·이미지·GitHub Pages·custom domain·오류
+해결·secret 관리 절차를 초보자 관점에서 정리한다. 현재 Pages workflow의 권한과
+이벤트를 감사한 뒤 push 배포와 pull request 검증을 분리하고, 내부 파일 수정이
+필요하지 않은 흐름을 전체 검사한다.

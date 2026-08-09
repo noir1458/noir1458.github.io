@@ -10,9 +10,12 @@ This folder is the user-facing source for site settings.
    article tables of contents, projects, and comments.
 5. Write the About page introduction in `profile.md`.
 
-Paths beginning with `/` refer to files or pages in this site. Place shared
-images in `public/images/` as the repository is generalized; post-specific
-images stay beside their Markdown files in `content/posts/`.
+Paths beginning with `/` refer to files or pages in this site. Replace the
+profile image in `public/images/profile/`, project images in
+`public/images/projects/`, and favicon or social-card images in
+`public/images/site/`. Keep the paths in `site.yaml` in sync with their files.
+The build reports the exact field when a configured image is missing.
+Post-specific images stay beside their Markdown files in `content/posts/`.
 
 Do not put API keys, access tokens, passwords, or other secrets in this folder.
 Analytics, site-verification, and Giscus identifiers are public browser

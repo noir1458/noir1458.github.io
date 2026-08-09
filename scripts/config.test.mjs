@@ -117,3 +117,19 @@ test("comments require a complete Giscus configuration", () => {
       && /comments: requires integrations\.giscus/u.test(error.message)
   );
 });
+
+test("a missing user-replaceable image reports its exact field", () => {
+  const directory = configFixture();
+  replaceInFile(
+    directory,
+    "site.yaml",
+    "/images/profile/profile.png",
+    "/images/profile/missing.png"
+  );
+
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) => error instanceof SiteConfigError
+      && /config\/site\.yaml: author\.profileImage: public asset does not exist/u.test(error.message)
+  );
+});
