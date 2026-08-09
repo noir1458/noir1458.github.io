@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SUPPORTED_LANGUAGE_CODES } from "@/config";
 import { getAllPublishedPosts, postDescription, postUrl } from "@/utils/content";
 
 const fallbackPosts = (await getAllPublishedPosts()).map((post) => ({
@@ -18,7 +19,12 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     <h1>Search</h1>
     <p>Search titles and article content.</p>
   </header>
-  <form class="search-page-form" data-search-page-form role="search">
+  <form
+    class="search-page-form"
+    data-search-page-form
+    data-supported-languages={SUPPORTED_LANGUAGE_CODES.join(",")}
+    role="search"
+  >
     <label class="sr-only" for="search-query">Search posts</label>
     <input id="search-query" name="q" type="search" placeholder="Type a keyword" autocomplete="off" />
     <button class="primary-button" type="submit">Search</button>
@@ -41,8 +47,6 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     set:html={fallbackSearchData}
   ></script>
   <script>
-    import { SUPPORTED_LANGUAGE_CODES } from "@/config";
-
     const form = document.querySelector<HTMLFormElement>("[data-search-page-form]");
     const input = document.querySelector<HTMLInputElement>("#search-query");
     const status = document.querySelector<HTMLElement>("[data-search-status]");
@@ -53,6 +57,9 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     const params = new URLSearchParams(location.search);
     const initialQuery = params.get("q") ?? "";
     const resultsPerPage = 6;
+    const supportedLanguageCodes = form?.dataset.supportedLanguages
+      ?.split(",")
+      .filter(Boolean) ?? [];
     let currentQuery = initialQuery;
     let currentPage = Math.max(1, Number(params.get("page")) || 1);
     let resultCount = 0;
@@ -209,7 +216,7 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
         const pagefindUrl = "/pagefind/pagefind.js";
         const pagefind = await import(/* @vite-ignore */ pagefindUrl);
         const responses = await Promise.allSettled(
-          SUPPORTED_LANGUAGE_CODES.map(async (language) => {
+          supportedLanguageCodes.map(async (language) => {
             const instance = pagefind.createInstance({ language });
             await instance.options({ excerptLength: 24 });
             return instance.search(normalizedQuery);

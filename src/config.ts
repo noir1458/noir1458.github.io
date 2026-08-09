@@ -1,37 +1,43 @@
-export const SUPPORTED_LANGUAGE_CODES = ["ko", "en", "ja"] as const;
+import { loadSiteConfig } from "./lib/config/index.ts";
 
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGE_CODES)[number];
+export const USER_CONFIG = loadSiteConfig();
 
-export const LANGUAGES: Record<
-  SupportedLanguage,
-  { label: string; locale: string; ogLocale: string; pathPrefix: string }
-> = {
-  ko: { label: "한국어", locale: "ko-KR", ogLocale: "ko_KR", pathPrefix: "" },
-  en: { label: "English", locale: "en-US", ogLocale: "en_US", pathPrefix: "/en" },
-  ja: { label: "日本語", locale: "ja-JP", ogLocale: "ja_JP", pathPrefix: "/ja" }
-};
+export const SUPPORTED_LANGUAGE_CODES = USER_CONFIG.supportedLanguageCodes;
+
+export type SupportedLanguage = string;
+
+export const LANGUAGES = USER_CONFIG.languages;
+export const NAVIGATION = USER_CONFIG.navigation;
+export const SOCIAL = USER_CONFIG.social;
+export const FEATURES = USER_CONFIG.features;
+export const PROFILE = USER_CONFIG.profile;
+
+const defaultLanguage = LANGUAGES[USER_CONFIG.site.language];
+
+if (!defaultLanguage) {
+  throw new Error(
+    `No language configuration found for ${USER_CONFIG.site.language}.`
+  );
+}
 
 export const SITE = {
-  title: "noir1458's blog",
-  description:
-    "Computer science, software, cybersecurity, cryptography, mathematics, problem solving, and personal notes.",
-  url: "https://noir1458.github.io",
-  locale: "ko-KR",
-  language: "ko" as SupportedLanguage,
-  timeZone: "Asia/Seoul",
-  socialImage: "/assets/img/social-card.png",
-  postsPerPage: 6,
+  title: USER_CONFIG.site.title,
+  description: USER_CONFIG.site.description,
+  url: USER_CONFIG.site.url,
+  locale: defaultLanguage.locale,
+  language: USER_CONFIG.site.language,
+  timeZone: USER_CONFIG.site.timeZone,
+  socialImage: USER_CONFIG.branding.defaultOgImage,
+  favicon: USER_CONFIG.branding.favicon,
+  manifestIcon: USER_CONFIG.branding.manifestIcon,
+  postsPerPage: USER_CONFIG.site.postsPerPage,
   author: {
-    name: "noir1458",
-    github: "https://github.com/noir1458"
+    name: USER_CONFIG.author.name,
+    displayName: USER_CONFIG.author.displayName,
+    profileImage: USER_CONFIG.author.profileImage,
+    url: USER_CONFIG.social.github
   },
-  repository: "https://github.com/noir1458/noir1458.github.io",
-  analyticsId: "G-DR2Z1J9NQ4",
-  googleVerification: "yLWIwMLKZv5QhvnUzTwIhY46AnghOhoCDKUSEM6Tsvk",
-  giscus: {
-    repo: "noir1458/noir1458.github.io",
-    repoId: "R_kgDOQj5fXQ",
-    category: "Announcements",
-    categoryId: "DIC_kwDOQj5fXc4Czey2"
-  }
+  analyticsId: USER_CONFIG.integrations.analyticsId,
+  googleVerification: USER_CONFIG.integrations.googleSiteVerification,
+  giscus: USER_CONFIG.integrations.giscus
 } as const;

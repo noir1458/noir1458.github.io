@@ -18,7 +18,7 @@ const schema = {
   author: {
     "@type": "Person",
     name: SITE.author.name,
-    url: SITE.author.github
+    ...(SITE.author.url ? { url: SITE.author.url } : {})
   }
 };
 ---

@@ -3,9 +3,10 @@ import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { SITE } from "./src/config.ts";
 
 export default defineConfig({
-  site: "https://noir1458.github.io",
+  site: SITE.url,
   output: "static",
   trailingSlash: "always",
   integrations: [
