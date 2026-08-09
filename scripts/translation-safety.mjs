@@ -50,9 +50,9 @@ function resolveSource(sourceArgument) {
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
     throw new Error("The source post must be inside this repository.");
   }
-  const contentRoot = path.join(projectRoot, "src/content/posts") + path.sep;
+  const contentRoot = path.join(projectRoot, "content/posts") + path.sep;
   if (!sourcePath.startsWith(contentRoot)) {
-    throw new Error("The translation source must be under src/content/posts.");
+    throw new Error("The translation source must be under content/posts.");
   }
   if (!fs.existsSync(sourcePath)) throw new Error(`Source post not found: ${relative}`);
   const source = parsePost(sourcePath);

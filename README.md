@@ -34,7 +34,7 @@ npm run dev
 npm run new
 ```
 
-질문에 답하면 `src/content/posts/<번호-큰분류>/<대표-category>/<slug>/` 아래에
+질문에 답하면 `content/posts/<번호-큰분류>/<대표-category>/<slug>/` 아래에
 한국어는 `index.md`, 영어는 `en.md`, 일본어는 `ja.md`로 생성됩니다.
 기존 카테고리는 해당 큰 분류를 자동으로 재사용하고, 새 카테고리일 때만
 큰 분류를 묻습니다. 번호 큰 분류와 그 안의 카테고리 폴더 순서가 우측
@@ -108,7 +108,7 @@ categories: blog
 사용해야 합니다.
 
 ```text
-src/content/posts/00.blog/blog/sample-post/
+content/posts/00.blog/blog/sample-post/
 ├── index.md  # 한국어, lang 생략 시 ko
 ├── en.md     # 영어, lang: en
 ├── ja.md     # 일본어, lang: ja
@@ -138,7 +138,7 @@ categories: blog
 글을 완성한 뒤 Codex에 다음처럼 요청합니다.
 
 > 이 글 블로그 번역 스크립트대로 번역해줘:
-> `src/content/posts/.../글-slug/ja.md`
+> `content/posts/.../글-slug/ja.md`
 
 Codex는 지정한 파일을 원문으로 보고 현재 폴더에 없는 나머지 두 언어 슬롯을
 바로 생성합니다. 예를 들어 `ja.md`로 시작했다면 `index.md`와 `en.md`를
@@ -155,8 +155,8 @@ Codex는 지정한 파일을 원문으로 보고 현재 폴더에 없는 나머�
 전달합니다.
 
 ```bash
-npm run translate:snapshot -- src/content/posts/.../ja.md
-npm run translate:verify -- src/content/posts/.../ja.md --source-hash <출력된 해시>
+npm run translate:snapshot -- content/posts/.../ja.md
+npm run translate:verify -- content/posts/.../ja.md --source-hash <출력된 해시>
 npm run check
 ```
 
@@ -209,7 +209,7 @@ git push origin main
 
 ## 주요 경로
 
-- `src/content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
+- `content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로

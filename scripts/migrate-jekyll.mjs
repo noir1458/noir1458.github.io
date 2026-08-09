@@ -13,7 +13,7 @@ const sourceRoot =
 const force = process.argv.includes("--force");
 
 const postsRoot = path.join(sourceRoot, "_posts");
-const outputRoot = path.join(projectRoot, "src/content/posts");
+const outputRoot = path.join(projectRoot, "content/posts");
 const publicRoot = path.join(projectRoot, "public");
 const reportRoot = path.join(projectRoot, "reports");
 
