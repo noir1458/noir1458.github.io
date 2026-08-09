@@ -1,11 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import matter from "gray-matter";
 import { FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
 const contentRoot = path.join(projectRoot, "content/posts");
+const legacyPostRoutesPath = path.join(
+  projectRoot,
+  "tests/baselines/legacy-post-routes.txt"
+);
 const siteOrigin = SITE.url;
 const defaultLanguage = SITE.language;
 
@@ -47,6 +52,23 @@ function findTag(html, tagName, attribute, value) {
     .find((tag) => tagAttribute(tag, attribute) === value);
 }
 
+function structuredData(html, label) {
+  const source = html.match(
+    /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/iu
+  )?.[1];
+  if (!source) {
+    errors.push(`${label}: missing JSON-LD`);
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(source);
+  } catch (error) {
+    errors.push(`${label}: invalid JSON-LD (${error.message})`);
+    return undefined;
+  }
+}
+
 function escapeXml(value) {
   return value.replace(/[&<>"']/gu, (character) => ({
     "&": "&amp;",
@@ -60,10 +82,26 @@ function escapeXml(value) {
 if (!fs.existsSync(distRoot)) {
   throw new Error("dist does not exist. Run npm run build first.");
 }
+if (!fs.existsSync(legacyPostRoutesPath)) {
+  throw new Error("legacy post route baseline is missing");
+}
 
 const htmlFiles = walk(distRoot, (file) => file.endsWith(".html"));
 const errors = [];
 const checked = new Set();
+const legacyPostRoutes = fs.readFileSync(legacyPostRoutesPath, "utf8")
+  .split("\n")
+  .map((route) => route.trim())
+  .filter(Boolean);
+const uniqueLegacyPostRoutes = new Set(legacyPostRoutes);
+if (uniqueLegacyPostRoutes.size !== legacyPostRoutes.length) {
+  errors.push("legacy post route baseline contains duplicates");
+}
+for (const route of legacyPostRoutes) {
+  if (!/^\/(?:[a-z][a-z0-9-]*\/)?posts\/[^/?#]+\/$/u.test(route)) {
+    errors.push(`legacy post route baseline contains an invalid route: ${route}`);
+  }
+}
 
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");
@@ -150,6 +188,23 @@ const expectedOgImage = new URL(SITE.socialImage, SITE.url).toString();
 if (!indexOgImage || tagAttribute(indexOgImage, "content") !== expectedOgImage) {
   errors.push(`index.html: expected default Open Graph image ${expectedOgImage}`);
 }
+const indexCanonicalTag = findTag(indexHtml, "link", "rel", "canonical");
+const expectedIndexCanonical = new URL("/", SITE.url).toString();
+if (tagAttribute(indexCanonicalTag ?? "", "href") !== expectedIndexCanonical) {
+  errors.push(`index.html: expected canonical ${expectedIndexCanonical}`);
+}
+const homeSchema = structuredData(indexHtml, "index.html");
+if (homeSchema) {
+  if (homeSchema["@type"] !== "WebSite") {
+    errors.push("index.html: JSON-LD must describe a WebSite");
+  }
+  if (homeSchema.name !== SITE.title || homeSchema.url !== SITE.url) {
+    errors.push("index.html: JSON-LD site identity does not match configuration");
+  }
+  if (homeSchema.author?.name !== SITE.author.name) {
+    errors.push("index.html: JSON-LD author does not match configuration");
+  }
+}
 
 if (indexHtml.includes("data-search-shell") !== FEATURES.search) {
   errors.push(`index.html: search UI does not match features.search=${FEATURES.search}`);
@@ -188,9 +243,31 @@ if (!FEATURES.sitemap && robots.includes("Sitemap:")) {
 
 if (FEATURES.rss) {
   const rssFeed = fs.readFileSync(path.join(distRoot, "rss.xml"), "utf8");
+  if (!rssFeed.includes(`<title>${escapeXml(SITE.title)}</title>`)) {
+    errors.push("rss.xml: configured title is missing");
+  }
+  if (!rssFeed.includes(`<description>${escapeXml(SITE.description)}</description>`)) {
+    errors.push("rss.xml: configured description is missing");
+  }
   if (!rssFeed.includes(`<dc:creator>${escapeXml(SITE.author.name)}</dc:creator>`)) {
     errors.push("rss.xml: configured author is missing");
   }
+  const expectedRssItems = walk(contentRoot, (file) => file.endsWith(".md"))
+    .map((file) => matter(fs.readFileSync(file, "utf8")).data)
+    .filter((data) => !data.draft && (data.lang ?? defaultLanguage) === defaultLanguage)
+    .length;
+  const rssItems = [...rssFeed.matchAll(/<item>/gu)].length;
+  if (rssItems !== expectedRssItems) {
+    errors.push(`rss.xml: expected ${expectedRssItems} items, found ${rssItems}`);
+  }
+}
+
+const notFoundHtml = fs.readFileSync(path.join(distRoot, "404.html"), "utf8");
+if (!notFoundHtml.includes('name="robots" content="noindex,follow"')) {
+  errors.push("404.html: missing noindex metadata");
+}
+if (fs.statSync(path.join(distRoot, "pagefind/pagefind.js")).size === 0) {
+  errors.push("pagefind/pagefind.js: search index loader is empty");
 }
 
 const aboutHtml = fs.readFileSync(path.join(distRoot, "about/index.html"), "utf8");
@@ -304,6 +381,24 @@ for (const entry of contentEntries) {
   if (!twitterImageTag || !tagAttribute(twitterImageTag, "content")) {
     errors.push(`${relativeOutput}: missing Twitter image`);
   }
+  const postSchema = structuredData(html, relativeOutput);
+  if (postSchema) {
+    if (postSchema["@type"] !== "BlogPosting") {
+      errors.push(`${relativeOutput}: JSON-LD must describe a BlogPosting`);
+    }
+    if (
+      postSchema.url !== expectedCanonical
+      || postSchema.mainEntityOfPage !== expectedCanonical
+    ) {
+      errors.push(`${relativeOutput}: JSON-LD URL does not match canonical`);
+    }
+    if (postSchema.author?.name !== SITE.author.name) {
+      errors.push(`${relativeOutput}: JSON-LD author does not match configuration`);
+    }
+    if (postSchema.inLanguage !== entry.lang) {
+      errors.push(`${relativeOutput}: JSON-LD language does not match ${entry.lang}`);
+    }
+  }
 
   const group = groups.get(entry.translationKey) ?? [];
   if (group.length > 1) {
@@ -338,6 +433,14 @@ for (const entry of contentEntries) {
 const generatedPostPages = walk(distRoot, (file) => (
   file.endsWith("/index.html") && /(?:^|\/)posts\//u.test(path.relative(distRoot, file))
 ));
+const generatedPostRoutes = new Set(generatedPostPages.map((file) => (
+  `/${path.relative(distRoot, file).replaceAll(path.sep, "/").replace(/index\.html$/u, "")}`
+)));
+for (const route of legacyPostRoutes) {
+  if (!generatedPostRoutes.has(route)) {
+    errors.push(`missing preserved legacy post route: ${route}`);
+  }
+}
 if (generatedPostPages.length !== contentEntries.length) {
   errors.push(
     `expected ${contentEntries.length} post pages, found ${generatedPostPages.length}`
@@ -352,6 +455,13 @@ console.log(
       postPages: generatedPostPages.length,
       multilingualPostPages,
       postDescriptions,
+      legacyPostRoutes: legacyPostRoutes.length,
+      preservedLegacyPostRoutes:
+        legacyPostRoutes.filter((route) => generatedPostRoutes.has(route)).length,
+      legacyPostRoutesSha256: crypto
+        .createHash("sha256")
+        .update(`${legacyPostRoutes.join("\n")}\n`)
+        .digest("hex"),
       checkedInternalLinks: checked.size,
       errors
     },
