@@ -67,7 +67,7 @@ try {
   const categoryDirectory = primaryCategory.replace(/[/\\]/g, "-");
   const sourceGroups = fs
     .readdirSync(contentRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && /^\\d+\\./u.test(entry.name))
+    .filter((entry) => entry.isDirectory() && /^\d+\./u.test(entry.name))
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
   const matchingGroups = sourceGroups.filter((group) =>
@@ -87,7 +87,7 @@ try {
     sourceGroup = sourceGroupInput || fallbackGroup;
   }
 
-  if (!sourceGroup || !/^\\d+\\.[^/\\\\]+$/u.test(sourceGroup)) {
+  if (!sourceGroup || !/^\d+\.[^/\\]+$/u.test(sourceGroup)) {
     throw new Error("Source group must look like 01.DEV and cannot contain slashes.");
   }
 
