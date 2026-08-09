@@ -2,7 +2,7 @@
 import type { PostEntry } from "@/utils/content";
 import { groupCategoriesBySource } from "@/utils/content";
 import Icon from "@/components/Icon.astro";
-import { SITE } from "@/config";
+import { FEATURES, NAVIGATION } from "@/config";
 
 interface Props {
   posts: PostEntry[];
@@ -10,6 +10,9 @@ interface Props {
 
 const { posts } = Astro.props;
 const categoryGroups = groupCategoriesBySource(posts);
+const sidebarLinks = NAVIGATION.sidebar.filter(
+  (link) => link.icon && (!link.requiresFeature || FEATURES[link.requiresFeature])
+);
 ---
 
 <button
@@ -25,32 +28,18 @@ const categoryGroups = groupCategoriesBySource(posts);
 <div class="sidebar-region" data-sidebar-region>
   <aside id="blog-sidebar" class="sidebar" data-sidebar aria-label="Blog navigation">
     <nav class="sidebar-links" aria-label="Quick links">
-      <a
-        class="sidebar-link icon-button"
-        href="/about/"
-        aria-label="Profile"
-        title="Profile"
-      >
-        <Icon name="user" />
-      </a>
-      <a
-        class="sidebar-link icon-button"
-        href={SITE.author.github}
-        rel="noopener noreferrer"
-        target="_blank"
-        aria-label="GitHub profile"
-        title="GitHub profile"
-      >
-        <Icon name="github" />
-      </a>
-      <a
-        class="sidebar-link icon-button"
-        href="/rss.xml"
-        aria-label="RSS feed"
-        title="RSS feed"
-      >
-        <Icon name="rss" />
-      </a>
+      {sidebarLinks.map((link) => (
+        <a
+          class="sidebar-link icon-button"
+          href={link.href}
+          rel={link.external ? "noopener noreferrer" : undefined}
+          target={link.external ? "_blank" : undefined}
+          aria-label={link.label}
+          title={link.label}
+        >
+          <Icon name={link.icon!} />
+        </a>
+      ))}
     </nav>
 
     <details class="sidebar-widget" open>

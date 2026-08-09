@@ -1,7 +1,7 @@
 ---
 import "katex/dist/katex.min.css";
 import "@/styles/global.css";
-import { LANGUAGES, SITE, type SupportedLanguage } from "@/config";
+import { FEATURES, LANGUAGES, SITE, type SupportedLanguage } from "@/config";
 import Header from "@/components/Header.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import Footer from "@/components/Footer.astro";
@@ -51,11 +51,15 @@ const xDefaultTranslation =
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#161719" media="(prefers-color-scheme: dark)" />
-    <meta name="google-site-verification" content={SITE.googleVerification} />
+    {SITE.googleVerification && (
+      <meta name="google-site-verification" content={SITE.googleVerification} />
+    )}
     {noindex && <meta name="robots" content="noindex,follow" />}
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
-    <link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon" />
+    {FEATURES.rss && (
+      <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    )}
+    <link rel="icon" href={SITE.favicon} />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={LANGUAGES[language].ogLocale} />
@@ -113,10 +117,10 @@ const xDefaultTranslation =
         (() => {
           if (!("serviceWorker" in navigator) || !("caches" in window)) return;
 
-          const reloadMarker = "noir1458-dev-cache-cleaned";
+          const reloadMarker = "astro-blog-dev-cache-cleaned";
           Promise.all([navigator.serviceWorker.getRegistrations(), caches.keys()])
             .then(async ([registrations, cacheNames]) => {
-              const blogCaches = cacheNames.filter((name) => name.startsWith("noir1458-blog-"));
+              const blogCaches = cacheNames;
               if (registrations.length === 0 && blogCaches.length === 0) {
                 sessionStorage.removeItem(reloadMarker);
                 return;
