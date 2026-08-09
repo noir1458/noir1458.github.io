@@ -7,9 +7,9 @@ import { FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
 const contentRoot = path.join(projectRoot, "content/posts");
-const legacyPostRoutesPath = path.join(
+const publishedPostRoutesPath = path.join(
   projectRoot,
-  "tests/baselines/legacy-post-routes.txt"
+  "tests/baselines/published-post-routes.txt"
 );
 const siteOrigin = SITE.url;
 const defaultLanguage = SITE.language;
@@ -82,24 +82,24 @@ function escapeXml(value) {
 if (!fs.existsSync(distRoot)) {
   throw new Error("dist does not exist. Run npm run build first.");
 }
-if (!fs.existsSync(legacyPostRoutesPath)) {
-  throw new Error("legacy post route baseline is missing");
+if (!fs.existsSync(publishedPostRoutesPath)) {
+  throw new Error("published post route baseline is missing");
 }
 
 const htmlFiles = walk(distRoot, (file) => file.endsWith(".html"));
 const errors = [];
 const checked = new Set();
-const legacyPostRoutes = fs.readFileSync(legacyPostRoutesPath, "utf8")
+const publishedPostRoutes = fs.readFileSync(publishedPostRoutesPath, "utf8")
   .split("\n")
   .map((route) => route.trim())
   .filter(Boolean);
-const uniqueLegacyPostRoutes = new Set(legacyPostRoutes);
-if (uniqueLegacyPostRoutes.size !== legacyPostRoutes.length) {
-  errors.push("legacy post route baseline contains duplicates");
+const uniquePublishedPostRoutes = new Set(publishedPostRoutes);
+if (uniquePublishedPostRoutes.size !== publishedPostRoutes.length) {
+  errors.push("published post route baseline contains duplicates");
 }
-for (const route of legacyPostRoutes) {
+for (const route of publishedPostRoutes) {
   if (!/^\/(?:[a-z][a-z0-9-]*\/)?posts\/[^/?#]+\/$/u.test(route)) {
-    errors.push(`legacy post route baseline contains an invalid route: ${route}`);
+    errors.push(`published post route baseline contains an invalid route: ${route}`);
   }
 }
 
@@ -424,9 +424,9 @@ const generatedPostPages = walk(distRoot, (file) => (
 const generatedPostRoutes = new Set(generatedPostPages.map((file) => (
   `/${path.relative(distRoot, file).replaceAll(path.sep, "/").replace(/index\.html$/u, "")}`
 )));
-for (const route of legacyPostRoutes) {
+for (const route of publishedPostRoutes) {
   if (!generatedPostRoutes.has(route)) {
-    errors.push(`missing preserved legacy post route: ${route}`);
+    errors.push(`missing required published post route: ${route}`);
   }
 }
 if (generatedPostPages.length !== contentEntries.length) {
@@ -443,12 +443,12 @@ console.log(
       postPages: generatedPostPages.length,
       multilingualPostPages,
       postDescriptions,
-      legacyPostRoutes: legacyPostRoutes.length,
-      preservedLegacyPostRoutes:
-        legacyPostRoutes.filter((route) => generatedPostRoutes.has(route)).length,
-      legacyPostRoutesSha256: crypto
+      requiredPublishedPostRoutes: publishedPostRoutes.length,
+      preservedPublishedPostRoutes:
+        publishedPostRoutes.filter((route) => generatedPostRoutes.has(route)).length,
+      publishedPostRoutesSha256: crypto
         .createHash("sha256")
-        .update(`${legacyPostRoutes.join("\n")}\n`)
+        .update(`${publishedPostRoutes.join("\n")}\n`)
         .digest("hex"),
       checkedInternalLinks: checked.size,
       errors
