@@ -497,6 +497,14 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 - 별도 디렉터리에서 `git init`으로 새 이력을 시작한다.
 - 이 단계가 현재 workspace 밖 쓰기를 요구하면 실행 전에 권한 승인을 받는다.
 
+실행 결과:
+
+- 임시 경로 `/private/tmp/astro-blog-template.Z9ayfE`에 `.git`, `node_modules`,
+  `dist`, `.astro`를 제외한 최신 작업 트리를 복사했다.
+- 복사 직후 원본과 checksum 비교 결과 콘텐츠 차이는 0건이었다.
+- `git init -b main`으로 개인 블로그와 무관한 새 이력을 만들었고, 기존 이력은
+  포함하거나 재작성하지 않았다.
+
 ### 11단계: 템플릿 개인정보 제거와 예제화
 
 - 실제 게시물과 게시물 이미지를 모두 제거한다.
@@ -508,6 +516,22 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
 
 검증: 개인정보 검색 결과 0건(허용된 LICENSE/credit 예외는 별도 기록), build 성공.
 
+실행 결과:
+
+- 실제 글 1,037개 파일과 개인 이미지, migration archive, legacy URL baseline을
+  템플릿에서만 제거했다. 개인 블로그 원본에는 그대로 남아 있다.
+- 일반 예제 게시물 3개(공개 2, 초안 1), 프로젝트 2개와 직접 만든 SVG 및 일반
+  placeholder 이미지를 추가했다.
+- 사이트·작성자·내비게이션·소셜·integration을 일반 예제값으로 바꾸고 package
+  이름을 `astro-personal-blog-template`로 변경했다.
+- 파일명과 PNG 등 바이너리를 포함한 95개 파일에서 실제 이름, `noir1458`, 개인
+  GitHub 식별자, Analytics/Search Console/Giscus ID를 검사해 위반 0건이었다.
+- 사용자 README, 실제 기본 화면 캡처, Pages workflow, 설정 오류 해결과 secret
+  안내를 포함했다.
+- 일반 GitHub Pages 저장소도 `site.url`의 `/repository-name` 경로만으로 동작하도록
+  base path를 자동 적용했다. 내부 URL 속성 50개와 RSS, sitemap, manifest를 별도
+  production build로 검증한다.
+
 ### 12단계: 새 사용자 흐름 검증
 
 - 깨끗한 임시 복사본에서 의존성을 설치하고 기본 build를 실행한다.
@@ -517,6 +541,21 @@ build를 실행한다. off 빌드에서는 검색·RSS·sitemap 경로가 생성
   `src/**/*.astro`, workflow를 수정하지 않는다.
 - GitHub Pages 활성화의 수동 UI 단계와 GitHub Template Repository 활성화는
   저장소 생성 후 사용자가 GitHub에서 수행할 작업으로 명확히 보고한다.
+
+실행 결과:
+
+- `/private/tmp/astro-blog-first-run.MREgO8`에 Git 이력과 build cache 없이 다시
+  복사하고 `npm ci`를 실행했다.
+- `config/`에서 사이트명·작성자·소개·메뉴를 바꾸고, `content/`에 게시물과
+  프로젝트를 하나씩 추가하고, `public/images/`의 프로필 이미지를 교체했다.
+- 내부 Astro/TypeScript, package, workflow 수정 없이 전체 `npm run check`가
+  성공했다. 공개 게시물 3개, 프로젝트 3개, HTML 20개, Pagefind 3페이지가
+  생성됐고 내부 링크 오류는 0개였다.
+- 기본 템플릿에서도 전체 검사가 성공했다. 공개 게시물 2개, 프로젝트 2개,
+  HTML 16개, Pagefind 2페이지가 생성됐다.
+- 템플릿의 깨끗한 최초 커밋은 `d1785dd`이며 Git commit 수는 1개다.
+- 남은 수동 결정은 템플릿 저장소 이름과 라이선스다. 이후 GitHub 원격 저장소를
+  만들고 push한 뒤 Pages Source와 Template Repository 설정을 활성화해야 한다.
 
 ## 6. 주요 위험과 대응
 
@@ -555,8 +594,8 @@ Node에서 읽는 설정과 Astro에서 읽는 설정이 서로 다른 파서를
 
 ## 7. 다음 실행 단계
 
-다음 작업은 **10단계: 깨끗한 템플릿 작업 트리 추출**이다. 저장소 이름은 아직
-확정하지 않고 임시 로컬 디렉터리명을 사용한다. 현재 검증된 최신 작업 트리에서
-`.git`, `node_modules`, `dist`, `.astro`를 제외해 복사하고 새 Git 저장소로
-초기화한다. 개인 블로그의 콘텐츠·개인정보·legacy 전용 파일은 이어지는 템플릿
-예제화 단계에서 제거하며 기존 개인 블로그 이력은 복사하거나 재작성하지 않는다.
+로컬 구현과 검증은 완료됐다. 다음 단계는 사용자가 **템플릿 저장소 이름과
+라이선스**를 정하는 것이다. 결정 후 임시 템플릿 디렉터리에 라이선스를 추가하고
+별도 GitHub 저장소를 생성·push한 다음, GitHub UI에서 Pages Source를 GitHub
+Actions로, 저장소를 Template Repository로 활성화한다. 원격 생성과 배포는 별도
+승인 전에는 실행하지 않는다.
