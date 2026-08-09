@@ -1,0 +1,35 @@
+header:
+  - label: Home
+    href: /
+  - label: Categories
+    href: /categories/
+  - label: Tags
+    href: /tags/
+  - label: Archives
+    href: /archives/
+  - label: About
+    href: /about/
+
+sidebar:
+  - label: Profile
+    href: /about/
+    icon: user
+  - label: GitHub profile
+    href: https://github.com/noir1458
+    icon: github
+    external: true
+  - label: RSS feed
+    href: /rss.xml
+    icon: rss
+    requiresFeature: rss
+
+footer:
+  - label: RSS
+    href: /rss.xml
+    requiresFeature: rss
+  - label: Sitemap
+    href: /sitemap-index.xml
+    requiresFeature: sitemap
+  - label: GitHub
+    href: https://github.com/noir1458
+    external: true
