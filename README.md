@@ -27,7 +27,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 - 카테고리, 태그, 아카이브, 페이지네이션과 Pagefind 검색
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
 - 한국어·영어·일본어 번역 경로와 `hreflang`
-- 다크 모드, 수식, 코드 하이라이팅, 목차와 Giscus 댓글
+- 다크 모드, 수식, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
 - 설정으로 노출을 제어하는 프로젝트 목록과 상세 페이지
 
 ## 기본 설정
@@ -39,7 +39,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 2. `config/navigation.yaml`: header, sidebar, footer 메뉴와 순서
 3. `config/categories.yaml`: 사이드바 카테고리 묶음, 순서, 숨김
 4. `config/social.yaml`: GitHub, LinkedIn, 이메일, 이력서 링크
-5. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, 프로젝트, 댓글
+5. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, Mermaid, 프로젝트, 댓글
 6. `config/profile.md`: About 제목과 소개 Markdown
 
 빈 선택 값은 화면에서 자동으로 숨겨집니다. 메뉴의 `requiresFeature`를 사용하면
@@ -64,6 +64,7 @@ math: false
 ```bash
 nvm use
 npm ci
+npx playwright install --only-shell chromium
 npm run dev
 ```
 
@@ -99,6 +100,18 @@ $$
 \int_0^1 x^2\,dx = \frac{1}{3}
 $$
 ```
+
+Mermaid는 별도 컴포넌트 없이 `mermaid` fenced code block으로 작성합니다.
+다이어그램이 먼저 표시되며 아래의 `Mermaid 소스 보기`를 열면 원문을 확인하고
+기존 Copy 버튼으로 복사할 수 있습니다.
+
+````md
+```mermaid
+flowchart LR
+    A --> B
+    B --> C
+```
+````
 
 글 전용 이미지는 언어 파일과 같은 글 폴더에 둡니다. 본문에서 처음 사용한
 로컬 이미지가 글 목록과 공유 메타데이터의 대표 이미지로 자동 선택됩니다.

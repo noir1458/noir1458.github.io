@@ -58,8 +58,8 @@ $$x = y_1, \qquad y = x_1 - \lfloor a/b \rfloor y_1$$
 ```mermaid
 flowchart TD
     A[입력 N, A] --> B[덧셈 역원 계산: N-A]
-    B --> C[egcd(A, N) 실행]
-    C --> D{gcd(A,N) == 1?}
+    B --> C["egcd(A, N) 실행"]
+    C --> D{"gcd(A,N) == 1?"}
     D -->|No| E[곱셈 역원 = -1]
     D -->|Yes| F[x를 구함]
     F --> G[x % N 으로 정규화]

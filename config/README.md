@@ -9,7 +9,7 @@ This folder is the user-facing source for site settings.
    omitted from both `groups` and `hidden` appear automatically in a final group.
 4. Edit `social.yaml` to add or remove profile links. Empty values are hidden.
 5. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
-   article tables of contents, projects, and comments.
+   article tables of contents, Mermaid diagrams, projects, and comments.
 6. Write the About page introduction in `profile.md`.
 
 Category values in `categories.yaml` use the URL slug shown after

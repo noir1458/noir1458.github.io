@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import rehypeMermaid from "rehype-mermaid";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const temporaryRoot = fs.mkdtempSync(
@@ -36,6 +37,7 @@ try {
       "sitemap: false",
       "darkMode: false",
       "tableOfContents: false",
+      "mermaid: false",
       "projects: false",
       "comments: false",
       ""
@@ -81,6 +83,8 @@ try {
   assert.equal(robots.includes("Sitemap:"), false);
   assert.equal(postHtml.includes('class="article-toc"'), false);
   assert.equal(postHtml.includes('class="comments"'), false);
+  assert.equal(postHtml.includes('class="mermaid-block"'), false);
+  assert.equal(postHtml.includes('data-language="mermaid"'), true);
 
   assert.equal(fs.existsSync(projectFixture), false, "feature fixture already exists");
   fs.writeFileSync(
@@ -100,6 +104,44 @@ try {
       "## Project overview",
       "",
       "This body verifies Markdown rendering.",
+      "",
+      "```mermaid",
+      "flowchart LR",
+      "    User --> Frontend",
+      "    Frontend --> API",
+      "    API --> Database",
+      "```",
+      "",
+      "```mermaid",
+      "sequenceDiagram",
+      "    Browser->>API: GET /user",
+      "    API->>DB: SELECT user",
+      "    DB-->>API: User",
+      "    API-->>Browser: JSON",
+      "```",
+      "",
+      "```mermaid",
+      "stateDiagram-v2",
+      "    [*] --> Ready",
+      "    Ready --> Running",
+      "    Running --> Finished",
+      "    Finished --> [*]",
+      "```",
+      "",
+      "```mermaid",
+      "erDiagram",
+      "    AUTHOR ||--o{ POST : writes",
+      "    AUTHOR {",
+      "        string id PK",
+      "    }",
+      "    POST {",
+      "        string slug PK",
+      "    }",
+      "```",
+      "",
+      "```python",
+      "print(\"ordinary code remains highlighted\")",
+      "```",
       ""
     ].join("\n")
   );
@@ -109,8 +151,9 @@ try {
       "search: false",
       "rss: false",
       "sitemap: false",
-      "darkMode: false",
+      "darkMode: true",
       "tableOfContents: false",
+      "mermaid: true",
       "projects: true",
       "comments: false",
       ""
@@ -151,6 +194,53 @@ try {
   assert.equal(projectHtml.includes("Project overview"), true);
   assert.equal(projectHtml.includes("https://github.com/example/project"), true);
   assert.equal(projectHtml.includes("https://example.com/project"), true);
+  assert.equal((projectHtml.match(/class="mermaid-block"/gu) ?? []).length, 4);
+  assert.equal((projectHtml.match(/class="mermaid-source"/gu) ?? []).length, 4);
+  assert.equal(projectHtml.includes("mermaid-diagram-light"), true);
+  assert.equal(projectHtml.includes("mermaid-diagram-dark"), true);
+  assert.equal(projectHtml.includes("flowchart LR"), true);
+  assert.equal(projectHtml.includes('data-language="python"'), true);
+  const darkMermaidSvgs = [...projectHtml.matchAll(
+    /src="(data:image\/svg\+xml,[^"]+)"[^>]*class="mermaid-diagram-image mermaid-diagram-dark"/gu
+  )].map((match) => (
+    decodeURIComponent(match[1].slice(match[1].indexOf(",") + 1))
+      .replaceAll("&#x27;", "'")
+      .replaceAll("&quot;", '"')
+      .replaceAll("&amp;", "&")
+  ));
+  const darkErSvg = darkMermaidSvgs.find((svg) => svg.includes("row-rect-odd"));
+  assert.ok(darkErSvg, "dark ER diagram was not generated");
+  assert.match(darkErSvg, /fill=["']#1e293b["']/u);
+  assert.match(darkErSvg, /fill=["']#172d59["']/u);
+  assert.equal(/96\.960784|#ffffff|#f2f2f2/iu.test(darkErSvg), false);
+
+  const invalidMermaidTree = {
+    type: "root",
+    children: [{
+      type: "element",
+      tagName: "pre",
+      properties: {},
+      children: [{
+        type: "element",
+        tagName: "code",
+        properties: { className: ["language-mermaid"] },
+        children: [{
+          type: "text",
+          value: "flowchart TD\n    A --> D{gcd(A,N) == 1?}\n"
+        }]
+      }]
+    }]
+  };
+  const invalidMermaidFile = {
+    message(reason) {
+      return new Error(String(reason));
+    }
+  };
+  const renderInvalidMermaid = rehypeMermaid({ strategy: "img-svg" });
+  await assert.rejects(
+    async () => renderInvalidMermaid(invalidMermaidTree, invalidMermaidFile),
+    /parse error/iu
+  );
 
   console.log(JSON.stringify({
     disabledFeatures: [
@@ -159,10 +249,12 @@ try {
       "sitemap",
       "darkMode",
       "tableOfContents",
+      "mermaid",
       "projects",
       "comments"
     ],
     enabledProjectRoutes: 2,
+    invalidMermaidRejected: true,
     generatedPostPages: postHtmlFiles.length,
     errors: []
   }, null, 2));

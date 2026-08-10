@@ -211,3 +211,14 @@ left|center|right
 | 1     |   2    |     3 |
 | 4     |   5    |     6 |
 | 7     |   8    |     9 |
+
+## Mermaid 다이어그램
+
+`mermaid` 코드 블록을 사용하면 다이어그램으로 렌더링된다. 다이어그램 아래의
+`Mermaid 소스 보기`를 누르면 원본 코드도 확인하고 복사할 수 있다.
+
+```mermaid
+flowchart LR
+    A[Markdown 작성] --> B[Astro 빌드]
+    B --> C[다이어그램 표시]
+```

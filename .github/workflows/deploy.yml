@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Mermaid renderer browser
+        run: npx playwright install --with-deps --only-shell chromium
+
       - name: Validate and build
         run: npm run check
 
