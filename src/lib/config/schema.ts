@@ -6,6 +6,7 @@ export const FEATURE_NAMES = [
   "sitemap",
   "darkMode",
   "tableOfContents",
+  "mermaid",
   "projects",
   "comments"
 ] as const;
@@ -145,6 +146,7 @@ export const featuresFileSchema = z.object({
   sitemap: z.boolean(),
   darkMode: z.boolean(),
   tableOfContents: z.boolean(),
+  mermaid: z.boolean(),
   projects: z.boolean(),
   comments: z.boolean()
 }).strict();
