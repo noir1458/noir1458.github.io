@@ -35,6 +35,12 @@ expect(
   build?.steps?.some((step) => step.run === "npm run check"),
   "build must run the complete local validation"
 );
+expect(
+  build?.steps?.some((step) => (
+    step.run === "npx playwright install --with-deps --only-shell chromium"
+  )),
+  "build must install the Chromium headless shell for Mermaid rendering"
+);
 expect(deploy?.needs === "build", "deploy must depend on build");
 expect(deploy?.permissions?.pages === "write", "deploy requires pages: write");
 expect(deploy?.permissions?.["id-token"] === "write", "deploy requires id-token: write");
