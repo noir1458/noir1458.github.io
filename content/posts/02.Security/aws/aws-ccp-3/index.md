@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP CLF-C02 — 03. Compute, Containers, Storage, Database'
+title: 'AWS CCP (CLF-C02) 03 — Compute, Storage & Database'
 slug: aws-ccp-3
-description: 'AWS 컴퓨팅, 컨테이너, 스토리지와 데이터베이스 서비스의 시험 핵심 정리'
+description: 'AWS 컴퓨팅, 컨테이너, 스토리지와 데이터베이스 서비스'
 publishedAt: '2026-08-10'
 tags:
   - AWS
