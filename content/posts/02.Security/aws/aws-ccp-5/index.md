@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP CLF-C02 — 05. Billing, Pricing, Support + Final Cram Sheet'
+title: 'AWS CCP (CLF-C02) 05 — Billing, Support & Final Review'
 slug: aws-ccp-5
-description: 'AWS 결제, 요금, 비용 관리, 지원 플랜과 시험 직전 최종 암기표 정리'
+description: 'AWS 결제, 요금, 비용 관리, 지원 플랜과 최종 암기표'
 publishedAt: '2026-08-10'
 tags:
   - AWS
