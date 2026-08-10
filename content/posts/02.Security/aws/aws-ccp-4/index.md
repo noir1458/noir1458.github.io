@@ -2,7 +2,7 @@
 title: 'AWS CCP (CLF-C02) 04 — Networking & Application Services'
 slug: aws-ccp-4
 description: 'AWS 네트워킹, 애플리케이션 통합, AI·ML과 분석 서비스'
-publishedAt: '2026-08-07'
+publishedAt: '2026-08-09'
 tags:
   - AWS
   - AWS CCP
