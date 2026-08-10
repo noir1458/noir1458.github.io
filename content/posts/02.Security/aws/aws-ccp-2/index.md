@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP CLF-C02 — 02. Security, Compliance, IAM, Auditing, Monitoring'
+title: 'AWS CCP (CLF-C02) 02 — Security & Compliance'
 slug: aws-ccp-2
-description: 'AWS 공동 책임 모델, IAM, 규정 준수, 감사와 모니터링 서비스 정리'
+description: 'AWS 공동 책임 모델, IAM, 규정 준수, 감사와 모니터링'
 publishedAt: '2026-08-10'
 tags:
   - AWS

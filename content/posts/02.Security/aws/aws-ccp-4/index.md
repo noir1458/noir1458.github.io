@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP CLF-C02 — 04. Networking, Application Integration, AI/ML, Analytics, Other Services'
+title: 'AWS CCP (CLF-C02) 04 — Networking & Application Services'
 slug: aws-ccp-4
-description: 'AWS 네트워킹, 애플리케이션 통합, AI·ML과 분석 서비스의 시험 핵심 정리'
+description: 'AWS 네트워킹, 애플리케이션 통합, AI·ML과 분석 서비스'
 publishedAt: '2026-08-10'
 tags:
   - AWS
