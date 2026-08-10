@@ -2,7 +2,7 @@
 title: 'AWS CCP (CLF-C02) 01 — Cloud Concepts'
 slug: aws-ccp-1
 description: 'AWS Cloud 개념, 글로벌 인프라, 아키텍처와 마이그레이션'
-publishedAt: '2026-08-10'
+publishedAt: '2026-08-06'
 tags:
   - AWS
   - AWS CCP
