@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP (CLF-C02) 03 — Compute, Storage & Database'
+title: 'AWS CCP (CLF-C02) 03 — Compute, Containers, Storage & Database'
 slug: aws-ccp-3
-description: 'AWS 컴퓨팅, 컨테이너, 스토리지와 데이터베이스 서비스'
+description: '컴퓨팅과 컨테이너, 객체·블록·파일 스토리지, 관계형·NoSQL·분석 데이터베이스'
 publishedAt: '2026-08-08'
 tags:
   - AWS
@@ -12,711 +12,461 @@ draft: false
 math: false
 ---
 
+# 03. Compute → Container → Storage → Database
 
-
-# 1. Compute 전체 지도
-
-```mermaid
-flowchart TD
-    C[Compute]
-    C --> EC2[EC2 - Virtual Server]
-    C --> L[Lambda - Serverless Function]
-    C --> EB[Elastic Beanstalk - App Platform]
-    C --> LS[Lightsail - Simplified VPS]
-    C --> B[AWS Batch - Batch Jobs]
-    C --> OUT[Outposts - AWS Infrastructure On-Prem]
-    C --> CON[Containers]
-    CON --> ECS[ECS]
-    CON --> EKS[EKS]
-    CON --> FG[Fargate]
-```
-
----
-
-# 2. Amazon EC2
-
-Elastic Compute Cloud.
-
-**가상 서버**를 임대하는 서비스.
-
-사용자가 선택:
-
-- Instance Type
-- vCPU/Memory
-- OS/AMI
-- Storage
-- Network
-- Region/AZ
-
-사용 사례:
-
-- Web Server
-- Application Server
-- Game Server
-- Self-managed DB
-- Container Host
-
-### 시험 키워드
-
-> “OS를 직접 제어해야 한다”  
-> “가상 머신이 필요하다”
-
-→ EC2
-
----
-
-# 3. AMI
-
-Amazon Machine Image.
-
-EC2 생성에 사용하는 이미지.
-
-포함 가능:
-
-- OS
-- Application
-- Library
-- Configuration
-
-```text
-Configured EC2
-     ↓
-Create AMI
-     ↓
-Same EC2 environment repeatedly launch
-```
-
----
-
-# 4. EC2 Storage — EBS vs Instance Store
-
-## EBS
-
-Elastic Block Store.
-
-EC2에 연결하는 **Persistent Block Storage**.
-
-특징:
-
-- Volume
-- Snapshot
-- EC2와 분리된 수명주기 가능
-- DB/OS Disk 등에 사용
-
-## Instance Store
-
-EC2 Host에 물리적으로 연결된 **Ephemeral Storage**.
-
-특징:
-
-- 매우 빠른 Local Storage
-- Instance stop/terminate 등에서 데이터 유지가 보장되지 않음
-- Temporary/Cache/Scratch Data에 적합
-
-### EBS vs Instance Store
-
-| EBS | Instance Store |
-|---|---|
-| Persistent | Ephemeral |
-| Network-attached block storage | Host-local storage |
-| Snapshot 가능 | 임시 데이터 용도 |
-| 일반 OS/DB Disk | Cache/Scratch |
-
----
-
-# 5. Auto Scaling
-
-수요에 따라 EC2 Instance 수를 자동 조절.
-
-```text
-CPU ↑ / Request ↑
-      ↓
-Scale Out
-
-수요 ↓
-      ↓
-Scale In
-```
-
-목적:
-
-- Elasticity
-- Availability
-- Cost Optimization
-
----
-
-# 6. Elastic Load Balancing (ELB)
-
-여러 Target으로 Traffic을 분산.
+> **시험 비중:** Domain 3 전체 34% 중 핵심 서비스 영역  
+> **풀이 원칙:** 구현 방법이 아니라 workload의 형태와 관리 책임을 보고 서비스를 고른다.
 
 ```mermaid
 flowchart LR
-    U[Users] --> ELB[ELB]
-    ELB --> A[EC2 A]
-    ELB --> B[EC2 B]
-    ELB --> C[EC2 C]
+    C[실행할 것] --> VM[VM<br/>EC2]
+    C --> FN[Function<br/>Lambda]
+    C --> CT[Container<br/>ECS/EKS + EC2/Fargate]
+    S[저장할 것] --> O[Object<br/>S3]
+    S --> B[Block<br/>EBS]
+    S --> F[File<br/>EFS/FSx]
+    D[데이터 모델] --> R[Relational<br/>RDS/Aurora]
+    D --> N[NoSQL<br/>DynamoDB]
+    D --> A[Analytics<br/>Redshift]
 ```
 
-대표 타입:
+## 1. Compute 선택 지도
 
-- ALB: HTTP/HTTPS, Layer 7
-- NLB: TCP/UDP/TLS, 고성능
-- GWLB: Virtual Network Appliance 통합
+| 요구 | 먼저 떠올릴 서비스 |
+|---|---|
+| OS를 직접 제어하는 범용 VM | Amazon EC2 |
+| 이벤트가 있을 때 코드 실행 | AWS Lambda |
+| Docker container 관리 | Amazon ECS |
+| Kubernetes | Amazon EKS |
+| 서버 노드 없이 container 실행 | AWS Fargate |
+| 소규모 웹사이트·WordPress를 단순하게 | Amazon Lightsail |
+| 코드 배포 중심의 관리형 앱 플랫폼 | AWS Elastic Beanstalk |
+| 대량 batch job | AWS Batch |
+| 고객 데이터센터에 AWS 인프라 배치 | AWS Outposts |
 
-CCP에서는 **“트래픽 분산/Healthy target으로 전달”** 정도가 핵심.
+## 2. Amazon EC2 — 제어권이 큰 가상 서버
 
----
+EC2(Elastic Compute Cloud)는 AWS에서 VM을 실행하는 서비스다.
 
-# 7. AWS Lambda
+고객이 선택·관리하는 대표 항목:
 
-Serverless Function Compute.
+- instance type(vCPU, memory, network 등)
+- AMI와 Guest OS
+- block storage
+- VPC, subnet, security group
+- 애플리케이션과 데이터
 
-- 서버 프로비저닝 불필요
-- Event-driven
-- 자동 확장
-- 실행량/시간 기준 과금
+**문제 단서:** “특정 OS 설치”, “관리자 권한 필요”, “오래 실행되는 범용 서버” → EC2
 
-예:
+### EC2 instance family의 목적
+
+시험에서는 구체적 이름보다 workload와 최적화 방향을 연결한다.
+
+| 유형 | 최적화 대상 | 예 |
+|---|---|---|
+| General purpose | compute·memory·network 균형 | 웹 서버, 일반 앱 |
+| Compute optimized | CPU 집약 | batch processing, 게임 서버 |
+| Memory optimized | 큰 memory | in-memory 분석, 큰 DB |
+| Storage optimized | 높은 local I/O | 대규모 데이터 처리 |
+| Accelerated computing | GPU·전용 가속기 | ML 학습, 그래픽 |
+
+### AMI
+
+Amazon Machine Image는 EC2를 시작하는 template이다. OS, 소프트웨어, 설정과 block device mapping 정보를 포함할 수 있다.
 
 ```text
-S3 Upload
-  ↓
-Lambda
-  ↓
-Thumbnail generation
+표준 EC2 구성 → AMI 생성 → 같은 구성의 EC2 반복 시작
 ```
 
-> “짧은 이벤트 기반 코드”, “서버 관리 없음” → Lambda
+AMI는 실행 중인 VM이 아니라 **VM을 만들기 위한 이미지**다.
 
----
+## 3. EC2 storage — EBS vs Instance Store
 
-# 8. Lightsail
+| Amazon Elastic Block Store(Amazon EBS) | Instance Store |
+|---|---|
+| network-attached block storage | EC2 host에 물리적으로 연결된 local block storage |
+| EC2와 분리된 수명 주기 가능 | instance 수명과 밀접한 임시 저장소 |
+| snapshot으로 S3에 백업 가능 | 영구 보관용이 아님 |
+| OS disk, DB volume | cache, buffer, scratch data |
 
-단순한 VPS 형태.
+> “EC2를 중지·종료한 뒤에도 보존해야 하는 disk” → EBS  
+> “손실되어도 되는 매우 빠른 임시 local data” → Instance Store
 
-서버, SSD, IP, Network 설정 등을 패키지 형태로 쉽게 제공.
+EBS volume과 EC2의 연결 가능 범위·유형은 세부 제약이 있으므로 CCP에서는 **persistent block vs ephemeral local**을 우선 기억한다.
 
-사용 사례:
+## 4. Elasticity와 Availability
 
-- 간단한 Website
-- WordPress
-- 개인 프로젝트
+### EC2 Auto Scaling
 
-> “AWS 초보자용 단순 VPS” → Lightsail
-
----
-
-# 9. Elastic Beanstalk
-
-Application을 배포하면 EC2/Load Balancing/Auto Scaling 등 환경 구성을 도와주는 **Managed Application Platform**.
-
-사용자는 코드에 더 집중.
-
-> “Web Application을 빠르게 배포하되 기반 EC2 환경도 사용” → Elastic Beanstalk
-
----
-
-# 10. AWS Batch
-
-Batch Computing Job을 실행/스케줄.
-
-예:
-
-- 대규모 계산
-- Batch Data Processing
-- Render/Scientific Job
-
----
-
-# 11. AWS Outposts
-
-AWS Infrastructure/Service 일부를 고객 On-Premises에 설치.
-
-> “AWS 경험을 Data Center 안에서도 사용” → Outposts
-
-Hybrid Cloud와 연결.
-
----
-
-# 12. Docker / Container — CCP에 필요한 만큼만
-
-## Container
-
-Application + Dependency를 묶은 실행 단위.
-
-VM과 달리 일반적으로 Host OS Kernel을 공유해 가볍다.
-
-## Docker
-
-Container Image를 만들고 실행·관리하는 대표적인 Container Platform.
-
-### CCP에서 중요한 연결
-
-- ECS = AWS-native Container Orchestration
-- EKS = Managed Kubernetes
-- Fargate = Serverless Container Compute
-- ECR = Container Image Registry
-
----
-
-# 13. Amazon ECS
-
-Elastic Container Service.
-
-AWS 자체 Container Orchestration.
-
-개념:
+수요 또는 정책에 따라 instance 수를 늘리고 줄이며, 원하는 수의 healthy instance를 유지한다.
 
 ```text
-Cluster
-  └─ Service
-      └─ Task
-          └─ Container
+수요 증가 → scale out
+수요 감소 → scale in
+비정상 instance → 교체
 ```
 
-> “AWS 방식으로 Container 관리” → ECS
+### Elastic Load Balancing(ELB)
 
----
-
-# 14. Amazon EKS
-
-Elastic Kubernetes Service.
-
-Managed Kubernetes.
-
-> “Kubernetes가 명시” → EKS
-
----
-
-# 15. AWS Fargate
-
-서버/EC2 Node를 직접 관리하지 않고 Container를 실행하는 Serverless Compute Engine.
-
-ECS/EKS와 함께 사용.
-
-### ECS vs Fargate
-
-- ECS = Container를 **어떻게 관리할지**
-- Fargate = Container를 **어디서 서버 관리 없이 실행할지**
-
----
-
-# 16. Amazon ECR
-
-Elastic Container Registry.
-
-Container Image 저장소.
-
-```text
-Build Image → ECR → ECS/EKS/Fargate
-```
-
----
-
-# 17. Storage 전체 지도
+여러 target으로 트래픽을 분산하고 health check 결과에 따라 healthy target으로 보낸다.
 
 ```mermaid
-flowchart TD
-    S[Storage]
-    S --> OBJ[Object]
-    OBJ --> S3[S3]
-    S --> BLOCK[Block]
-    BLOCK --> EBS[EBS]
-    S --> FILE[File]
-    FILE --> EFS[EFS]
-    FILE --> FSX[FSx]
-    S --> ARCH[Archive]
-    ARCH --> G[S3 Glacier Classes]
+flowchart LR
+    U[Users] --> E[Elastic Load Balancing]
+    E --> A[EC2 - AZ A]
+    E --> B[EC2 - AZ B]
 ```
 
----
+| 유형 | 대표 traffic | CCP 수준의 구별 |
+|---|---|---|
+| ALB | HTTP/HTTPS | Web application, path/host 기반 routing |
+| NLB | TCP/UDP/TLS | 매우 높은 성능, network 연결 |
+| GWLB | IP traffic | 가상 network appliance 배치 |
 
-# 18. Amazon S3
+**ELB는 분산**, **Auto Scaling은 수량 조절**이다. 둘을 함께 사용하지만 같은 기능은 아니다.
 
-Simple Storage Service.
+## 5. Serverless compute
 
-**Object Storage**.
+Serverless는 서버가 실제로 없다는 뜻이 아니다. 고객이 서버를 프로비저닝·패치·용량 관리하지 않고 **코드나 container workload에 집중**한다는 뜻이다.
 
-구성:
+### AWS Lambda
+
+- function 단위 코드 실행
+- event-driven
+- 자동 확장
+- 요청 수와 실행 시간·구성 자원 등을 기준으로 과금
+- 짧은 API 처리, 파일 변환, 자동화에 적합
+
+```text
+S3 object upload → Lambda → thumbnail 생성
+```
+
+### AWS Fargate
+
+- ECS 또는 EKS에서 사용할 수 있는 serverless container compute
+- EC2 worker node를 직접 프로비저닝·패치하지 않음
+- container image와 task/pod 자원 요구를 정의
+
+Fargate를 “Lambda의 container 버전”이라고 외우면 안 된다. Lambda는 **function 실행 모델**, Fargate는 **container 실행 용량**이다.
+
+### EC2 vs Lambda vs Fargate
+
+| EC2 | Lambda | Fargate |
+|---|---|---|
+| VM | function | container compute |
+| OS 제어·관리 | 서버 관리 없음 | 노드 관리 없음 |
+| 장기 실행·특수 OS | event-driven code | containerized app |
+| 가장 큰 제어권 | 가장 작은 실행 단위 | container 이식성 |
+
+## 6. Container 핵심
+
+### VM vs Container
+
+| VM | Container |
+|---|---|
+| 각 VM이 Guest OS 포함 | 보통 host OS kernel 공유 |
+| 무겁고 부팅이 상대적으로 느림 | 가볍고 시작이 빠름 |
+| 서로 다른 OS 전체 격리 | app와 dependency를 패키징 |
+
+- **Image**: container를 만들기 위한 읽기 전용 template
+- **Container**: image를 실행한 instance
+- **Registry**: image 저장소
+- **Docker**: image 생성·container 실행에 널리 쓰이는 플랫폼
+
+원본의 Xen 그림(`day3/image-1.png`)은 hypervisor 내부 구조 예시지만 CLF-C02에서는 이 정도 상세 구현을 암기할 필요가 없다.
+
+### ECR / ECS / EKS / Fargate
+
+```mermaid
+flowchart LR
+    I[Container Image] --> ECR[Amazon ECR]
+    ECR --> ECS[Amazon ECS]
+    ECR --> EKS[Amazon EKS]
+    ECS --> EC2[EC2 capacity]
+    ECS --> F[AWS Fargate]
+    EKS --> EC2
+    EKS --> F
+```
+
+| 서비스 | 역할 | 단서 |
+|---|---|---|
+| Amazon ECR | container image registry | image 저장·배포 |
+| Amazon ECS | AWS-native container orchestration | task, service, cluster |
+| Amazon EKS | managed Kubernetes | pod, Kubernetes |
+| AWS Fargate | serverless container compute | EC2 node 관리 없음 |
+
+```text
+ECS/EKS = container를 오케스트레이션하는 방법
+Fargate = 그 container를 서버 관리 없이 실행하는 용량
+```
+
+## 7. 기타 compute 서비스
+
+| 서비스 | 한 줄 설명 | 대표 상황 |
+|---|---|---|
+| Lightsail | VM·SSD·network 등을 단순한 bundle로 제공 | 개인 사이트, WordPress |
+| Elastic Beanstalk | 코드를 배포하면 EC2·Auto Scaling·ELB 환경 구성을 지원 | 전통 Web app의 빠른 배포 |
+| AWS Batch | 필요한 compute를 준비해 batch job 실행을 관리 | 대규모 계산·렌더링 |
+| AWS Outposts | AWS 인프라·서비스 일부를 고객 시설에 설치 | on-premises 저지연·local processing |
+
+## 8. Storage 선택 지도
+
+| 저장 방식 | 서비스 | 데이터 접근 방식 |
+|---|---|---|
+| Object | Amazon S3 | bucket/key, API |
+| Block | Amazon EBS | EC2의 disk volume |
+| Local block | Instance Store | host-local 임시 disk |
+| File | Amazon EFS | shared NFS |
+| Specialized file | Amazon FSx | Windows, Lustre, ONTAP, OpenZFS |
+| Hybrid storage | AWS Storage Gateway | on-premises와 AWS storage 연결 |
+
+## 9. Amazon S3 — object storage
+
+S3는 object를 bucket에 저장하는 고확장성 object storage다.
 
 ```text
 Bucket
- ├─ object1
- ├─ object2
- └─ object3
+ ├── images/cat.jpg  ← key
+ └── logs/app.log    ← object
 ```
 
-핵심:
+핵심 특성:
 
 - 사실상 매우 큰 확장성
-- 11 nines durability로 알려짐
-- Bucket/Object/Key
-- Versioning
-- Encryption
-- Lifecycle
-- Static files, Backup, Data Lake, Logs
+- 여러 AZ에 걸쳐 설계된 높은 내구성(일반 class 기준)
+- versioning, encryption, lifecycle
+- 정적 파일, backup, log, data lake
 
-> “Object / Bucket / Image / Backup / Static file” → S3
+“무제한 저장”이라는 표현은 **사실상 확장 가능한 서비스**라는 의미로 이해한다. 개별 object 크기 등 서비스 제한은 존재한다.
 
----
+### S3 storage classes와 Amazon S3 Glacier
 
-# 19. S3 Storage Classes
+| class | 접근 패턴 | 핵심 trade-off |
+|---|---|---|
+| S3 Standard | 자주 접근 | 기본 범용, 여러 AZ |
+| S3 Intelligent-Tiering | 패턴 예측 어려움 | 접근에 따라 tier 자동 이동, monitoring 비용 고려 |
+| S3 Standard-IA | 드물지만 즉시 필요 | 낮은 저장 비용, retrieval 비용·최소 기간 |
+| S3 One Zone-IA | 재생성 가능한 비중요 IA | 한 AZ, 더 저렴 |
+| Glacier Instant Retrieval | 거의 안 쓰지만 즉시 필요 | archive + millisecond access |
+| Glacier Flexible Retrieval | archive | retrieval에 분~시간 |
+| Glacier Deep Archive | 장기 보존 | 가장 느린 시간 단위 retrieval |
+| S3 Express One Zone | 매우 높은 성능·낮은 latency | 한 AZ의 고성능 object class |
 
-시험에서 **접근 빈도와 복구 시간**을 보고 선택한다.
+### Lifecycle policy
 
-| Class | 용도 |
-|---|---|
-| S3 Standard | 자주 접근, 일반 목적 |
-| Intelligent-Tiering | Access pattern을 예측하기 어려움 |
-| Standard-IA | 덜 자주 접근하지만 필요 시 빠르게 |
-| One Zone-IA | 한 AZ, 재생성 가능한 덜 중요한 IA Data |
-| Glacier Instant Retrieval | Archive지만 즉시 접근 요구 |
-| Glacier Flexible Retrieval | Archive, 분~시간 단위 Retrieval |
-| Glacier Deep Archive | 가장 장기 보관, Retrieval이 매우 느림 |
-| S3 Express One Zone | 한 AZ, 초저지연/고성능 Object Access |
-
-### Lifecycle
+시간이 지나며 덜 쓰는 데이터를 자동으로 저렴한 class로 이동하거나 만료한다.
 
 ```mermaid
 flowchart LR
-    A[S3 Standard] --> B[Standard-IA]
-    B --> C[Glacier Flexible]
-    C --> D[Deep Archive]
+    S[S3 Standard] --> IA[Standard-IA]
+    IA --> G[Glacier Flexible Retrieval]
+    G --> D[Deep Archive]
 ```
 
-> 오래될수록 더 저렴한 Class로 자동 전환 → **Lifecycle Policy**
+정확한 일수는 업무 요구와 각 class의 최소 보관 조건에 따라 정한다. 원본의 `30일 → 90일 → 365일`은 가능한 예시이지 고정 규칙이 아니다.
 
----
+## 10. File·hybrid·backup storage
 
-# 20. Amazon EFS
+### Amazon Elastic File System(Amazon EFS) vs Amazon FSx
 
-Elastic File System.
-
-Managed NFS File System.
-
-- 여러 Linux EC2가 동시 Mount
-- 자동 확장
-- File Storage
-- Multi-AZ 구성 가능
-
-> “여러 Linux Server가 같은 파일 공유” → EFS
-
----
-
-# 21. Amazon FSx
-
-관리형 특정 File System.
-
-대표:
-
-- FSx for Windows File Server → SMB/Windows
-- FSx for Lustre → HPC/고성능
-- FSx for NetApp ONTAP
-- FSx for OpenZFS
-
-### EFS vs FSx
-
-| EFS | FSx |
+| Amazon EFS | Amazon FSx |
 |---|---|
-| AWS Managed NFS | 특정 File System 구현 |
-| Linux 범용 공유 | Windows/Lustre/NetApp/OpenZFS |
+| managed NFS file system | 특정 file system의 managed service |
+| Linux workload의 공유 file | Windows SMB, Lustre HPC, NetApp ONTAP, OpenZFS |
+| 여러 compute에서 동시 mount | workload별 특화 기능 |
 
----
+### AWS Storage Gateway
 
-# 22. S3 Glacier
+On-Premises 애플리케이션이 표준 storage protocol을 사용하면서 AWS storage와 연결하도록 돕는 hybrid storage 서비스다.
 
-별도 “일반 Disk”가 아니라 S3의 Archive Storage 계층으로 이해하면 편하다.
+### AWS Backup
 
-용도:
+여러 AWS 서비스의 backup plan, 정책, 보존을 중앙 관리한다.
 
-- 장기 백업
-- 법률/금융 기록
-- 거의 접근하지 않는 데이터
+### AWS Elastic Disaster Recovery
 
----
+서버를 AWS에 지속 복제해 재해 시 복구하는 서비스다. **AWS Backup은 backup 중앙 관리**, **Elastic Disaster Recovery는 서버 수준 DR**에 초점이 있다.
 
-# 23. AWS Storage Gateway
+## 11. Database 선택 지도
 
-On-Premises 환경과 AWS Cloud Storage를 연결하는 Hybrid Storage.
-
-> “사내 File/Backup 환경을 AWS Storage와 연결” → Storage Gateway
-
----
-
-# 24. AWS Backup
-
-여러 AWS Service의 Backup을 중앙에서 관리.
-
-시험 키워드:
-
-- Centralized backup
-- Backup policy
-- Multiple services
-
----
-
-# 25. Storage 비교
-
-| 요구 | 서비스 |
-|---|---|
-| Object 저장 | S3 |
-| EC2 Block Disk | EBS |
-| EC2 Local temporary disk | Instance Store |
-| Linux Shared File | EFS |
-| Windows File Share | FSx for Windows |
-| HPC File System | FSx for Lustre |
-| 장기 Archive | S3 Glacier Class |
-| On-Prem ↔ Cloud Storage | Storage Gateway |
-| Backup 중앙 관리 | AWS Backup |
-
----
-
-# 26. Database 전체 지도
+먼저 데이터 모델과 사용 목적을 묻는다.
 
 ```mermaid
 flowchart TD
-    DB[Database]
-    DB --> REL[Relational]
-    REL --> RDS[RDS]
-    REL --> AUR[Aurora]
-    DB --> NOSQL[NoSQL]
-    NOSQL --> DDB[DynamoDB]
-    NOSQL --> DOC[DocumentDB]
-    NOSQL --> NEP[Neptune]
-    DB --> CACHE[Cache]
-    CACHE --> EC[ElastiCache]
-    DB --> DW[Analytics / Data Warehouse]
-    DW --> RS[Redshift]
+    Q[데이터 요구] --> R[관계·SQL<br/>RDS/Aurora]
+    Q --> N[Key-value/document<br/>DynamoDB]
+    Q --> C[메모리 cache<br/>ElastiCache]
+    Q --> W[Data warehouse<br/>Redshift]
+    Q --> D[Document<br/>DocumentDB]
+    Q --> G[Graph<br/>Neptune]
 ```
 
----
+### DB on EC2 vs managed database
 
-# 27. Amazon RDS
+| DB on EC2 | Managed DB |
+|---|---|
+| OS·DB 설치와 patch를 직접 제어 | provisioning·backup·patch 기능을 AWS가 더 많이 관리 |
+| 특수 설정·엔진 제어에 유리 | 운영 부담 감소 |
+| 고객 책임 범위가 큼 | 데이터·계정·접근 설정은 여전히 고객 책임 |
 
-Managed Relational Database.
+## 12. Amazon RDS와 Aurora
 
-지원 엔진 예:
+### Amazon RDS
 
-- MySQL
-- PostgreSQL
-- MariaDB
-- Oracle
-- SQL Server
-- Aurora
+MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, Db2 같은 관계형 엔진을 관리형으로 운영한다.
 
-AWS가 관리하는 대표 영역:
+- SQL, table, relation
+- 자동 backup 기능
+- Multi-AZ와 read replica 옵션
+- OS와 DB 인프라 관리 부담 감소
 
-- Provisioning
-- Patch 일부
-- Backup 기능
-- Monitoring 기반 기능
-- Failure recovery 기능
+### Amazon Aurora
+
+AWS가 설계한 MySQL/PostgreSQL-compatible managed relational database다. RDS 관리 인터페이스와 통합되지만 시험에서는 일반 RDS 엔진과 구별해 **AWS-native 고성능·고가용성 관계형 DB**로 기억한다.
 
 ### Multi-AZ vs Read Replica
 
-- **Multi-AZ** → High Availability / Failover
-- **Read Replica** → Read Scaling
+| Multi-AZ | Read Replica |
+|---|---|
+| 고가용성·failover | read scaling |
+| 장애 시 standby로 전환 | 읽기 요청 분산 |
+| 주목적은 가용성 | 주목적은 성능 확장 |
 
-이 구별은 매우 중요.
+**시험 예제:** “DB 장애 시 자동 failover” → Multi-AZ  
+“읽기 요청이 너무 많다” → Read Replica
 
----
+## 13. DynamoDB, ElastiCache, Redshift
 
-# 28. Amazon Aurora
+### Amazon DynamoDB
 
-AWS가 만든 MySQL/PostgreSQL compatible relational database.
+완전관리형 serverless NoSQL key-value/document database다.
 
-- RDS Family
-- 높은 성능/가용성
-- 분산 Storage Architecture
+- 매우 큰 scale과 낮은 latency
+- 자동 확장 옵션
+- game, mobile, shopping cart, session metadata
 
-> “AWS-native relational DB, MySQL/PostgreSQL compatible” → Aurora
+SQL join과 복잡한 관계가 핵심이면 RDS/Aurora를 먼저 생각한다.
 
----
+### Amazon ElastiCache
 
-# 29. Amazon DynamoDB
+Valkey, Memcached, Redis OSS 계열의 managed in-memory cache다.
 
-Fully managed NoSQL Key-Value/Document Database.
+```text
+App → cache hit → 빠른 응답
+   ↘ cache miss → DB 조회 → cache 저장
+```
 
-- Serverless style managed DB
-- 자동 확장
-- 낮은 latency
-- 대규모 Web/Mobile/Game/IoT
+DB 앞에서 반복 조회를 줄이고 응답 속도를 높인다. 영구 원본 DB와 같은 역할로 단정하지 않는다.
 
-> “NoSQL, Key-Value, 매우 큰 Scale” → DynamoDB
+### Amazon Redshift
 
----
+대규모 데이터를 **저장하고 분석**하는 data warehouse다.
 
-# 30. Amazon Redshift
+- columnar storage
+- SQL analytics
+- OLAP, BI, 과거 매출 분석
 
-Data Warehouse / Analytics.
-
-- Columnar
-- OLAP
-- 대규모 분석
-- SQL
+원본의 “데이터를 저장하는 목적이 아니다”는 부정확하다. 운영 transaction DB가 아니라 **분석용 저장·처리**가 목적이다.
 
 ### OLTP vs OLAP
 
 | OLTP | OLAP |
 |---|---|
-| 실시간 거래 | 분석 |
-| 주문/결제/로그인 | 과거 매출 분석 |
-| RDS/Aurora | Redshift |
+| 주문·결제·회원가입 같은 실시간 거래 | 과거 대량 데이터 분석 |
+| 짧은 읽기·쓰기 transaction | 복잡한 집계 query |
+| RDS, Aurora | Redshift |
 
----
+## 14. 목적별 database
 
-# 31. Amazon ElastiCache
+| 서비스 | 데이터 모델·역할 | 시험 단서 |
+|---|---|---|
+| Amazon DocumentDB | MongoDB-compatible document DB | JSON document, MongoDB workload |
+| Amazon Neptune | graph DB | node·edge·relationship, 추천·사기 관계 |
 
-In-memory Cache.
+원본 데이터베이스 이미지에는 Keyspaces, Timestream, QLDB, MemoryDB도 나오지만 현재 CLF-C02의 명시적 in-scope 목록에는 없다. 이미지 내용은 확인했으나 시험 직전 핵심 표에는 확대하지 않는다.
 
-대표 엔진:
+## 15. Database migration — DMS vs SCT
 
-- Redis 계열
-- Memcached
-
-용도:
-
-- Session
-- Frequently accessed data
-- DB Load 감소
-- 빠른 응답
-
-```text
-App → Cache Hit → 즉시 응답
-  ↘ Cache Miss → DB → Cache 저장
-```
-
----
-
-# 32. Amazon DocumentDB
-
-MongoDB-compatible Document Database.
-
-> “Document DB / MongoDB compatibility” → DocumentDB
-
----
-
-# 33. Amazon Neptune
-
-Graph Database.
-
-사용 사례:
-
-- Social graph
-- Recommendation relationship
-- Fraud relationship
-
-> “Node/Edge/Relationship” → Neptune
-
----
-
-# 34. Database Migration
-
-## AWS DMS
-
-Database Migration Service.
-
-DB 데이터를 AWS로 이동/복제.
-
-- Homogeneous migration
-- Heterogeneous migration
-- 최소 downtime migration에 활용
-
-## AWS SCT
-
-Schema Conversion Tool.
-
-DB Engine이 달라질 때 Schema/Code 변환 지원.
+| AWS DMS | AWS SCT |
+|---|---|
+| 데이터 이동·지속 복제 | 서로 다른 DB 엔진 간 schema·일부 code 변환 지원 |
+| homogeneous와 heterogeneous migration | heterogeneous migration에서 주로 사용 |
+| downtime 최소화에 활용 | 실제 데이터 이동 서비스가 아님 |
 
 ```text
 Oracle → PostgreSQL
-Schema conversion: SCT
-Data movement: DMS
+schema 변환: SCT
+data 이동:    DMS
 ```
 
----
+## 16. 문제 풀이 예제
 
-# 35. 핵심 비교표
+**상황:** “Kubernetes는 필요하지만 worker node를 관리하지 않는다.”  
+**정답:** Amazon EKS + AWS Fargate
 
-## EC2 vs Lambda vs Fargate
+**상황:** “여러 Linux EC2가 같은 파일 경로를 mount한다.”  
+**정답:** Amazon EFS
 
-| EC2 | Lambda | Fargate |
-|---|---|---|
-| VM | Function | Container Compute |
-| OS 관리 필요 | 서버 관리 없음 | 서버 관리 없음 |
-| 장시간/범용 | Event-driven | Container workload |
+**상황:** “접근 패턴을 예측할 수 없는 S3 데이터의 비용을 자동 최적화한다.”  
+**정답:** S3 Intelligent-Tiering
 
-## ECS vs EKS
+**상황:** “주문 DB 장애 시 자동으로 standby로 failover한다.”  
+**정답:** Amazon RDS Multi-AZ
 
-| ECS | EKS |
-|---|---|
-| AWS-native | Kubernetes |
-| 단순 | Kubernetes ecosystem |
-| AWS 중심 | K8s 표준 |
-
-## S3 vs EBS vs EFS
-
-| S3 | EBS | EFS |
-|---|---|---|
-| Object | Block | File |
-| Bucket/Object | EC2 Disk | Shared NFS |
-| Web/Backup/Data Lake | OS/DB Disk | 여러 Linux EC2 공유 |
-
-## RDS vs DynamoDB vs Redshift
-
-| RDS | DynamoDB | Redshift |
-|---|---|---|
-| Relational | NoSQL | Data Warehouse |
-| OLTP | Key-Value/Document | OLAP |
-| SQL | NoSQL API | SQL Analytics |
-
----
-
-# 36. 시험 직전 치트시트
-
-```text
-EC2       = Virtual Server
-AMI       = EC2 Image
-EBS       = Persistent Block Storage
-Instance Store = Temporary Local Block Storage
-Auto Scaling = EC2 자동 증감
-ELB       = Traffic 분산
-Lambda    = Serverless Function
-Lightsail = Simple VPS
-Beanstalk = Managed App Deployment
-Batch     = Batch Computing
-Outposts  = AWS Infrastructure On-Prem
-
-ECR       = Container Image Registry
-ECS       = AWS Container Orchestration
-EKS       = Managed Kubernetes
-Fargate   = Serverless Container Runtime
-
-S3        = Object
-EBS       = Block
-EFS       = Shared NFS
-FSx       = Managed specialized File Systems
-Glacier   = Archive
-Storage Gateway = Hybrid Storage
-AWS Backup= Central Backup
-
-RDS       = Managed Relational DB
-Aurora    = AWS-native MySQL/PostgreSQL-compatible Relational DB
-DynamoDB  = NoSQL
-Redshift  = Data Warehouse / OLAP
-ElastiCache = In-memory Cache
-DocumentDB  = MongoDB-compatible Document DB
-Neptune     = Graph DB
-DMS         = DB Data Migration
-SCT         = DB Schema Conversion
-```
-
----
+**상황:** “10년치 판매 데이터를 SQL로 집계한다.”  
+**정답:** Amazon Redshift
 
 ## References
 
-- CLF-C02 Domain 3:
-  https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html
-- In-scope services:
-  https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/clf-02-in-scope-services.html
+- [CLF-C02 Domain 3](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html)
+- [CLF-C02 In-Scope AWS Services](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/clf-02-in-scope-services.html)
+- 원본: `day2/3.1.md`~`day2/3.3.md`, `day3/3.5.md`, `day3/3.6.md` 및 참조 이미지
+
+---
+
+## 반드시 알아야 할 핵심 비교
+
+| 비교 | A | B | C |
+|---|---|---|---|
+| EC2 vs Lambda vs Fargate | VM | function | serverless container compute |
+| ECS vs EKS | AWS-native orchestration | managed Kubernetes | — |
+| ELB vs Auto Scaling | traffic 분산 | instance 수 조절 | — |
+| EBS vs Instance Store | persistent network block | ephemeral local block | — |
+| S3 vs EBS vs EFS | object | block | shared file |
+| EFS vs FSx | 범용 managed NFS | 특화 file system | — |
+| RDS/Aurora vs DynamoDB | relational SQL | NoSQL key-value/document | — |
+| Multi-AZ vs Read Replica | availability/failover | read scaling | — |
+| RDS vs Redshift | OLTP | OLAP/data warehouse | — |
+| DMS vs SCT | data 이동 | schema 변환 | — |
+
+## 시험에서 헷갈리는 서비스
+
+| 요구 | 정답 | 헷갈리는 서비스 |
+|---|---|---|
+| container image 저장 | ECR | ECS는 실행 관리 |
+| 서버 없이 container 실행 | Fargate | Lambda는 function |
+| 단순한 VPS bundle | Lightsail | EC2는 더 세밀한 제어 |
+| Windows file share | FSx for Windows | EFS는 NFS |
+| 중앙 backup 정책 | AWS Backup | Elastic Disaster Recovery는 server DR |
+| in-memory cache | ElastiCache | DynamoDB는 NoSQL DB |
+| MongoDB 호환 | DocumentDB | DynamoDB는 AWS-native NoSQL |
+| 관계 분석 | Neptune | Redshift는 warehouse |
+
+## 최종 암기표
+
+| 키워드 | 한 줄 암기 |
+|---|---|
+| EC2 / AMI | VM / VM template |
+| Auto Scaling / ELB | 수량 / 분산 |
+| Lambda | event-driven function |
+| ECR / ECS / EKS / Fargate | image / AWS container / Kubernetes / serverless capacity |
+| S3 / EBS / EFS | object / block / file |
+| Instance Store | 임시 local block |
+| Glacier | archive class |
+| Lifecycle | class 이동·만료 자동화 |
+| RDS / Aurora | managed relational / AWS-native compatible relational |
+| DynamoDB | serverless NoSQL |
+| ElastiCache | in-memory cache |
+| Redshift | OLAP data warehouse |
+| DocumentDB / Neptune | document / graph |
+| DMS / SCT | data / schema |

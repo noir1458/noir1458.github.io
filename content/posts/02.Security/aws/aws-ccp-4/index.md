@@ -1,7 +1,7 @@
 ---
-title: 'AWS CCP (CLF-C02) 04 — Networking & Application Services'
+title: 'AWS CCP (CLF-C02) 04 — Networking, Integration & Other Services'
 slug: aws-ccp-4
-description: 'AWS 네트워킹, 애플리케이션 통합, AI·ML과 분석 서비스'
+description: 'VPC와 글로벌 네트워크, 애플리케이션 통합, 배포·운영, AI·ML과 분석 서비스'
 publishedAt: '2026-08-09'
 tags:
   - AWS
@@ -12,677 +12,382 @@ draft: false
 math: false
 ---
 
+# 04. Networking → Connectivity → Integration → Other Services
 
+> **Domain 3 핵심:** 서비스의 세부 설정이 아니라 **무슨 문제를 해결하는지** 구별한다.
 
-# 1. VPC 전체 구조
+## 1. VPC 전체 그림
 
 ```mermaid
 flowchart TD
-    Internet((Internet))
-    R53[Route 53]
-    CF[CloudFront]
-    IGW[Internet Gateway]
-    VPC[VPC]
-    PUB[Public Subnet]
-    NAT[NAT Gateway]
-    PRIV[Private Subnet]
-    WEB[EC2 / ALB]
-    DB[RDS / App]
-
-    Internet --> R53 --> CF --> IGW --> VPC
-    VPC --> PUB
-    PUB --> WEB
-    PUB --> NAT
-    NAT --> PRIV
-    PRIV --> DB
+    I((Internet)) --> R53[Route 53<br/>DNS]
+    I --> CF[CloudFront<br/>CDN]
+    I <--> IGW[Internet Gateway]
+    IGW <--> PUB[Public Subnet<br/>ALB / public EC2]
+    PRIV[Private Subnet<br/>App / DB] -->|outbound| NAT[NAT Gateway<br/>in public subnet]
+    NAT --> IGW
+    RT[Route Tables] -.경로 결정.-> PUB
+    RT -.경로 결정.-> PRIV
+    SG[Security Groups] -.resource traffic.-> PUB
+    SG -.resource traffic.-> PRIV
+    NACL[Network ACL] -.subnet traffic.-> PUB
+    NACL -.subnet traffic.-> PRIV
 ```
 
-이 그림에서 시험에 필요한 것은 각 구성 요소의 **역할**이다.
+이 그림은 역할 관계를 보여 줄 뿐 모든 요청이 Route 53 → CloudFront → IGW 순서로 지나야 한다는 뜻은 아니다.
 
----
+## 2. Amazon VPC와 Subnet
 
-# 2. Amazon VPC
+### Amazon VPC
 
-Virtual Private Cloud.
+AWS 계정에 만드는 논리적으로 격리된 가상 네트워크다.
 
-AWS 안에 만드는 논리적으로 격리된 Network.
+- CIDR IP 범위
+- subnet
+- route table
+- gateway
+- security group과 network ACL
 
-설정 요소:
+### Subnet
 
-- CIDR
-- Subnet
-- Route Table
-- Internet Gateway
-- NAT Gateway
-- Security Group
-- Network ACL
+VPC의 IP 범위를 나눈 network segment이며 **하나의 Availability Zone에 속한다.**
 
-> “AWS 안의 사설 네트워크” → VPC
+| Public subnet | Private subnet |
+|---|---|
+| route table에 Internet Gateway 경로가 있음 | Internet Gateway로 직접 향하는 경로가 없음 |
+| public address 등 조건을 갖춘 resource가 인터넷 통신 가능 | 필요하면 NAT Gateway를 통해 outbound 인터넷 사용 |
+| internet-facing ALB, NAT Gateway | app server, DB, cache |
 
----
+Public subnet에 있다는 사실만으로 resource가 자동으로 인터넷에 노출되지는 않는다. **route, public IP/address, security rule** 등 조건이 함께 필요하다.
 
-# 3. Subnet
+## 3. Route Table, IGW, NAT Gateway
 
-VPC의 IP 범위를 나눈 Network Segment.
+### Route Table
 
-## Public Subnet
-
-Internet Gateway로 향하는 Route가 있고, Public IP 등 필요한 조건을 갖춘 Resource가 Internet과 통신할 수 있는 Subnet.
-
-대표:
-
-- Public ALB
-- Bastion
-- NAT Gateway
-- Internet-facing Web Resource
-
-## Private Subnet
-
-Internet에서 직접 들어오는 경로를 두지 않는 Subnet.
-
-대표:
-
-- Database
-- Internal App
-- Cache
-
-> 단순히 “Public Subnet = 무조건 Internet 가능”이라고 외우기보다 **Route Table + IGW + Resource의 Public Address 조건**이 필요하다는 감각을 가진다.
-
----
-
-# 4. Route Table
-
-Traffic이 어느 Target으로 갈지 결정.
-
-예:
+목적지 traffic을 어느 target으로 보낼지 결정한다.
 
 ```text
-0.0.0.0/0 → Internet Gateway
+Public subnet:  0.0.0.0/0 → Internet Gateway
+Private subnet: 0.0.0.0/0 → NAT Gateway
 ```
 
-또는 Private Subnet outbound:
+### Internet Gateway(IGW)
+
+VPC와 인터넷 간 통신을 지원하는 gateway다. Public IPv4/IPv6 주소와 route·보안 설정 같은 조건도 필요하다.
+
+### NAT Gateway
+
+Private subnet의 resource가 인터넷으로 outbound 연결을 시작하도록 한다.
 
 ```text
-0.0.0.0/0 → NAT Gateway
+Private EC2 → NAT Gateway(public subnet) → IGW → Internet
 ```
 
----
+Internet 사용자가 NAT Gateway를 통해 private EC2에 임의의 연결을 시작하게 만드는 용도가 아니다.
 
-# 5. Internet Gateway
-
-VPC와 Internet 간 연결 Gateway.
-
-> Public Internet 연결 → IGW
-
----
-
-# 6. NAT Gateway
-
-Private Subnet Resource가 Internet으로 **Outbound** 연결할 수 있도록 한다.
-
-대표:
-
-```text
-Private EC2 → NAT Gateway → Internet
-```
-
-Internet에서 NAT Gateway를 통해 Private EC2로 임의의 Inbound 연결을 시작하는 용도가 아니다.
-
-> “Private Subnet에서 패키지 Update/외부 API 호출” → NAT Gateway
-
----
-
-# 7. Security Group vs Network ACL
+## 4. Security Group vs Network ACL
 
 | Security Group | Network ACL |
 |---|---|
-| Resource/ENI Level | Subnet Level |
-| Stateful | Stateless |
-| Allow Rules | Allow + Deny Rules |
-| Return Traffic 자동 허용 | Inbound/Outbound 각각 평가 |
-
-### 암기
+| resource/network interface 수준 | subnet 수준 |
+| stateful | stateless |
+| allow rule | allow와 deny rule |
+| 허용된 요청의 응답 traffic 자동 허용 | inbound·outbound를 각각 평가 |
 
 ```text
-SG   = Stateful
-NACL = Stateless
+SG   = resource 앞의 stateful firewall
+NACL = subnet 경계의 stateless firewall
 ```
 
----
+기본 Security Group·기본 NACL의 상세 기본값을 섞지 말고, 시험에서는 적용 범위와 stateful/stateless를 먼저 구별한다.
 
-# 8. Amazon Route 53
+## 5. VPC의 private 연결과 기록
 
-Managed DNS.
+### VPC Endpoint와 AWS PrivateLink
 
-기능:
+Public IP나 Internet Gateway 없이 지원되는 서비스에 private하게 접근한다.
 
-- Domain Registration
-- DNS Routing
-- Health Check
-- Routing Policies
+- **Gateway endpoint**: Amazon S3, DynamoDB에 사용하는 대표 endpoint 유형
+- **Interface endpoint**: AWS PrivateLink 기반으로 ENI를 통해 service에 private 접근
+- **AWS PrivateLink**: service provider와 consumer를 private하게 연결; 전체 network를 서로 routing하는 기능과는 다름
 
-대표 Routing Policy:
+### VPC Peering vs Transit Gateway
 
-- Simple
-- Weighted
-- Latency-based
-- Geolocation
-- Failover
-
-### 시험 연결
-
-- “DNS” → Route 53
-- “사용자 latency가 가장 낮은 Region으로” → Latency Routing
-- “70%/30% Traffic 분배” → Weighted
-- “Primary 장애 시 Secondary” → Failover
-
----
-
-# 9. Amazon CloudFront
-
-CDN.
-
-Edge Location에 Content를 Cache해 사용자에게 빠르게 제공.
-
-```text
-User → Edge Location
-       ├─ Cache Hit → 즉시 응답
-       └─ Cache Miss → Origin(S3/ALB/EC2) → Cache
-```
-
-장점:
-
-- Latency 감소
-- Origin Load 감소
-- Global Content Delivery
-- WAF/Shield와 연계 가능
-
----
-
-# 10. VPN vs Direct Connect
-
-## AWS VPN / Site-to-Site VPN
-
-Internet 위에 암호화 Tunnel.
-
-- 빠르게 구축
-- Internet 품질에 영향
-
-## AWS Direct Connect
-
-Customer Network와 AWS를 전용 회선으로 연결.
-
-- 일관된 Network 경험
-- 대용량/Hybrid 요구
-- 물리 연결 Provisioning에 시간이 걸림
-
-| VPN | Direct Connect |
+| VPC Peering | AWS Transit Gateway |
 |---|---|
-| Internet 기반 암호화 | Dedicated connection |
-| 빠른 시작 | 안정적/일관된 연결 |
-| 일반 Hybrid | 지속적 대역폭/기업 환경 |
+| 두 VPC 간 직접 private 연결 | 여러 VPC·on-premises 연결을 중앙 hub로 관리 |
+| transitive routing이 아님 | hub-and-spoke 확장에 적합 |
+| 소수의 직접 연결 | 많은 network 연결 중앙화 |
 
----
+### VPC Flow Logs
 
-# 11. AWS PrivateLink
-
-VPC 간 또는 VPC와 Service 간 통신을 Public Internet에 노출하지 않고 Private Connectivity로 제공.
-
-> “Private하게 Service 제공/접근” → PrivateLink
-
----
-
-# 12. AWS Transit Gateway
-
-여러 VPC와 On-Premises Network를 중앙 Hub처럼 연결.
+VPC, subnet, network interface의 IP traffic metadata를 기록한다.
 
 ```text
-VPC A ─┐
-VPC B ─┼→ Transit Gateway → On-Prem
-VPC C ─┘
+API 작업 감사     → CloudTrail
+network flow 기록 → VPC Flow Logs
 ```
 
-> “많은 VPC Network 연결을 중앙화” → Transit Gateway
+## 6. Hybrid connectivity — VPN vs Direct Connect
 
----
+| AWS Site-to-Site VPN | AWS Direct Connect |
+|---|---|
+| 인터넷 위의 암호화 tunnel | 고객 network와 AWS 간 전용 network 연결 |
+| 비교적 빠르게 구축 | 회선 provisioning 시간 필요 |
+| 인터넷 품질에 영향 | 더 일관된 network 경험·대역폭 |
+| 암호화 연결이 핵심 | 전용 연결 자체가 자동 암호화를 뜻하지는 않음 |
 
-# 13. AWS Global Accelerator
+Direct Connect와 VPN을 함께 사용해 private 연결과 암호화를 결합할 수도 있다.
 
-AWS Global Network를 이용해 Global Application의 Availability/Performance를 향상.
+### Site-to-Site VPN vs Client VPN
 
-CloudFront와 구별:
+| AWS Site-to-Site VPN | AWS Client VPN |
+|---|---|
+| 회사 network와 VPC를 연결 | 개별 사용자의 device와 AWS/on-premises network를 연결 |
+| network-to-network | user-to-network, managed remote access |
 
-- CloudFront → Content Cache/CDN
-- Global Accelerator → Network Traffic을 AWS Global Network로 최적화, Static Anycast IP 제공
+## 7. Amazon Route 53
 
----
+도메인 등록, authoritative DNS, health check, traffic routing을 제공한다.
 
-# 14. API Gateway
+| Routing policy | 선택 기준 |
+|---|---|
+| Simple | 단순한 단일 응답 |
+| Weighted | 90%/10%처럼 비율 분산 |
+| Latency-based | AWS가 측정한 더 낮은 latency의 Region으로 |
+| Geolocation | 사용자 위치에 따른 정책 |
+| Failover | primary health check 실패 시 secondary |
 
-API의 Managed Front Door.
+Latency routing은 단순히 지도상 가장 가까운 Region을 고르는 것과 다르다.
 
-기능:
+## 8. CloudFront vs Global Accelerator
 
-- HTTP/REST API
-- Authentication/Authorization 연동
-- Throttling
-- Routing
-- Logging
-- Lambda 등 Backend 연결
+### Amazon CloudFront
+
+Edge Location을 이용하는 CDN이다. origin의 cacheable content와 web delivery를 사용자 가까이에서 제공해 latency와 origin 부하를 줄인다.
 
 ```text
-Mobile/Web Client
-      ↓
-API Gateway
-      ↓
-Lambda / ECS / EC2
+User → Edge
+       ├─ cache hit  → 바로 응답
+       └─ cache miss → origin(S3/ALB 등) → cache → 응답
 ```
 
----
+정적 파일만 전달한다고 한정하지 않는다. 동적 content delivery와 보안 연계도 지원한다.
 
-# 15. EventBridge / SNS / SQS / Step Functions
+### AWS Global Accelerator
 
-시험에서 매우 자주 섞는다.
+정적 anycast IP와 AWS global network를 이용해 regional endpoint로 TCP/UDP traffic을 전달하고 application availability와 성능을 개선한다.
 
-## Amazon EventBridge
+| CloudFront | Global Accelerator |
+|---|---|
+| CDN, edge caching | network acceleration |
+| HTTP(S) content delivery 중심 | TCP/UDP application 포함 |
+| cache가 핵심 | anycast IP와 endpoint health가 핵심 |
 
-Event Bus / Event Routing.
+## 9. API Gateway와 application integration
+
+### Amazon API Gateway
+
+API의 managed front door다.
+
+- REST/HTTP/WebSocket API
+- 인증·권한 연동
+- throttling
+- request/response 처리와 routing
+- Lambda, HTTP service 등 backend 연결
 
 ```text
-Event 발생 → Rule → Target
+Web/Mobile client → API Gateway → Lambda 또는 application backend
 ```
 
-예:
+### EventBridge / SNS / SQS / Step Functions
 
-- EC2 state change
-- SaaS Event
-- Scheduled Event
+이 네 서비스는 선형 파이프라인이 아니라 서로 다른 문제를 해결한다.
 
----
-
-## Amazon SNS
-
-Simple Notification Service.
-
-**Pub/Sub, Fan-out, Notification**.
+| 서비스 | 핵심 역할 | 문제의 동사 |
+|---|---|---|
+| Amazon EventBridge | event bus에서 규칙에 따라 target으로 routing | 사건을 분류·연결한다 |
+| Amazon SNS | pub/sub로 한 message를 여러 subscriber에 push | 알림·fan-out한다 |
+| Amazon SQS | queue에 message를 보관해 producer와 consumer 분리 | 쌓아 두고 처리한다 |
+| AWS Step Functions | 여러 task를 state machine workflow로 orchestration | 순서·분기·retry를 제어한다 |
 
 ```mermaid
 flowchart LR
     P[Publisher] --> SNS[SNS Topic]
-    SNS --> E[Email]
-    SNS --> S[SQS]
-    SNS --> L[Lambda]
+    SNS --> E[Email/HTTP subscriber]
+    SNS --> Q1[SQS Queue A]
+    SNS --> Q2[SQS Queue B]
+    PROD[Producer] --> SQS[SQS Queue] --> CONS[Consumer]
 ```
 
-> “하나의 Message를 여러 Subscriber에게 Push” → SNS
+**SNS + SQS fan-out:** 하나의 event를 여러 queue에 복사해 각 consumer가 독립적으로 처리할 수 있다.
 
----
+SQS의 **Standard queue**는 높은 처리량, **FIFO queue**는 순서와 중복 제거 요구를 우선할 때 선택한다.
 
-## Amazon SQS
-
-Simple Queue Service.
-
-**Message Queue / Decoupling / Buffering**.
-
-```text
-Producer → SQS Queue → Consumer
-```
-
-> “Producer와 Consumer를 분리”, “작업을 Queue에 쌓음” → SQS
-
----
-
-## SNS vs SQS
-
-| SNS | SQS |
-|---|---|
-| Push / Pub-Sub | Queue / Pull |
-| 여러 Subscriber Fan-out | Message를 보관 후 Consumer 처리 |
-| Notification | Decoupling/Buffer |
-
----
-
-## AWS Step Functions
-
-여러 Service/Task를 State Machine으로 Orchestrate.
-
-- 순서
-- Branch
-- Retry
-- Error Handling
-
-> “여러 Lambda/Task를 단계별 Workflow로” → Step Functions
-
----
-
-# 16. Amazon SES / Amazon Connect
-
-## Amazon SES
-
-Simple Email Service.
-
-대량/Transactional Email 전송.
-
-> “Application이 Email 발송” → SES
-
-## Amazon Connect
-
-Cloud Contact Center.
-
-> “고객센터/Call Center” → Amazon Connect
-
----
-
-# 17. Developer Tools
-
-## AWS CodeBuild
-
-Source Code를 Build/Test.
-
-> “Build” → CodeBuild
-
-## AWS CodePipeline
-
-CI/CD Pipeline Orchestration.
-
-```text
-Source → Build → Test → Deploy
-```
-
-> “Release Pipeline 자동화” → CodePipeline
-
-## AWS X-Ray
-
-Distributed Application Request Trace/Debug.
-
-> “Microservice 요청이 어디에서 느린지 Trace” → X-Ray
-
-## AWS CLI
-
-Command Line으로 AWS API를 사용.
-
-## AWS CloudFormation
-
-Infrastructure as Code.
-
-Template으로 AWS Resource를 반복 배포.
-
-> “AWS Infrastructure를 Template으로 생성” → CloudFormation
-
----
-
-# 18. Management & Governance 한 줄 정리
+### Amazon SES와 Amazon Connect
 
 | 서비스 | 역할 |
 |---|---|
-| AWS Management Console | Web UI |
-| AWS CLI | Command line |
-| CloudFormation | Infrastructure as Code |
-| Systems Manager | Fleet/Operations Management |
-| Organizations | Multi-account 관리 |
-| Control Tower | Landing Zone/Governance |
-| Service Catalog | 승인된 Product Catalog |
-| Service Quotas | 서비스 할당량 확인/관리 |
-| Compute Optimizer | Resource 최적화 권고 |
-| Trusted Advisor | Best Practice 권고 |
-| AWS Health Dashboard | Account/Resource에 영향을 주는 AWS Event |
+| Amazon SES | 애플리케이션의 transactional·대량 email 발송 |
+| Amazon Connect | cloud contact center/call center |
 
----
+## 10. AWS에 접근하고 반복 배포하는 방법
 
-# 19. AI/ML Services — Domain 3.7
-
-공식 CLF-C02에는 AI/ML 서비스 **이름 ↔ 수행 작업** 구별이 포함된다. 깊은 ML 지식은 필요 없다.
-
-| 서비스 | 한 줄 용도 |
+| 방법 | 적합한 상황 |
 |---|---|
-| Amazon SageMaker AI | ML Model Build/Train/Deploy |
-| Amazon Lex | Chatbot / Conversational Interface |
-| Amazon Kendra | Enterprise Intelligent Search |
-| Amazon Comprehend | NLP/Text 분석, 감정/Entity 등 |
-| Amazon Polly | Text → Speech |
-| Amazon Rekognition | Image/Video 분석 |
-| Amazon Textract | Document에서 Text/Table/Form 추출 |
-| Amazon Transcribe | Speech → Text |
-| Amazon Translate | Machine Translation |
-| Amazon Q | AWS의 Generative AI Assistant 계열 |
+| AWS Management Console | 사람이 일회성·시각적 작업 |
+| AWS CLI | shell에서 명령·script 자동화 |
+| AWS SDK | application code에서 AWS API 호출 |
+| API | programmatic access의 기반 |
+| AWS CloudFormation | template으로 인프라를 반복·일관되게 배포(IaC) |
 
-### 암기 연결
+**시험 예제:** “동일한 VPC와 EC2 환경을 여러 계정에 반복 배포” → CloudFormation
+
+## 11. Developer·management 서비스
+
+| 서비스 | 한 줄 역할 |
+|---|---|
+| AWS CodeBuild | source code build·test |
+| AWS CodePipeline | source부터 build·deploy까지 pipeline orchestration |
+| AWS X-Ray | distributed request trace와 성능 문제 분석 |
+| AWS Systems Manager | node·운영 작업·automation 중앙 관리 |
+| AWS Compute Optimizer | 사용률을 분석해 resource 구성 권고 |
+| AWS License Manager | software license 사용·규칙·추적 중앙 관리 |
+| Service Quotas | AWS service quota 확인·관리 |
+| AWS Well-Architected Tool | Well-Architected review 수행·기록 |
+
+원본 서비스 지도에는 CodeCommit, CodeDeploy도 있지만 현재 CLF-C02의 명시적 in-scope service 목록에는 없다. 시험 직전 핵심으로 확대하지 않는다.
+
+## 12. AI/ML 서비스 — 이름과 작업 연결
+
+깊은 ML 구현보다 “무슨 입력을 받아 무슨 일을 하는가”를 본다.
+
+| 서비스 | 작업 | 기억 문장 |
+|---|---|---|
+| Amazon SageMaker AI | ML model build·train·deploy | ML 개발 platform |
+| Amazon Lex | text/voice conversational interface | chatbot |
+| Amazon Kendra | enterprise intelligent search | 사내 문서 검색 |
+| Amazon Comprehend | text에서 sentiment·entity 등 추출 | NLP 분석 |
+| Amazon Polly | text → speech | 글을 음성으로 |
+| Amazon Rekognition | image/video 분석 | 시각 자료 인식 |
+| Amazon Textract | document의 text·form·table 추출 | OCR + 문서 구조 |
+| Amazon Transcribe | speech → text | 음성을 글로 |
+| Amazon Translate | machine translation | 번역 |
+| Amazon Q | generative AI assistant 계열 | 질의·업무 지원 |
 
 ```text
-ML 개발 전체      → SageMaker
-챗봇              → Lex
-기업 검색          → Kendra
-자연어 분석        → Comprehend
-글을 음성으로      → Polly
-이미지/영상 분석   → Rekognition
-문서 OCR/표 추출   → Textract
-음성을 글로        → Transcribe
-번역              → Translate
+Text → Speech = Polly
+Speech → Text = Transcribe
+문서의 글·표 = Textract
+사진·영상 분석 = Rekognition
+텍스트 의미·감정 = Comprehend
 ```
 
----
+## 13. Analytics 서비스 — 데이터 위치와 처리 방식
 
-# 20. Analytics Services
-
-## Amazon Athena
-
-S3 Data를 **Serverless SQL Query**.
-
-> “S3에 있는 Log/CSV를 SQL로 바로 분석” → Athena
-
-## AWS Glue
-
-Serverless Data Integration / ETL + Data Catalog.
-
-> “데이터 발견/정리/변환/ETL” → Glue
-
-## Amazon Kinesis
-
-Real-time Streaming Data.
-
-> “실시간 Clickstream/IoT/Event Stream” → Kinesis
-
-## Amazon QuickSight
-
-Business Intelligence / Dashboard / Visualization.
-
-> “BI Dashboard” → QuickSight
-
-## Amazon EMR
-
-Big Data Framework(Hadoop/Spark 등) Managed Cluster.
-
-> “Hadoop/Spark Big Data Processing” → EMR
-
-## Amazon OpenSearch Service
-
-Search/Log Analytics.
-
-> “Search, Log Analytics” → OpenSearch
-
-## Amazon Redshift
-
-Data Warehouse/OLAP.
-
-> “기업 대규모 SQL 분석” → Redshift
-
----
-
-# 21. Analytics 비교
-
-| 상황 | 서비스 |
-|---|---|
-| S3의 파일을 SQL Query | Athena |
-| ETL / Data Catalog | Glue |
-| Real-time Stream | Kinesis |
-| Dashboard/BI | QuickSight |
-| Hadoop/Spark | EMR |
-| Search/Log Analytics | OpenSearch |
-| Data Warehouse | Redshift |
-
----
-
-# 22. End User Computing
-
-## Amazon WorkSpaces
-
-Managed Virtual Desktop.
-
-> “직원에게 Cloud Desktop 제공” → WorkSpaces
-
-## Amazon AppStream 2.0
-
-Application을 Streaming해 End User Device에서 사용.
-
-> “Desktop 전체가 아니라 Application Streaming” → AppStream 2.0
-
-## WorkSpaces Secure Browser
-
-Managed Secure Browser access.
-
----
-
-# 23. Frontend Web / Mobile
-
-## AWS Amplify
-
-Frontend/Mobile App Build/Host/Deploy를 쉽게 지원.
-
-> “Frontend/Mobile App 개발·배포” → Amplify
-
-## AWS AppSync
-
-Managed GraphQL API.
-
-> “GraphQL” → AppSync
-
----
-
-# 24. IoT
-
-## AWS IoT Core
-
-IoT Device를 Cloud에 안전하게 연결하고 Message 처리.
-
-> “IoT Device 연결/관리” → IoT Core
-
----
-
-# 25. High-Yield Architecture 연결
-
-```mermaid
-flowchart LR
-    U[Users] --> R53[Route 53]
-    R53 --> CF[CloudFront]
-    CF --> APIGW[API Gateway]
-    APIGW --> L[Lambda]
-    APIGW --> ECS[ECS/Fargate]
-    L --> DDB[DynamoDB]
-    L --> SQS[SQS]
-    SQS --> W[Worker]
-    L --> SNS[SNS]
-```
-
-이 그림을 외우라는 뜻이 아니라, 서비스 역할을 서로 연결해서 기억한다.
-
----
-
-# 26. 매우 자주 헷갈리는 것
-
-## CloudFront vs Global Accelerator
-
-| CloudFront | Global Accelerator |
-|---|---|
-| CDN/Cache | Network Acceleration |
-| HTTP Content 중심 | TCP/UDP Application 포함 |
-| Edge Cache | Anycast IP + AWS Global Network |
-
-## EventBridge vs SNS vs SQS
-
-| EventBridge | SNS | SQS |
+| 서비스 | 한 줄 역할 | 대표 단서 |
 |---|---|---|
-| Event Routing | Pub/Sub Push | Queue |
-| Rule/Target | Fan-out | Buffer/Decouple |
-| Event Bus | Notification | Work Queue |
-
-## Athena vs Redshift
+| Amazon Athena | S3 데이터를 serverless SQL query | S3 log를 바로 SQL |
+| AWS Glue | serverless data integration, ETL, Data Catalog | 발견·변환·catalog |
+| Amazon Kinesis | real-time streaming data | clickstream, IoT stream |
+| Amazon QuickSight | BI dashboard·visualization | 경영 dashboard |
+| Amazon EMR | Hadoop·Spark 등 big data framework | managed cluster |
+| Amazon OpenSearch Service | search와 log analytics | 검색·log 분석 |
+| Amazon Redshift | data warehouse·OLAP | 대규모 SQL 분석 |
 
 | Athena | Redshift |
 |---|---|
-| Serverless Query on S3 | Data Warehouse |
-| 필요할 때 Query | Analytics DB |
-| Data 이동 없이 분석 가능 | 데이터를 Warehouse에 적재해 분석 |
+| S3의 데이터를 필요할 때 query | warehouse에 데이터를 적재해 반복 분석 |
+| serverless query | managed data warehouse |
 
-## Lex vs Polly vs Transcribe
+## 14. 기타 in-scope 서비스 지도
 
-```text
-Lex        = 대화/챗봇
-Polly      = Text → Speech
-Transcribe = Speech → Text
-```
+### End-user computing
 
----
+| 서비스 | 선택 단서 |
+|---|---|
+| Amazon WorkSpaces | 관리형 virtual desktop 전체 |
+| Amazon AppStream 2.0 | desktop app을 사용자 장치로 streaming |
+| WorkSpaces Secure Browser | 관리형 secure browser access |
 
-# 27. 시험 직전 치트시트
+### Frontend web/mobile와 IoT
 
-```text
-VPC           = AWS Private Network
-Subnet        = VPC Network Segment
-Route Table   = Traffic Route
-IGW           = VPC ↔ Internet
-NAT Gateway   = Private → Internet outbound
-SG            = Stateful Resource Firewall
-NACL          = Stateless Subnet Firewall
-Route 53      = DNS
-CloudFront    = CDN
-Direct Connect= Dedicated Network
-VPN           = Encrypted Internet Tunnel
-PrivateLink   = Private Service Connectivity
-Transit GW    = Multi-VPC Network Hub
-Global Accelerator = Global Network Acceleration
+| 서비스 | 선택 단서 |
+|---|---|
+| AWS Amplify | frontend/mobile 앱 build·host·deploy 지원 |
+| AWS AppSync | managed GraphQL API |
+| AWS IoT Core | IoT device를 cloud에 연결하고 message 처리 |
 
-API Gateway   = API Front Door
-EventBridge   = Event Routing
-SNS           = Pub/Sub / Notification
-SQS           = Queue / Decoupling
-Step Functions= Workflow
-SES           = Email
-Connect       = Contact Center
+## 15. 이미지에만 있던 정보의 처리
 
-CodeBuild     = Build
-CodePipeline  = CI/CD Pipeline
-X-Ray         = Distributed Trace
-CloudFormation= IaC
+원본 종합 장표에는 VPC Peering, VPC endpoint, Flow Logs 같은 유용한 관계가 있어 본문에 반영했다. 반면 Wavelength, Pinpoint, AppFlow와 일부 개발·DB 서비스는 현재 CLF-C02 명시 목록에서 벗어나므로 이름을 억지로 외우는 범위로 확대하지 않았다. 모든 장표는 판독 가능했으며 추정으로 채운 항목은 없다.
 
-SageMaker     = ML Platform
-Lex           = Chatbot
-Kendra        = Enterprise Search
-Comprehend    = NLP
-Polly         = Text→Speech
-Rekognition   = Image/Video
-Textract      = Document extraction
-Transcribe    = Speech→Text
-Translate     = Translation
+## 16. 문제 풀이 예제
 
-Athena        = SQL on S3
-Glue          = ETL/Catalog
-Kinesis       = Streaming
-QuickSight    = BI Dashboard
-EMR           = Hadoop/Spark
-OpenSearch    = Search/Logs
+**상황:** “Private EC2가 OS update를 받되 인터넷에서 시작한 연결은 받지 않는다.”  
+**정답:** NAT Gateway
 
-WorkSpaces    = Virtual Desktop
-AppStream 2.0 = Application Streaming
-Amplify       = Frontend/Mobile
-AppSync       = GraphQL
-IoT Core      = IoT
-```
+**상황:** “수십 개 VPC와 on-premises를 hub로 연결한다.”  
+**정답:** AWS Transit Gateway
 
----
+**상황:** “한 주문 event를 email과 두 개의 처리 시스템에 동시에 보낸다.”  
+**정답:** Amazon SNS fan-out, 필요하면 각 consumer 앞에 SQS
+
+**상황:** “S3 CSV를 옮기지 않고 SQL로 일회성 분석한다.”  
+**정답:** Amazon Athena
+
+**상황:** “음성 파일을 자막 text로 바꾼다.”  
+**정답:** Amazon Transcribe
 
 ## References
 
-- CLF-C02 Domain 3:
-  https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html
-- In-scope services:
-  https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/clf-02-in-scope-services.html
+- [CLF-C02 Domain 3](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html)
+- [CLF-C02 In-Scope AWS Services](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/clf-02-in-scope-services.html)
+- 원본: `day3/3.4.md`~`day3/3.6.md`, 전체 서비스·네트워크·serverless 참조 이미지
+
+---
+
+## 반드시 알아야 할 핵심 비교
+
+| 비교 | A | B | C |
+|---|---|---|---|
+| Public vs Private subnet | IGW 경로 | 직접 IGW 경로 없음 | — |
+| IGW vs NAT Gateway | VPC 인터넷 연결 | private resource의 outbound | — |
+| Security Group vs NACL | stateful resource firewall | stateless subnet firewall | — |
+| VPN vs Direct Connect | 인터넷 암호화 tunnel | 전용 network connection | — |
+| Peering vs Transit Gateway | 두 VPC 직접 연결 | 다수 network hub | — |
+| CloudFront vs Global Accelerator | CDN/cache | network acceleration | — |
+| EventBridge vs SNS vs SQS | event routing | pub/sub fan-out | queue/buffer |
+| Console vs CLI vs CloudFormation | UI | command | IaC |
+| Athena vs Redshift | SQL on S3 | data warehouse | — |
+| WorkSpaces vs AppStream | desktop | application streaming | — |
+
+## 시험에서 헷갈리는 서비스
+
+| 요구 | 정답 | 헷갈리는 서비스 |
+|---|---|---|
+| DNS와 routing policy | Route 53 | Route table은 VPC packet 경로 |
+| private service endpoint | PrivateLink/interface endpoint | Peering은 VPC network 연결 |
+| event를 규칙으로 target에 전달 | EventBridge | SNS는 subscriber fan-out |
+| producer/consumer decoupling | SQS | SNS는 push 알림 |
+| 여러 task의 순서·retry | Step Functions | EventBridge는 workflow engine이 아님 |
+| 문서의 form·table 추출 | Textract | Rekognition은 image/video 분석 |
+| text 감정·entity | Comprehend | Translate는 언어 번역 |
+| S3 SQL query | Athena | Glue는 ETL/catalog |
+
+## 최종 암기표
+
+| 키워드 | 한 줄 암기 |
+|---|---|
+| VPC / Subnet | 격리 network / AZ 단위 segment |
+| IGW / NAT | 인터넷 gateway / private outbound |
+| SG / NACL | stateful / stateless |
+| Route 53 / CloudFront | DNS / CDN |
+| Direct Connect / VPN | 전용 연결 / 암호화 tunnel |
+| PrivateLink / Transit Gateway | private service / network hub |
+| API Gateway | API front door |
+| EventBridge / SNS / SQS / Step Functions | route / fan-out / queue / workflow |
+| CloudFormation | Infrastructure as Code |
+| Polly / Transcribe / Translate | text→speech / speech→text / 번역 |
+| Rekognition / Textract / Comprehend | image / document / text 의미 |
+| Athena / Glue / Kinesis / QuickSight | query / ETL / stream / BI |
