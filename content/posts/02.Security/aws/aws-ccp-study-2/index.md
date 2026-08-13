@@ -1,6 +1,6 @@
 ---
 title: 'AWS CCP 요약본 2'
-slug: aws-ccp-2
+slug: aws-ccp-study-2
 description: 'aws ccp 내용 정리본'
 publishedAt: '2026-08-11'
 tags:

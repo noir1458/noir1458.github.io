@@ -1,6 +1,6 @@
 ---
 title: 'AWS CCP 요약본 1'
-slug: aws-ccp-1
+slug: aws-ccp-study-1
 description: 'AWS Certified Cloud Practitioner(CLF-C02) 핵심 개념과 서비스 요약'
 publishedAt: '2026-08-09'
 tags:
