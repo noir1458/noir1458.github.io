@@ -46,7 +46,7 @@ try {
 
   const build = spawnSync(
     process.execPath,
-    [astroEntry, "build", "--outDir", outputDirectory],
+    [astroEntry, "build", "--force", "--outDir", outputDirectory],
     {
       cwd: projectRoot,
       encoding: "utf8",
@@ -162,7 +162,7 @@ try {
 
   const projectBuild = spawnSync(
     process.execPath,
-    [astroEntry, "build", "--outDir", projectsOutputDirectory],
+    [astroEntry, "build", "--force", "--outDir", projectsOutputDirectory],
     {
       cwd: projectRoot,
       encoding: "utf8",
