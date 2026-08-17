@@ -81,7 +81,7 @@ try {
   assert.equal(indexHtml.includes('type="application/rss+xml"'), false);
   assert.equal(indexHtml.includes('data-theme="light"'), true);
   assert.equal(robots.includes("Sitemap:"), false);
-  assert.equal(postHtml.includes('class="article-toc"'), false);
+  assert.equal(postHtml.includes("data-article-toc-dialog"), false);
   assert.equal(postHtml.includes('class="comments"'), false);
   assert.equal(postHtml.includes('class="mermaid-block"'), false);
   assert.equal(postHtml.includes('data-language="mermaid"'), true);

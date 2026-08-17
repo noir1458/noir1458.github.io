@@ -1,13 +1,13 @@
 const scrollTopButton = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+const articleTocToggle = document.querySelector<HTMLButtonElement>("[data-article-toc-toggle]");
+const articleTocDialog = document.querySelector<HTMLDialogElement>("[data-article-toc-dialog]");
+const articleTocPanel = articleTocDialog?.querySelector<HTMLElement>("[data-article-toc-panel]");
 const readingProgress = document.querySelector<HTMLElement>("[data-reading-progress]");
 const readingProgressBar = readingProgress?.querySelector<HTMLElement>("span");
 const readingArticle = document.querySelector<HTMLElement>("[data-reading-article]");
 let scrollFrame = 0;
 
 function syncArticleTools() {
-  const showScrollTop = window.scrollY > Math.max(520, window.innerHeight * 0.65);
-  scrollTopButton?.classList.toggle("visible", showScrollTop);
-
   if (readingProgress && readingProgressBar && readingArticle) {
     const bounds = readingArticle.getBoundingClientRect();
     const articleStart = window.scrollY + bounds.top;
@@ -33,6 +33,31 @@ scrollTopButton?.addEventListener("click", () => {
     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
   });
 });
+
+articleTocToggle?.addEventListener("click", () => {
+  if (!articleTocDialog?.open) {
+    articleTocDialog?.showModal();
+    articleTocToggle.setAttribute("aria-expanded", "true");
+  }
+});
+
+articleTocDialog?.addEventListener("close", () => {
+  articleTocToggle?.setAttribute("aria-expanded", "false");
+});
+
+articleTocDialog?.addEventListener("click", (event) => {
+  if (event.target !== articleTocDialog) return;
+  const bounds = articleTocPanel?.getBoundingClientRect();
+  if (!bounds) return;
+  const outside = event.clientX < bounds.left || event.clientX > bounds.right
+    || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  if (outside) articleTocDialog.close();
+});
+
+articleTocDialog?.querySelectorAll<HTMLAnchorElement>("a[href^='#']").forEach((link) => {
+  link.addEventListener("click", () => articleTocDialog.close());
+});
+
 window.addEventListener("scroll", requestArticleToolsSync, { passive: true });
 window.addEventListener("resize", requestArticleToolsSync);
 syncArticleTools();

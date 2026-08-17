@@ -126,19 +126,6 @@ const schema = {
       </div>
     </header>
 
-    {FEATURES.tableOfContents && tocHeadings.length > 0 && (
-      <details class="article-toc" open>
-        <summary>On this page</summary>
-        <ol>
-          {tocHeadings.map((heading) => (
-            <li class={`depth-${heading.depth}`}>
-              <a href={`#${heading.slug}`}>{heading.text}</a>
-            </li>
-          ))}
-        </ol>
-      </details>
-    )}
-
     <div class="article-content" data-pagefind-body data-reading-article>
       <Content />
     </div>
@@ -160,9 +147,45 @@ const schema = {
     {FEATURES.comments && SITE.giscus && <Giscus language={post.data.lang} />}
   </article>
 
-  <button class="scroll-top icon-button" type="button" aria-label="Back to top" data-scroll-top>
-    <Icon name="arrow-up" size={21} />
-  </button>
+  {FEATURES.tableOfContents && tocHeadings.length > 0 && (
+    <dialog
+      id="article-toc-dialog"
+      class="article-toc-dialog"
+      aria-labelledby="article-toc-title"
+      data-article-toc-dialog
+      data-pagefind-ignore
+    >
+      <nav class="article-toc-panel" aria-labelledby="article-toc-title" data-article-toc-panel>
+        <h2 id="article-toc-title">On this page</h2>
+        <ol>
+          {tocHeadings.map((heading) => (
+            <li class={`depth-${heading.depth}`}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </dialog>
+  )}
+
+  <div class="article-floating-tools" data-pagefind-ignore>
+    {FEATURES.tableOfContents && tocHeadings.length > 0 && (
+      <button
+        class="article-toc-toggle icon-button"
+        type="button"
+        aria-label="Open table of contents"
+        aria-controls="article-toc-dialog"
+        aria-expanded="false"
+        title="On this page"
+        data-article-toc-toggle
+      >
+        <Icon name="menu" size={21} />
+      </button>
+    )}
+    <button class="scroll-top icon-button" type="button" aria-label="Back to top" data-scroll-top>
+      <Icon name="arrow-up" size={21} />
+    </button>
+  </div>
 
   <script>
     import "@/scripts/article-tools";
