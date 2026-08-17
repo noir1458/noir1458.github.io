@@ -26,12 +26,12 @@ export const MERMAID_LIGHT_CONFIG = {
   themeVariables: {
     background: "#ffffff",
     primaryColor: "#f7f9f7",
-    primaryTextColor: "#334139",
+    primaryTextColor: "#28332d",
     primaryBorderColor: "#9bafa2",
     secondaryColor: "#edf4ef",
     tertiaryColor: "#ffffff",
     lineColor: "#4d775d",
-    textColor: "#334139"
+    textColor: "#28332d"
   }
 };
 
