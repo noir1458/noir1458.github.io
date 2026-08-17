@@ -195,7 +195,9 @@ try {
   assert.equal(projectHtml.includes("https://github.com/example/project"), true);
   assert.equal(projectHtml.includes("https://example.com/project"), true);
   assert.equal((projectHtml.match(/class="mermaid-block"/gu) ?? []).length, 4);
-  assert.equal((projectHtml.match(/class="mermaid-source"/gu) ?? []).length, 4);
+  assert.equal((projectHtml.match(
+    /<button\b[^>]*class="mermaid-source"/gu
+  ) ?? []).length, 4);
   assert.equal(projectHtml.includes("mermaid-diagram-light"), true);
   assert.equal(projectHtml.includes("mermaid-diagram-dark"), true);
   assert.equal(projectHtml.includes("flowchart LR"), true);

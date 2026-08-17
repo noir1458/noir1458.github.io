@@ -344,7 +344,9 @@ for (const entry of contentEntries) {
   const html = fs.readFileSync(outputFile, "utf8");
   const relativeOutput = path.relative(distRoot, outputFile);
   const mermaidBlocks = (html.match(/class="mermaid-block"/gu) ?? []).length;
-  const mermaidSources = (html.match(/class="mermaid-source"/gu) ?? []).length;
+  const mermaidSources = (html.match(
+    /<button\b[^>]*class="mermaid-source"/gu
+  ) ?? []).length;
   const lightDiagrams = (html.match(/mermaid-diagram-light/gu) ?? []).length;
   const darkDiagrams = (html.match(/mermaid-diagram-dark/gu) ?? []).length;
   if (FEATURES.mermaid) {
