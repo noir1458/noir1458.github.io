@@ -13,9 +13,9 @@ interface MarkdownVFile {
 }
 
 const SOURCE_LABELS = {
-  en: { show: "View Mermaid source", hide: "Hide Mermaid source" },
-  ja: { show: "Mermaid ソースを表示", hide: "Mermaid ソースを隠す" },
-  ko: { show: "Mermaid 소스 보기", hide: "Mermaid 소스 숨기기" }
+  en: "View Mermaid source",
+  ja: "Mermaid ソースを表示",
+  ko: "Mermaid 소스 보기"
 } as const;
 
 export const MERMAID_LIGHT_CONFIG = {
@@ -106,42 +106,45 @@ function sourceLabels(language: unknown) {
     ?? SOURCE_LABELS.en;
 }
 
-function createSourceToggle(source: string, language: unknown): Element {
-  const labels = sourceLabels(language);
+function createSourceButton(source: string, language: unknown): Element {
+  const label = sourceLabels(language);
   return {
     type: "element",
-    tagName: "details",
-    properties: { className: ["mermaid-source"] },
+    tagName: "button",
+    properties: {
+      ariaLabel: label,
+      className: ["mermaid-source"],
+      dataMermaidSource: source,
+      title: label,
+      type: "button"
+    },
     children: [
       {
         type: "element",
-        tagName: "summary",
-        properties: {},
+        tagName: "svg",
+        properties: {
+          ariaHidden: "true",
+          fill: "none",
+          viewBox: "0 0 24 24"
+        },
         children: [
           {
             type: "element",
-            tagName: "span",
-            properties: { className: ["mermaid-source-show"] },
-            children: [{ type: "text", value: labels.show }]
+            tagName: "path",
+            properties: { d: "m8 9-3 3 3 3" },
+            children: []
           },
           {
             type: "element",
-            tagName: "span",
-            properties: { className: ["mermaid-source-hide"] },
-            children: [{ type: "text", value: labels.hide }]
-          }
-        ]
-      },
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["mermaid-source-pre"] },
-        children: [
+            tagName: "path",
+            properties: { d: "m16 9 3 3-3 3" },
+            children: []
+          },
           {
             type: "element",
-            tagName: "code",
-            properties: { className: ["mermaid-source-code"] },
-            children: [{ type: "text", value: source }]
+            tagName: "path",
+            properties: { d: "m14 5-4 14" },
+            children: []
           }
         ]
       }
@@ -178,7 +181,7 @@ export function rehypeMermaidSource({ defaultLanguage }: RehypeMermaidSourceOpti
                 properties: { className: ["mermaid-diagram"] },
                 children: [child]
               },
-              createSourceToggle(source, language)
+              createSourceButton(source, language)
             ]
           };
           return;

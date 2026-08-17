@@ -1263,6 +1263,7 @@ button {
 }
 
 .mermaid-block {
+  position: relative;
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -1280,7 +1281,7 @@ button {
   min-height: 120px;
   place-items: start center;
   overflow: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   padding: var(--mermaid-diagram-padding);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1332,55 +1333,100 @@ button {
 }
 
 .mermaid-source {
-  margin-top: 10px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface);
-}
-
-.mermaid-source summary {
-  padding: 8px 12px;
-  color: var(--accent-ink);
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-solid) 78%, transparent);
+  box-shadow: 0 4px 12px rgba(14, 18, 24, 0.1);
+  color: var(--muted);
+  font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+  background-color 150ms ease;
 }
 
-.mermaid-source summary:hover {
-  background: var(--accent-soft);
+.mermaid-source svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
-.mermaid-source-hide,
-.mermaid-source[open] .mermaid-source-show {
-  display: none;
+.mermaid-source:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--accent-soft) 42%, var(--surface-solid));
+  color: var(--accent-ink);
+  transform: translateY(-1px);
 }
 
-.mermaid-source[open] .mermaid-source-hide {
-  display: inline;
-}
+.mermaid-source-dialog {
+  --mermaid-source-inline-space: clamp(32px, 8vw, 80px);
+  --mermaid-source-block-space: clamp(48px, 10svh, 96px);
 
-.mermaid-source > .mermaid-source-pre,
-.mermaid-source > .code-block {
-  margin: 0;
-  border-top: 1px solid var(--line);
-}
-
-.article-content .mermaid-source > .mermaid-source-pre,
-.article-content .mermaid-source .code-block pre {
-  margin: 0;
+  width: min(920px, calc(100vw - var(--mermaid-source-inline-space)));
+  max-width: none;
+  max-height: calc(100svh - var(--mermaid-source-block-space));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
   border: 0;
-  border-radius: 0;
-  background: var(--surface-strong);
+  background: transparent;
   color: var(--body-ink);
 }
 
-.article-content .mermaid-source > .mermaid-source-pre {
-  overflow-x: auto;
+.mermaid-source-dialog::backdrop {
+  background: rgba(5, 9, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.mermaid-source-code-block {
+  position: relative;
+  width: 100%;
+}
+
+.mermaid-source-code-block pre {
+  width: 100%;
+  max-height: min(680px, calc(100svh - var(--mermaid-source-block-space)));
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 0;
   padding: 20px 54px 20px 20px;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, var(--accent));
+  border-radius: 8px;
+  background: var(--surface-strong);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+  color: var(--body-ink);
   font-family: var(--font-mono);
   font-size: clamp(0.82rem, 0.78rem + 0.16vw, 0.94rem);
-  line-height: 1.52;
+  line-height: 1.58;
+  tab-size: 2;
+  white-space: pre;
+}
+
+.mermaid-source-code-block code {
+  font: inherit;
+}
+
+@media (max-width: 720px) {
+  .mermaid-source-code-block pre {
+    padding: 18px 50px 18px 18px;
+  }
 }
 
 :root[data-theme="dark"] .astro-code,

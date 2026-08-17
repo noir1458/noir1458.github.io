@@ -65,6 +65,81 @@ const copiedIcon = `
   </svg>
 `;
 
+const mermaidSourceLabels = {
+  en: { copy: "Copy", copied: "Copied", title: "Mermaid source" },
+  ja: { copy: "コピー", copied: "コピーしました", title: "Mermaid ソース" },
+  ko: { copy: "복사", copied: "복사됨", title: "Mermaid 소스" }
+} as const;
+
+const mermaidSourceButtons = document.querySelectorAll<HTMLButtonElement>(".mermaid-source");
+
+if (mermaidSourceButtons.length > 0) {
+  const language = document.documentElement.lang.toLowerCase().split("-")[0];
+  const labels = mermaidSourceLabels[language as keyof typeof mermaidSourceLabels]
+    ?? mermaidSourceLabels.en;
+  const dialog = document.createElement("dialog");
+  const codeBlock = document.createElement("div");
+  const sourcePre = document.createElement("pre");
+  const sourceCode = document.createElement("code");
+  const sourceCopy = document.createElement("button");
+
+  dialog.className = "mermaid-source-dialog";
+  dialog.setAttribute("aria-label", labels.title);
+  codeBlock.className = "mermaid-source-code-block";
+  sourceCopy.className = "code-copy mermaid-source-copy";
+  sourceCopy.type = "button";
+  sourceCopy.innerHTML = copyIcon;
+  sourceCopy.title = labels.copy;
+  sourceCopy.setAttribute("aria-label", labels.copy);
+  sourceCopy.setAttribute("aria-live", "polite");
+  sourcePre.append(sourceCode);
+  codeBlock.append(sourcePre, sourceCopy);
+  dialog.append(codeBlock);
+  document.body.append(dialog);
+
+  let resetTimer = 0;
+  function resetCopyButton() {
+    window.clearTimeout(resetTimer);
+    sourceCopy.innerHTML = copyIcon;
+    sourceCopy.classList.remove("copied", "failed");
+    sourceCopy.title = labels.copy;
+    sourceCopy.setAttribute("aria-label", labels.copy);
+  }
+
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const bounds = codeBlock.getBoundingClientRect();
+    const outside = event.clientX < bounds.left || event.clientX > bounds.right
+      || event.clientY < bounds.top || event.clientY > bounds.bottom;
+    if (outside) dialog.close();
+  });
+
+  sourceCopy.addEventListener("click", async () => {
+    resetCopyButton();
+    try {
+      await copyText(sourceCode.textContent ?? "");
+      sourceCopy.innerHTML = copiedIcon;
+      sourceCopy.classList.add("copied");
+      sourceCopy.title = labels.copied;
+      sourceCopy.setAttribute("aria-label", labels.copied);
+    } catch {
+      sourceCopy.classList.add("failed");
+    }
+    resetTimer = window.setTimeout(() => {
+      resetCopyButton();
+    }, 1800);
+  });
+
+  mermaidSourceButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      sourceCode.textContent = button.dataset.mermaidSource ?? "";
+      resetCopyButton();
+      if (!dialog.open) dialog.showModal();
+      sourceCopy.focus();
+    });
+  });
+}
+
 document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => {
   if (pre.dataset.copyReady === "true") return;
   pre.dataset.copyReady = "true";
