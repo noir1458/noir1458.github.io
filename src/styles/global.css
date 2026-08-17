@@ -1116,12 +1116,32 @@ button {
 
 .article-content h2 {
   margin: 2.7em 0 0.8em;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 84%, var(--accent));
   font-size: 1.65em;
 }
 
 .article-content h3 {
   margin: 2.2em 0 0.7em;
+  padding-bottom: 0.38em;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 64%, transparent);
   font-size: 1.3em;
+}
+
+.article-content h4 {
+  margin: 1.8em 0 0.6em;
+  font-size: 1.08em;
+}
+
+.article-content :is(h2, h3, h4)::before {
+  content: "#";
+  margin-right: 0.42em;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 720;
+  letter-spacing: 0;
+  vertical-align: 0.08em;
 }
 
 .article-content a {

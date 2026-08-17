@@ -218,7 +218,43 @@ left|center|right
 우측 상단의 코드 아이콘(`</>`)을 누르면 화면 중앙의 모달에서 원본 코드를 확인하고 복사할 수 있다.
 
 ```mermaid
-flowchart LR
-    A[Markdown 작성] --> B[Astro 빌드]
-    B --> C[다이어그램 표시]
+erDiagram
+    BLOG_AUTHOR ||--o{ BLOG_POST : writes
+    CATEGORY ||--o{ BLOG_POST : contains
+    BLOG_POST ||--o{ COMMENT : receives
+    BLOG_POST ||--o{ POST_TAG : has
+    TAG ||--o{ POST_TAG : maps
+
+    BLOG_AUTHOR {
+        string id PK
+        string name
+        string email UK
+    }
+    CATEGORY {
+        string id PK
+        string name UK
+    }
+    BLOG_POST {
+        string id PK
+        string authorId FK
+        string categoryId FK
+        string slug UK
+        string title
+        datetime publishedAt
+    }
+    COMMENT {
+        string id PK
+        string postId FK
+        string authorName
+        string body
+        datetime createdAt
+    }
+    TAG {
+        string id PK
+        string name UK
+    }
+    POST_TAG {
+        string postId PK, FK
+        string tagId PK, FK
+    }
 ```
