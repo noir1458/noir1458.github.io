@@ -17,9 +17,7 @@ math: false
 >
 > 아래의 계정명, 비밀번호, DDNS·내부 IP·MAC 주소, VPN 이름, Keychain 서비스명, 장치 이름은 모두 placeholder로 적었다.
 
----
-
-## 0. 최종 결과
+### 최종 결과
 
 최종적으로 완성된 흐름은 이렇다.
 
@@ -52,11 +50,9 @@ Windows 바탕화면 '절전' 바로가기
 
 노트북 덮개를 닫은 상태에서도 정상 동작했고, Parsec 해상도는 `1680×1050 (16:10)`으로 맞추니 macOS 클라이언트에서도 꽤 자연스러웠다.
 
----
+## 환경
 
-# 1. 환경
-
-## Windows 호스트
+### Windows 호스트
 
 - 구형 Windows 노트북
 - Windows 10
@@ -64,7 +60,7 @@ Windows 바탕화면 '절전' 바로가기
 - WSL Ubuntu (개인 공부용으로 사용)
 - Parsec Host
 
-## 공유기
+### 공유기
 
 - 구형 ipTIME 공유기
 - 내부 주소: `<ROUTER_IP>`
@@ -72,7 +68,7 @@ Windows 바탕화면 '절전' 바로가기
 - DDNS 지원
 - L2TP VPN 서버 지원
 
-## 클라이언트
+### 클라이언트
 
 - macOS
 - Homebrew
@@ -102,11 +98,9 @@ Windows 바탕화면 '절전' 바로가기
 <DEFAULT_PASSWD_FIELD_VALUE> = DevTools에서 확인한 공유기 로그인 폼 필드 값
 ```
 
----
+## Windows WOL 기본 조건 확인
 
-# 2. Windows WOL 기본 조건 확인
-
-## 2.1 Wake 가능한 장치 확인
+### Wake 가능한 장치 확인
 
 CMD 또는 PowerShell:
 
@@ -122,7 +116,7 @@ powercfg /devicequery wake_armed
 
 가 나오면 Windows가 해당 NIC를 Wake 가능한 장치로 인식하고 있는 것이다.
 
-## 2.2 유선 MAC 주소 확인
+### 유선 MAC 주소 확인
 
 ```cmd
 ipconfig /all
@@ -140,9 +134,7 @@ IPv4 Address     : <WINDOWS_LAN_IP>
 
 WOL에는 Wi-Fi MAC이 아니라 **유선 Realtek NIC MAC**을 사용했다.
 
----
-
-# 3. Realtek NIC 설정
+## Realtek NIC 설정
 
 장치 관리자:
 
@@ -152,7 +144,7 @@ WOL에는 Wi-Fi MAC이 아니라 **유선 Realtek NIC MAC**을 사용했다.
 → 속성
 ```
 
-## 고급
+### 고급
 
 ```text
 Wake on Magic Packet      → Enabled
@@ -162,7 +154,7 @@ WOL & Shutdown Link Speed → 기본값 유지
 
 핵심은 `Wake on Magic Packet`이다.
 
-## 전원 관리
+### 전원 관리
 
 ```text
 ☑ 전원을 절약하기 위해 컴퓨터가 이 장치를 끌 수 있음
@@ -172,9 +164,7 @@ WOL & Shutdown Link Speed → 기본값 유지
 
 이 상태에서 실제 S3 절전 WOL이 성공했다.
 
----
-
-# 4. BIOS에서 본 것
+## BIOS에서 본 것
 
 Boot 탭:
 
@@ -211,17 +201,15 @@ PME Event Wake Up
 
 같은 항목은 없었다.
 
-### EDB
+#### EDB
 
 `Execute Disable Bit`이다. 대략 NX bit / DEP 계열의 하드웨어 보안 기능이라고 보면 된다. WOL과는 무관하므로 Enabled 그대로 두었다.
 
-### Smart Battery Calibration
+#### Smart Battery Calibration
 
 배터리 잔량 표시를 보정하는 기능이다. 배터리 성능 복구 기능도 아니고 WOL과도 관계없다.
 
----
-
-# 5. 가장 중요한 결론: S3만 WOL이 됐다
+## 가장 중요한 결론: S3만 WOL이 됐다
 
 실제 결과:
 
@@ -244,9 +232,7 @@ Windows 업데이트/드라이버 → 다시 시작
 
 완전 종료 후에는 WOL로 켤 수 없으므로 직접 전원 버튼을 눌러야 한다.
 
----
-
-# 6. 덮개를 닫아도 동작하게 하기
+## 덮개를 닫아도 동작하게 하기
 
 Windows 전원 옵션에서:
 
@@ -260,9 +246,7 @@ Windows 전원 옵션에서:
 
 최종적으로는 노트북을 덮어둔 채 사실상 헤드리스 머신처럼 쓸 수 있었다.
 
----
-
-# 7. Windows 바탕화면에 절전 버튼 만들기
+## Windows 바탕화면에 절전 버튼 만들기
 
 원격 머신에서는 실수로 `시스템 종료`를 눌러버리는 것이 가장 귀찮다.
 
@@ -296,9 +280,7 @@ powershell.exe -NoProfile -WindowStyle Hidden -Command "Add-Type -AssemblyName S
 
 이 방식은 실제 테스트에서 절전 후 WOL 복귀가 정상 동작했다.
 
----
-
-# 8. 집 안에서 Mac → WOL
+## 집 안에서 Mac → WOL
 
 macOS:
 
@@ -331,9 +313,7 @@ Magic Packet 처리
 
 가 모두 정상임을 먼저 확인했다.
 
----
-
-# 9. ipTIME 공유기 자체 WOL
+## ipTIME 공유기 자체 WOL
 
 ipTIME:
 
@@ -354,9 +334,7 @@ PC 설명: <DEVICE_LABEL>
 
 이 기능이 나중에 외부 자동화의 핵심이 됐다.
 
----
-
-# 10. DDNS 설정
+## DDNS 설정
 
 외부 IP가 바뀌는 상황을 고려해 ipTIME DDNS를 사용했다.
 
@@ -389,9 +367,7 @@ dig +short <DDNS_HOST>
 
 집 공유기의 현재 공인 IP가 나오면 정상이다.
 
----
-
-# 11. L2TP VPN 서버 구성
+## L2TP VPN 서버 구성
 
 사용한 공유기에서는 PPTP와 L2TP가 보였고 L2TP를 사용했다.
 
@@ -416,7 +392,7 @@ VPN 접속 암호: 별도 암호
 할당 IP 주소: <VPN_CLIENT_IP>
 ```
 
-## 시행착오: VPN 할당 IP 충돌
+### 시행착오: VPN 할당 IP 충돌
 
 처음 VPN 클라이언트 IP를 Windows 노트북이 이미 사용 중인 주소와 겹치게 잡았다.
 
@@ -435,9 +411,7 @@ VPN 클라이언트 = <WINDOWS_LAN_IP>  ← 충돌
 
 가능하면 DHCP 자동 할당 범위와도 분리하는 편이 좋다.
 
----
-
-# 12. macOS L2TP 설정
+## macOS L2TP 설정
 
 macOS:
 
@@ -470,9 +444,7 @@ VPN 계정 암호 != L2TP 공유 비밀키
 
 두 값은 서로 다르다.
 
----
-
-# 13. 집 Wi-Fi에서 VPN을 테스트하면 실패했던 문제
+## 집 Wi-Fi에서 VPN을 테스트하면 실패했던 문제
 
 처음에는 Mac을 집 Wi-Fi에 붙인 상태에서 자기 집 DDNS로 VPN을 연결했다.
 
@@ -511,7 +483,7 @@ DDNS 정상
 
 이었다.
 
-## 해결
+### 해결
 
 Mac을 **모바일 핫스팟**으로 바꿔 실제 외부망에서 VPN을 연결하니 정상.
 
@@ -535,9 +507,7 @@ ping -c 3 <ROUTER_IP>
 
 따라서 VPN 테스트는 실제 외부 네트워크에서 해야 한다.
 
----
-
-# 14. Chrome만 공유기 관리자 페이지가 안 열린 문제
+## Chrome만 공유기 관리자 페이지가 안 열린 문제
 
 한때:
 
@@ -579,9 +549,7 @@ Chrome의 로컬 네트워크 접근을 허용하니 해결됐다.
 
 이 권한은 공유기, NAS, 프린터 같은 같은 LAN의 장치 접근과도 관계가 있다.
 
----
-
-# 15. 외부 VPN에서 Magic Packet 직접 보내기
+## 외부 VPN에서 Magic Packet 직접 보내기
 
 VPN 연결 후:
 
@@ -634,9 +602,7 @@ http://<ROUTER_IP>
 > Mac이 VPN 너머로 직접 LAN broadcast를 보내게 하지 말고
 > **VPN은 공유기 접근용으로만 쓰고, 공유기가 자기 LAN에서 WOL을 발생시키게 하자.**
 
----
-
-# 16. ipTIME WOL HTTP 요청 분석
+## ipTIME WOL HTTP 요청 분석
 
 Chrome DevTools:
 
@@ -694,9 +660,7 @@ curl 'http://<ROUTER_IP>/sess-bin/timepro.cgi' \
 
 형태였다.
 
----
-
-# 17. 로그인 POST 찾기
+## 로그인 POST 찾기
 
 로그인 시 요청이 페이지 이동 때문에 잠깐 보였다 사라졌기 때문에 DevTools의:
 
@@ -724,9 +688,7 @@ default_passwd=<DEFAULT_PASSWD_FIELD_VALUE>
 captcha_code=
 ```
 
----
-
-# 18. 가장 오래 걸린 문제: curl cookie jar가 비어 있었다
+## 가장 오래 걸린 문제: curl cookie jar가 비어 있었다
 
 처음에는 일반적인 로그인처럼 생각해서:
 
@@ -756,9 +718,7 @@ http://<ROUTER_IP>/sess-bin/login_session.cgi?logout=1
 
 `Set-Cookie:` 헤더가 없었다.
 
----
-
-# 19. 결정적 해결: 로그인 응답의 JavaScript에서 session 추출
+## 결정적 해결: 로그인 응답의 JavaScript에서 session 추출
 
 이 구형 ipTIME 펌웨어는 로그인 성공 후 세션을:
 
@@ -795,9 +755,7 @@ SESSION=$(printf '%s' "$LOGIN_RESP" \
 
 이번 구성에서 가장 중요한 시행착오였다.
 
----
-
-# 20. 암호는 macOS Keychain에 저장
+## 암호는 macOS Keychain에 저장
 
 다음 값들을 스크립트에 평문으로 넣지 않았다.
 
@@ -807,7 +765,7 @@ L2TP Shared Secret
 ipTIME 관리자 비밀번호
 ```
 
-## VPN 비밀번호
+### VPN 비밀번호
 
 ```bash
 read -s "VPN_PASS?VPN 계정 암호 입력: "
@@ -822,7 +780,7 @@ security add-generic-password \
 unset VPN_PASS
 ```
 
-## L2TP Shared Secret
+### L2TP Shared Secret
 
 ```bash
 read -s "VPN_SECRET?L2TP 비밀키 입력: "
@@ -837,7 +795,7 @@ security add-generic-password \
 unset VPN_SECRET
 ```
 
-## 공유기 관리자 비밀번호
+### 공유기 관리자 비밀번호
 
 ```bash
 read -s "ROUTER_PASS?공유기 관리자 암호 입력: "
@@ -861,9 +819,7 @@ security find-generic-password \
   && echo "공유기 암호 OK"
 ```
 
----
-
-# 21. macOS 단축어의 내장 VPN 액션 문제
+## macOS 단축어의 내장 VPN 액션 문제
 
 Shortcuts의 VPN 액션으로 처리하려 했는데, 이 환경에서는 VPN 목록을 불러오는 과정에서 단축어 앱이 죽는 문제가 있었다.
 
@@ -910,9 +866,7 @@ unset VPN_PASS VPN_SECRET
 
 실제 외부망에서 정상 연결됐다.
 
----
-
-# 22. 최종 외부용 단축어
+## 최종 외부용 단축어
 
 macOS 단축어:
 
@@ -1056,9 +1010,7 @@ fi
 
 실제 외부망에서 이 단축어 하나로 전체 과정이 성공했다.
 
----
-
-# 23. 집 전용 단축어
+## 집 전용 단축어
 
 집에서는 훨씬 단순하다.
 
@@ -1084,9 +1036,7 @@ wakeonlan <LAPTOP_MAC>
 
 로 분리해두면 편하다.
 
----
-
-# 24. Parsec 해상도
+## Parsec 해상도
 
 노트북 패널과 macOS 클라이언트의 화면 비율이 달라 기본 해상도가 약간 어색했다.
 
@@ -1111,11 +1061,9 @@ macOS 클라이언트 기준으로:
 - 1920×1200보다 구형 호스트에 부담이 적으며
 - Windows 글자 크기도 적당했다.
 
----
+## 디버깅에 유용했던 명령어
 
-# 25. 디버깅에 유용했던 명령어
-
-## Windows
+### Windows
 
 ```cmd
 powercfg /devicequery wake_armed
@@ -1124,7 +1072,7 @@ shutdown /s /t 0
 shutdown /h
 ```
 
-## macOS
+### macOS
 
 VPN 상태:
 
@@ -1176,9 +1124,7 @@ broadcast 지정:
 wakeonlan -i <LAN_BROADCAST_IP> <LAPTOP_MAC>
 ```
 
----
-
-# 26. 문제와 해결 요약
+## 문제와 해결 요약
 
 | 문제 | 원인 | 해결 |
 |---|---|---|
@@ -1193,9 +1139,7 @@ wakeonlan -i <LAN_BROADCAST_IP> <LAPTOP_MAC>
 | Shortcuts VPN 액션이 죽음 | macOS Shortcuts 쪽 문제 | `scutil --nc` 사용 |
 | WOL POST가 실행됐는데 안 깨어남 | 유효한 `efm_session_id`가 없었음 | 로그인 응답에서 session 추출 |
 
----
-
-# 27. 보안상 반드시 주의할 점
+## 보안상 반드시 주의할 점
 
 자동화 과정에서 다음 정보는 외부에 공개하면 안 된다.
 
@@ -1215,9 +1159,7 @@ L2TP Shared Secret
 5. 관리자 비밀번호를 공개했다면 즉시 변경한다.
 6. 공유기 관리자 페이지를 외부에 직접 노출하기보다 VPN을 먼저 거치는 구조를 사용한다.
 
----
-
-# 28. 보너스: WSL 개인 공부 환경
+## 보너스: WSL 개인 공부 환경
 
 원격 Windows 머신 안에서도 Linux 기반 공부와 개발 실습을 할 수 있도록 WSL에 필요한 도구를 추가로 설치했다.
 
@@ -1272,11 +1214,9 @@ pwndbg    # pwndbg 포함 GDB
 
 둘을 굳이 alias로 합치지 않았다.
 
----
+## 통합 전 사용 루틴
 
-# 29. 통합 전 사용 루틴
-
-## 집
+### 집
 
 ```text
 '집 PC 켜기'
@@ -1285,7 +1225,7 @@ pwndbg    # pwndbg 포함 GDB
 → Parsec
 ```
 
-## 외부
+### 외부
 
 ```text
 '외부 PC 켜기'
@@ -1298,15 +1238,13 @@ pwndbg    # pwndbg 포함 GDB
 → Parsec
 ```
 
-## 사용 후
+### 사용 후
 
 ```text
 Windows 바탕화면 '절전'
 ```
 
----
-
-# 30. 집/외부 단축어를 하나로 통합
+## 집/외부 단축어를 하나로 통합
 
 처음에는 단축어를 두 개로 나눠 사용했다.
 
@@ -1343,7 +1281,7 @@ Windows 바탕화면 '절전'
 
 그래서 최종적으로는 **현재 `<ROUTER_IP>` 장비의 MAC 주소를 ARP로 확인하고, 미리 등록한 집 공유기 MAC과 비교하는 방식**을 사용했다.
 
-## 30.1 현재 공유기 MAC 확인
+### 현재 공유기 MAC 확인
 
 먼저 집 Wi-Fi에 연결한 상태에서:
 
@@ -1370,7 +1308,7 @@ arp -n <ROUTER_IP>
 
 > 아래 스크립트에서는 실제 MAC 주소 대신 `<HOME_ROUTER_MAC_1>`, `<HOME_ROUTER_MAC_2>` placeholder를 사용한다.
 
-## 30.2 최종 통합 단축어
+### 최종 통합 단축어
 
 macOS 단축어의 `셸 스크립트 실행`에 다음처럼 넣었다.
 
@@ -1662,9 +1600,7 @@ Parsec 실행
 
 집/외부용 단축어 두 개를 따로 유지하는 것보다 실제 사용에서는 이 방식이 가장 깔끔했다.
 
----
-
-# 31. 결론
+## 결론
 
 처음에는 단순히 “WOL 켜고 Parsec 쓰면 되겠지”라고 생각했지만 실제로는:
 
