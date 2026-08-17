@@ -4,10 +4,10 @@
   --surface: #ffffff;
   --surface-solid: #ffffff;
   --surface-strong: #f7f9f7;
-  --text: #334139;
-  --body-ink: #3f4d45;
-  --text-soft: color-mix(in srgb, #687a70 50%, #334139);
-  --muted: color-mix(in srgb, #687a70 68%, #334139);
+  --text: #28332d;
+  --body-ink: #344039;
+  --text-soft: color-mix(in srgb, #607167 50%, #28332d);
+  --muted: color-mix(in srgb, #607167 65%, #28332d);
   --line: #dde7e0;
   --line-strong: #9bafa2;
   --accent: #78a889;
