@@ -1068,13 +1068,15 @@ button {
 
 .article-toc-panel h2 {
   margin: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
   color: var(--text);
   font-size: 1.08rem;
   line-height: 1.4;
 }
 
 .article-toc-panel ol {
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   padding-left: 28px;
   color: var(--text-soft);
 }
