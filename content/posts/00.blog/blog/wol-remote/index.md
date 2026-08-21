@@ -3,6 +3,7 @@ title: WOL을 활용해 구형 Windows 노트북을 원격 머신으로 활용�
 slug: wol-remote
 description: ipTIME DDNS와 L2TP VPN, macOS 단축어를 이용해 구형 Windows 노트북의 WOL 원격 접속을 자동화한 과정
 publishedAt: '2026-08-17'
+updatedAt: '2026-08-22'
 tags:
   - WOL
 categories: blog
@@ -10,13 +11,13 @@ draft: false
 math: false
 ---
 
-구형 Windows 노트북을 집에 덮어둔 채 **절전 상태로 대기**시키고, 집에서는 Mac에서 한 번 클릭, 외부에서는 **VPN → 공유기 WOL → Parsec**까지 한 번에 실행해 필요할 때 원격으로 Windows 환경을 사용할 수 있게 만들었다. 작업 용도보다 **WOL과 원격 접속을 이용해 구형 Windows 노트북을 원격 머신으로 재활용하는 과정** 자체에 초점을 두고 글을 작성한다. 아래의 계정명, 비밀번호, DDNS·내부 IP·MAC 주소, VPN 이름, Keychain 서비스명, 장치 이름은 모두 placeholder로 적었다. iptime 공유기를 사용하는 사람이면 글 내용 복사해서 붙이고 물어보면서 시도하면 충분히 똑같이 따라할수 있을듯.
+구형 Windows 노트북을 집에 덮어둔 채 **절전 상태로 대기**시키고, 집에서는 Mac에서 한 번 클릭, 외부에서는 **VPN → 공유기 WOL → Parsec**까지 한 번에 실행해 필요할 때 원격으로 Windows 환경을 사용할 수 있게 만들었다. 작업 용도보다는 **WOL과 원격 접속을 이용해 구형 Windows 노트북을 원격 머신으로 재활용하는 과정** 자체에 초점을 맞춰 글을 작성한다. 아래의 계정명, 비밀번호, DDNS·내부 IP·MAC 주소, VPN 이름, Keychain 서비스명, 장치 이름은 모두 placeholder로 적었다. ipTIME 공유기를 사용한다면 글의 설정과 명령을 참고해 비슷한 환경을 구성할 수 있을 것이다. 다만 공유기 모델과 펌웨어, Windows의 전원 관리 방식에 따라 메뉴와 동작은 달라질 수 있다.
 
 ## 최종 결과
 
-![alt text](image.png)
+![macOS의 Parsec에서 원격 Windows 노트북에 접속한 화면](image.png)
 
-맥북에서 단축어 버튼 하나로 원격으로 노트북을 절전 상태에서 깨우고, Parsec로 접속하는데 성공했다.
+맥북에서 단축어 버튼 하나로 원격 노트북을 절전 상태에서 깨우고 Parsec으로 접속하는 데 성공했다.
 
 최종적으로 완성된 흐름은 이렇다.
 
@@ -47,9 +48,9 @@ Mac 단축어 → L2TP VPN → ipTIME 로그인 → 공유기 자체 WOL
 Windows 바탕화면 '절전' 바로가기
 ```
 
-노트북 덮개를 닫은 상태에서도 정상 동작했고, Parsec 해상도는 `1680×1050 (16:10)`으로 맞추니 macOS 클라이언트에서도 꽤 자연스러웠다. 다만 종료할때 절전을 해야 한다. 그냥 꺼버리면 집에 가서 다시 켜줘야한다.
+노트북 덮개를 닫은 상태에서도 정상 동작했고, Parsec 해상도를 `1680×1050 (16:10)`으로 맞추니 macOS 클라이언트에서도 꽤 자연스러웠다. 다만 사용을 마칠 때는 시스템을 종료하지 말고 절전 상태로 전환해야 한다. 전원을 완전히 끄면 집에서 직접 다시 켜야 한다.
 
-노트북이 나온지 오래된것이라 완전 종료상태에서 깨우는건 안되는것으로 보인다. CD 넣는곳도 있고 작동시 하드디스크 돌아가는 소리가 나는 10년이 넘은 노트북이다. SSD만 신형으로 바꿔놓아서 못써먹을정도로 느리지는 않다.
+노트북이 출시된 지 오래돼 완전 종료 상태에서 깨우는 기능은 지원하지 않는 것으로 보인다. 광학 드라이브가 있고 작동할 때 하드디스크 돌아가는 소리가 나는 10년 넘은 노트북이다. SSD만 새 제품으로 교체해 사용하기 어려울 정도로 느리지는 않다.
 
 ## 환경
 
@@ -133,7 +134,7 @@ IPv4 Address     : <WINDOWS_LAN_IP>
 
 를 확인한다.
 
-WOL에는 Wi-Fi MAC이 아니라 **유선 Realtek NIC MAC**을 사용했다. 
+WOL에는 Wi-Fi MAC이 아니라 **유선 Realtek NIC MAC**을 사용했다.
 
 ## Realtek NIC 설정
 
@@ -147,68 +148,38 @@ WOL에는 Wi-Fi MAC이 아니라 **유선 Realtek NIC MAC**을 사용했다.
 
 ### 고급
 
-```text
-Wake on Magic Packet      → Enabled
-Wake on pattern match     → Disabled여도 무방
-WOL & Shutdown Link Speed → 기본값 유지
-```
+![고급 설정](image-4.png)
 
-`Wake on Magic Packet`이 중요
+- Wake on Magic Packet      → Enabled (중요)
+- Wake on pattern match     → Disabled여도 무방
+- WOL & Shutdown Link Speed → 기본값 유지
 
 ### 전원 관리
 
-```text
-☑ 전원을 절약하기 위해 컴퓨터가 이 장치를 끌 수 있음
-☑ 이 장치를 사용하여 컴퓨터의 대기 모드를 종료할 수 있음
-☑ 매직 패킷에서만 컴퓨터의 대기 모드를 종료할 수 있음
-```
+![전원 관리](image-3.png)
 
-이 상태에서 실제 S3 절전 WOL이 성공했다.
+- 전원을 절약하기 위해 컴퓨터가 이 장치를 끌 수 있음
+- 이 장치를 사용하여 컴퓨터의 대기 모드를 종료할 수 있음
+- 매직 패킷에서만 컴퓨터의 대기 모드를 종료할 수 있음
+
+3개를 체크한 이 상태에서 실제 S3 절전 WOL이 성공했다.
 
 ## BIOS에서 본 것
 
-Boot 탭:
-
-```text
-Internal LAN [Enabled]
-PXE OPROM    [Disabled]
-```
+![BIOS BOOT](image-1.png)
 
 - `Internal LAN`: 그대로 Enabled
 - `PXE OPROM`: 네트워크 부팅용이므로 WOL과 무관
 
 Advanced 탭에는:
 
-```text
-CPU Power Saving Mode
-Hyperthreading
-EDB
-Fast BIOS Mode
-AHCI Mode Control
-Battery Life Cycle Extension
-USB S3 Wake-up
-```
+![BIOS ADVANCED](image-2.png)
 
-정도만 있었고, 기대했던:
+기대했던 Wake on LAN, Wake on PME, Power On By LAN, PCI-E Wake, Wake From S5, PME Event Wake Up 같은 항목은 없었다.
 
-```text
-Wake on LAN
-Wake on PME
-Power On By LAN
-PCI-E Wake
-Wake From S5
-PME Event Wake Up
-```
+EDB는 `Execute Disable Bit`이다. 대략 NX bit / DEP 계열의 하드웨어 보안 기능이라고 보면 된다. WOL과는 무관하므로 Enabled 그대로 두었다.
 
-같은 항목은 없었다.
-
-#### EDB
-
-`Execute Disable Bit`이다. 대략 NX bit / DEP 계열의 하드웨어 보안 기능이라고 보면 된다. WOL과는 무관하므로 Enabled 그대로 두었다.
-
-#### Smart Battery Calibration
-
-배터리 잔량 표시를 보정하는 기능이다. 배터리 성능 복구 기능도 아니고 WOL과도 관계없다.
+Smart Battery Calibration은 배터리 잔량 표시를 보정하는 기능이다. 배터리 성능 복구 기능도 아니고 WOL과도 관계없다.
 
 ## 가장 중요한 결론: S3만 WOL이 됐다
 
@@ -233,15 +204,17 @@ Windows 업데이트/드라이버 → 다시 시작
 
 완전 종료 후에는 WOL로 켤 수 없으므로 직접 전원 버튼을 눌러야 한다.
 
+### 장시간 절전 시 최대 절전으로 전환되는 문제
+
+외부 카페에서 다시 테스트했을 때는 한 차례 WOL에 실패했다. Windows가 S3 절전 상태로 들어간 뒤 일정 시간이 지나면 S4 최대 절전 상태로 전환되도록 설정돼 있었던 것이 원인으로 보인다. 이 노트북은 S4에서 WOL이 동작하지 않으므로, 전원 옵션의 `다음 시간 후 최대 절전 모드로 전환`을 `사용 안 함`으로 바꾸고 장시간 대기 후 다시 확인할 필요가 있다.
+
+따라서 이 글의 자동화는 **노트북이 S3 절전 상태를 유지한다는 조건에서 검증됐다.** 장시간 무인 운용까지 안정적인지는 추가 테스트가 필요하다.
+
 ## 덮개를 닫아도 동작하게 하기
 
-Windows 전원 옵션에서:
+![Windows 전원 옵션](image-5.png)
 
-```text
-덮개를 닫을 때 → 아무 것도 안 함
-```
-
-으로 설정했다.
+Windows 전원 옵션에서 `덮개를 닫을 때`를 `아무 것도 안 함`으로 설정했다.
 
 이렇게 해두면 Parsec으로 사용 중 노트북 덮개를 닫아도 시스템은 계속 돌아간다.
 
@@ -865,169 +838,15 @@ unset VPN_PASS VPN_SECRET
 
 실제 외부망에서 정상 연결됐다.
 
-## 최종 외부용 단축어
-
-macOS 단축어:
-
-```text
-새 단축어 → 셸 스크립트 실행
-```
-
-`관리자로 실행`은 OFF.
-
-아래에서 placeholder만 본인 값으로 바꾼다.
-
-```bash
-VPN="<VPN_NAME>"
-VPN_USER="<VPN_USER>"
-
-ROUTER_IP="<ROUTER_IP>"
-ROUTER_USER="<ROUTER_USER>"
-
-MAC="<LAPTOP_MAC>"
-
-VPN_STARTED=0
-
-
-# 1. 집 LAN인지 확인
-if ! /sbin/ping -c 1 -W 1000 "$ROUTER_IP" >/dev/null 2>&1; then
-
-    VPN_PASS=$(/usr/bin/security find-generic-password \
-      -a "$VPN_USER" \
-      -s "<VPN_PASSWORD_SERVICE>" \
-      -w)
-
-    VPN_SECRET=$(/usr/bin/security find-generic-password \
-      -a "$VPN_USER" \
-      -s "<VPN_SECRET_SERVICE>" \
-      -w)
-
-    /usr/sbin/scutil --nc start "$VPN" \
-      --user "$VPN_USER" \
-      --password "$VPN_PASS" \
-      --secret "$VPN_SECRET"
-
-    unset VPN_PASS VPN_SECRET
-
-    VPN_STARTED=1
-    CONNECTED=0
-
-    for i in {1..20}; do
-        if /usr/sbin/scutil --nc status "$VPN" \
-          | /usr/bin/head -n 1 \
-          | /usr/bin/grep -q "^Connected$"; then
-            CONNECTED=1
-            break
-        fi
-        /bin/sleep 1
-    done
-
-    if [ "$CONNECTED" -ne 1 ]; then
-        /usr/bin/osascript \
-          -e 'display alert "VPN 연결 실패" message "집 VPN 연결에 실패했습니다."'
-        exit 1
-    fi
-
-    for i in {1..10}; do
-        if /sbin/ping -c 1 -W 1000 "$ROUTER_IP" >/dev/null 2>&1; then
-            break
-        fi
-        /bin/sleep 1
-    done
-fi
-
-
-# 2. ipTIME 로그인
-ROUTER_PASS=$(/usr/bin/security find-generic-password \
-  -a "$ROUTER_USER" \
-  -s "<ROUTER_PASSWORD_SERVICE>" \
-  -w)
-
-LOGIN_RESP=$(/usr/bin/curl -sS \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H "Referer: http://${ROUTER_IP}/sess-bin/login_session.cgi?logout=1" \
-  --data-urlencode 'init_status=1' \
-  --data-urlencode 'captcha_on=0' \
-  --data-urlencode 'captcha_file=' \
-  --data-urlencode "username=$ROUTER_USER" \
-  --data-urlencode "passwd=$ROUTER_PASS" \
-  --data-urlencode 'default_passwd=<DEFAULT_PASSWD_FIELD_VALUE>' \
-  --data-urlencode 'captcha_code=' \
-  "http://${ROUTER_IP}/sess-bin/login_handler.cgi")
-
-unset ROUTER_PASS
-
-
-# 3. 응답 JS에서 세션 추출
-SESSION=$(printf '%s' "$LOGIN_RESP" \
-  | /usr/bin/grep -o "setCookie('[^']*')" \
-  | /usr/bin/head -1 \
-  | /usr/bin/cut -d"'" -f2)
-
-unset LOGIN_RESP
-
-if [ -z "$SESSION" ]; then
-    if [ "$VPN_STARTED" -eq 1 ]; then
-        /usr/sbin/scutil --nc stop "$VPN"
-    fi
-
-    /usr/bin/osascript \
-      -e 'display alert "공유기 로그인 실패" message "ipTIME 세션을 가져오지 못했습니다."'
-    exit 1
-fi
-
-
-# 4. 공유기 자체 WOL
-/usr/bin/curl -sS \
-  "http://${ROUTER_IP}/sess-bin/timepro.cgi" \
-  -b "efm_session_id=$SESSION" \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H "Origin: http://${ROUTER_IP}" \
-  -H "Referer: http://${ROUTER_IP}/sess-bin/timepro.cgi?tmenu=iframe&smenu=expertconfwollist" \
-  --data-urlencode 'tmenu=iframe' \
-  --data-urlencode 'smenu=expertconfwollist' \
-  --data-urlencode 'nomore=0' \
-  --data-urlencode "wakeupchk=$MAC" \
-  --data-urlencode 'act=wake' \
-  >/dev/null
-
-unset SESSION
-
-
-# 5. 외부에서 시작한 VPN만 종료
-if [ "$VPN_STARTED" -eq 1 ]; then
-    /bin/sleep 2
-    /usr/sbin/scutil --nc stop "$VPN"
-fi
-
-
-# 6. Windows / Parsec 대기
-/bin/sleep 15
-
-/usr/bin/open -a "Parsec"
-```
-
-실제 외부망에서 이 단축어 하나로 전체 과정이 성공했다.
-
-## 집 전용 단축어
-
-집에서는 훨씬 단순하다.
-
-```bash
-wakeonlan <LAPTOP_MAC>
-
-/bin/sleep 15
-
-/usr/bin/open -a "Parsec"
-```
+Keychain을 사용하면 비밀번호를 스크립트 파일에 직접 저장하지 않아도 된다. 다만 위 방식은 `scutil`을 실행하는 순간 비밀번호와 비밀키가 프로세스 인자로 전달될 수 있다. 여러 사용자가 함께 쓰는 Mac이라면 VPN 설정 자체에 인증 정보를 저장하고 `scutil --nc start "<VPN_NAME>"`만 호출하는 방식도 검토하는 편이 안전하다.
 
 ## Parsec 해상도
 
 노트북 패널과 macOS 클라이언트의 화면 비율이 달라 기본 해상도가 약간 어색했다.
 
-Parsec 오버레이 Resolution 에서 1680×1050 (16:10)을 사용했다.
+Parsec 오버레이의 Resolution에서 `1680×1050 (16:10)`을 사용했다.
 
-macOS 클라이언트 기준으로 Fullscreen이 자연스럽고, 1280×800보다 작업 공간이 넓고, 1920×1200보다 구형 호스트에 부담이 적으며, Windows 글자 크기도 적당했다. CMD에서 폰트를 consolas로 바꾸고 16px로 사용하면 해상도를 변경해도 맥 화면에서 잘보인다.
+macOS 클라이언트에서 전체 화면으로 보기에 자연스러웠다. `1280×800`보다 작업 공간이 넓고 `1920×1200`보다 구형 호스트의 부담이 적었으며, Windows 글자 크기도 적당했다. CMD 글꼴을 Consolas 16px로 설정하면 해상도를 바꿔도 Mac 화면에서 잘 보인다.
 
 ## 디버깅에 유용했던 명령어
 
@@ -1173,6 +992,8 @@ pwndbg:
 curl -qsL 'https://install.pwndbg.re' | sh -s -- -t pwndbg-gdb
 ```
 
+이 명령은 인터넷에서 받은 스크립트를 곧바로 실행한다. 사용하기 전에 공식 설치 문서와 내려받을 스크립트의 내용을 확인해야 한다.
+
 사용:
 
 ```bash
@@ -1181,36 +1002,6 @@ pwndbg    # pwndbg 포함 GDB
 ```
 
 둘을 굳이 alias로 합치지 않았다.
-
-## 통합 전 사용 루틴
-
-### 집
-
-```text
-'집 PC 켜기'
-→ wakeonlan
-→ 15초
-→ Parsec
-```
-
-### 외부
-
-```text
-'외부 PC 켜기'
-→ L2TP VPN
-→ ipTIME 관리자 로그인
-→ 로그인 JS에서 session 추출
-→ 공유기 자체 WOL
-→ VPN 종료
-→ 15초
-→ Parsec
-```
-
-### 사용 후
-
-```text
-Windows 바탕화면 '절전'
-```
 
 ## 집/외부 단축어를 하나로 통합
 
@@ -1280,7 +1071,7 @@ arp -n <ROUTER_IP>
 
 macOS 단축어의 `셸 스크립트 실행`에 다음처럼 넣었다.
 
-`관리자로 실행`은 OFF로 둔다.
+셸은 `/bin/zsh`로 설정하고 `관리자로 실행`은 OFF로 둔다.
 
 ```bash
 VPN="<VPN_NAME>"
@@ -1304,9 +1095,11 @@ if [ -z "$WOL" ]; then
     fi
 fi
 
-# 집 공유기 MAC
-HOME_ROUTER_MAC_1="<HOME_ROUTER_MAC_1>"
-HOME_ROUTER_MAC_2="<HOME_ROUTER_MAC_2>"
+# 집 공유기 MAC: 비교 전에 소문자로 통일
+HOME_ROUTER_MAC_1=$(printf '%s' "<HOME_ROUTER_MAC_1>" \
+  | /usr/bin/tr '[:upper:]' '[:lower:]')
+HOME_ROUTER_MAC_2=$(printf '%s' "<HOME_ROUTER_MAC_2>" \
+  | /usr/bin/tr '[:upper:]' '[:lower:]')
 
 VPN_STARTED=0
 
@@ -1413,6 +1206,10 @@ else
 
         if [ "$CONNECTED" -ne 1 ]; then
 
+            if [ "$VPN_STARTED" -eq 1 ]; then
+                /usr/sbin/scutil --nc stop "$VPN"
+            fi
+
             /usr/bin/osascript \
               -e 'display alert "VPN 연결 실패" message "집 VPN 연결에 실패했습니다."'
 
@@ -1463,7 +1260,7 @@ else
       -s "<ROUTER_PASSWORD_SERVICE>" \
       -w)
 
-    LOGIN_RESP=$(/usr/bin/curl -sS \
+    LOGIN_RESP=$(/usr/bin/curl -fsS \
       -H 'Content-Type: application/x-www-form-urlencoded' \
       -H "Referer: http://${ROUTER_IP}/sess-bin/login_session.cgi?logout=1" \
       --data-urlencode 'init_status=1' \
@@ -1505,18 +1302,31 @@ else
     # 4. ipTIME 자체 WOL 실행
     # ─────────────────────────────
 
-    /usr/bin/curl -sS \
-      "http://${ROUTER_IP}/sess-bin/timepro.cgi" \
-      -b "efm_session_id=$SESSION" \
-      -H 'Content-Type: application/x-www-form-urlencoded' \
-      -H "Origin: http://${ROUTER_IP}" \
-      -H "Referer: http://${ROUTER_IP}/sess-bin/timepro.cgi?tmenu=iframe&smenu=expertconfwollist" \
-      --data-urlencode 'tmenu=iframe' \
-      --data-urlencode 'smenu=expertconfwollist' \
-      --data-urlencode 'nomore=0' \
-      --data-urlencode "wakeupchk=$MAC" \
-      --data-urlencode 'act=wake' \
-      >/dev/null
+    if ! /usr/bin/curl -fsS \
+        "http://${ROUTER_IP}/sess-bin/timepro.cgi" \
+        -b "efm_session_id=$SESSION" \
+        -H 'Content-Type: application/x-www-form-urlencoded' \
+        -H "Origin: http://${ROUTER_IP}" \
+        -H "Referer: http://${ROUTER_IP}/sess-bin/timepro.cgi?tmenu=iframe&smenu=expertconfwollist" \
+        --data-urlencode 'tmenu=iframe' \
+        --data-urlencode 'smenu=expertconfwollist' \
+        --data-urlencode 'nomore=0' \
+        --data-urlencode "wakeupchk=$MAC" \
+        --data-urlencode 'act=wake' \
+        >/dev/null; then
+
+        unset SESSION
+
+        if [ "$VPN_STARTED" -eq 1 ]; then
+            /usr/sbin/scutil --nc stop "$VPN"
+        fi
+
+        /usr/bin/osascript \
+          -e 'display alert "WOL 요청 실패" message "ipTIME 공유기에 WOL 요청을 보내지 못했습니다."'
+
+        exit 1
+
+    fi
 
     unset SESSION
 
@@ -1607,6 +1417,6 @@ NIC Wake 권한
 + 필요하면 WSL 같은 공부 환경 추가
 ```
 
-형태의 꽤 쓸 만한 **원격 Windows 머신**으로 바뀌었다. 이후 외부 카페에서 단축어로 켜는것을 실패했는데, 윈도우에서 S3 절전 이후 일정 시간 이후 S4 최대절전모드로 넘어가는 옵션이 있는것으로 보인다. 이 설정만 다시 건드리고 확인 예정
+형태의 꽤 쓸 만한 **원격 Windows 머신**으로 바뀌었다. S3 절전 상태에서는 집과 외부 모두 자동화가 정상 동작했다. 다만 장시간 뒤 S4 최대 절전 상태로 전환되는 문제는 전원 옵션을 바꾼 뒤 추가로 검증해야 한다.
 
-공유기에서 WOL, DDNS 설정은 생각보다 쉬웠는데, 로그인하는거 cURL 따와서 하는 부분부터는 혼자서 하라고 했으면 절대 못했을것 같다. 윈도우 설정 점검하는것도 생각보다 체크할게 많아서 GPT 도움받으면서 많이 배웠다.
+공유기의 WOL과 DDNS 설정은 생각보다 쉬웠다. 반면 로그인 요청을 cURL로 가져와 자동화하는 부분부터는 혼자 했다면 해결하기 어려웠을 것 같다. Windows 설정도 확인할 항목이 예상보다 많았고, GPT의 도움을 받아 하나씩 점검하면서 많이 배웠다.
