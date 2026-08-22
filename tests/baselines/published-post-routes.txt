@@ -110,4 +110,3 @@
 /posts/pyplot02/
 /posts/regular-expression-for-python/
 /posts/security-model/
-/posts/think260718/
