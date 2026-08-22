@@ -17,7 +17,11 @@ Do not require routine users to edit Astro, TypeScript, package, or workflow fil
 - Preserve published post URLs and frontmatter slugs.
 - Keep category, tag, archive, RSS, sitemap, search, and static asset routes working.
 - Treat `tests/baselines/published-post-routes.txt` as the required public route contract.
-- Do not rewrite public Git history or force-push the production repository.
+- Do not rewrite public Git history or force-push the production repository,
+  except when the user explicitly asks to delete a post. A post deletion also
+  authorizes removing that post and its post-specific attachments from Git
+  history and force-pushing the rewritten production branch after verifying the
+  exact paths.
 
 ## Implementation
 
