@@ -1056,6 +1056,7 @@ button {
 }
 
 .article-toc-panel {
+  position: relative;
   max-height: calc(100svh - var(--article-toc-block-space));
   overflow: auto;
   overscroll-behavior: contain;
@@ -1068,6 +1069,7 @@ button {
 
 .article-toc-panel h2 {
   margin: 0;
+  padding-right: 42px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
   color: var(--text);
@@ -1305,6 +1307,32 @@ button {
 .code-copy.failed {
   border-color: color-mix(in srgb, var(--status-error) 42%, var(--line));
   color: var(--status-error);
+}
+
+.code-language {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  display: flex;
+  height: 32px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-solid) 70%, transparent);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.article-toc-close {
+  top: 14px;
+  right: 16px;
 }
 
 .mermaid-block {
@@ -2266,6 +2294,12 @@ button {
     top: 8px;
     right: 8px;
     width: 30px;
+    height: 30px;
+  }
+
+  .code-language {
+    top: 8px;
+    right: 46px;
     height: 30px;
   }
 

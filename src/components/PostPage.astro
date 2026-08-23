@@ -157,6 +157,15 @@ const schema = {
     >
       <nav class="article-toc-panel" aria-labelledby="article-toc-title" data-article-toc-panel>
         <h2 id="article-toc-title">On this page</h2>
+        <button
+          class="code-copy article-toc-close"
+          type="button"
+          aria-label="Close table of contents"
+          title="Close"
+          data-article-toc-close
+        >
+          <Icon name="close" size={16} />
+        </button>
         <ol>
           {tocHeadings.map((heading) => (
             <li class={`depth-${heading.depth}`}>

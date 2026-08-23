@@ -2,6 +2,7 @@ const scrollTopButton = document.querySelector<HTMLButtonElement>("[data-scroll-
 const articleTocToggle = document.querySelector<HTMLButtonElement>("[data-article-toc-toggle]");
 const articleTocDialog = document.querySelector<HTMLDialogElement>("[data-article-toc-dialog]");
 const articleTocPanel = articleTocDialog?.querySelector<HTMLElement>("[data-article-toc-panel]");
+const articleTocClose = articleTocDialog?.querySelector<HTMLButtonElement>("[data-article-toc-close]");
 const readingProgress = document.querySelector<HTMLElement>("[data-reading-progress]");
 const readingProgressBar = readingProgress?.querySelector<HTMLElement>("span");
 const readingArticle = document.querySelector<HTMLElement>("[data-reading-article]");
@@ -40,6 +41,8 @@ articleTocToggle?.addEventListener("click", () => {
     articleTocToggle.setAttribute("aria-expanded", "true");
   }
 });
+
+articleTocClose?.addEventListener("click", () => articleTocDialog?.close());
 
 articleTocDialog?.addEventListener("close", () => {
   articleTocToggle?.setAttribute("aria-expanded", "false");
@@ -170,6 +173,7 @@ document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => 
   pre.dataset.copyReady = "true";
   const wrapper = document.createElement("div");
   const button = document.createElement("button");
+  const language = pre.dataset.language;
   wrapper.className = "code-block";
   button.className = "code-copy";
   button.type = "button";
@@ -178,7 +182,14 @@ document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => 
   button.setAttribute("aria-label", "Copy code to clipboard");
   button.setAttribute("aria-live", "polite");
   pre.before(wrapper);
-  wrapper.append(pre, button);
+  wrapper.append(pre);
+  if (language) {
+    const languageLabel = document.createElement("span");
+    languageLabel.className = "code-language";
+    languageLabel.textContent = language;
+    wrapper.append(languageLabel);
+  }
+  wrapper.append(button);
 
   let resetTimer = 0;
   button.addEventListener("click", async () => {
