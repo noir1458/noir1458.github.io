@@ -152,6 +152,25 @@ button {
   color: var(--text);
 }
 
+@keyframes page-content-out {
+  to {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes page-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  mix-blend-mode: normal;
+}
+
 :focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 48%, transparent);
   outline-offset: 3px;

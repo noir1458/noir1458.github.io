@@ -2,7 +2,7 @@ const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 
 const getThemeButtons = () => [
-  ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")
+  ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]"),
 ];
 const getThemePicker = () =>
   document.querySelector<HTMLElement>("[data-theme-picker]");
@@ -11,7 +11,7 @@ const getThemeToggle = () =>
 const getThemeMenu = () =>
   document.querySelector<HTMLElement>("[data-theme-menu]");
 const getThemeIcons = () => [
-  ...document.querySelectorAll<HTMLElement>("[data-theme-icon]")
+  ...document.querySelectorAll<HTMLElement>("[data-theme-icon]"),
 ];
 
 function closeThemeMenu({ restoreFocus = false } = {}) {
@@ -40,31 +40,36 @@ function syncTheme({ broadcast = true } = {}) {
   getThemeIcons().forEach((icon) => {
     icon.hidden = icon.dataset.themeIcon !== selected;
   });
-  const selectedLabel = selected === "system"
-    ? "Auto"
-    : selected.charAt(0).toUpperCase() + selected.slice(1);
+  const selectedLabel =
+    selected === "system"
+      ? "Auto"
+      : selected.charAt(0).toUpperCase() + selected.slice(1);
   getThemeToggle()?.setAttribute(
     "aria-label",
-    `Choose color theme, current: ${selectedLabel}`
+    `Choose color theme, current: ${selectedLabel}`,
   );
   if (broadcast) {
-    document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
-      {
-        giscus: {
-          setConfig: {
-            theme: root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light"
-          }
-        }
-      },
-      "https://giscus.app"
-    );
+    document
+      .querySelector<HTMLIFrameElement>(".giscus-frame")
+      ?.contentWindow?.postMessage(
+        {
+          giscus: {
+            setConfig: {
+              theme:
+                root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light",
+            },
+          },
+        },
+        "https://giscus.app",
+      );
   }
 }
 
 document.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) return;
 
-  const themeButton = event.target.closest<HTMLButtonElement>("[data-theme-value]");
+  const themeButton =
+    event.target.closest<HTMLButtonElement>("[data-theme-value]");
   if (themeButton) {
     const theme = themeButton.dataset.themeValue ?? "system";
     root.dataset.theme = theme;
@@ -81,13 +86,16 @@ document.addEventListener("click", (event) => {
   menu?.classList.toggle("open", open);
   toggle.setAttribute("aria-expanded", String(open));
   if (open) {
-    getThemeButtons().find((button) => button.classList.contains("active"))?.focus();
+    getThemeButtons()
+      .find((button) => button.classList.contains("active"))
+      ?.focus();
   }
 });
 
 document.addEventListener("pointerdown", (event) => {
   const themePicker = getThemePicker();
-  if (themePicker && !themePicker.contains(event.target as Node)) closeThemeMenu();
+  if (themePicker && !themePicker.contains(event.target as Node))
+    closeThemeMenu();
 });
 
 document.addEventListener("keydown", (event) => {
@@ -100,4 +108,7 @@ media.addEventListener("change", () => syncTheme());
 window.addEventListener("message", (event) => {
   if (event.origin === "https://giscus.app") syncTheme({ broadcast: false });
 });
+document.addEventListener("astro:page-load", () =>
+  syncTheme({ broadcast: false }),
+);
 syncTheme({ broadcast: false });
