@@ -25,10 +25,10 @@ export function postCover(post: PostEntry): ImageMetadata | undefined {
 
   const localReference =
     post.body?.match(
-      /!\[[^\]]*\]\((\.\/[^)\s]+\.(?:avif|gif|jpe?g|png|webp))(?:\s+["'][^"']*["'])?\)/i
+      /!\[[^\]]*\]\(((?!(?:[a-z][a-z0-9+.-]*:|\/|\.\.\/))(?:\.\/)?[^)\s]+\.(?:avif|gif|jpe?g|png|webp))(?:\s+["'][^"']*["'])?\)/i
     )?.[1] ??
     post.body?.match(
-      /<img[^>]+src=["'](\.\/[^"']+\.(?:avif|gif|jpe?g|png|webp))["']/i
+      /<img[^>]+src=["']((?!(?:[a-z][a-z0-9+.-]*:|\/|\.\.\/))(?:\.\/)?[^"']+\.(?:avif|gif|jpe?g|png|webp))["']/i
     )?.[1];
 
   if (!localReference || !post.filePath) return undefined;
