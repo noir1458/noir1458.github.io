@@ -200,6 +200,7 @@ const pageTransition: TransitionDirectionalAnimations = {
         </main>
         {sidebar && <Sidebar posts={posts} />}
       </div>
+      <slot name="floating" />
       <Footer />
     </div>
     <script>
