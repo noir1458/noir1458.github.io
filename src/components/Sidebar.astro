@@ -1,14 +1,16 @@
 ---
 import type { PostEntry } from "@/utils/content";
+import type { MarkdownHeading } from "astro";
 import { groupCategoriesForSidebar } from "@/utils/content";
 import Icon from "@/components/Icon.astro";
 import { FEATURES, NAVIGATION } from "@/config";
 
 interface Props {
   posts: PostEntry[];
+  headings?: MarkdownHeading[];
 }
 
-const { posts } = Astro.props;
+const { posts, headings = [] } = Astro.props;
 const categoryGroups = groupCategoriesForSidebar(posts);
 const sidebarLinks = NAVIGATION.sidebar.filter(
   (link) => link.icon && (!link.requiresFeature || FEATURES[link.requiresFeature])
@@ -42,7 +44,25 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
       ))}
     </nav>
 
-    <details class="sidebar-widget" open>
+    {headings.length > 0 && (
+      <details class="sidebar-widget article-sidebar-toc" open>
+        <summary>
+          <span>On this page</span>
+          <Icon name="chevron-down" size={20} />
+        </summary>
+        <nav aria-label="On this page">
+          <ol>
+            {headings.map((heading) => (
+              <li class={`depth-${heading.depth}`}>
+                <a href={`#${heading.slug}`} data-article-toc-link>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </details>
+    )}
+
+    <details class="sidebar-widget" open={headings.length === 0}>
       <summary>
         <span>Categories</span>
         <Icon name="chevron-down" size={20} />

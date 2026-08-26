@@ -52,6 +52,32 @@ test("an invalid site URL reports its file and field", () => {
   );
 });
 
+test("an invalid accent preset reports its exact field", () => {
+  const directory = configFixture();
+  replaceInFile(directory, "site.yaml", /^  accent: .*$/mu, "  accent: orange");
+
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) => error instanceof SiteConfigError
+      && /config\/site\.yaml: appearance\.accent:/u.test(error.message)
+  );
+});
+
+test("a missing appearance section uses the cyan accent", () => {
+  const directory = configFixture();
+  replaceInFile(
+    directory,
+    "site.yaml",
+    /\nappearance:\n  accent: [^\n]+\n/u,
+    ""
+  );
+
+  assert.equal(
+    loadSiteConfig({ configDirectory: directory }).appearance.accent,
+    "cyan"
+  );
+});
+
 test("a navigation item without href reports its exact field", () => {
   const directory = configFixture();
   fs.writeFileSync(

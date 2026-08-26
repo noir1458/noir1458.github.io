@@ -44,7 +44,13 @@ const entries = posts.map((post) => ({
       </div>
       <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
         {cover ? (
-          <Image alt="" loading="lazy" src={cover} />
+          <Image
+            alt=""
+            loading="lazy"
+            src={cover}
+            widths={[184, 360]}
+            sizes="(max-width: 700px) 92px, 180px"
+          />
         ) : (
           <span aria-hidden="true"><Icon name="arrow-right" size={22} /></span>
         )}

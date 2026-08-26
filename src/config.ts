@@ -12,6 +12,7 @@ export const SOCIAL = USER_CONFIG.social;
 export const FEATURES = USER_CONFIG.features;
 export const CATEGORY_SIDEBAR = USER_CONFIG.categories.sidebar;
 export const PROFILE = USER_CONFIG.profile;
+export const APPEARANCE = USER_CONFIG.appearance;
 
 const defaultLanguage = LANGUAGES[USER_CONFIG.site.language];
 

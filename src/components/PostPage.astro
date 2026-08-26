@@ -70,6 +70,7 @@ const schema = {
   ogType="article"
   pagefindBody
   schema={schema}
+  sidebarHeadings={tocHeadings}
 >
   <div
     class="reading-progress"
@@ -169,13 +170,34 @@ const schema = {
         <ol>
           {tocHeadings.map((heading) => (
             <li class={`depth-${heading.depth}`}>
-              <a href={`#${heading.slug}`}>{heading.text}</a>
+              <a href={`#${heading.slug}`} data-article-toc-link>{heading.text}</a>
             </li>
           ))}
         </ol>
       </nav>
     </dialog>
   )}
+
+  <dialog
+    class="article-image-dialog"
+    aria-label="Image preview"
+    data-article-image-dialog
+    data-pagefind-ignore
+  >
+    <figure data-article-image-panel>
+      <button
+        class="code-copy article-image-close"
+        type="button"
+        aria-label="Close image preview"
+        title="Close"
+        data-article-image-close
+      >
+        <Icon name="close" size={16} />
+      </button>
+      <img alt="" data-article-image-preview />
+      <figcaption data-article-image-caption hidden></figcaption>
+    </figure>
+  </dialog>
 
   <div slot="floating" class="article-floating-tools" data-pagefind-ignore>
     {FEATURES.tableOfContents && tocHeadings.length > 0 && (

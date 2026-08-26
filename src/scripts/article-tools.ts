@@ -29,6 +29,33 @@ function initArticleTools() {
   const readingArticle = document.querySelector<HTMLElement>(
     "[data-reading-article]",
   );
+  const articleTocLinks = [
+    ...document.querySelectorAll<HTMLAnchorElement>("[data-article-toc-link]"),
+  ];
+  const articleTocTargets = [
+    ...new Set(
+      articleTocLinks.map((link) => decodeURIComponent(link.hash.slice(1))),
+    ),
+  ]
+    .map((id) => document.getElementById(id))
+    .filter((heading): heading is HTMLElement => Boolean(heading));
+  const articleImageDialog = document.querySelector<HTMLDialogElement>(
+    "[data-article-image-dialog]",
+  );
+  const articleImagePanel = articleImageDialog?.querySelector<HTMLElement>(
+    "[data-article-image-panel]",
+  );
+  const articleImagePreview =
+    articleImageDialog?.querySelector<HTMLImageElement>(
+      "[data-article-image-preview]",
+    );
+  const articleImageCaption = articleImageDialog?.querySelector<HTMLElement>(
+    "[data-article-image-caption]",
+  );
+  const articleImageClose =
+    articleImageDialog?.querySelector<HTMLButtonElement>(
+      "[data-article-image-close]",
+    );
   function syncArticleTools() {
     if (readingProgress && readingProgressBar && readingArticle) {
       const bounds = readingArticle.getBoundingClientRect();
@@ -45,6 +72,25 @@ function initArticleTools() {
         "aria-valuenow",
         String(Math.round(progress * 100)),
       );
+    }
+
+    if (articleTocTargets.length > 0) {
+      const threshold = Math.min(180, window.innerHeight * 0.24);
+      let activeHeading = articleTocTargets[0];
+      articleTocTargets.forEach((heading) => {
+        if (heading.getBoundingClientRect().top <= threshold) {
+          activeHeading = heading;
+        }
+      });
+      articleTocLinks.forEach((link) => {
+        const active =
+          decodeURIComponent(link.hash.slice(1)) === activeHeading.id;
+        if (active) {
+          link.setAttribute("aria-current", "location");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
     }
   }
 
@@ -94,6 +140,91 @@ function initArticleTools() {
     ?.querySelectorAll<HTMLAnchorElement>("a[href^='#']")
     .forEach((link) => {
       link.addEventListener("click", () => articleTocDialog.close());
+    });
+
+  let articleImageTrigger: HTMLImageElement | undefined;
+
+  function closeArticleImage() {
+    articleImageDialog?.close();
+  }
+
+  articleImageClose?.addEventListener("click", closeArticleImage, { signal });
+
+  articleImageDialog?.addEventListener(
+    "click",
+    (event) => {
+      if (event.target !== articleImageDialog) return;
+      const bounds = articleImagePanel?.getBoundingClientRect();
+      if (!bounds) return;
+      const outside =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+      if (outside) closeArticleImage();
+    },
+    { signal },
+  );
+
+  articleImageDialog?.addEventListener(
+    "close",
+    () => {
+      articleImagePreview?.removeAttribute("src");
+      articleImageTrigger?.focus();
+      articleImageTrigger = undefined;
+    },
+    { signal },
+  );
+
+  document
+    .querySelectorAll<HTMLImageElement>(".article-content img")
+    .forEach((image) => {
+      if (image.closest("a, button, .mermaid-diagram")) return;
+
+      image.classList.add("lightbox-ready");
+      image.tabIndex = 0;
+      image.setAttribute("role", "button");
+      image.setAttribute(
+        "aria-label",
+        image.alt.trim()
+          ? `Open image preview: ${image.alt.trim()}`
+          : "Open image preview",
+      );
+
+      const openImage = () => {
+        if (
+          !articleImageDialog ||
+          !articleImagePreview ||
+          !articleImageCaption
+        ) {
+          return;
+        }
+        const alt = image.alt.trim();
+        const figureCaption =
+          image
+            .closest("figure")
+            ?.querySelector("figcaption")
+            ?.textContent?.trim() ?? "";
+        const caption = figureCaption || alt;
+        articleImageTrigger = image;
+        articleImagePreview.src = image.currentSrc || image.src;
+        articleImagePreview.alt = alt;
+        articleImageCaption.textContent = caption;
+        articleImageCaption.hidden = !caption;
+        if (!articleImageDialog.open) articleImageDialog.showModal();
+        articleImageClose?.focus();
+      };
+
+      image.addEventListener("click", openImage, { signal });
+      image.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openImage();
+        },
+        { signal },
+      );
     });
 
   window.addEventListener("scroll", requestArticleToolsSync, {

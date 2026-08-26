@@ -12,6 +12,8 @@ const temporaryRoot = fs.mkdtempSync(
 const configDirectory = path.join(temporaryRoot, "config");
 const outputDirectory = path.join(temporaryRoot, "dist");
 const projectsOutputDirectory = path.join(temporaryRoot, "dist-projects");
+const disabledCacheDirectory = path.join(temporaryRoot, "cache-disabled");
+const projectsCacheDirectory = path.join(temporaryRoot, "cache-projects");
 const astroEntry = path.join(projectRoot, "node_modules/astro/bin/astro.mjs");
 const projectFixture = path.join(
   projectRoot,
@@ -52,7 +54,8 @@ try {
       encoding: "utf8",
       env: {
         ...process.env,
-        ASTRO_BLOG_CONFIG_DIR: configDirectory
+        ASTRO_BLOG_CONFIG_DIR: configDirectory,
+        ASTRO_BLOG_CACHE_DIR: disabledCacheDirectory
       }
     }
   );
@@ -168,7 +171,8 @@ try {
       encoding: "utf8",
       env: {
         ...process.env,
-        ASTRO_BLOG_CONFIG_DIR: configDirectory
+        ASTRO_BLOG_CONFIG_DIR: configDirectory,
+        ASTRO_BLOG_CACHE_DIR: projectsCacheDirectory
       }
     }
   );

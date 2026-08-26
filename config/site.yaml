@@ -16,6 +16,9 @@ branding:
   manifestIcon: /images/site/icon.svg
   defaultOgImage: /images/site/og-default.png
 
+appearance:
+  accent: purple # cyan | green | purple | rose
+
 languages:
   ko:
     label: 한국어

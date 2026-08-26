@@ -27,6 +27,7 @@ const mermaidPlugins = FEATURES.mermaid
 
 export default defineConfig({
   site: SITE.url,
+  cacheDir: process.env.ASTRO_BLOG_CACHE_DIR ?? "./node_modules/.astro",
   output: "static",
   trailingSlash: "always",
   integrations: FEATURES.sitemap

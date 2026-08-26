@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import matter from "gray-matter";
-import { FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
+import { APPEARANCE, FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
@@ -200,6 +200,10 @@ if (indexHtml.includes("data-search-shell") !== FEATURES.search) {
 
 if (indexHtml.includes("data-theme-picker") !== FEATURES.darkMode) {
   errors.push(`index.html: theme UI does not match features.darkMode=${FEATURES.darkMode}`);
+}
+
+if (!indexHtml.includes(`data-accent="${APPEARANCE.accent}"`)) {
+  errors.push(`index.html: configured accent is missing: ${APPEARANCE.accent}`);
 }
 
 if (indexHtml.includes('type="application/rss+xml"') !== FEATURES.rss) {

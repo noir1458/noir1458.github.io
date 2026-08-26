@@ -52,6 +52,7 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
   title={PROFILE.data.title}
   description={PROFILE.data.subtitle ?? SITE.description}
   sidebar={false}
+  fullWidth
 >
   <header class="page-heading">
     <span class="eyebrow">{PROFILE.data.eyebrow}</span>

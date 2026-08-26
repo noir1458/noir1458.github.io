@@ -2,8 +2,8 @@
 import "katex/dist/katex.min.css";
 import "@/styles/global.css";
 import { ClientRouter } from "astro:transitions";
-import type { TransitionDirectionalAnimations } from "astro";
-import { FEATURES, LANGUAGES, SITE, type SupportedLanguage } from "@/config";
+import type { MarkdownHeading, TransitionDirectionalAnimations } from "astro";
+import { APPEARANCE, FEATURES, LANGUAGES, SITE, type SupportedLanguage } from "@/config";
 import Header from "@/components/Header.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import Footer from "@/components/Footer.astro";
@@ -15,11 +15,13 @@ interface Props {
   image?: string;
   noindex?: boolean;
   sidebar?: boolean;
+  fullWidth?: boolean;
   pagefindBody?: boolean;
   ogType?: "website" | "article";
   schema?: Record<string, unknown>;
   language?: SupportedLanguage;
   translations?: PostTranslation[];
+  sidebarHeadings?: MarkdownHeading[];
 }
 
 const {
@@ -28,11 +30,13 @@ const {
   image,
   noindex = false,
   sidebar = true,
+  fullWidth = false,
   pagefindBody = false,
   ogType = "website",
   schema,
   language = SITE.language,
-  translations = []
+  translations = [],
+  sidebarHeadings = []
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, SITE.url);
@@ -65,6 +69,7 @@ const pageTransition: TransitionDirectionalAnimations = {
 <!doctype html>
 <html
   lang={language}
+  data-accent={APPEARANCE.accent}
   data-theme={FEATURES.darkMode ? "system" : "light"}
   data-theme-enabled={String(FEATURES.darkMode)}
 >
@@ -189,7 +194,13 @@ const pageTransition: TransitionDirectionalAnimations = {
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
       <Header language={language} translations={translations} />
-      <div class:list={["content-grid", { "without-sidebar": !sidebar }]} data-layout>
+      <div
+        class:list={[
+          "content-grid",
+          { "without-sidebar": !sidebar, "full-width-content": fullWidth }
+        ]}
+        data-layout
+      >
         <main
           id="main-content"
           class="main-content"
@@ -198,7 +209,7 @@ const pageTransition: TransitionDirectionalAnimations = {
         >
           <slot />
         </main>
-        {sidebar && <Sidebar posts={posts} />}
+        {sidebar && <Sidebar posts={posts} headings={sidebarHeadings} />}
       </div>
       <slot name="floating" />
       <Footer />

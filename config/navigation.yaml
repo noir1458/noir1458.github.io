@@ -21,10 +21,9 @@ sidebar:
     href: https://github.com/noir1458
     icon: github
     external: true
-  - label: RSS feed
-    href: /rss.xml
-    icon: rss
-    requiresFeature: rss
+  - label: Email
+    href: "mailto:"
+    icon: mail
 
 footer:
   - label: RSS

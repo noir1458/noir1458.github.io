@@ -2,8 +2,8 @@
 
 This folder is the user-facing source for site settings.
 
-1. Edit `site.yaml` for the site identity, author, branding, languages, and
-   public service integrations.
+1. Edit `site.yaml` for the site identity, author, branding, accent color,
+   languages, and public service integrations.
 2. Edit `navigation.yaml` to change visible links and their order.
 3. Edit `categories.yaml` to group, order, or hide sidebar categories. Categories
    omitted from both `groups` and `hidden` appear automatically in a final group.
@@ -23,6 +23,10 @@ profile image in `public/images/profile/`, project images in
 `public/images/site/`. Keep the paths in `site.yaml` in sync with their files.
 The build reports the exact field when a configured image is missing.
 Post-specific images stay beside their Markdown files in `content/posts/`.
+
+Choose the site accent in `site.yaml` with `appearance.accent`. Supported values
+are `cyan`, `green`, `purple`, and `rose`. The preset supplies coordinated
+light and dark colors; `cyan` is the default.
 
 Do not put API keys, access tokens, passwords, or other secrets in this folder.
 Analytics, site-verification, and Giscus identifiers are public browser
