@@ -6,7 +6,7 @@ import {
   arrangeSidebarCategories,
   slugifyTermValue
 } from "../src/lib/content/sidebarCategories.ts";
-import { projectSchema } from "../src/lib/content/projectSchema.ts";
+import { projectFrontmatterSchema } from "../src/lib/content/projectSchema.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "content/posts");
@@ -182,8 +182,14 @@ let publishedProjects = 0;
 for (const file of projectFiles) {
   const relative = path.relative(projectRoot, file);
   const nestedPath = path.relative(projectContentRoot, file);
-  if (path.dirname(nestedPath) !== ".") {
-    errors.push(`${relative}: project Markdown files must be directly under content/projects`);
+  const nestedDirectory = path.dirname(nestedPath);
+  const isDirectFile = nestedDirectory === ".";
+  const isProjectIndex = path.basename(file) === "index.md"
+    && path.dirname(nestedDirectory) === ".";
+  if (!isDirectFile && !isProjectIndex) {
+    errors.push(
+      `${relative}: use content/projects/<slug>.md or content/projects/<slug>/index.md`
+    );
   }
 
   let parsed;
@@ -194,7 +200,7 @@ for (const file of projectFiles) {
     continue;
   }
 
-  const result = projectSchema.safeParse(parsed.data);
+  const result = projectFrontmatterSchema.safeParse(parsed.data);
   if (!result.success) {
     for (const issue of result.error.issues) {
       const field = issue.path.length > 0 ? issue.path.join(".") : "<root>";
@@ -203,7 +209,9 @@ for (const file of projectFiles) {
     continue;
   }
 
-  const slug = path.basename(file, ".md");
+  const slug = isProjectIndex
+    ? path.basename(path.dirname(file))
+    : path.basename(file, ".md");
   const existing = projectRoutes.get(slug);
   if (existing) {
     errors.push(`${relative}: duplicate project slug "${slug}" also used by ${existing}`);
@@ -212,10 +220,17 @@ for (const file of projectFiles) {
   }
 
   if (!result.data.draft) publishedProjects += 1;
-  if (result.data.image) {
-    const imagePath = path.join(projectRoot, "public", result.data.image.slice(1));
+  const references = [
+    ...parsed.content.matchAll(
+      /(?:\]\(|src=["'])(\.\/[^)"'\s]+\.(?:avif|gif|jpe?g|png|svg|webp))/gi
+    )
+  ];
+  if (result.data.image) references.push([result.data.image, result.data.image]);
+  for (const match of references) {
+    imageReferences += 1;
+    const imagePath = path.resolve(path.dirname(file), match[1]);
     if (!fs.existsSync(imagePath)) {
-      errors.push(`${relative}: missing project image ${result.data.image}`);
+      errors.push(`${relative}: missing project image ${match[1]}`);
     }
   }
 }

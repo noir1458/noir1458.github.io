@@ -4,5 +4,5 @@ sitemap: true
 darkMode: true
 tableOfContents: true
 mermaid: true
-projects: false
+projects: true
 comments: true

@@ -31,11 +31,11 @@ const posts = defineCollection({
 
 const projects = defineCollection({
   loader: glob({
-    pattern: "*.md",
+    pattern: ["*.md", "*/index.md"],
     base: "./content/projects",
-    generateId: ({ entry }) => entry.replace(/\.md$/u, "")
+    generateId: ({ entry }) => entry.replace(/(?:\/index)?\.md$/u, "")
   }),
-  schema: projectSchema
+  schema: ({ image }) => projectSchema(image())
 });
 
 export const collections = { posts, projects };

@@ -1,6 +1,7 @@
 ---
 import Icon from "@/components/Icon.astro";
 import { projectUrl, type ProjectEntry } from "@/utils/projects";
+import { Image } from "astro:assets";
 
 interface Props {
   projects: ProjectEntry[];
@@ -18,7 +19,13 @@ const { projects } = Astro.props;
           href={projectUrl(project)}
           aria-label={`View ${project.data.title}`}
         >
-          <img src={project.data.image} alt="" loading="lazy" />
+          <Image
+            src={project.data.image}
+            alt=""
+            loading="lazy"
+            widths={[480, 720]}
+            sizes="(max-width: 700px) 100vw, 50vw"
+          />
         </a>
       )}
       <div class="project-card-copy">

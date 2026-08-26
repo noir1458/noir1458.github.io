@@ -17,8 +17,8 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 | 경로 | 용도 |
 | --- | --- |
 | `config/` | 사이트 정보, 프로필, 메뉴, 카테고리 묶음, 소셜 링크, 기능 켜기/끄기 |
-| `content/` | 게시물 Markdown, 글 전용 이미지, 프로젝트 Markdown |
-| `public/images/` | 프로필, 프로젝트, favicon, manifest, 기본 OG 이미지 |
+| `content/` | 게시물·프로젝트 Markdown과 각각의 전용 이미지 |
+| `public/images/` | 프로필, favicon, manifest, 기본 OG 이미지 |
 
 ## 주요 기능
 
@@ -127,15 +127,14 @@ cover: ./cover.png
 ```
 
 `public/images/`는 여러 페이지에서 공유하는 사용자 교체 이미지에 사용합니다.
-프로필 이미지는 `public/images/profile/`, 프로젝트 이미지는
-`public/images/projects/`, 파비콘·manifest 아이콘·기본 OG 이미지는
+프로필 이미지는 `public/images/profile/`, 파비콘·manifest 아이콘·기본 OG 이미지는
 `public/images/site/`에 둡니다. 실제 파일 경로는 `config/site.yaml`의
 `author.profileImage`와 `branding` 설정에서 지정합니다. 글 전용 이미지는 계속
 각 글 폴더에 둡니다.
 
 ## 프로젝트
 
-프로젝트는 `content/projects/<project-slug>.md`에 추가합니다. 파일명이
+프로젝트는 `content/projects/<project-slug>/index.md`에 추가합니다. 폴더명이
 `/projects/<project-slug>/` URL이 됩니다.
 
 ```md
@@ -144,7 +143,7 @@ title: 프로젝트 이름
 description: 프로젝트를 설명하는 짧은 문장
 repository: https://github.com/username/project
 demo:
-image: /images/projects/project.webp
+image: ./cover.webp
 tags:
   - Astro
   - TypeScript
@@ -153,10 +152,14 @@ order: 1
 ---
 
 프로젝트에 관한 자세한 설명을 Markdown으로 작성합니다.
+
+![프로젝트 화면](./screenshot.webp)
 ```
 
 `repository`, `demo`, `image`는 선택 사항이며 빈 값은 화면에서 숨겨집니다.
-프로젝트 이미지는 `public/images/projects/`에 둡니다. `featured: true`인
+대표 이미지와 본문 이미지는 `index.md`와 같은 프로젝트 폴더에 둡니다. 기존
+`content/projects/<project-slug>.md` 형식도 URL 호환을 위해 계속 지원합니다.
+`featured: true`인
 프로젝트가 먼저 나오고, 그 안에서는 `order`가 작은 순서로 정렬됩니다.
 공개 전에는 `draft: true`를 사용합니다. 프로젝트 화면을 표시하려면
 `config/features.yaml`의 `projects`를 `true`로 바꾸면 설정된 Projects 메뉴와
@@ -352,9 +355,9 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 ## 주요 경로
 
 - `content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
-- `content/projects/<slug>.md` — 프로젝트 정보와 상세 Markdown
+- `content/projects/<slug>/` — 프로젝트 Markdown과 프로젝트 전용 이미지
 - `config/` — 사이트, 내비게이션, 소셜 링크와 기능 설정
-- `public/images/` — 프로필, 프로젝트, favicon과 기본 OG 이미지
+- `public/images/` — 프로필, favicon과 기본 OG 이미지
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로
