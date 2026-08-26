@@ -7,7 +7,8 @@ This folder is the user-facing source for site settings.
 2. Edit `navigation.yaml` to change visible links and their order.
 3. Edit `categories.yaml` to group, order, or hide sidebar categories. Categories
    omitted from both `groups` and `hidden` appear automatically in a final group.
-4. Edit `social.yaml` to add or remove profile links. Empty values are hidden.
+4. Edit `social.yaml` to add GitHub, LinkedIn, X, Facebook, or email profile
+   links. Empty values are hidden.
 5. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
    article tables of contents, Mermaid diagrams, projects, and comments.
 6. Write the About page introduction in `profile.md`.

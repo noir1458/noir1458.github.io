@@ -153,8 +153,9 @@ export const navigationFileSchema = z.object({
 export const socialFileSchema = z.object({
   github: optionalWebUrl,
   linkedin: optionalWebUrl,
-  email: optionalEmail,
-  resume: optionalWebUrl
+  x: optionalWebUrl,
+  facebook: optionalWebUrl,
+  email: optionalEmail
 }).strict();
 
 export const featuresFileSchema = z.object({

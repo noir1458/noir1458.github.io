@@ -38,7 +38,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
    Analytics·Search Console·Giscus 공개 식별자
 2. `config/navigation.yaml`: header, sidebar, footer 메뉴와 순서
 3. `config/categories.yaml`: 사이드바 카테고리 묶음, 순서, 숨김
-4. `config/social.yaml`: GitHub, LinkedIn, 이메일, 이력서 링크
+4. `config/social.yaml`: GitHub, LinkedIn, X, Facebook, 이메일 링크
 5. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, Mermaid, 프로젝트, 댓글
 6. `config/profile.md`: About 제목과 소개 Markdown
 

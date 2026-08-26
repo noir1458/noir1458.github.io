@@ -36,7 +36,10 @@ test("the repository configuration is valid", () => {
   const config = loadSiteConfig();
   assert.match(config.site.url, /^https:\/\//u);
   assert.deepEqual(config.supportedLanguageCodes, ["ko", "en", "ja"]);
+  assert.equal(config.social.x, undefined);
+  assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
+  assert.equal("resume" in config.social, false);
 });
 
 test("an invalid site URL reports its file and field", () => {

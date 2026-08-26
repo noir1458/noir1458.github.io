@@ -272,12 +272,26 @@ if (!PROFILE.body || !aboutHtml.includes('class="profile-copy"')) {
 if (!aboutHtml.includes(`src="${SITE.author.profileImage}"`)) {
   errors.push(`about/index.html: configured profile image is missing: ${SITE.author.profileImage}`);
 }
-for (const href of Object.values(SOCIAL).filter(Boolean)) {
-  const renderedHref = href === SOCIAL.email ? `mailto:${href}` : href;
-  if (!aboutHtml.includes(`href="${renderedHref}"`)) {
-    errors.push(`about/index.html: configured social link is missing: ${renderedHref}`);
+const profileLinkChecks = [
+  ["github", SOCIAL.github, SOCIAL.github],
+  ["linkedin", SOCIAL.linkedin, SOCIAL.linkedin],
+  ["x", SOCIAL.x, SOCIAL.x],
+  ["facebook", SOCIAL.facebook, SOCIAL.facebook],
+  ["mail", SOCIAL.email, SOCIAL.email ? `mailto:${SOCIAL.email}` : undefined]
+];
+for (const [icon, configuredValue, renderedHref] of profileLinkChecks) {
+  if (!fs.existsSync(path.join(distRoot, `assets/icons/${icon}.svg`))) {
+    errors.push(`about/index.html: missing ${icon} profile icon asset`);
+  }
+  const renderedIcon = aboutHtml.includes(`data-icon="${icon}"`);
+  if (!configuredValue && renderedIcon) {
+    errors.push(`about/index.html: unconfigured ${icon} profile link is visible`);
+  }
+  if (configuredValue && (!renderedIcon || !aboutHtml.includes(`href="${renderedHref}"`))) {
+    errors.push(`about/index.html: configured ${icon} profile link is missing`);
   }
 }
+if (aboutHtml.includes(">CV</a>")) errors.push("about/index.html: obsolete CV link is visible");
 
 let manifest;
 try {

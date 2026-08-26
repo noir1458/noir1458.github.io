@@ -6,39 +6,26 @@ import { PROFILE, SITE, SOCIAL } from "@/config";
 interface ProfileLink {
   label: string;
   href: string;
-  icon?: "github" | "linkedin";
-  external?: boolean;
+  icon: "github" | "linkedin" | "x" | "facebook" | "mail";
+  external: boolean;
 }
 
 const profileLinks: ProfileLink[] = [];
-if (SOCIAL.github) {
-  profileLinks.push({
-    label: "GitHub",
-    href: SOCIAL.github,
-    icon: "github",
-    external: true
-  });
-}
-if (SOCIAL.linkedin) {
-  profileLinks.push({
-    label: "LinkedIn",
-    href: SOCIAL.linkedin,
-    icon: "linkedin",
-    external: true
-  });
-}
-if (SOCIAL.email) {
-  profileLinks.push({
+const configuredProfileLinks: Array<Omit<ProfileLink, "href"> & { href: string | undefined }> = [
+  { label: "GitHub", href: SOCIAL.github, icon: "github", external: true },
+  { label: "LinkedIn", href: SOCIAL.linkedin, icon: "linkedin", external: true },
+  { label: "X", href: SOCIAL.x, icon: "x", external: true },
+  { label: "Facebook", href: SOCIAL.facebook, icon: "facebook", external: true },
+  {
     label: "Email",
-    href: `mailto:${SOCIAL.email}`
-  });
-}
-if (SOCIAL.resume) {
-  profileLinks.push({
-    label: "CV",
-    href: SOCIAL.resume,
-    external: true
-  });
+    href: SOCIAL.email ? `mailto:${SOCIAL.email}` : undefined,
+    icon: "mail",
+    external: false
+  }
+];
+
+for (const link of configuredProfileLinks) {
+  if (link.href) profileLinks.push({ ...link, href: link.href });
 }
 
 const markdown = await createMarkdownProcessor({ syntaxHighlight: false });
