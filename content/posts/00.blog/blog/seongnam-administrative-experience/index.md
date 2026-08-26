@@ -1,7 +1,7 @@
 ---
 title: 성남시 지방행정체험 후기
 slug: seongnam-administrative-experience
-publishedAt: '2023-03-03'
+publishedAt: '2026-08-26'
 categories: blog
 math: false
 ---
