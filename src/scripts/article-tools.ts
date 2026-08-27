@@ -49,9 +49,6 @@ function initArticleTools() {
     articleImageDialog?.querySelector<HTMLImageElement>(
       "[data-article-image-preview]",
     );
-  const articleImageCaption = articleImageDialog?.querySelector<HTMLElement>(
-    "[data-article-image-caption]",
-  );
   const articleImageClose =
     articleImageDialog?.querySelector<HTMLButtonElement>(
       "[data-article-image-close]",
@@ -194,23 +191,14 @@ function initArticleTools() {
       const openImage = () => {
         if (
           !articleImageDialog ||
-          !articleImagePreview ||
-          !articleImageCaption
+          !articleImagePreview
         ) {
           return;
         }
         const alt = image.alt.trim();
-        const figureCaption =
-          image
-            .closest("figure")
-            ?.querySelector("figcaption")
-            ?.textContent?.trim() ?? "";
-        const caption = figureCaption || alt;
         articleImageTrigger = image;
         articleImagePreview.src = image.currentSrc || image.src;
         articleImagePreview.alt = alt;
-        articleImageCaption.textContent = caption;
-        articleImageCaption.hidden = !caption;
         if (!articleImageDialog.open) articleImageDialog.showModal();
         articleImageClose?.focus();
       };
