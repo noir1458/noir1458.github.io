@@ -81,6 +81,7 @@ try {
 
   assert.equal(indexHtml.includes("data-search-shell"), false);
   assert.equal(indexHtml.includes("data-theme-picker"), false);
+  assert.equal(indexHtml.includes("data-accent-picker"), false);
   assert.equal(indexHtml.includes('type="application/rss+xml"'), false);
   assert.equal(indexHtml.includes('data-theme="light"'), true);
   assert.equal(robots.includes("Sitemap:"), false);

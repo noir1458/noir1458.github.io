@@ -2,48 +2,78 @@
 import Icon from "@/components/Icon.astro";
 ---
 
-<div class="theme-picker" data-theme-picker>
-  <button
-    class="theme-picker-toggle icon-button"
-    data-theme-toggle
-    type="button"
-    aria-controls="theme-menu"
-    aria-expanded="false"
-    aria-haspopup="true"
-    aria-label="Choose color theme, current: Auto"
-  >
-    <span data-theme-icon="system"><Icon name="system" /></span>
-    <span data-theme-icon="light" hidden><Icon name="sun" /></span>
-    <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
-  </button>
+<div class="color-controls">
+  <div class="accent-picker" data-accent-picker>
+    <button
+      class="accent-picker-toggle icon-button"
+      data-accent-toggle
+      type="button"
+      aria-controls="accent-menu"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-label="Choose accent color"
+    >
+      <Icon name="palette" />
+    </button>
 
-  <div id="theme-menu" class="theme-menu" data-theme-menu aria-label="Color theme">
+    <div id="accent-menu" class="accent-menu" data-accent-menu aria-label="Accent color">
+      {(["cyan", "green", "purple", "rose"] as const).map((accent) => (
+        <button
+          data-accent-value={accent}
+          type="button"
+          aria-label={`${accent[0].toUpperCase()}${accent.slice(1)} accent`}
+          title={`${accent[0].toUpperCase()}${accent.slice(1)}`}
+          aria-pressed="false"
+        >
+          <span class={`accent-swatch accent-swatch-${accent}`}></span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="theme-picker" data-theme-picker>
     <button
-      data-theme-value="system"
+      class="theme-picker-toggle icon-button"
+      data-theme-toggle
       type="button"
-      aria-label="Auto theme"
-      title="Auto"
-      aria-pressed="false"
+      aria-controls="theme-menu"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-label="Choose color theme, current: Auto"
     >
-      <Icon name="system" />
+      <span data-theme-icon="system"><Icon name="system" /></span>
+      <span data-theme-icon="light" hidden><Icon name="sun" /></span>
+      <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
     </button>
-    <button
-      data-theme-value="light"
-      type="button"
-      aria-label="Light theme"
-      title="Light"
-      aria-pressed="false"
-    >
-      <Icon name="sun" />
-    </button>
-    <button
-      data-theme-value="dark"
-      type="button"
-      aria-label="Dark theme"
-      title="Dark"
-      aria-pressed="false"
-    >
-      <Icon name="moon" />
-    </button>
+
+    <div id="theme-menu" class="theme-menu" data-theme-menu aria-label="Color theme">
+      <button
+        data-theme-value="system"
+        type="button"
+        aria-label="Auto theme"
+        title="Auto"
+        aria-pressed="false"
+      >
+        <Icon name="system" />
+      </button>
+      <button
+        data-theme-value="light"
+        type="button"
+        aria-label="Light theme"
+        title="Light"
+        aria-pressed="false"
+      >
+        <Icon name="sun" />
+      </button>
+      <button
+        data-theme-value="dark"
+        type="button"
+        aria-label="Dark theme"
+        title="Dark"
+        aria-pressed="false"
+      >
+        <Icon name="moon" />
+      </button>
+    </div>
   </div>
 </div>

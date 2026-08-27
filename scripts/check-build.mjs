@@ -202,6 +202,10 @@ if (indexHtml.includes("data-theme-picker") !== FEATURES.darkMode) {
   errors.push(`index.html: theme UI does not match features.darkMode=${FEATURES.darkMode}`);
 }
 
+if (indexHtml.includes("data-accent-picker") !== FEATURES.darkMode) {
+  errors.push(`index.html: accent UI does not match features.darkMode=${FEATURES.darkMode}`);
+}
+
 if (!indexHtml.includes(`data-accent="${APPEARANCE.accent}"`)) {
   errors.push(`index.html: configured accent is missing: ${APPEARANCE.accent}`);
 }

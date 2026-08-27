@@ -108,7 +108,13 @@ const schema = {
           </time>
         </span>
         {post.data.updatedAt && (
-          <span>Updated {formatDate(post.data.updatedAt, undefined, post.data.lang)}</span>
+          <span title="Updated">
+            <Icon name="calendar-edit" size={20} />
+            <span class="sr-only">Updated </span>
+            <time datetime={post.data.updatedAt.toISOString()}>
+              {formatDate(post.data.updatedAt, undefined, post.data.lang)}
+            </time>
+          </span>
         )}
         <span>
           <Icon name="clock" size={18} />

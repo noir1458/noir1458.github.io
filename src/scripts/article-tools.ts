@@ -112,6 +112,11 @@ function initArticleTools() {
     if (!articleTocDialog?.open) {
       articleTocDialog?.showModal();
       articleTocToggle.setAttribute("aria-expanded", "true");
+      window.requestAnimationFrame(() => {
+        articleTocDialog
+          ?.querySelector<HTMLElement>("[aria-current='location']")
+          ?.scrollIntoView({ block: "nearest" });
+      });
     }
   });
 

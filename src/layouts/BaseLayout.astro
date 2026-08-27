@@ -49,13 +49,13 @@ const xDefaultTranslation =
 const contentAnimation = {
   old: {
     name: "page-content-out",
-    duration: "90ms",
+    duration: "70ms",
     easing: "cubic-bezier(0.4, 0, 1, 1)",
     fillMode: "both"
   },
   new: {
     name: "page-content-in",
-    duration: "170ms",
+    duration: "150ms",
     easing: "cubic-bezier(0.22, 1, 0.36, 1)",
     fillMode: "both"
   }
@@ -70,6 +70,7 @@ const pageTransition: TransitionDirectionalAnimations = {
 <html
   lang={language}
   data-accent={APPEARANCE.accent}
+  data-default-accent={APPEARANCE.accent}
   data-theme={FEATURES.darkMode ? "system" : "light"}
   data-theme-enabled={String(FEATURES.darkMode)}
 >
@@ -124,29 +125,56 @@ const pageTransition: TransitionDirectionalAnimations = {
     )}
     {pagefindBody && <meta data-pagefind-meta="language" content={language} />}
     <title>{pageTitle}</title>
-    <ClientRouter fallback="animate" />
     <script is:inline>
       (() => {
         const root = document.documentElement;
+        const supportedAccents = ["cyan", "green", "purple", "rose"];
+        let savedTheme = null;
+        let savedAccent = null;
+        let sidebarCollapsed = false;
+
+        try {
+          savedTheme = localStorage.getItem("color-theme");
+          savedAccent = localStorage.getItem("color-accent");
+          sidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+        } catch {}
+
+        const defaultAccent = supportedAccents.includes(root.dataset.defaultAccent)
+          ? root.dataset.defaultAccent
+          : "cyan";
+        root.dataset.accent = supportedAccents.includes(savedAccent)
+          ? savedAccent
+          : defaultAccent;
+
         if (root.dataset.themeEnabled === "true") {
-          const saved = localStorage.getItem("color-theme");
-          const theme = saved === "neon"
+          const theme = savedTheme === "neon"
             ? "dark"
-            : saved === "light" || saved === "dark" || saved === "system"
-              ? saved
+            : savedTheme === "light" || savedTheme === "dark" || savedTheme === "system"
+              ? savedTheme
               : "system";
           root.dataset.theme = theme;
-          if (saved === "neon") localStorage.setItem("color-theme", "dark");
+          const resolved = theme === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : theme;
+          root.dataset.resolvedTheme = resolved;
+          root.style.colorScheme = resolved;
+          if (savedTheme === "neon") {
+            try { localStorage.setItem("color-theme", "dark"); } catch {}
+          }
         } else {
           root.dataset.theme = "light";
           root.dataset.resolvedTheme = "light";
+          root.style.colorScheme = "light";
         }
         root.dataset.sidebarCollapsed = String(
-          window.matchMedia("(min-width: 961px)").matches
-          && localStorage.getItem("sidebar-collapsed") === "true"
+          window.matchMedia("(min-width: 961px)").matches && sidebarCollapsed
         );
+        root.dataset.appearanceReady = "true";
       })();
     </script>
+    <ClientRouter fallback="animate" />
     {!isProduction && (
       <script is:inline>
         (() => {
