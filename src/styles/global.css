@@ -747,17 +747,14 @@ button {
 }
 
 .sidebar-toggle {
-  position: sticky;
+  position: absolute;
   z-index: 11;
-  top: 18px;
-  grid-column: 2;
-  grid-row: 1;
-  align-self: start;
-  justify-self: end;
+  top: 0;
+  right: 0;
   display: grid;
   place-items: center;
   padding: 0;
-  margin: -28px 0 0;
+  margin: 0;
   border-color: var(--line);
   background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
   box-shadow: var(--glass-shadow);
@@ -2440,7 +2437,8 @@ button {
   }
 
   .content-grid,
-  .content-grid.sidebar-collapsed {
+  .content-grid.sidebar-collapsed,
+  .content-grid.without-sidebar {
     grid-template-columns: 1fr;
     gap: 36px;
   }
@@ -2639,6 +2637,20 @@ button {
     grid-template-columns: 112px minmax(0, 1fr);
     gap: 20px;
     align-items: start;
+  }
+
+  .about-links a {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .about-link-label {
+    display: none;
   }
 
   .profile-image {

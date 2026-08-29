@@ -17,17 +17,17 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
 );
 ---
 
-<button
-  class="sidebar-toggle icon-button"
-  data-sidebar-toggle
-  type="button"
-  aria-expanded="true"
-  aria-label="Hide sidebar"
-  aria-controls="blog-sidebar"
->
-  <Icon name="chevron-right" />
-</button>
 <div class="sidebar-region" data-sidebar-region>
+  <button
+    class="sidebar-toggle icon-button"
+    data-sidebar-toggle
+    type="button"
+    aria-expanded="true"
+    aria-label="Hide sidebar"
+    aria-controls="blog-sidebar"
+  >
+    <Icon name="chevron-right" />
+  </button>
   <aside id="blog-sidebar" class="sidebar" data-sidebar aria-label="Blog navigation">
     <nav class="sidebar-links" aria-label="Quick links">
       {sidebarLinks.map((link) => (
