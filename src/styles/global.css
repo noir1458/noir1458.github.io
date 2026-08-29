@@ -136,7 +136,7 @@ body {
 :root[data-theme="system"][data-resolved-theme="light"] body {
   background:
     radial-gradient(
-      circle at 88% -8%,
+      circle at 88% -6rem,
       color-mix(in srgb, var(--accent) 2%, transparent),
       transparent 34rem
     ),
@@ -152,7 +152,7 @@ body {
 :root[data-theme="system"][data-resolved-theme="dark"] body {
   background:
     radial-gradient(
-      circle at 88% -8%,
+      circle at 88% -6rem,
       color-mix(in srgb, var(--accent) 12%, transparent),
       transparent 34rem
     ),
