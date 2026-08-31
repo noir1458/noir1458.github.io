@@ -46,6 +46,17 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 기능이 꺼졌을 때 연결된 메뉴도 함께 숨길 수 있습니다. YAML과 Markdown 설정은
 빌드 전에 스키마와 파일 경로를 검증합니다.
 
+사이트의 기본 accent Hue는 `config/site.yaml`에서 0부터 360 사이의 값으로
+설정합니다.
+
+```yaml
+appearance:
+  accentHue: 250
+```
+
+모든 방문자는 이 Hue로 시작하며, palette 메뉴의 세로 slider로 개인 Hue를
+조정할 수 있습니다. 방문자가 조정한 값은 해당 브라우저에 저장됩니다.
+
 ```md
 ---
 title: 글 제목

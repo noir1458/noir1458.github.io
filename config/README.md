@@ -24,9 +24,18 @@ profile image in `public/images/profile/`, and favicon or social-card images in
 The build reports the exact field when a configured image is missing.
 Post- and project-specific images stay beside their Markdown files in `content/`.
 
-Choose the site accent in `site.yaml` with `appearance.accent`. Supported values
-are `cyan`, `green`, `purple`, and `rose`. The preset supplies coordinated
-light and dark colors; `cyan` is the default.
+Choose the site's default accent hue in `site.yaml` with a value from 0 through
+360:
+
+```yaml
+appearance:
+  accentHue: 248
+```
+
+The theme controls saturation, lightness, and contrast for consistent light and
+dark palettes. Every visitor starts with the configured hue. They can adjust it
+with the vertical slider in the palette menu, and that personal hue is stored in
+their browser.
 
 Do not put API keys, access tokens, passwords, or other secrets in this folder.
 Analytics, site-verification, and Giscus identifiers are public browser

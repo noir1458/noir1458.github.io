@@ -1,10 +1,9 @@
 const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 const supportedThemes = ["system", "light", "dark"] as const;
-const supportedAccents = ["cyan", "green", "purple", "rose"] as const;
+const safeAccentHue = 250;
 
 type Theme = (typeof supportedThemes)[number];
-type Accent = (typeof supportedAccents)[number];
 
 function storedValue(key: string) {
   try {
@@ -24,6 +23,12 @@ function includesValue<T extends string>(values: readonly T[], value?: string | 
   return Boolean(value && values.includes(value as T));
 }
 
+function validHue(value: string | null | undefined, fallback: number) {
+  if (value === null || value === undefined || value.trim() === "") return fallback;
+  const hue = Number(value);
+  return Number.isInteger(hue) && hue >= 0 && hue <= 360 ? hue : fallback;
+}
+
 function applyStoredAppearance(targetRoot: HTMLElement) {
   const themeEnabled = targetRoot.dataset.themeEnabled === "true";
   const storedTheme = storedValue("color-theme");
@@ -34,16 +39,11 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
         ? storedTheme
         : "system"
     : "light";
-  const configuredAccent = includesValue(
-    supportedAccents,
-    targetRoot.dataset.defaultAccent,
-  )
-    ? targetRoot.dataset.defaultAccent
-    : "cyan";
-  const storedAccent = storedValue("color-accent");
-  const accent: Accent = includesValue(supportedAccents, storedAccent)
-    ? storedAccent
-    : configuredAccent;
+  const configuredHue = validHue(
+    targetRoot.dataset.defaultAccentHue,
+    safeAccentHue,
+  );
+  const accentHue = validHue(storedValue("color-accent-hue"), configuredHue);
   const resolved = theme === "system"
     ? media.matches
       ? "dark"
@@ -52,7 +52,7 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
 
   targetRoot.dataset.theme = theme;
   targetRoot.dataset.resolvedTheme = resolved;
-  targetRoot.dataset.accent = accent;
+  targetRoot.style.setProperty("--accent-hue", String(accentHue));
   targetRoot.dataset.sidebarCollapsed = String(
     window.matchMedia("(min-width: 961px)").matches
     && storedValue("sidebar-collapsed") === "true"
@@ -75,15 +75,16 @@ const getThemeMenu = () =>
 const getThemeIcons = () => [
   ...document.querySelectorAll<HTMLElement>("[data-theme-icon]"),
 ];
-const getAccentButtons = () => [
-  ...document.querySelectorAll<HTMLButtonElement>("[data-accent-value]"),
-];
 const getAccentPicker = () =>
   document.querySelector<HTMLElement>("[data-accent-picker]");
 const getAccentToggle = () =>
   document.querySelector<HTMLButtonElement>("[data-accent-toggle]");
 const getAccentMenu = () =>
   document.querySelector<HTMLElement>("[data-accent-menu]");
+const getAccentHueInput = () =>
+  document.querySelector<HTMLInputElement>("[data-accent-hue]");
+const getAccentHueOutput = () =>
+  document.querySelector<HTMLOutputElement>("[data-accent-hue-output]");
 
 function closeThemeMenu({ restoreFocus = false } = {}) {
   getThemeMenu()?.classList.remove("open");
@@ -145,35 +146,36 @@ function syncTheme({ broadcast = true } = {}) {
   }
 }
 
-function syncAccent() {
-  const selected = root.dataset.accent ?? root.dataset.defaultAccent ?? "cyan";
-  getAccentButtons().forEach((button) => {
-    const active = button.dataset.accentValue === selected;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  const label = selected.charAt(0).toUpperCase() + selected.slice(1);
+function syncAccentHue() {
+  const hue = validHue(
+    root.style.getPropertyValue("--accent-hue"),
+    validHue(root.dataset.defaultAccentHue, safeAccentHue),
+  );
   getAccentToggle()?.setAttribute(
     "aria-label",
-    `Choose accent color, current: ${label}`,
+    `Choose accent hue, current: ${hue} degrees`,
   );
+  const hueInput = getAccentHueInput();
+  if (hueInput) hueInput.value = String(hue);
+  const hueOutput = getAccentHueOutput();
+  if (hueOutput) hueOutput.value = `${hue}°`;
 }
+
+document.addEventListener("input", (event) => {
+  if (
+    !(event.target instanceof HTMLInputElement)
+    || !event.target.matches("[data-accent-hue]")
+  ) {
+    return;
+  }
+  const hue = validHue(event.target.value, safeAccentHue);
+  root.style.setProperty("--accent-hue", String(hue));
+  storeValue("color-accent-hue", String(hue));
+  syncAccentHue();
+});
 
 document.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) return;
-
-  const accentButton =
-    event.target.closest<HTMLButtonElement>("[data-accent-value]");
-  if (accentButton) {
-    const accent = accentButton.dataset.accentValue;
-    if (includesValue(supportedAccents, accent)) {
-      root.dataset.accent = accent;
-      storeValue("color-accent", accent);
-      syncAccent();
-    }
-    closeAccentMenu({ restoreFocus: true });
-    return;
-  }
 
   const themeButton =
     event.target.closest<HTMLButtonElement>("[data-theme-value]");
@@ -194,11 +196,7 @@ document.addEventListener("click", (event) => {
     closeThemeMenu();
     menu?.classList.toggle("open", open);
     accentToggle.setAttribute("aria-expanded", String(open));
-    if (open) {
-      getAccentButtons()
-        .find((button) => button.classList.contains("active"))
-        ?.focus();
-    }
+    if (open) getAccentHueInput()?.focus();
     return;
   }
 
@@ -246,8 +244,8 @@ document.addEventListener("astro:page-load", () => {
   closeThemeMenu();
   closeAccentMenu();
   syncTheme({ broadcast: false });
-  syncAccent();
+  syncAccentHue();
 });
 applyStoredAppearance(root);
 syncTheme({ broadcast: false });
-syncAccent();
+syncAccentHue();

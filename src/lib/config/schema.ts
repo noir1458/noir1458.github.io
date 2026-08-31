@@ -11,13 +11,6 @@ export const FEATURE_NAMES = [
   "comments"
 ] as const;
 
-export const ACCENT_PRESETS = [
-  "cyan",
-  "green",
-  "purple",
-  "rose"
-] as const;
-
 const emptyToUndefined = (value: unknown) => {
   if (value === null) return undefined;
   if (typeof value === "string" && value.trim() === "") return undefined;
@@ -94,8 +87,8 @@ export const siteFileSchema = z.object({
     defaultOgImage: publicPath
   }).strict(),
   appearance: z.object({
-    accent: z.enum(ACCENT_PRESETS).default("cyan")
-  }).strict().default({ accent: "cyan" }),
+    accentHue: z.number().int().min(0).max(360).default(250)
+  }).strict().default({ accentHue: 250 }),
   languages: z.record(languageCode, languageDefinition).refine(
     (languages) => Object.keys(languages).length > 0,
     "must define at least one language"

@@ -40,6 +40,7 @@ test("the repository configuration is valid", () => {
   assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
   assert.equal("resume" in config.social, false);
+  assert.equal(config.appearance.accentHue, 250);
 });
 
 test("an invalid site URL reports its file and field", () => {
@@ -55,29 +56,70 @@ test("an invalid site URL reports its file and field", () => {
   );
 });
 
-test("an invalid accent preset reports its exact field", () => {
+test("a configured accent hue is valid", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /^  accent: .*$/mu, "  accent: orange");
+  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accentHue: 248");
+
+  assert.deepEqual(
+    loadSiteConfig({ configDirectory: directory }).appearance,
+    { accentHue: 248 }
+  );
+});
+
+test("accent hue accepts both range boundaries", () => {
+  for (const hue of [0, 360]) {
+    const directory = configFixture();
+    replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, `  accentHue: ${hue}`);
+    assert.equal(loadSiteConfig({ configDirectory: directory }).appearance.accentHue, hue);
+  }
+});
+
+test("accent hue rejects values outside its range", () => {
+  for (const hue of [-1, 361]) {
+    const directory = configFixture();
+    replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, `  accentHue: ${hue}`);
+    assert.throws(
+      () => loadSiteConfig({ configDirectory: directory }),
+      (error) => error instanceof SiteConfigError
+        && /config\/site\.yaml: appearance\.accentHue:/u.test(error.message)
+    );
+  }
+});
+
+test("accent hue rejects fractional values", () => {
+  const directory = configFixture();
+  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accentHue: 248.5");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
     (error) => error instanceof SiteConfigError
-      && /config\/site\.yaml: appearance\.accent:/u.test(error.message)
+      && /config\/site\.yaml: appearance\.accentHue:/u.test(error.message)
   );
 });
 
-test("a missing appearance section uses the cyan accent", () => {
+test("a missing appearance section uses the default hue", () => {
   const directory = configFixture();
   replaceInFile(
     directory,
     "site.yaml",
-    /\nappearance:\n  accent: [^\n]+\n/u,
+    /\nappearance:\n  accentHue: [^\n]+\n/u,
     ""
   );
 
-  assert.equal(
-    loadSiteConfig({ configDirectory: directory }).appearance.accent,
-    "cyan"
+  assert.deepEqual(
+    loadSiteConfig({ configDirectory: directory }).appearance,
+    { accentHue: 250 }
+  );
+});
+
+test("removed accent presets are rejected", () => {
+  const directory = configFixture();
+  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accent: purple");
+
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) => error instanceof SiteConfigError
+      && /config\/site\.yaml: appearance:/u.test(error.message)
   );
 });
 

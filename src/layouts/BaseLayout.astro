@@ -69,10 +69,10 @@ const pageTransition: TransitionDirectionalAnimations = {
 <!doctype html>
 <html
   lang={language}
-  data-accent={APPEARANCE.accent}
-  data-default-accent={APPEARANCE.accent}
+  data-default-accent-hue={String(APPEARANCE.accentHue)}
   data-theme={FEATURES.darkMode ? "system" : "light"}
   data-theme-enabled={String(FEATURES.darkMode)}
+  style={`--accent-hue: ${APPEARANCE.accentHue}`}
 >
   <head>
     <meta charset="UTF-8" />
@@ -128,23 +128,30 @@ const pageTransition: TransitionDirectionalAnimations = {
     <script is:inline>
       (() => {
         const root = document.documentElement;
-        const supportedAccents = ["cyan", "green", "purple", "rose"];
         let savedTheme = null;
-        let savedAccent = null;
+        let savedAccentHue = null;
         let sidebarCollapsed = false;
 
         try {
           savedTheme = localStorage.getItem("color-theme");
-          savedAccent = localStorage.getItem("color-accent");
+          savedAccentHue = localStorage.getItem("color-accent-hue");
           sidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
         } catch {}
 
-        const defaultAccent = supportedAccents.includes(root.dataset.defaultAccent)
-          ? root.dataset.defaultAccent
-          : "cyan";
-        root.dataset.accent = supportedAccents.includes(savedAccent)
-          ? savedAccent
-          : defaultAccent;
+        const defaultAccentHue = Number(root.dataset.defaultAccentHue);
+        const parsedAccentHue = Number(savedAccentHue);
+        const accentHue = savedAccentHue !== null
+          && savedAccentHue.trim() !== ""
+          && Number.isInteger(parsedAccentHue)
+          && parsedAccentHue >= 0
+          && parsedAccentHue <= 360
+            ? parsedAccentHue
+            : Number.isInteger(defaultAccentHue)
+              && defaultAccentHue >= 0
+              && defaultAccentHue <= 360
+                ? defaultAccentHue
+                : 250;
+        root.style.setProperty("--accent-hue", String(accentHue));
 
         if (root.dataset.themeEnabled === "true") {
           const theme = savedTheme === "neon"

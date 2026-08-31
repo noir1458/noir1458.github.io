@@ -9,7 +9,7 @@ const configuredSocialLinks = Object.values(config.social).filter(Boolean).lengt
 console.log(JSON.stringify({
   site: config.site.title,
   origin: config.site.url,
-  accent: config.appearance.accent,
+  accentHue: config.appearance.accentHue,
   defaultLanguage: config.site.language,
   supportedLanguages: config.supportedLanguageCodes,
   navigationLinks:

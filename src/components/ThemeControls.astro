@@ -16,18 +16,21 @@ import Icon from "@/components/Icon.astro";
       <Icon name="palette" />
     </button>
 
-    <div id="accent-menu" class="accent-menu" data-accent-menu aria-label="Accent color">
-      {(["cyan", "green", "purple", "rose"] as const).map((accent) => (
-        <button
-          data-accent-value={accent}
-          type="button"
-          aria-label={`${accent[0].toUpperCase()}${accent.slice(1)} accent`}
-          title={`${accent[0].toUpperCase()}${accent.slice(1)}`}
-          aria-pressed="false"
-        >
-          <span class={`accent-swatch accent-swatch-${accent}`}></span>
-        </button>
-      ))}
+    <div id="accent-menu" class="accent-menu" data-accent-menu aria-label="Accent hue">
+      <div class="accent-hue-control">
+        <output data-accent-hue-output for="accent-hue">250°</output>
+        <input
+          id="accent-hue"
+          data-accent-hue
+          type="range"
+          min="0"
+          max="360"
+          step="1"
+          value="250"
+          aria-label="Accent hue"
+          aria-orientation="vertical"
+        />
+      </div>
     </div>
   </div>
 

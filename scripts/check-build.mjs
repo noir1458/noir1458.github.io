@@ -156,6 +156,9 @@ for (const publicPath of configuredPublicAssets) {
 }
 
 const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
+const buildCss = walk(distRoot, (file) => file.endsWith(".css"))
+  .map((file) => fs.readFileSync(file, "utf8"))
+  .join("\n");
 const visibleNavigationLinks = [
   ...NAVIGATION.header,
   ...NAVIGATION.sidebar,
@@ -206,8 +209,27 @@ if (indexHtml.includes("data-accent-picker") !== FEATURES.darkMode) {
   errors.push(`index.html: accent UI does not match features.darkMode=${FEATURES.darkMode}`);
 }
 
-if (!indexHtml.includes(`data-accent="${APPEARANCE.accent}"`)) {
-  errors.push(`index.html: configured accent is missing: ${APPEARANCE.accent}`);
+if (indexHtml.includes("data-accent-value")) {
+  errors.push("index.html: removed accent presets are still rendered");
+}
+
+if (
+  !indexHtml.includes('data-accent-hue')
+  || !indexHtml.includes('max="360"')
+  || !indexHtml.includes('aria-orientation="vertical"')
+) {
+  errors.push("index.html: vertical accent hue range is missing");
+}
+
+if (!indexHtml.includes(`data-default-accent-hue="${APPEARANCE.accentHue}"`)) {
+  errors.push(`index.html: configured accent hue is missing: ${APPEARANCE.accentHue}`);
+}
+
+if (!buildCss.includes("--accent-hue") || !buildCss.includes("writing-mode:vertical-lr")) {
+  errors.push("build CSS: Hue palette or vertical slider is missing");
+}
+if (buildCss.includes("data-accent=")) {
+  errors.push("build CSS: removed accent mode selectors are still present");
 }
 
 if (indexHtml.includes('type="application/rss+xml"') !== FEATURES.rss) {
