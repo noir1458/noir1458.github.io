@@ -11,10 +11,7 @@ const categories = [
 
 test("configured categories keep their group order", () => {
   const result = arrangeSidebarCategories(categories, {
-    groups: [
-      { categories: ["blog"] },
-      { categories: ["code"] }
-    ],
+    groups: [{ categories: ["blog"] }, { categories: ["code"] }],
     hidden: ["internal"]
   });
 
@@ -22,7 +19,10 @@ test("configured categories keep their group order", () => {
     result.groups.map((group) => group.categories.map((category) => category.slug)),
     [["blog"], ["code"], ["new"]]
   );
-  assert.deepEqual(result.groups.map((group) => group.automatic), [false, false, true]);
+  assert.deepEqual(
+    result.groups.map((group) => group.automatic),
+    [false, false, true]
+  );
 });
 
 test("hidden categories are omitted and unconfigured categories are reported", () => {
@@ -31,8 +31,14 @@ test("hidden categories are omitted and unconfigured categories are reported", (
     hidden: ["internal"]
   });
 
-  assert.deepEqual(result.unconfigured.map((category) => category.slug), ["new", "code"]);
-  assert.equal(result.groups.flatMap((group) => group.categories).some(
-    (category) => category.slug === "internal"
-  ), false);
+  assert.deepEqual(
+    result.unconfigured.map((category) => category.slug),
+    ["new", "code"]
+  );
+  assert.equal(
+    result.groups
+      .flatMap((group) => group.categories)
+      .some((category) => category.slug === "internal"),
+    false
+  );
 });

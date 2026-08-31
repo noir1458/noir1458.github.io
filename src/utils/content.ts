@@ -26,16 +26,14 @@ export function postCover(post: PostEntry): ImageMetadata | undefined {
   const localReference =
     post.body?.match(
       /!\[[^\]]*\]\(((?!(?:[a-z][a-z0-9+.-]*:|\/|\.\.\/))(?:\.\/)?[^)\s]+\.(?:avif|gif|jpe?g|png|webp))(?:\s+["'][^"']*["'])?\)/i
-    )?.[1] ??
-    post.body?.match(
+    )?.[1]
+    ?? post.body?.match(
       /<img[^>]+src=["']((?!(?:[a-z][a-z0-9+.-]*:|\/|\.\.\/))(?:\.\/)?[^"']+\.(?:avif|gif|jpe?g|png|webp))["']/i
     )?.[1];
 
   if (!localReference || !post.filePath) return undefined;
 
-  const postDirectory = post.filePath
-    .replaceAll("\\", "/")
-    .replace(/\/[^/]+\.md$/i, "");
+  const postDirectory = post.filePath.replaceAll("\\", "/").replace(/\/[^/]+\.md$/i, "");
   const imagePath = `/${postDirectory}/${localReference.replace(/^\.\//, "")}`;
 
   return localPostImages[imagePath];
@@ -46,7 +44,10 @@ const DESCRIPTION_LIMIT = 180;
 function truncateDescription(value: string): string {
   const characters = Array.from(value.trim());
   if (characters.length <= DESCRIPTION_LIMIT) return characters.join("");
-  return `${characters.slice(0, DESCRIPTION_LIMIT - 1).join("").trimEnd()}…`;
+  return `${characters
+    .slice(0, DESCRIPTION_LIMIT - 1)
+    .join("")
+    .trimEnd()}…`;
 }
 
 function markdownParagraphs(body: string): string[] {
@@ -56,29 +57,33 @@ function markdownParagraphs(body: string): string[] {
     .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/^\[[^\]]+\]:\s+\S+.*$/gm, "");
 
-  return withoutCode.split(/\n\s*\n/u).map((block) =>
-    block
-      .split("\n")
-      .filter((line) => !/^\s*(?:#{1,6}\s+|[-*_]{3,}\s*$|\|?(?:\s*:?-+:?\s*\|)+)/u.test(line))
-      .join(" ")
-      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-      .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-      .replace(/\[([^\]]+)\]\[[^\]]*\]/g, "$1")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/^\s*(?:>\s*|[-+*]\s+|\d+[.)]\s+)/u, "")
-      .replace(/[`*_~]/g, "")
-      .replace(/\\([\\`*_[\]{}()#+.!-])/g, "$1")
-      .replace(/\s+/g, " ")
-      .trim()
-  ).filter(Boolean);
+  return withoutCode
+    .split(/\n\s*\n/u)
+    .map((block) =>
+      block
+        .split("\n")
+        .filter((line) => !/^\s*(?:#{1,6}\s+|[-*_]{3,}\s*$|\|?(?:\s*:?-+:?\s*\|)+)/u.test(line))
+        .join(" ")
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        .replace(/\[([^\]]+)\]\[[^\]]*\]/g, "$1")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/^\s*(?:>\s*|[-+*]\s+|\d+[.)]\s+)/u, "")
+        .replace(/[`*_~]/g, "")
+        .replace(/\\([\\`*_[\]{}()#+.!-])/g, "$1")
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
 }
 
 export function postDescription(post: PostEntry): string {
   const explicitDescription = post.data.description?.trim();
   if (explicitDescription) return explicitDescription;
 
-  const firstParagraph = markdownParagraphs(post.body ?? "")
-    .find((paragraph) => paragraph.length >= 12);
+  const firstParagraph = markdownParagraphs(post.body ?? "").find(
+    (paragraph) => paragraph.length >= 12
+  );
 
   return truncateDescription(firstParagraph ?? post.data.title);
 }
@@ -86,9 +91,7 @@ export function postDescription(post: PostEntry): string {
 export async function getAllPublishedPosts(): Promise<PostEntry[]> {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
 
-  return posts.sort(
-    (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
-  );
+  return posts.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }
 
 export async function getPublishedPosts(
@@ -113,10 +116,7 @@ export interface PostTranslation {
   post: PostEntry;
 }
 
-export function getPostTranslations(
-  post: PostEntry,
-  posts: PostEntry[]
-): PostTranslation[] {
+export function getPostTranslations(post: PostEntry, posts: PostEntry[]): PostTranslation[] {
   const key = postTranslationKey(post);
   const order = new Map(SUPPORTED_LANGUAGE_CODES.map((lang, index) => [lang, index]));
 
@@ -175,10 +175,7 @@ export function countTerms(
 }
 
 export function groupCategoriesForSidebar(posts: PostEntry[]): SidebarCategoryGroup[] {
-  return arrangeSidebarCategories(
-    countTerms(posts, "categories"),
-    CATEGORY_SIDEBAR
-  ).groups;
+  return arrangeSidebarCategories(countTerms(posts, "categories"), CATEGORY_SIDEBAR).groups;
 }
 
 export function groupPostsByYear(posts: PostEntry[]) {
@@ -209,14 +206,8 @@ export function paginatePosts(posts: PostEntry[], currentPage: number) {
   };
 }
 
-export function postsWithTerm(
-  posts: PostEntry[],
-  field: "tags" | "categories",
-  termSlug: string
-) {
-  return posts.filter((post) =>
-    post.data[field].some((term) => slugifyTerm(term) === termSlug)
-  );
+export function postsWithTerm(posts: PostEntry[], field: "tags" | "categories", termSlug: string) {
+  return posts.filter((post) => post.data[field].some((term) => slugifyTerm(term) === termSlug));
 }
 
 export function termNameFromSlug(
@@ -224,7 +215,5 @@ export function termNameFromSlug(
   field: "tags" | "categories",
   termSlug: string
 ) {
-  return posts
-    .flatMap((post) => post.data[field])
-    .find((term) => slugifyTerm(term) === termSlug);
+  return posts.flatMap((post) => post.data[field]).find((term) => slugifyTerm(term) === termSlug);
 }

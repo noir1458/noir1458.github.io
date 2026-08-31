@@ -4,21 +4,8 @@ import { loadSiteConfig } from "../src/lib/config/index.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const config = loadSiteConfig();
-const implementationTargets = [
-  "astro.config.mjs",
-  "src",
-  "public/sw.js",
-  ".github/workflows"
-];
-const textExtensions = new Set([
-  ".astro",
-  ".css",
-  ".js",
-  ".mjs",
-  ".ts",
-  ".yaml",
-  ".yml"
-]);
+const implementationTargets = ["astro.config.mjs", "src", "public/sw.js", ".github/workflows"];
+const textExtensions = new Set([".astro", ".css", ".js", ".mjs", ".ts", ".yaml", ".yml"]);
 
 function walk(target) {
   if (!fs.existsSync(target)) return [];
@@ -31,21 +18,23 @@ function walk(target) {
   });
 }
 
-const userValues = new Set([
-  config.site.title,
-  config.site.url,
-  config.author.name,
-  config.author.displayName,
-  ...Object.values(config.social),
-  config.integrations.analyticsId,
-  config.integrations.googleSiteVerification,
-  config.integrations.giscus?.repo,
-  config.integrations.giscus?.repoId,
-  config.integrations.giscus?.category,
-  config.integrations.giscus?.categoryId,
-  ...config.categories.sidebar.groups.flatMap((group) => group.categories),
-  ...config.categories.sidebar.hidden
-].filter((value) => typeof value === "string" && value.length >= 5));
+const userValues = new Set(
+  [
+    config.site.title,
+    config.site.url,
+    config.author.name,
+    config.author.displayName,
+    ...Object.values(config.social),
+    config.integrations.analyticsId,
+    config.integrations.googleSiteVerification,
+    config.integrations.giscus?.repo,
+    config.integrations.giscus?.repoId,
+    config.integrations.giscus?.category,
+    config.integrations.giscus?.categoryId,
+    ...config.categories.sidebar.groups.flatMap((group) => group.categories),
+    ...config.categories.sidebar.hidden
+  ].filter((value) => typeof value === "string" && value.length >= 5)
+);
 
 const violations = [];
 const files = implementationTargets
@@ -64,10 +53,16 @@ for (const file of files) {
   }
 }
 
-console.log(JSON.stringify({
-  scannedImplementationFiles: files.length,
-  checkedUserValues: userValues.size,
-  violations
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      scannedImplementationFiles: files.length,
+      checkedUserValues: userValues.size,
+      violations
+    },
+    null,
+    2
+  )
+);
 
 if (violations.length > 0) process.exitCode = 1;

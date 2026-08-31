@@ -8,19 +8,12 @@ function initNavigation() {
 
   window.clearTimeout(searchCloseTimer);
 
-  const searchShell = document.querySelector<HTMLElement>(
-    "[data-search-shell]",
-  );
-  const searchToggle = document.querySelector<HTMLButtonElement>(
-    "[data-search-toggle]",
-  );
+  const searchShell = document.querySelector<HTMLElement>("[data-search-shell]");
+  const searchToggle = document.querySelector<HTMLButtonElement>("[data-search-toggle]");
   const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
   const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
-  const navToggle =
-    document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
-  const languagePicker = document.querySelector<HTMLDetailsElement>(
-    "[data-language-picker]",
-  );
+  const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const languagePicker = document.querySelector<HTMLDetailsElement>("[data-language-picker]");
 
   function closeSearch({ restoreFocus = false } = {}) {
     const wasOpen = Boolean(searchShell?.classList.contains("open"));
@@ -43,10 +36,7 @@ function initNavigation() {
     primaryNav?.classList.toggle("open", open);
     navToggle?.classList.toggle("open", open);
     navToggle?.setAttribute("aria-expanded", String(open));
-    navToggle?.setAttribute(
-      "aria-label",
-      open ? "Close navigation" : "Open navigation",
-    );
+    navToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     if (open) closeSearch();
   }
 
@@ -66,7 +56,7 @@ function initNavigation() {
       searchToggle.setAttribute("aria-label", "Close search");
       window.setTimeout(() => searchInput?.focus(), 80);
     },
-    { signal },
+    { signal }
   );
 
   navToggle?.addEventListener(
@@ -74,7 +64,7 @@ function initNavigation() {
     () => {
       setNavigation(!primaryNav?.classList.contains("open"));
     },
-    { signal },
+    { signal }
   );
 
   primaryNav?.addEventListener(
@@ -82,29 +72,25 @@ function initNavigation() {
     (event) => {
       if ((event.target as Element).closest("a")) setNavigation(false);
     },
-    { signal },
+    { signal }
   );
 
   document.addEventListener(
     "pointerdown",
     (event) => {
-      if (searchShell && !searchShell.contains(event.target as Node))
-        closeSearch();
+      if (searchShell && !searchShell.contains(event.target as Node)) closeSearch();
       if (
-        primaryNav?.classList.contains("open") &&
-        !primaryNav.contains(event.target as Node) &&
-        !navToggle?.contains(event.target as Node)
+        primaryNav?.classList.contains("open")
+        && !primaryNav.contains(event.target as Node)
+        && !navToggle?.contains(event.target as Node)
       ) {
         setNavigation(false);
       }
-      if (
-        languagePicker?.open &&
-        !languagePicker.contains(event.target as Node)
-      ) {
+      if (languagePicker?.open && !languagePicker.contains(event.target as Node)) {
         languagePicker.open = false;
       }
     },
-    { signal },
+    { signal }
   );
 
   document.addEventListener(
@@ -112,7 +98,7 @@ function initNavigation() {
     (event) => {
       if (event.key !== "Escape") return;
       closeSearch({
-        restoreFocus: Boolean(searchShell?.classList.contains("open")),
+        restoreFocus: Boolean(searchShell?.classList.contains("open"))
       });
       if (primaryNav?.classList.contains("open")) {
         setNavigation(false);
@@ -123,7 +109,7 @@ function initNavigation() {
         languagePicker.querySelector<HTMLElement>("summary")?.focus();
       }
     },
-    { signal },
+    { signal }
   );
 
   const mobileNavigation = window.matchMedia("(max-width: 700px)");
@@ -132,16 +118,12 @@ function initNavigation() {
     (event) => {
       if (!event.matches) setNavigation(false);
     },
-    { signal },
+    { signal }
   );
 
   const layout = document.querySelector<HTMLElement>("[data-layout]");
-  const sidebarToggle = document.querySelector<HTMLButtonElement>(
-    "[data-sidebar-toggle]",
-  );
-  const sidebarRegion = document.querySelector<HTMLElement>(
-    "[data-sidebar-region]",
-  );
+  const sidebarToggle = document.querySelector<HTMLButtonElement>("[data-sidebar-toggle]");
+  const sidebarRegion = document.querySelector<HTMLElement>("[data-sidebar-region]");
   const sidebarIcon = sidebarToggle?.querySelector("svg");
   const desktopSidebar = window.matchMedia("(min-width: 961px)");
 
@@ -150,10 +132,7 @@ function initNavigation() {
     layout?.classList.toggle("sidebar-collapsed", collapsed);
     sidebarRegion?.classList.toggle("collapsed", collapsed);
     sidebarToggle?.setAttribute("aria-expanded", String(!collapsed));
-    sidebarToggle?.setAttribute(
-      "aria-label",
-      collapsed ? "Show sidebar" : "Hide sidebar",
-    );
+    sidebarToggle?.setAttribute("aria-label", collapsed ? "Show sidebar" : "Hide sidebar");
     sidebarIcon?.classList.toggle("flip", collapsed);
     if (persist) localStorage.setItem("sidebar-collapsed", String(collapsed));
   }
@@ -163,37 +142,32 @@ function initNavigation() {
     () => {
       setSidebar(!layout?.classList.contains("sidebar-collapsed"));
     },
-    { signal },
+    { signal }
   );
 
-  const savedSidebarCollapsed = () =>
-    localStorage.getItem("sidebar-collapsed") === "true";
+  const savedSidebarCollapsed = () => localStorage.getItem("sidebar-collapsed") === "true";
   setSidebar(desktopSidebar.matches && savedSidebarCollapsed(), {
-    persist: false,
+    persist: false
   });
   desktopSidebar.addEventListener(
     "change",
     (event) => {
       setSidebar(event.matches && savedSidebarCollapsed(), { persist: false });
     },
-    { signal },
+    { signal }
   );
 
-  document
-    .querySelectorAll<HTMLDetailsElement>(".sidebar-widget")
-    .forEach((details) => {
-      details.addEventListener(
-        "toggle",
-        () => {
-          const icon = details.querySelector<SVGElement>("summary svg");
-          icon?.classList.toggle("open", details.open);
-        },
-        { signal },
-      );
-      details
-        .querySelector<SVGElement>("summary svg")
-        ?.classList.toggle("open", details.open);
-    });
+  document.querySelectorAll<HTMLDetailsElement>(".sidebar-widget").forEach((details) => {
+    details.addEventListener(
+      "toggle",
+      () => {
+        const icon = details.querySelector<SVGElement>("summary svg");
+        icon?.classList.toggle("open", details.open);
+      },
+      { signal }
+    );
+    details.querySelector<SVGElement>("summary svg")?.classList.toggle("open", details.open);
+  });
 }
 
 document.addEventListener("astro:page-load", initNavigation);

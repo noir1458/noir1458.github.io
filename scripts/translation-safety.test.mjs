@@ -14,9 +14,8 @@ function languageFilename(language) {
 function fixture(name, sourceLanguage = "ko") {
   const directory = fs.mkdtempSync(path.join(postsRoot, `.translation-test-${name}-`));
   const sourcePath = path.join(directory, languageFilename(sourceLanguage));
-  const languageMetadata = sourceLanguage === "ko"
-    ? ""
-    : `translationKey: test-post\nlang: ${sourceLanguage}\n`;
+  const languageMetadata =
+    sourceLanguage === "ko" ? "" : `translationKey: test-post\nlang: ${sourceLanguage}\n`;
   const source = `---
 title: 테스트 글
 slug: test-post
@@ -126,11 +125,14 @@ test("changed code, math, and destinations are rejected", () => {
   const item = fixture("structure");
   try {
     const before = snapshot(item.relative);
-    fs.writeFileSync(path.join(item.directory, "en.md"), translation("en", {
-      code: "const value = 2;",
-      math: "x^2 - y^2",
-      url: "https://invalid.example"
-    }));
+    fs.writeFileSync(
+      path.join(item.directory, "en.md"),
+      translation("en", {
+        code: "const value = 2;",
+        math: "x^2 - y^2",
+        url: "https://invalid.example"
+      })
+    );
     fs.writeFileSync(path.join(item.directory, "ja.md"), translation("ja"));
     const errors = verify(item.relative, before.sourceHash).errors.join("\n");
     assert.match(errors, /fenced code blocks/u);

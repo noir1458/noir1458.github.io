@@ -8,20 +8,14 @@ const emptyToUndefined = (value: unknown) => {
 };
 
 const nonEmptyString = z.string().trim().min(1);
-const webUrl = z.url().refine(
-  (value) => /^https?:\/\//u.test(value),
-  "must use http or https"
-);
-const localImagePath = nonEmptyString.refine(
-  (value) => value.startsWith("./"),
-  "must be a relative path beginning with ./"
-).refine(
-  (value) => !value.split("/").includes(".."),
-  "must not contain parent-directory segments"
-).refine(
-  (value) => !value.includes("\\") && !/[?#]/u.test(value),
-  "must not contain backslashes, a query, or a fragment"
-);
+const webUrl = z.url().refine((value) => /^https?:\/\//u.test(value), "must use http or https");
+const localImagePath = nonEmptyString
+  .refine((value) => value.startsWith("./"), "must be a relative path beginning with ./")
+  .refine((value) => !value.split("/").includes(".."), "must not contain parent-directory segments")
+  .refine(
+    (value) => !value.includes("\\") && !/[?#]/u.test(value),
+    "must not contain backslashes, a query, or a fragment"
+  );
 
 const projectFields = {
   title: nonEmptyString,
@@ -34,14 +28,18 @@ const projectFields = {
   draft: z.boolean().default(false)
 };
 
-export const projectFrontmatterSchema = z.object({
-  ...projectFields,
-  image: z.preprocess(emptyToUndefined, localImagePath.optional())
-}).strict();
+export const projectFrontmatterSchema = z
+  .object({
+    ...projectFields,
+    image: z.preprocess(emptyToUndefined, localImagePath.optional())
+  })
+  .strict();
 
 export function projectSchema(imageSchema: z.ZodType<ImageMetadata>) {
-  return z.object({
-    ...projectFields,
-    image: z.preprocess(emptyToUndefined, imageSchema.optional())
-  }).strict();
+  return z
+    .object({
+      ...projectFields,
+      image: z.preprocess(emptyToUndefined, imageSchema.optional())
+    })
+    .strict();
 }

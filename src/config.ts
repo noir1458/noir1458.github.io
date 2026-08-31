@@ -17,9 +17,7 @@ export const APPEARANCE = USER_CONFIG.appearance;
 const defaultLanguage = LANGUAGES[USER_CONFIG.site.language];
 
 if (!defaultLanguage) {
-  throw new Error(
-    `No language configuration found for ${USER_CONFIG.site.language}.`
-  );
+  throw new Error(`No language configuration found for ${USER_CONFIG.site.language}.`);
 }
 
 export const SITE = {

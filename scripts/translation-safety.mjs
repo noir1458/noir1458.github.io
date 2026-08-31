@@ -31,9 +31,9 @@ function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
   if (value && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value).sort(([left], [right]) => left.localeCompare(right)).map(
-        ([key, item]) => [key, stable(item)]
-      )
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, item]) => [key, stable(item)])
     );
   }
   return value;
@@ -77,8 +77,8 @@ function withoutFencedCode(markdown) {
 }
 
 function fencedCode(markdown) {
-  return [...markdown.matchAll(/^([`~]{3,})[^\n]*\n[\s\S]*?^\1[ \t]*$/gmu)].map(
-    (match) => match[0].replace(/\r\n/gu, "\n")
+  return [...markdown.matchAll(/^([`~]{3,})[^\n]*\n[\s\S]*?^\1[ \t]*$/gmu)].map((match) =>
+    match[0].replace(/\r\n/gu, "\n")
   );
 }
 
@@ -95,14 +95,17 @@ function mathExpressions(markdown) {
     ...prose.matchAll(/\\\([\s\S]*?\\\)/gu)
   ].map((match) => match[0]);
   const withoutBlocks = blocks.reduce((text, block) => text.replace(block, ""), prose);
-  const inline = [...withoutBlocks.matchAll(/(?<!\\)\$(?!\s)(?:\\.|[^$\n])+?(?<!\s)(?<!\\)\$/gu)]
-    .map((match) => match[0]);
+  const inline = [
+    ...withoutBlocks.matchAll(/(?<!\\)\$(?!\s)(?:\\.|[^$\n])+?(?<!\s)(?<!\\)\$/gu)
+  ].map((match) => match[0]);
   return [...blocks, ...inline];
 }
 
 function destinations(markdown) {
   const prose = withoutFencedCode(markdown);
-  const markdownDestinations = [...prose.matchAll(/!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+["'][^"']*["'])?\s*\)/gu)]
+  const markdownDestinations = [
+    ...prose.matchAll(/!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+["'][^"']*["'])?\s*\)/gu)
+  ]
     .map((match) => match[1])
     .filter((destination) => !destination.startsWith("#"));
   const htmlDestinations = [...prose.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/giu)]
@@ -195,9 +198,11 @@ export function verify(sourceArgument, expectedHash) {
         errors.push(`${targetRelative}: ${field} must match the source`);
       }
     }
-    errors.push(...structuralErrors(source, target, language).map(
-      (message) => `${targetRelative}: ${message}`
-    ));
+    errors.push(
+      ...structuralErrors(source, target, language).map(
+        (message) => `${targetRelative}: ${message}`
+      )
+    );
   }
 
   return {
@@ -224,7 +229,10 @@ async function main() {
   let result;
   if (command === "snapshot") result = snapshot(sourceArgument);
   else if (command === "verify") result = verify(sourceArgument, sourceHash);
-  else throw new Error("Usage: translation-safety.mjs <snapshot|verify> path/to/source.md [--source-hash HASH]");
+  else
+    throw new Error(
+      "Usage: translation-safety.mjs <snapshot|verify> path/to/source.md [--source-hash HASH]"
+    );
 
   console.log(JSON.stringify(result, null, 2));
   if (result.errors?.length) process.exitCode = 1;

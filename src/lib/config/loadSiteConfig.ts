@@ -14,12 +14,8 @@ import {
 } from "./schema.ts";
 import type { ProfileConfig, UserConfig } from "./types.ts";
 
-const DEFAULT_CONFIG_DIRECTORY = fileURLToPath(
-  new URL("../../../config/", import.meta.url)
-);
-const DEFAULT_PUBLIC_DIRECTORY = fileURLToPath(
-  new URL("../../../public/", import.meta.url)
-);
+const DEFAULT_CONFIG_DIRECTORY = fileURLToPath(new URL("../../../config/", import.meta.url));
+const DEFAULT_PUBLIC_DIRECTORY = fileURLToPath(new URL("../../../public/", import.meta.url));
 const CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE = "ASTRO_BLOG_CONFIG_DIR";
 
 export class SiteConfigError extends Error {
@@ -49,10 +45,12 @@ function readConfigFile(configDirectory: string, filename: string): string {
 }
 
 function formatSchemaIssues(fileLabel: string, error: z.ZodError): string {
-  return error.issues.map((issue) => {
-    const field = issue.path.length > 0 ? issue.path.join(".") : "<root>";
-    return `${fileLabel}: ${field}: ${issue.message}`;
-  }).join("\n");
+  return error.issues
+    .map((issue) => {
+      const field = issue.path.length > 0 ? issue.path.join(".") : "<root>";
+      return `${fileLabel}: ${field}: ${issue.message}`;
+    })
+    .join("\n");
 }
 
 function loadYaml<T extends z.ZodType>(
@@ -108,9 +106,7 @@ function loadProfile(configDirectory: string): ProfileConfig {
 
   const body = parsedMatter.content.trim();
   if (!body) {
-    throw new SiteConfigError(
-      `${fileLabel}: body: must contain the About page introduction`
-    );
+    throw new SiteConfigError(`${fileLabel}: body: must contain the About page introduction`);
   }
 
   return {
@@ -127,7 +123,9 @@ function validateCombinedConfig(config: UserConfig, publicDirectory: string): vo
   if (!config.languages[language]) {
     errors.push(`config/site.yaml: site.language: no matching languages.${language} entry`);
   } else if (config.languages[language].pathPrefix !== "") {
-    errors.push(`config/site.yaml: languages.${language}.pathPrefix: default language must use an empty pathPrefix`);
+    errors.push(
+      `config/site.yaml: languages.${language}.pathPrefix: default language must use an empty pathPrefix`
+    );
   }
 
   const prefixes = new Map<string, string>();
@@ -149,9 +147,7 @@ function validateCombinedConfig(config: UserConfig, publicDirectory: string): vo
   }
 
   if (config.features.comments && !config.integrations.giscus) {
-    errors.push(
-      "config/features.yaml: comments: requires integrations.giscus in config/site.yaml"
-    );
+    errors.push("config/features.yaml: comments: requires integrations.giscus in config/site.yaml");
   }
 
   const publicAssets = [
@@ -179,30 +175,18 @@ export interface LoadSiteConfigOptions {
   publicDirectory?: string;
 }
 
-export function loadSiteConfig(
-  options: LoadSiteConfigOptions = {}
-): UserConfig {
+export function loadSiteConfig(options: LoadSiteConfigOptions = {}): UserConfig {
   const configDirectory = path.resolve(
     options.configDirectory
       ?? process.env[CONFIG_DIRECTORY_ENVIRONMENT_VARIABLE]
       ?? DEFAULT_CONFIG_DIRECTORY
   );
-  const publicDirectory = path.resolve(
-    options.publicDirectory ?? DEFAULT_PUBLIC_DIRECTORY
-  );
+  const publicDirectory = path.resolve(options.publicDirectory ?? DEFAULT_PUBLIC_DIRECTORY);
   const site = loadYaml(configDirectory, "site.yaml", siteFileSchema);
-  const navigation = loadYaml(
-    configDirectory,
-    "navigation.yaml",
-    navigationFileSchema
-  );
+  const navigation = loadYaml(configDirectory, "navigation.yaml", navigationFileSchema);
   const social = loadYaml(configDirectory, "social.yaml", socialFileSchema);
   const features = loadYaml(configDirectory, "features.yaml", featuresFileSchema);
-  const categories = loadYaml(
-    configDirectory,
-    "categories.yaml",
-    categoriesFileSchema
-  );
+  const categories = loadYaml(configDirectory, "categories.yaml", categoriesFileSchema);
   const profile = loadProfile(configDirectory);
   const config: UserConfig = {
     ...site,

@@ -20,9 +20,7 @@ function configFixture() {
 function replaceInFile(directory, filename, from, to) {
   const filePath = path.join(directory, filename);
   const source = fs.readFileSync(filePath, "utf8");
-  const containsPattern = typeof from === "string"
-    ? source.includes(from)
-    : from.test(source);
+  const containsPattern = typeof from === "string" ? source.includes(from) : from.test(source);
   assert.ok(containsPattern, `${filename} fixture did not contain ${from}`);
   fs.writeFileSync(filePath, source.replace(from, to));
 }
@@ -51,8 +49,8 @@ test("an invalid site URL reports its file and field", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/site\.yaml: site\.url:/u.test(error.message)
+    (error) =>
+      error instanceof SiteConfigError && /config\/site\.yaml: site\.url:/u.test(error.message)
   );
 });
 
@@ -60,10 +58,7 @@ test("a configured accent hue is valid", () => {
   const directory = configFixture();
   replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accentHue: 248");
 
-  assert.deepEqual(
-    loadSiteConfig({ configDirectory: directory }).appearance,
-    { accentHue: 248 }
-  );
+  assert.deepEqual(loadSiteConfig({ configDirectory: directory }).appearance, { accentHue: 248 });
 });
 
 test("accent hue accepts both range boundaries", () => {
@@ -80,7 +75,8 @@ test("accent hue rejects values outside its range", () => {
     replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, `  accentHue: ${hue}`);
     assert.throws(
       () => loadSiteConfig({ configDirectory: directory }),
-      (error) => error instanceof SiteConfigError
+      (error) =>
+        error instanceof SiteConfigError
         && /config\/site\.yaml: appearance\.accentHue:/u.test(error.message)
     );
   }
@@ -92,24 +88,17 @@ test("accent hue rejects fractional values", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
+    (error) =>
+      error instanceof SiteConfigError
       && /config\/site\.yaml: appearance\.accentHue:/u.test(error.message)
   );
 });
 
 test("a missing appearance section uses the default hue", () => {
   const directory = configFixture();
-  replaceInFile(
-    directory,
-    "site.yaml",
-    /\nappearance:\n  accentHue: [^\n]+\n/u,
-    ""
-  );
+  replaceInFile(directory, "site.yaml", /\nappearance:\n  accentHue: [^\n]+\n/u, "");
 
-  assert.deepEqual(
-    loadSiteConfig({ configDirectory: directory }).appearance,
-    { accentHue: 250 }
-  );
+  assert.deepEqual(loadSiteConfig({ configDirectory: directory }).appearance, { accentHue: 250 });
 });
 
 test("removed accent presets are rejected", () => {
@@ -118,8 +107,8 @@ test("removed accent presets are rejected", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/site\.yaml: appearance:/u.test(error.message)
+    (error) =>
+      error instanceof SiteConfigError && /config\/site\.yaml: appearance:/u.test(error.message)
   );
 });
 
@@ -132,7 +121,8 @@ test("a navigation item without href reports its exact field", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
+    (error) =>
+      error instanceof SiteConfigError
       && /config\/navigation\.yaml: header\.0\.href:/u.test(error.message)
   );
 });
@@ -143,7 +133,8 @@ test("duplicate language path prefixes are rejected", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
+    (error) =>
+      error instanceof SiteConfigError
       && /languages\.ja\.pathPrefix: duplicates languages\.en\.pathPrefix/u.test(error.message)
   );
 });
@@ -154,37 +145,28 @@ test("broken YAML reports the configuration filename", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/features\.yaml:/u.test(error.message)
+    (error) => error instanceof SiteConfigError && /config\/features\.yaml:/u.test(error.message)
   );
 });
 
 test("an empty profile body reports the configuration file", () => {
   const directory = configFixture();
-  fs.writeFileSync(
-    path.join(directory, "profile.md"),
-    "---\ntitle: About\neyebrow: About\n---\n"
-  );
+  fs.writeFileSync(path.join(directory, "profile.md"), "---\ntitle: About\neyebrow: About\n---\n");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/profile\.md: body:/u.test(error.message)
+    (error) => error instanceof SiteConfigError && /config\/profile\.md: body:/u.test(error.message)
   );
 });
 
 test("comments require a complete Giscus configuration", () => {
   const directory = configFixture();
-  replaceInFile(
-    directory,
-    "site.yaml",
-    /  giscus:\n(?:    .*\n?)+$/u,
-    "  giscus:\n"
-  );
+  replaceInFile(directory, "site.yaml", /  giscus:\n(?:    .*\n?)+$/u, "  giscus:\n");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
+    (error) =>
+      error instanceof SiteConfigError
       && /comments: requires integrations\.giscus/u.test(error.message)
   );
 });
@@ -200,8 +182,11 @@ test("a missing user-replaceable image reports its exact field", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/site\.yaml: author\.profileImage: public asset does not exist/u.test(error.message)
+    (error) =>
+      error instanceof SiteConfigError
+      && /config\/site\.yaml: author\.profileImage: public asset does not exist/u.test(
+        error.message
+      )
   );
 });
 
@@ -211,7 +196,10 @@ test("a sidebar category cannot be both grouped and hidden", () => {
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) => error instanceof SiteConfigError
-      && /config\/categories\.yaml: sidebar\.hidden\.0: duplicates sidebar\.groups\.0\.categories\.0/u.test(error.message)
+    (error) =>
+      error instanceof SiteConfigError
+      && /config\/categories\.yaml: sidebar\.hidden\.0: duplicates sidebar\.groups\.0\.categories\.0/u.test(
+        error.message
+      )
   );
 });

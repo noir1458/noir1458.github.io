@@ -22,7 +22,14 @@ function slugify(value) {
 }
 
 function splitTerms(value) {
-  return [...new Set(value.split(",").map((item) => item.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    )
+  ];
 }
 
 function todayInConfiguredTimeZone() {
@@ -39,30 +46,24 @@ try {
   if (!title) throw new Error("Title is required.");
 
   const suggestedSlug = slugify(title);
-  const slugInput = (
-    await prompt.question(`Slug (${suggestedSlug || "required"}): `)
-  ).trim();
+  const slugInput = (await prompt.question(`Slug (${suggestedSlug || "required"}): `)).trim();
   const slug = slugInput || suggestedSlug;
   if (!slug || /[/\\?#\s]/u.test(slug)) {
     throw new Error("Slug cannot contain spaces, slashes, ?, or #.");
   }
 
   const languageInput = (
-    await prompt.question(
-      `Language [${SUPPORTED_LANGUAGE_CODES.join("/")}] (${SITE.language}): `
-    )
-  ).trim().toLowerCase();
+    await prompt.question(`Language [${SUPPORTED_LANGUAGE_CODES.join("/")}] (${SITE.language}): `)
+  )
+    .trim()
+    .toLowerCase();
   const language = languageInput || SITE.language;
   if (!SUPPORTED_LANGUAGE_CODES.includes(language)) {
     throw new Error(`Language must be one of: ${SUPPORTED_LANGUAGE_CODES.join(", ")}.`);
   }
 
-  const categories = splitTerms(
-    await prompt.question("Categories (comma separated): ")
-  );
-  const mathInput = (
-    await prompt.question("Enable math? [y/N]: ")
-  ).trim().toLowerCase();
+  const categories = splitTerms(await prompt.question("Categories (comma separated): "));
+  const mathInput = (await prompt.question("Enable math? [y/N]: ")).trim().toLowerCase();
   const primaryCategory = categories[0] || "uncategorized";
   const categoryDirectory = primaryCategory.replace(/[/\\]/g, "-");
   const sourceGroups = fs
@@ -76,9 +77,7 @@ try {
 
   let sourceGroup = matchingGroups[0];
   if (!sourceGroup) {
-    const fallbackGroup = sourceGroups.includes("99.Other")
-      ? "99.Other"
-      : sourceGroups.at(-1);
+    const fallbackGroup = sourceGroups.includes("99.Other") ? "99.Other" : sourceGroups.at(-1);
     const sourceGroupInput = (
       await prompt.question(
         `Source group (${sourceGroups.join(", ")}; ${fallbackGroup || "required"}): `
@@ -91,12 +90,7 @@ try {
     throw new Error("Source group must look like 01.DEV and cannot contain slashes.");
   }
 
-  const directory = path.join(
-    contentRoot,
-    sourceGroup,
-    categoryDirectory,
-    slug
-  );
+  const directory = path.join(contentRoot, sourceGroup, categoryDirectory, slug);
   const filename = language === SITE.language ? "index.md" : `${language}.md`;
   const postPath = path.join(directory, filename);
 

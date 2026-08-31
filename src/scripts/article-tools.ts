@@ -7,68 +7,45 @@ function initArticleTools() {
   const { signal } = articleToolsController;
   if (articleToolsFrame) window.cancelAnimationFrame(articleToolsFrame);
 
-  const scrollTopButton =
-    document.querySelector<HTMLButtonElement>("[data-scroll-top]");
-  const articleTocToggle = document.querySelector<HTMLButtonElement>(
-    "[data-article-toc-toggle]",
-  );
-  const articleTocDialog = document.querySelector<HTMLDialogElement>(
-    "[data-article-toc-dialog]",
-  );
-  const articleTocPanel = articleTocDialog?.querySelector<HTMLElement>(
-    "[data-article-toc-panel]",
-  );
+  const scrollTopButton = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+  const articleTocToggle = document.querySelector<HTMLButtonElement>("[data-article-toc-toggle]");
+  const articleTocDialog = document.querySelector<HTMLDialogElement>("[data-article-toc-dialog]");
+  const articleTocPanel = articleTocDialog?.querySelector<HTMLElement>("[data-article-toc-panel]");
   const articleTocClose = articleTocDialog?.querySelector<HTMLButtonElement>(
-    "[data-article-toc-close]",
+    "[data-article-toc-close]"
   );
-  const readingProgress = document.querySelector<HTMLElement>(
-    "[data-reading-progress]",
-  );
-  const readingProgressBar =
-    readingProgress?.querySelector<HTMLElement>("span");
-  const readingArticle = document.querySelector<HTMLElement>(
-    "[data-reading-article]",
-  );
+  const readingProgress = document.querySelector<HTMLElement>("[data-reading-progress]");
+  const readingProgressBar = readingProgress?.querySelector<HTMLElement>("span");
+  const readingArticle = document.querySelector<HTMLElement>("[data-reading-article]");
   const articleTocLinks = [
-    ...document.querySelectorAll<HTMLAnchorElement>("[data-article-toc-link]"),
+    ...document.querySelectorAll<HTMLAnchorElement>("[data-article-toc-link]")
   ];
   const articleTocTargets = [
-    ...new Set(
-      articleTocLinks.map((link) => decodeURIComponent(link.hash.slice(1))),
-    ),
+    ...new Set(articleTocLinks.map((link) => decodeURIComponent(link.hash.slice(1))))
   ]
     .map((id) => document.getElementById(id))
     .filter((heading): heading is HTMLElement => Boolean(heading));
   const articleImageDialog = document.querySelector<HTMLDialogElement>(
-    "[data-article-image-dialog]",
+    "[data-article-image-dialog]"
   );
   const articleImagePanel = articleImageDialog?.querySelector<HTMLElement>(
-    "[data-article-image-panel]",
+    "[data-article-image-panel]"
   );
-  const articleImagePreview =
-    articleImageDialog?.querySelector<HTMLImageElement>(
-      "[data-article-image-preview]",
-    );
-  const articleImageClose =
-    articleImageDialog?.querySelector<HTMLButtonElement>(
-      "[data-article-image-close]",
-    );
+  const articleImagePreview = articleImageDialog?.querySelector<HTMLImageElement>(
+    "[data-article-image-preview]"
+  );
+  const articleImageClose = articleImageDialog?.querySelector<HTMLButtonElement>(
+    "[data-article-image-close]"
+  );
   function syncArticleTools() {
     if (readingProgress && readingProgressBar && readingArticle) {
       const bounds = readingArticle.getBoundingClientRect();
       const articleStart = window.scrollY + bounds.top;
-      const articleEnd =
-        articleStart + readingArticle.offsetHeight - window.innerHeight;
+      const articleEnd = articleStart + readingArticle.offsetHeight - window.innerHeight;
       const distance = Math.max(1, articleEnd - articleStart);
-      const progress = Math.min(
-        1,
-        Math.max(0, (window.scrollY - articleStart) / distance),
-      );
+      const progress = Math.min(1, Math.max(0, (window.scrollY - articleStart) / distance));
       readingProgressBar.style.transform = `scaleX(${progress})`;
-      readingProgress.setAttribute(
-        "aria-valuenow",
-        String(Math.round(progress * 100)),
-      );
+      readingProgress.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
     }
 
     if (articleTocTargets.length > 0) {
@@ -80,8 +57,7 @@ function initArticleTools() {
         }
       });
       articleTocLinks.forEach((link) => {
-        const active =
-          decodeURIComponent(link.hash.slice(1)) === activeHeading.id;
+        const active = decodeURIComponent(link.hash.slice(1)) === activeHeading.id;
         if (active) {
           link.setAttribute("aria-current", "location");
         } else {
@@ -102,9 +78,7 @@ function initArticleTools() {
   scrollTopButton?.addEventListener("click", () => {
     window.scrollTo({
       top: 0,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
     });
   });
 
@@ -131,18 +105,16 @@ function initArticleTools() {
     const bounds = articleTocPanel?.getBoundingClientRect();
     if (!bounds) return;
     const outside =
-      event.clientX < bounds.left ||
-      event.clientX > bounds.right ||
-      event.clientY < bounds.top ||
-      event.clientY > bounds.bottom;
+      event.clientX < bounds.left
+      || event.clientX > bounds.right
+      || event.clientY < bounds.top
+      || event.clientY > bounds.bottom;
     if (outside) articleTocDialog.close();
   });
 
-  articleTocDialog
-    ?.querySelectorAll<HTMLAnchorElement>("a[href^='#']")
-    .forEach((link) => {
-      link.addEventListener("click", () => articleTocDialog.close());
-    });
+  articleTocDialog?.querySelectorAll<HTMLAnchorElement>("a[href^='#']").forEach((link) => {
+    link.addEventListener("click", () => articleTocDialog.close());
+  });
 
   let articleImageTrigger: HTMLImageElement | undefined;
 
@@ -159,13 +131,13 @@ function initArticleTools() {
       const bounds = articleImagePanel?.getBoundingClientRect();
       if (!bounds) return;
       const outside =
-        event.clientX < bounds.left ||
-        event.clientX > bounds.right ||
-        event.clientY < bounds.top ||
-        event.clientY > bounds.bottom;
+        event.clientX < bounds.left
+        || event.clientX > bounds.right
+        || event.clientY < bounds.top
+        || event.clientY > bounds.bottom;
       if (outside) closeArticleImage();
     },
-    { signal },
+    { signal }
   );
 
   articleImageDialog?.addEventListener(
@@ -175,54 +147,47 @@ function initArticleTools() {
       articleImageTrigger?.focus();
       articleImageTrigger = undefined;
     },
-    { signal },
+    { signal }
   );
 
-  document
-    .querySelectorAll<HTMLImageElement>(".article-content img")
-    .forEach((image) => {
-      if (image.closest("a, button, .mermaid-diagram")) return;
+  document.querySelectorAll<HTMLImageElement>(".article-content img").forEach((image) => {
+    if (image.closest("a, button, .mermaid-diagram")) return;
 
-      image.classList.add("lightbox-ready");
-      image.tabIndex = 0;
-      image.setAttribute("role", "button");
-      image.setAttribute(
-        "aria-label",
-        image.alt.trim()
-          ? `Open image preview: ${image.alt.trim()}`
-          : "Open image preview",
-      );
+    image.classList.add("lightbox-ready");
+    image.tabIndex = 0;
+    image.setAttribute("role", "button");
+    image.setAttribute(
+      "aria-label",
+      image.alt.trim() ? `Open image preview: ${image.alt.trim()}` : "Open image preview"
+    );
 
-      const openImage = () => {
-        if (
-          !articleImageDialog ||
-          !articleImagePreview
-        ) {
-          return;
-        }
-        const alt = image.alt.trim();
-        articleImageTrigger = image;
-        articleImagePreview.src = image.currentSrc || image.src;
-        articleImagePreview.alt = alt;
-        if (!articleImageDialog.open) articleImageDialog.showModal();
-        articleImageClose?.focus();
-      };
+    const openImage = () => {
+      if (!articleImageDialog || !articleImagePreview) {
+        return;
+      }
+      const alt = image.alt.trim();
+      articleImageTrigger = image;
+      articleImagePreview.src = image.currentSrc || image.src;
+      articleImagePreview.alt = alt;
+      if (!articleImageDialog.open) articleImageDialog.showModal();
+      articleImageClose?.focus();
+    };
 
-      image.addEventListener("click", openImage, { signal });
-      image.addEventListener(
-        "keydown",
-        (event) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          openImage();
-        },
-        { signal },
-      );
-    });
+    image.addEventListener("click", openImage, { signal });
+    image.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        openImage();
+      },
+      { signal }
+    );
+  });
 
   window.addEventListener("scroll", requestArticleToolsSync, {
     passive: true,
-    signal,
+    signal
   });
   window.addEventListener("resize", requestArticleToolsSync, { signal });
   syncArticleTools();
@@ -258,17 +223,15 @@ function initArticleTools() {
   const mermaidSourceLabels = {
     en: { copy: "Copy", copied: "Copied", title: "Mermaid source" },
     ja: { copy: "コピー", copied: "コピーしました", title: "Mermaid ソース" },
-    ko: { copy: "복사", copied: "복사됨", title: "Mermaid 소스" },
+    ko: { copy: "복사", copied: "복사됨", title: "Mermaid 소스" }
   } as const;
 
-  const mermaidSourceButtons =
-    document.querySelectorAll<HTMLButtonElement>(".mermaid-source");
+  const mermaidSourceButtons = document.querySelectorAll<HTMLButtonElement>(".mermaid-source");
 
   if (mermaidSourceButtons.length > 0) {
     const language = document.documentElement.lang.toLowerCase().split("-")[0];
     const labels =
-      mermaidSourceLabels[language as keyof typeof mermaidSourceLabels] ??
-      mermaidSourceLabels.en;
+      mermaidSourceLabels[language as keyof typeof mermaidSourceLabels] ?? mermaidSourceLabels.en;
     const dialog = document.createElement("dialog");
     const codeBlock = document.createElement("div");
     const sourcePre = document.createElement("pre");
@@ -302,10 +265,10 @@ function initArticleTools() {
       if (event.target !== dialog) return;
       const bounds = codeBlock.getBoundingClientRect();
       const outside =
-        event.clientX < bounds.left ||
-        event.clientX > bounds.right ||
-        event.clientY < bounds.top ||
-        event.clientY > bounds.bottom;
+        event.clientX < bounds.left
+        || event.clientX > bounds.right
+        || event.clientY < bounds.top
+        || event.clientY > bounds.bottom;
       if (outside) dialog.close();
     });
 
@@ -335,58 +298,54 @@ function initArticleTools() {
     });
   }
 
-  document
-    .querySelectorAll<HTMLElement>(".article-content pre")
-    .forEach((pre) => {
-      if (pre.dataset.copyReady === "true") return;
-      pre.dataset.copyReady = "true";
-      const wrapper = document.createElement("div");
-      const button = document.createElement("button");
-      const language = pre.dataset.language;
-      wrapper.className = "code-block";
-      button.className = "code-copy";
-      button.type = "button";
-      button.innerHTML = copyIcon;
-      button.title = "Copy code";
-      button.setAttribute("aria-label", "Copy code to clipboard");
-      button.setAttribute("aria-live", "polite");
-      pre.before(wrapper);
-      wrapper.append(pre);
-      if (language) {
-        const languageLabel = document.createElement("span");
-        languageLabel.className = "code-language";
-        languageLabel.textContent = language;
-        wrapper.append(languageLabel);
-      }
-      wrapper.append(button);
+  document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => {
+    if (pre.dataset.copyReady === "true") return;
+    pre.dataset.copyReady = "true";
+    const wrapper = document.createElement("div");
+    const button = document.createElement("button");
+    const language = pre.dataset.language;
+    wrapper.className = "code-block";
+    button.className = "code-copy";
+    button.type = "button";
+    button.innerHTML = copyIcon;
+    button.title = "Copy code";
+    button.setAttribute("aria-label", "Copy code to clipboard");
+    button.setAttribute("aria-live", "polite");
+    pre.before(wrapper);
+    wrapper.append(pre);
+    if (language) {
+      const languageLabel = document.createElement("span");
+      languageLabel.className = "code-language";
+      languageLabel.textContent = language;
+      wrapper.append(languageLabel);
+    }
+    wrapper.append(button);
 
-      let resetTimer = 0;
-      button.addEventListener("click", async () => {
-        window.clearTimeout(resetTimer);
-        try {
-          await copyText(
-            pre.querySelector("code")?.textContent ?? pre.textContent ?? "",
-          );
-          button.innerHTML = copiedIcon;
-          button.classList.add("copied");
-          button.classList.remove("failed");
-          button.title = "Copied";
-          button.setAttribute("aria-label", "Code copied to clipboard");
-        } catch {
-          button.classList.remove("copied");
-          button.classList.add("failed");
-          button.title = "Copy failed";
-          button.setAttribute("aria-label", "Copy failed; retry");
-        }
-        resetTimer = window.setTimeout(() => {
-          button.innerHTML = copyIcon;
-          button.classList.remove("copied");
-          button.classList.remove("failed");
-          button.title = "Copy code";
-          button.setAttribute("aria-label", "Copy code to clipboard");
-        }, 1800);
-      });
+    let resetTimer = 0;
+    button.addEventListener("click", async () => {
+      window.clearTimeout(resetTimer);
+      try {
+        await copyText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "");
+        button.innerHTML = copiedIcon;
+        button.classList.add("copied");
+        button.classList.remove("failed");
+        button.title = "Copied";
+        button.setAttribute("aria-label", "Code copied to clipboard");
+      } catch {
+        button.classList.remove("copied");
+        button.classList.add("failed");
+        button.title = "Copy failed";
+        button.setAttribute("aria-label", "Copy failed; retry");
+      }
+      resetTimer = window.setTimeout(() => {
+        button.innerHTML = copyIcon;
+        button.classList.remove("copied");
+        button.classList.remove("failed");
+        button.title = "Copy code";
+        button.setAttribute("aria-label", "Copy code to clipboard");
+      }, 1800);
     });
+  });
 }
 
 document.addEventListener("astro:page-load", initArticleTools);

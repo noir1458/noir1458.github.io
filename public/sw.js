@@ -2,9 +2,9 @@ const CACHE_NAME = "astro-blog-v4";
 const CORE = ["/", "/404.html", "/manifest.webmanifest"];
 
 const isPageRequest = (request) =>
-  request.mode === "navigate" ||
-  request.destination === "document" ||
-  request.headers.get("accept")?.includes("text/html");
+  request.mode === "navigate"
+  || request.destination === "document"
+  || request.headers.get("accept")?.includes("text/html");
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE)));
@@ -23,7 +23,8 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || new URL(event.request.url).origin !== location.origin) return;
+  if (event.request.method !== "GET" || new URL(event.request.url).origin !== location.origin)
+    return;
 
   // Astro's client router fetches the next document without using navigation mode.
   // Treat every HTML request as a page so an older cached document cannot be mixed
@@ -36,7 +37,9 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/404.html")))
+        .catch(() =>
+          caches.match(event.request).then((cached) => cached || caches.match("/404.html"))
+        )
     );
     return;
   }
@@ -44,8 +47,8 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then(
       (cached) =>
-        cached ||
-        fetch(event.request).then((response) => {
+        cached
+        || fetch(event.request).then((response) => {
           if (response.ok) {
             const copy = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));

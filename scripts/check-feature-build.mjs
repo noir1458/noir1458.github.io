@@ -6,19 +6,14 @@ import path from "node:path";
 import rehypeMermaid from "rehype-mermaid";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
-const temporaryRoot = fs.mkdtempSync(
-  path.join(os.tmpdir(), "astro-blog-features-")
-);
+const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "astro-blog-features-"));
 const configDirectory = path.join(temporaryRoot, "config");
 const outputDirectory = path.join(temporaryRoot, "dist");
 const projectsOutputDirectory = path.join(temporaryRoot, "dist-projects");
 const disabledCacheDirectory = path.join(temporaryRoot, "cache-disabled");
 const projectsCacheDirectory = path.join(temporaryRoot, "cache-projects");
 const astroEntry = path.join(projectRoot, "node_modules/astro/bin/astro.mjs");
-const projectFixture = path.join(
-  projectRoot,
-  "content/projects/feature-build-fixture.md"
-);
+const projectFixture = path.join(projectRoot, "content/projects/feature-build-fixture.md");
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -73,10 +68,11 @@ try {
 
   const indexHtml = fs.readFileSync(path.join(outputDirectory, "index.html"), "utf8");
   const robots = fs.readFileSync(path.join(outputDirectory, "robots.txt"), "utf8");
-  const postHtmlFiles = walk(outputDirectory, (file) => (
-    file.endsWith("/index.html")
-    && /(?:^|\/)posts\//u.test(path.relative(outputDirectory, file))
-  ));
+  const postHtmlFiles = walk(
+    outputDirectory,
+    (file) =>
+      file.endsWith("/index.html") && /(?:^|\/)posts\//u.test(path.relative(outputDirectory, file))
+  );
   const postHtml = postHtmlFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
 
   assert.equal(indexHtml.includes("data-search-shell"), false);
@@ -144,7 +140,7 @@ try {
       "```",
       "",
       "```python",
-      "print(\"ordinary code remains highlighted\")",
+      'print("ordinary code remains highlighted")',
       "```",
       ""
     ].join("\n")
@@ -189,10 +185,7 @@ try {
     "utf8"
   );
   const projectHtml = fs.readFileSync(
-    path.join(
-      projectsOutputDirectory,
-      "projects/feature-build-fixture/index.html"
-    ),
+    path.join(projectsOutputDirectory, "projects/feature-build-fixture/index.html"),
     "utf8"
   );
   assert.equal(projectsHtml.includes("Feature Build Project"), true);
@@ -200,21 +193,21 @@ try {
   assert.equal(projectHtml.includes("https://github.com/example/project"), true);
   assert.equal(projectHtml.includes("https://example.com/project"), true);
   assert.equal((projectHtml.match(/class="mermaid-block"/gu) ?? []).length, 4);
-  assert.equal((projectHtml.match(
-    /<button\b[^>]*class="mermaid-source"/gu
-  ) ?? []).length, 4);
+  assert.equal((projectHtml.match(/<button\b[^>]*class="mermaid-source"/gu) ?? []).length, 4);
   assert.equal(projectHtml.includes("mermaid-diagram-light"), true);
   assert.equal(projectHtml.includes("mermaid-diagram-dark"), true);
   assert.equal(projectHtml.includes("flowchart LR"), true);
   assert.equal(projectHtml.includes('data-language="python"'), true);
-  const darkMermaidSvgs = [...projectHtml.matchAll(
-    /src="(data:image\/svg\+xml,[^"]+)"[^>]*class="mermaid-diagram-image mermaid-diagram-dark"/gu
-  )].map((match) => (
+  const darkMermaidSvgs = [
+    ...projectHtml.matchAll(
+      /src="(data:image\/svg\+xml,[^"]+)"[^>]*class="mermaid-diagram-image mermaid-diagram-dark"/gu
+    )
+  ].map((match) =>
     decodeURIComponent(match[1].slice(match[1].indexOf(",") + 1))
       .replaceAll("&#x27;", "'")
       .replaceAll("&quot;", '"')
       .replaceAll("&amp;", "&")
-  ));
+  );
   const darkErSvg = darkMermaidSvgs.find((svg) => svg.includes("row-rect-odd"));
   assert.ok(darkErSvg, "dark ER diagram was not generated");
   assert.match(darkErSvg, /fill=["']#1e293b["']/u);
@@ -223,20 +216,26 @@ try {
 
   const invalidMermaidTree = {
     type: "root",
-    children: [{
-      type: "element",
-      tagName: "pre",
-      properties: {},
-      children: [{
+    children: [
+      {
         type: "element",
-        tagName: "code",
-        properties: { className: ["language-mermaid"] },
-        children: [{
-          type: "text",
-          value: "flowchart TD\n    A --> D{gcd(A,N) == 1?}\n"
-        }]
-      }]
-    }]
+        tagName: "pre",
+        properties: {},
+        children: [
+          {
+            type: "element",
+            tagName: "code",
+            properties: { className: ["language-mermaid"] },
+            children: [
+              {
+                type: "text",
+                value: "flowchart TD\n    A --> D{gcd(A,N) == 1?}\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   };
   const invalidMermaidFile = {
     message(reason) {
@@ -249,22 +248,28 @@ try {
     /parse error/iu
   );
 
-  console.log(JSON.stringify({
-    disabledFeatures: [
-      "search",
-      "rss",
-      "sitemap",
-      "darkMode",
-      "tableOfContents",
-      "mermaid",
-      "projects",
-      "comments"
-    ],
-    enabledProjectRoutes: 2,
-    invalidMermaidRejected: true,
-    generatedPostPages: postHtmlFiles.length,
-    errors: []
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        disabledFeatures: [
+          "search",
+          "rss",
+          "sitemap",
+          "darkMode",
+          "tableOfContents",
+          "mermaid",
+          "projects",
+          "comments"
+        ],
+        enabledProjectRoutes: 2,
+        invalidMermaidRejected: true,
+        generatedPostPages: postHtmlFiles.length,
+        errors: []
+      },
+      null,
+      2
+    )
+  );
 } finally {
   if (fs.existsSync(projectFixture)) fs.rmSync(projectFixture);
   fs.rmSync(temporaryRoot, { recursive: true, force: true });

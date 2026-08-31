@@ -6,18 +6,24 @@ const enabledFeatures = Object.entries(config.features)
   .map(([feature]) => feature);
 const configuredSocialLinks = Object.values(config.social).filter(Boolean).length;
 
-console.log(JSON.stringify({
-  site: config.site.title,
-  origin: config.site.url,
-  accentHue: config.appearance.accentHue,
-  defaultLanguage: config.site.language,
-  supportedLanguages: config.supportedLanguageCodes,
-  navigationLinks:
-    config.navigation.header.length
-    + config.navigation.sidebar.length
-    + config.navigation.footer.length,
-  configuredSocialLinks,
-  sidebarCategoryGroups: config.categories.sidebar.groups.length,
-  hiddenSidebarCategories: config.categories.sidebar.hidden.length,
-  enabledFeatures
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      site: config.site.title,
+      origin: config.site.url,
+      accentHue: config.appearance.accentHue,
+      defaultLanguage: config.site.language,
+      supportedLanguages: config.supportedLanguageCodes,
+      navigationLinks:
+        config.navigation.header.length
+        + config.navigation.sidebar.length
+        + config.navigation.footer.length,
+      configuredSocialLinks,
+      sidebarCategoryGroups: config.categories.sidebar.groups.length,
+      hiddenSidebarCategories: config.categories.sidebar.hidden.length,
+      enabledFeatures
+    },
+    null,
+    2
+  )
+);

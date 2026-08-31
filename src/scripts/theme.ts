@@ -39,23 +39,15 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
         ? storedTheme
         : "system"
     : "light";
-  const configuredHue = validHue(
-    targetRoot.dataset.defaultAccentHue,
-    safeAccentHue,
-  );
+  const configuredHue = validHue(targetRoot.dataset.defaultAccentHue, safeAccentHue);
   const accentHue = validHue(storedValue("color-accent-hue"), configuredHue);
-  const resolved = theme === "system"
-    ? media.matches
-      ? "dark"
-      : "light"
-    : theme;
+  const resolved = theme === "system" ? (media.matches ? "dark" : "light") : theme;
 
   targetRoot.dataset.theme = theme;
   targetRoot.dataset.resolvedTheme = resolved;
   targetRoot.style.setProperty("--accent-hue", String(accentHue));
   targetRoot.dataset.sidebarCollapsed = String(
-    window.matchMedia("(min-width: 961px)").matches
-    && storedValue("sidebar-collapsed") === "true"
+    window.matchMedia("(min-width: 961px)").matches && storedValue("sidebar-collapsed") === "true"
   );
   targetRoot.dataset.appearanceReady = "true";
   targetRoot.style.colorScheme = resolved;
@@ -64,25 +56,16 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
 }
 
 const getThemeButtons = () => [
-  ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]"),
+  ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")
 ];
-const getThemePicker = () =>
-  document.querySelector<HTMLElement>("[data-theme-picker]");
-const getThemeToggle = () =>
-  document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-const getThemeMenu = () =>
-  document.querySelector<HTMLElement>("[data-theme-menu]");
-const getThemeIcons = () => [
-  ...document.querySelectorAll<HTMLElement>("[data-theme-icon]"),
-];
-const getAccentPicker = () =>
-  document.querySelector<HTMLElement>("[data-accent-picker]");
-const getAccentToggle = () =>
-  document.querySelector<HTMLButtonElement>("[data-accent-toggle]");
-const getAccentMenu = () =>
-  document.querySelector<HTMLElement>("[data-accent-menu]");
-const getAccentHueInput = () =>
-  document.querySelector<HTMLInputElement>("[data-accent-hue]");
+const getThemePicker = () => document.querySelector<HTMLElement>("[data-theme-picker]");
+const getThemeToggle = () => document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+const getThemeMenu = () => document.querySelector<HTMLElement>("[data-theme-menu]");
+const getThemeIcons = () => [...document.querySelectorAll<HTMLElement>("[data-theme-icon]")];
+const getAccentPicker = () => document.querySelector<HTMLElement>("[data-accent-picker]");
+const getAccentToggle = () => document.querySelector<HTMLButtonElement>("[data-accent-toggle]");
+const getAccentMenu = () => document.querySelector<HTMLElement>("[data-accent-menu]");
+const getAccentHueInput = () => document.querySelector<HTMLInputElement>("[data-accent-hue]");
 const getAccentHueOutput = () =>
   document.querySelector<HTMLOutputElement>("[data-accent-hue-output]");
 
@@ -101,11 +84,7 @@ function closeAccentMenu({ restoreFocus = false } = {}) {
 }
 
 function resolvedTheme() {
-  return root.dataset.theme === "system"
-    ? media.matches
-      ? "dark"
-      : "light"
-    : root.dataset.theme;
+  return root.dataset.theme === "system" ? (media.matches ? "dark" : "light") : root.dataset.theme;
 }
 
 function syncTheme({ broadcast = true } = {}) {
@@ -122,39 +101,28 @@ function syncTheme({ broadcast = true } = {}) {
     icon.hidden = icon.dataset.themeIcon !== selected;
   });
   const selectedLabel =
-    selected === "system"
-      ? "Auto"
-      : selected.charAt(0).toUpperCase() + selected.slice(1);
-  getThemeToggle()?.setAttribute(
-    "aria-label",
-    `Choose color theme, current: ${selectedLabel}`,
-  );
+    selected === "system" ? "Auto" : selected.charAt(0).toUpperCase() + selected.slice(1);
+  getThemeToggle()?.setAttribute("aria-label", `Choose color theme, current: ${selectedLabel}`);
   if (broadcast) {
-    document
-      .querySelector<HTMLIFrameElement>(".giscus-frame")
-      ?.contentWindow?.postMessage(
-        {
-          giscus: {
-            setConfig: {
-              theme:
-                root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light",
-            },
-          },
-        },
-        "https://giscus.app",
-      );
+    document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
+      {
+        giscus: {
+          setConfig: {
+            theme: root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light"
+          }
+        }
+      },
+      "https://giscus.app"
+    );
   }
 }
 
 function syncAccentHue() {
   const hue = validHue(
     root.style.getPropertyValue("--accent-hue"),
-    validHue(root.dataset.defaultAccentHue, safeAccentHue),
+    validHue(root.dataset.defaultAccentHue, safeAccentHue)
   );
-  getAccentToggle()?.setAttribute(
-    "aria-label",
-    `Choose accent hue, current: ${hue} degrees`,
-  );
+  getAccentToggle()?.setAttribute("aria-label", `Choose accent hue, current: ${hue} degrees`);
   const hueInput = getAccentHueInput();
   if (hueInput) hueInput.value = String(hue);
   const hueOutput = getAccentHueOutput();
@@ -162,10 +130,7 @@ function syncAccentHue() {
 }
 
 document.addEventListener("input", (event) => {
-  if (
-    !(event.target instanceof HTMLInputElement)
-    || !event.target.matches("[data-accent-hue]")
-  ) {
+  if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-accent-hue]")) {
     return;
   }
   const hue = validHue(event.target.value, safeAccentHue);
@@ -177,8 +142,7 @@ document.addEventListener("input", (event) => {
 document.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) return;
 
-  const themeButton =
-    event.target.closest<HTMLButtonElement>("[data-theme-value]");
+  const themeButton = event.target.closest<HTMLButtonElement>("[data-theme-value]");
   if (themeButton) {
     const value = themeButton.dataset.themeValue;
     const theme: Theme = includesValue(supportedThemes, value) ? value : "system";
@@ -216,11 +180,9 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("pointerdown", (event) => {
   const themePicker = getThemePicker();
-  if (themePicker && !themePicker.contains(event.target as Node))
-    closeThemeMenu();
+  if (themePicker && !themePicker.contains(event.target as Node)) closeThemeMenu();
   const accentPicker = getAccentPicker();
-  if (accentPicker && !accentPicker.contains(event.target as Node))
-    closeAccentMenu();
+  if (accentPicker && !accentPicker.contains(event.target as Node)) closeAccentMenu();
 });
 
 document.addEventListener("keydown", (event) => {

@@ -53,7 +53,9 @@ for (const file of files) {
   }
   if (
     translationKey !== undefined
-    && (typeof translationKey !== "string" || !translationKey.trim() || /[/\\?#\s]/u.test(translationKey))
+    && (typeof translationKey !== "string"
+      || !translationKey.trim()
+      || /[/\\?#\s]/u.test(translationKey))
   ) {
     errors.push(`${relative}: translationKey must be a non-empty URL-safe identifier`);
   }
@@ -85,7 +87,9 @@ for (const file of files) {
 
   const routeKey = `${lang}:${slug}`;
   if (routes.has(routeKey)) {
-    errors.push(`${relative}: duplicate ${lang} slug "${slug}" also used by ${routes.get(routeKey)}`);
+    errors.push(
+      `${relative}: duplicate ${lang} slug "${slug}" also used by ${routes.get(routeKey)}`
+    );
   } else {
     routes.set(routeKey, relative);
   }
@@ -99,13 +103,16 @@ for (const file of files) {
     slug,
     translationKey: translationKey ?? slug,
     draft: parsed.data.draft === true,
-    categories: (Array.isArray(categories) ? categories : [categories])
-      .filter((category) => typeof category === "string" && category.trim())
+    categories: (Array.isArray(categories) ? categories : [categories]).filter(
+      (category) => typeof category === "string" && category.trim()
+    )
   });
 
   if (parsed.data.math) mathPosts += 1;
   const references = [
-    ...parsed.content.matchAll(/(?:\]\(|src=["'])(\.\/[^)"'\s]+\.(?:avif|gif|jpe?g|png|svg|webp))/gi)
+    ...parsed.content.matchAll(
+      /(?:\]\(|src=["'])(\.\/[^)"'\s]+\.(?:avif|gif|jpe?g|png|svg|webp))/gi
+    )
   ];
   if (typeof parsed.data.cover === "string" && parsed.data.cover.startsWith("./")) {
     references.push([parsed.data.cover, parsed.data.cover]);
@@ -147,7 +154,9 @@ for (const [translationKey, group] of groups) {
     errors.push(`translationKey "${translationKey}" must be colocated in one post directory`);
   }
   if (slugs.size > 1) {
-    errors.push(`translationKey "${translationKey}" has mismatched slugs: ${[...slugs].join(", ")}`);
+    errors.push(
+      `translationKey "${translationKey}" has mismatched slugs: ${[...slugs].join(", ")}`
+    );
   }
   if (draftStates.size > 1) {
     errors.push(`translationKey "${translationKey}" has inconsistent draft states`);
@@ -173,9 +182,12 @@ const { unconfigured: unconfiguredSidebarCategories } = arrangeSidebarCategories
   sidebarCategories,
   CATEGORY_SIDEBAR
 );
-const warnings = unconfiguredSidebarCategories.length > 0
-  ? [`config/categories.yaml: unconfigured sidebar categories: ${unconfiguredSidebarCategories.map((category) => category.slug).join(", ")}`]
-  : [];
+const warnings =
+  unconfiguredSidebarCategories.length > 0
+    ? [
+        `config/categories.yaml: unconfigured sidebar categories: ${unconfiguredSidebarCategories.map((category) => category.slug).join(", ")}`
+      ]
+    : [];
 const projectFiles = walk(projectContentRoot, (file) => file.endsWith(".md"));
 let publishedProjects = 0;
 
@@ -184,12 +196,10 @@ for (const file of projectFiles) {
   const nestedPath = path.relative(projectContentRoot, file);
   const nestedDirectory = path.dirname(nestedPath);
   const isDirectFile = nestedDirectory === ".";
-  const isProjectIndex = path.basename(file) === "index.md"
-    && path.dirname(nestedDirectory) === ".";
+  const isProjectIndex =
+    path.basename(file) === "index.md" && path.dirname(nestedDirectory) === ".";
   if (!isDirectFile && !isProjectIndex) {
-    errors.push(
-      `${relative}: use content/projects/<slug>.md or content/projects/<slug>/index.md`
-    );
+    errors.push(`${relative}: use content/projects/<slug>.md or content/projects/<slug>/index.md`);
   }
 
   let parsed;
@@ -209,9 +219,7 @@ for (const file of projectFiles) {
     continue;
   }
 
-  const slug = isProjectIndex
-    ? path.basename(path.dirname(file))
-    : path.basename(file, ".md");
+  const slug = isProjectIndex ? path.basename(path.dirname(file)) : path.basename(file, ".md");
   const existing = projectRoutes.get(slug);
   if (existing) {
     errors.push(`${relative}: duplicate project slug "${slug}" also used by ${existing}`);
@@ -244,9 +252,7 @@ const result = {
   publishedProjects,
   mathPosts,
   imageReferences,
-  unconfiguredSidebarCategories: unconfiguredSidebarCategories.map(
-    (category) => category.slug
-  ),
+  unconfiguredSidebarCategories: unconfiguredSidebarCategories.map((category) => category.slug),
   warnings,
   errors
 };

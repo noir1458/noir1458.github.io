@@ -14,15 +14,18 @@ import {
 
 const mermaidPlugins = FEATURES.mermaid
   ? [
-    [rehypeMermaidSource, { defaultLanguage: SITE.language }],
-    [rehypeMermaid, {
-      strategy: "img-svg",
-      colorScheme: "light",
-      mermaidConfig: MERMAID_LIGHT_CONFIG,
-      dark: FEATURES.darkMode ? MERMAID_DARK_CONFIG : undefined
-    }],
-    rehypeMermaidTheme
-  ]
+      [rehypeMermaidSource, { defaultLanguage: SITE.language }],
+      [
+        rehypeMermaid,
+        {
+          strategy: "img-svg",
+          colorScheme: "light",
+          mermaidConfig: MERMAID_LIGHT_CONFIG,
+          dark: FEATURES.darkMode ? MERMAID_DARK_CONFIG : undefined
+        }
+      ],
+      rehypeMermaidTheme
+    ]
   : [];
 
 export default defineConfig({
@@ -31,9 +34,11 @@ export default defineConfig({
   output: "static",
   trailingSlash: "always",
   integrations: FEATURES.sitemap
-    ? [sitemap({
-      filter: (page) => new URL(page).pathname !== "/search/"
-    })]
+    ? [
+        sitemap({
+          filter: (page) => new URL(page).pathname !== "/search/"
+        })
+      ]
     : [],
   markdown: {
     syntaxHighlight: {
@@ -42,10 +47,7 @@ export default defineConfig({
     },
     processor: unified({
       remarkPlugins: [remarkMath],
-      rehypePlugins: [
-        [rehypeKatex, { output: "htmlAndMathml", strict: false }],
-        ...mermaidPlugins
-      ]
+      rehypePlugins: [[rehypeKatex, { output: "htmlAndMathml", strict: false }], ...mermaidPlugins]
     }),
     shikiConfig: {
       themes: {

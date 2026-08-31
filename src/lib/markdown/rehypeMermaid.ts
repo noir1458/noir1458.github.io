@@ -75,9 +75,7 @@ export const MERMAID_DARK_CONFIG = {
   }
 };
 
-function isElement(
-  node: Root["children"][number] | ElementContent
-): node is Element {
+function isElement(node: Root["children"][number] | ElementContent): node is Element {
   return node.type === "element";
 }
 
@@ -92,18 +90,17 @@ function hasClass(element: Element, className: string): boolean {
 }
 
 function textContent(node: Element): string {
-  return node.children.map((child) => {
-    if (child.type === "text") return child.value;
-    return child.type === "element" ? textContent(child) : "";
-  }).join("");
+  return node.children
+    .map((child) => {
+      if (child.type === "text") return child.value;
+      return child.type === "element" ? textContent(child) : "";
+    })
+    .join("");
 }
 
 function sourceLabels(language: unknown) {
-  const baseLanguage = typeof language === "string"
-    ? language.toLowerCase().split("-")[0]
-    : "en";
-  return SOURCE_LABELS[baseLanguage as keyof typeof SOURCE_LABELS]
-    ?? SOURCE_LABELS.en;
+  const baseLanguage = typeof language === "string" ? language.toLowerCase().split("-")[0] : "en";
+  return SOURCE_LABELS[baseLanguage as keyof typeof SOURCE_LABELS] ?? SOURCE_LABELS.en;
 }
 
 function createSourceButton(source: string, language: unknown): Element {
@@ -160,13 +157,15 @@ export function rehypeMermaidSource({ defaultLanguage }: RehypeMermaidSourceOpti
       parent.children.forEach((child, index) => {
         if (!isElement(child)) return;
 
-        const code = child.tagName === "pre"
-          ? child.children.find((candidate) => (
-            isElement(candidate)
-            && candidate.tagName === "code"
-            && hasClass(candidate, "language-mermaid")
-          ))
-          : undefined;
+        const code =
+          child.tagName === "pre"
+            ? child.children.find(
+                (candidate) =>
+                  isElement(candidate)
+                  && candidate.tagName === "code"
+                  && hasClass(candidate, "language-mermaid")
+              )
+            : undefined;
 
         if (code && isElement(code)) {
           const source = textContent(code);
@@ -213,8 +212,7 @@ function themedImage(
       decoding: "async",
       height: source.height ?? fallback.height,
       loading: "lazy",
-      src: dataUri(source, "src") ?? dataUri(source, "srcSet")
-        ?? dataUri(source, "srcset"),
+      src: dataUri(source, "src") ?? dataUri(source, "srcSet") ?? dataUri(source, "srcset"),
       title: fallback.title,
       width: source.width ?? fallback.width,
       className: ["mermaid-diagram-image", `mermaid-diagram-${theme}`]
@@ -229,14 +227,17 @@ export function rehypeMermaidTheme() {
       parent.children.forEach((child, index) => {
         if (!isElement(child)) return;
 
-        if (child.tagName === "picture" && parent.type === "element"
-          && hasClass(parent, "mermaid-diagram")) {
-          const source = child.children.find((candidate) => (
-            isElement(candidate) && candidate.tagName === "source"
-          ));
-          const image = child.children.find((candidate) => (
-            isElement(candidate) && candidate.tagName === "img"
-          ));
+        if (
+          child.tagName === "picture"
+          && parent.type === "element"
+          && hasClass(parent, "mermaid-diagram")
+        ) {
+          const source = child.children.find(
+            (candidate) => isElement(candidate) && candidate.tagName === "source"
+          );
+          const image = child.children.find(
+            (candidate) => isElement(candidate) && candidate.tagName === "img"
+          );
           if (source && image && isElement(source) && isElement(image)) {
             parent.children[index] = {
               type: "element",
@@ -251,13 +252,12 @@ export function rehypeMermaidTheme() {
           }
         }
 
-        if (child.tagName === "img" && parent.type === "element"
-          && hasClass(parent, "mermaid-diagram")) {
-          child.properties = themedImage(
-            child.properties,
-            child.properties,
-            "light"
-          ).properties;
+        if (
+          child.tagName === "img"
+          && parent.type === "element"
+          && hasClass(parent, "mermaid-diagram")
+        ) {
+          child.properties = themedImage(child.properties, child.properties, "light").properties;
           return;
         }
 

@@ -7,13 +7,17 @@ export function getStaticPaths() {
 }
 
 function escapeXml(value: string): string {
-  return value.replace(/[&<>"']/gu, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&apos;"
-  })[character] ?? character);
+  return value.replace(
+    /[&<>"']/gu,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&apos;"
+      })[character] ?? character
+  );
 }
 
 export async function GET(context: { site?: URL }) {
