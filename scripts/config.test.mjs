@@ -45,7 +45,7 @@ test("an invalid site URL reports its file and field", () => {
   const directory = configFixture();
   const sitePath = path.join(directory, "site.yaml");
   const source = fs.readFileSync(sitePath, "utf8");
-  fs.writeFileSync(sitePath, source.replace(/^  url: .*$/mu, "  url: not-a-url"));
+  fs.writeFileSync(sitePath, source.replace(/^ {2}url: .*$/mu, "  url: not-a-url"));
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
@@ -56,7 +56,7 @@ test("an invalid site URL reports its file and field", () => {
 
 test("a configured accent hue is valid", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accentHue: 248");
+  replaceInFile(directory, "site.yaml", /^ {2}accentHue: .*$/mu, "  accentHue: 248");
 
   assert.deepEqual(loadSiteConfig({ configDirectory: directory }).appearance, { accentHue: 248 });
 });
@@ -64,7 +64,7 @@ test("a configured accent hue is valid", () => {
 test("accent hue accepts both range boundaries", () => {
   for (const hue of [0, 360]) {
     const directory = configFixture();
-    replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, `  accentHue: ${hue}`);
+    replaceInFile(directory, "site.yaml", /^ {2}accentHue: .*$/mu, `  accentHue: ${hue}`);
     assert.equal(loadSiteConfig({ configDirectory: directory }).appearance.accentHue, hue);
   }
 });
@@ -72,7 +72,7 @@ test("accent hue accepts both range boundaries", () => {
 test("accent hue rejects values outside its range", () => {
   for (const hue of [-1, 361]) {
     const directory = configFixture();
-    replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, `  accentHue: ${hue}`);
+    replaceInFile(directory, "site.yaml", /^ {2}accentHue: .*$/mu, `  accentHue: ${hue}`);
     assert.throws(
       () => loadSiteConfig({ configDirectory: directory }),
       (error) =>
@@ -84,7 +84,7 @@ test("accent hue rejects values outside its range", () => {
 
 test("accent hue rejects fractional values", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accentHue: 248.5");
+  replaceInFile(directory, "site.yaml", /^ {2}accentHue: .*$/mu, "  accentHue: 248.5");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
@@ -96,14 +96,14 @@ test("accent hue rejects fractional values", () => {
 
 test("a missing appearance section uses the default hue", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /\nappearance:\n  accentHue: [^\n]+\n/u, "");
+  replaceInFile(directory, "site.yaml", /\nappearance:\n {2}accentHue: [^\n]+\n/u, "");
 
   assert.deepEqual(loadSiteConfig({ configDirectory: directory }).appearance, { accentHue: 250 });
 });
 
 test("removed accent presets are rejected", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /^  accentHue: .*$/mu, "  accent: purple");
+  replaceInFile(directory, "site.yaml", /^ {2}accentHue: .*$/mu, "  accent: purple");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
@@ -161,7 +161,7 @@ test("an empty profile body reports the configuration file", () => {
 
 test("comments require a complete Giscus configuration", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /  giscus:\n(?:    .*\n?)+$/u, "  giscus:\n");
+  replaceInFile(directory, "site.yaml", / {2}giscus:\n(?: {4}.*\n?)+$/u, "  giscus:\n");
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),

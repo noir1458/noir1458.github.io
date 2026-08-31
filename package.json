@@ -15,7 +15,7 @@
     "new": "node scripts/new-post.mjs",
     "translate:snapshot": "node scripts/translation-safety.mjs snapshot",
     "translate:verify": "node scripts/translation-safety.mjs verify",
-    "lint": "biome lint .",
+    "lint": "biome lint --error-on-warnings .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "check:workflow": "node scripts/check-workflow.mjs",
