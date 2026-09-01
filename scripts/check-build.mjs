@@ -233,6 +233,20 @@ if (!buildCss.includes("--accent-hue") || !buildCss.includes("writing-mode:verti
 if (buildCss.includes("data-accent=")) {
   errors.push("build CSS: removed accent mode selectors are still present");
 }
+for (const className of [
+  "admonition-note",
+  "admonition-tip",
+  "admonition-important",
+  "admonition-warning",
+  "admonition-caution"
+]) {
+  if (!buildCss.includes(`.${className}`)) {
+    errors.push(`build CSS: missing ${className} styles`);
+  }
+}
+if (!buildCss.includes("admonition-title") || !buildCss.includes("data-resolved-theme")) {
+  errors.push("build CSS: incomplete admonition title or dark-theme styles");
+}
 
 if (indexHtml.includes('type="application/rss+xml"') !== FEATURES.rss) {
   errors.push(`index.html: RSS metadata does not match features.rss=${FEATURES.rss}`);
@@ -475,6 +489,16 @@ for (const entry of contentEntries) {
     }
     if (!html.includes('class="language-menu"')) {
       errors.push(`${relativeOutput}: missing article language selector`);
+    }
+  }
+}
+
+const markdownGuide = contentEntries.find((entry) => entry.slug === "markdown-guide");
+if (markdownGuide) {
+  const guideHtml = fs.readFileSync(outputFileForPath(postPath(markdownGuide)), "utf8");
+  for (const type of ["note", "warning"]) {
+    if (!guideHtml.includes(`class="admonition admonition-${type}"`)) {
+      errors.push(`markdown guide: missing rendered ${type} admonition`);
     }
   }
 }

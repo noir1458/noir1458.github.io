@@ -27,7 +27,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 - 카테고리, 태그, 아카이브, 페이지네이션과 Pagefind 검색
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
 - 한국어·영어·일본어 번역 경로와 `hreflang`
-- 다크 모드, 수식, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
+- 다크 모드, 수식, admonition, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
 - 설정으로 노출을 제어하는 프로젝트 목록과 상세 페이지
 
 ## 기본 설정

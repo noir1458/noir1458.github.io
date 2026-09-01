@@ -105,6 +105,33 @@ try {
       "",
       "This body verifies Markdown rendering.",
       "",
+      "> [!NOTE]",
+      "> Supplementary **details** with a [reference](https://example.com/reference), `inline()`, and $x^2$.",
+      ">",
+      "> - Create a backup",
+      "> - Verify the backup",
+      ">",
+      "> ```bash",
+      '> echo "safe"',
+      "> ```",
+      "",
+      "> [!tip]",
+      "> Prefer the simpler approach.",
+      "",
+      "> [!IMPORTANT]",
+      "> Keep this context in mind.",
+      "",
+      "> [!WARNING]",
+      "> Something may go wrong.",
+      "",
+      "> [!CAUTION]",
+      "> This action may have negative consequences.",
+      "",
+      "> This is a normal quote.",
+      "",
+      "> [!HELLO]",
+      "> This unsupported type remains a quote.",
+      "",
       "```mermaid",
       "flowchart LR",
       "    User --> Frontend",
@@ -192,6 +219,18 @@ try {
   assert.equal(projectHtml.includes("Project overview"), true);
   assert.equal(projectHtml.includes("https://github.com/example/project"), true);
   assert.equal(projectHtml.includes("https://example.com/project"), true);
+  assert.equal((projectHtml.match(/class="admonition admonition-/gu) ?? []).length, 5);
+  for (const type of ["note", "tip", "important", "warning", "caution"]) {
+    assert.equal(projectHtml.includes(`class="admonition admonition-${type}"`), true);
+  }
+  assert.equal(projectHtml.includes('<div class="admonition-title">Note</div>'), true);
+  assert.equal(projectHtml.includes('<div class="admonition-title">Warning</div>'), true);
+  assert.equal(projectHtml.includes("<strong>details</strong>"), true);
+  assert.equal(projectHtml.includes("https://example.com/reference"), true);
+  assert.equal(projectHtml.includes('class="katex"'), true);
+  assert.equal(projectHtml.includes('data-language="bash"'), true);
+  assert.equal((projectHtml.match(/<blockquote>/gu) ?? []).length, 2);
+  assert.equal(projectHtml.includes("[!HELLO]"), true);
   assert.equal((projectHtml.match(/class="mermaid-block"/gu) ?? []).length, 4);
   assert.equal((projectHtml.match(/<button\b[^>]*class="mermaid-source"/gu) ?? []).length, 4);
   assert.equal(projectHtml.includes("mermaid-diagram-light"), true);

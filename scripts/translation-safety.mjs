@@ -123,6 +123,14 @@ function headingLevels(markdown) {
     });
 }
 
+function admonitionMarkers(markdown) {
+  return [
+    ...withoutFencedCode(markdown).matchAll(
+      /^[ \t]{0,3}>[ \t]*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][ \t]*$/gimu
+    )
+  ].map((match) => match[1].toUpperCase());
+}
+
 function structuralErrors(source, target, targetLanguage) {
   const errors = [];
   const comparisons = [
@@ -130,7 +138,8 @@ function structuralErrors(source, target, targetLanguage) {
     ["inline code", inlineCode(source.content), inlineCode(target.content)],
     ["math expressions", mathExpressions(source.content), mathExpressions(target.content)],
     ["link and image destinations", destinations(source.content), destinations(target.content)],
-    ["heading levels", headingLevels(source.content), headingLevels(target.content)]
+    ["heading levels", headingLevels(source.content), headingLevels(target.content)],
+    ["admonition markers", admonitionMarkers(source.content), admonitionMarkers(target.content)]
   ];
 
   for (const [label, sourceValue, targetValue] of comparisons) {

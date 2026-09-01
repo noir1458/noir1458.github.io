@@ -28,6 +28,9 @@ math: true
 
 [링크](https://example.com)와 \`inline()\`이다.
 
+> [!WARNING]
+> 구조를 유지한다.
+
 \`\`\`js
 const value = 1;
 \`\`\`
@@ -61,6 +64,9 @@ math: true
 ## ${language === "ko" ? "제목" : language === "en" ? "Heading" : "見出し"}
 
 [${language === "ko" ? "링크" : language === "en" ? "Link" : "リンク"}](${url}) and \`inline()\`.
+
+> [!WARNING]
+> ${language === "ko" ? "구조를 유지한다." : language === "en" ? "Keep the structure." : "構造を維持します。"}
 
 \`\`\`js
 ${code}
@@ -138,6 +144,27 @@ test("changed code, math, and destinations are rejected", () => {
     assert.match(errors, /fenced code blocks/u);
     assert.match(errors, /math expressions/u);
     assert.match(errors, /link and image destinations/u);
+  } finally {
+    item.cleanup();
+  }
+});
+
+test("changed admonition markers are rejected", () => {
+  const item = fixture("admonitions");
+  try {
+    const before = snapshot(item.relative);
+    const [changedLanguage, ...remainingLanguages] = before.targetLanguages;
+    fs.writeFileSync(
+      path.join(item.directory, languageFilename(changedLanguage)),
+      translation(changedLanguage).replace("[!WARNING]", "[!TIP]")
+    );
+    for (const language of remainingLanguages) {
+      fs.writeFileSync(
+        path.join(item.directory, languageFilename(language)),
+        translation(language)
+      );
+    }
+    assert.match(verify(item.relative, before.sourceHash).errors.join("\n"), /admonition markers/u);
   } finally {
     item.cleanup();
   }

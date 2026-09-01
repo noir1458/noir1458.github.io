@@ -1522,6 +1522,69 @@ button {
   color: var(--text-soft);
 }
 
+.article-content .admonition {
+  --admonition-color: var(--accent);
+
+  margin: 2em 0;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--admonition-color) 42%, var(--line));
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--admonition-color) 8%, var(--surface-solid));
+  color: var(--body-ink);
+}
+
+.article-content .admonition-note {
+  --admonition-color: oklch(55% 0.14 250);
+}
+
+.article-content .admonition-tip {
+  --admonition-color: oklch(51% 0.13 150);
+}
+
+.article-content .admonition-important {
+  --admonition-color: var(--accent);
+}
+
+.article-content .admonition-warning {
+  --admonition-color: oklch(59% 0.14 75);
+}
+
+.article-content .admonition-caution {
+  --admonition-color: oklch(55% 0.17 25);
+}
+
+:root[data-theme="dark"] .article-content .admonition-note,
+:root[data-theme="system"][data-resolved-theme="dark"] .article-content .admonition-note {
+  --admonition-color: oklch(76% 0.11 250);
+}
+
+:root[data-theme="dark"] .article-content .admonition-tip,
+:root[data-theme="system"][data-resolved-theme="dark"] .article-content .admonition-tip {
+  --admonition-color: oklch(76% 0.12 150);
+}
+
+:root[data-theme="dark"] .article-content .admonition-warning,
+:root[data-theme="system"][data-resolved-theme="dark"] .article-content .admonition-warning {
+  --admonition-color: oklch(79% 0.12 75);
+}
+
+:root[data-theme="dark"] .article-content .admonition-caution,
+:root[data-theme="system"][data-resolved-theme="dark"] .article-content .admonition-caution {
+  --admonition-color: oklch(73% 0.14 25);
+}
+
+.article-content .admonition-title {
+  margin: 0 0 0.55em;
+  color: var(--admonition-color);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.article-content .admonition > :last-child {
+  margin-bottom: 0;
+}
+
 .article-content code:not(pre code) {
   padding: 0.15em 0.4em;
   border-radius: 4px;
