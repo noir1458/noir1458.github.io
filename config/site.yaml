@@ -19,7 +19,7 @@ branding:
 appearance:
   accentHue: 250 # 0-360
   banner:
-    enabled: false
+    enabled: true
     image: /images/site/banner.webp
     position: center # center, top, bottom, left, or right
     height: 600 # 100-800px
