@@ -39,8 +39,9 @@ const {
   language = SITE.language,
   translations = [],
   sidebarHeadings = [],
-  heroBackground = APPEARANCE.banner.enabled
+  heroBackground = true
 } = Astro.props;
+const showHeroBackground = APPEARANCE.banner.enabled && heroBackground;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, SITE.url);
 const socialImage = new URL(image ?? SITE.socialImage, SITE.url);
@@ -225,12 +226,12 @@ const pageTransition: TransitionDirectionalAnimations = {
     <slot name="head" />
   </head>
   <body
-    class:list={{ "has-hero-background": heroBackground }}
+    class:list={{ "has-hero-background": showHeroBackground }}
     data-pagefind-body={pagefindBody ? "" : undefined}
     transition:name="page-shell"
     transition:animate="none"
   >
-    {heroBackground && <HeroBanner />}
+    {showHeroBackground && <HeroBanner />}
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
       <Header language={language} translations={translations} />

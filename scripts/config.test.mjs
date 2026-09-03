@@ -40,7 +40,7 @@ test("the repository configuration is valid", () => {
   assert.equal("resume" in config.social, false);
   assert.equal(config.appearance.accentHue, 250);
   assert.deepEqual(config.appearance.banner, {
-    enabled: false,
+    enabled: true,
     image: "/images/site/banner.webp",
     position: "center",
     height: 600,
@@ -127,7 +127,7 @@ test("a missing banner section uses disabled defaults", () => {
 
 test("an enabled banner accepts a valid local image", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", "    enabled: false", "    enabled: true");
+  replaceInFile(directory, "site.yaml", /^ {4}enabled: .*$/mu, "    enabled: true");
 
   const banner = loadSiteConfig({ configDirectory: directory }).appearance.banner;
   assert.equal(banner.enabled, true);
@@ -136,7 +136,7 @@ test("an enabled banner accepts a valid local image", () => {
 
 test("an enabled banner rejects a missing local image", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", "    enabled: false", "    enabled: true");
+  replaceInFile(directory, "site.yaml", /^ {4}enabled: .*$/mu, "    enabled: true");
   replaceInFile(directory, "site.yaml", "/images/site/banner.webp", "/images/site/missing.webp");
 
   assert.throws(

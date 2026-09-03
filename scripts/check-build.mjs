@@ -101,6 +101,33 @@ if (!fs.existsSync(publishedPostRoutesPath)) {
 
 const htmlFiles = walk(distRoot, (file) => file.endsWith(".html"));
 const errors = [];
+const baseLayoutSource = fs.readFileSync(
+  path.join(projectRoot, "src/layouts/BaseLayout.astro"),
+  "utf8"
+);
+for (const requiredLogic of [
+  "heroBackground = true",
+  "const showHeroBackground = APPEARANCE.banner.enabled && heroBackground;",
+  'class:list={{ "has-hero-background": showHeroBackground }}',
+  "{showHeroBackground && <HeroBanner />}"
+]) {
+  if (!baseLayoutSource.includes(requiredLogic)) {
+    errors.push(`BaseLayout.astro: missing master-switch logic: ${requiredLogic}`);
+  }
+}
+const heroVisibilityCases = [
+  { bannerEnabled: true, pageEnabled: undefined, expected: true },
+  { bannerEnabled: true, pageEnabled: false, expected: false },
+  { bannerEnabled: false, pageEnabled: undefined, expected: false },
+  { bannerEnabled: false, pageEnabled: true, expected: false }
+];
+for (const { bannerEnabled, pageEnabled = true, expected } of heroVisibilityCases) {
+  if ((bannerEnabled && pageEnabled) !== expected) {
+    errors.push(
+      `hero visibility: bannerEnabled=${bannerEnabled}, pageEnabled=${pageEnabled} should be ${expected}`
+    );
+  }
+}
 const checked = new Set();
 const publishedPostRoutes = fs
   .readFileSync(publishedPostRoutesPath, "utf8")

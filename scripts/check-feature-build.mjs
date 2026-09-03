@@ -26,6 +26,11 @@ function walk(directory, predicate = () => true) {
 
 try {
   fs.cpSync(path.join(projectRoot, "config"), configDirectory, { recursive: true });
+  const siteConfigPath = path.join(configDirectory, "site.yaml");
+  const disabledBannerConfig = fs
+    .readFileSync(siteConfigPath, "utf8")
+    .replace(/^ {4}enabled: .*$/mu, "    enabled: false");
+  fs.writeFileSync(siteConfigPath, disabledBannerConfig);
   fs.writeFileSync(
     path.join(configDirectory, "features.yaml"),
     [
@@ -202,7 +207,6 @@ try {
       ""
     ].join("\n")
   );
-  const siteConfigPath = path.join(configDirectory, "site.yaml");
   const bannerConfig = fs
     .readFileSync(siteConfigPath, "utf8")
     .replace("    enabled: false", "    enabled: true")
