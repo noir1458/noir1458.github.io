@@ -222,10 +222,63 @@ button {
   margin-inline: auto;
 }
 
+body.has-hero-background {
+  position: relative;
+  isolation: isolate;
+}
+
+.has-hero-background .site-shell {
+  position: relative;
+  z-index: 1;
+}
+
 .site-header {
   position: relative;
   z-index: 30;
   padding-top: 22px;
+}
+
+.hero-banner {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 50%;
+  width: 100vw;
+  max-width: none;
+  height: var(--banner-height);
+  overflow: hidden;
+  background: var(--bg);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.hero-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--banner-position);
+}
+
+.hero-banner::before,
+.hero-banner::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.hero-banner::before {
+  background: rgb(0 0 0 / var(--banner-overlay-opacity));
+}
+
+.hero-banner::after {
+  background: linear-gradient(
+    to bottom,
+    transparent 32%,
+    color-mix(in srgb, var(--bg) 18%, transparent) 48%,
+    color-mix(in srgb, var(--bg) 62%, transparent) 72%,
+    var(--bg) 100%
+  );
 }
 
 .title-row {
@@ -1167,6 +1220,124 @@ button {
 .pagination-meta {
   color: var(--muted);
   font-size: 0.84rem;
+}
+
+body.has-hero-background {
+  --hero-nav-surface: color-mix(in srgb, var(--surface) 90%, transparent);
+  --hero-sidebar-surface: color-mix(in srgb, var(--surface) 90%, transparent);
+  --hero-control-surface: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+  --hero-panel-border: var(--line);
+  --hero-panel-blur: 10px;
+  --hero-control-blur: 8px;
+  --hero-panel-shadow: var(--glass-shadow);
+  --hero-content-divider: color-mix(in srgb, var(--line) 72%, var(--text-soft));
+  --hero-direct-text-shadow:
+    -0.6px 0 rgb(255 255 255 / 82%), 0.6px 0 rgb(255 255 255 / 82%),
+    0 -0.6px rgb(255 255 255 / 82%), 0 0.6px rgb(255 255 255 / 82%),
+    0 1px 3px rgb(255 255 255 / 18%);
+  --hero-direct-icon-shadow:
+    drop-shadow(0 0 0.6px rgb(255 255 255 / 78%))
+    drop-shadow(0 1px 2px rgb(255 255 255 / 16%));
+}
+
+:root[data-theme="dark"] body.has-hero-background,
+:root[data-theme="system"][data-resolved-theme="dark"] body.has-hero-background {
+  --hero-nav-surface: color-mix(in srgb, var(--surface) 88%, transparent);
+  --hero-sidebar-surface: color-mix(in srgb, var(--surface) 88%, transparent);
+  --hero-control-surface: color-mix(in srgb, var(--surface-solid) 90%, transparent);
+  --hero-content-divider: var(--line);
+  --hero-direct-text-shadow:
+    -0.6px 0 rgb(0 0 0 / 68%), 0.6px 0 rgb(0 0 0 / 68%),
+    0 -0.6px rgb(0 0 0 / 68%), 0 0.6px rgb(0 0 0 / 68%),
+    0 1px 2px rgb(0 0 0 / 16%);
+  --hero-direct-icon-shadow:
+    drop-shadow(0 0 0.6px rgb(0 0 0 / 64%))
+    drop-shadow(0 1px 2px rgb(0 0 0 / 14%));
+}
+
+.has-hero-background .topbar {
+  border-color: var(--hero-panel-border);
+  background: var(--hero-nav-surface);
+  box-shadow: var(--hero-panel-shadow);
+  backdrop-filter: blur(var(--hero-panel-blur));
+}
+
+:root .has-hero-background :is(
+  .theme-picker-toggle,
+  .accent-picker-toggle,
+  .language-picker-toggle
+) {
+  border-color: var(--hero-panel-border);
+  background: var(--hero-control-surface);
+  box-shadow: var(--hero-panel-shadow);
+  backdrop-filter: blur(var(--hero-control-blur));
+}
+
+:root .has-hero-background :is(
+  .theme-picker-toggle,
+  .accent-picker-toggle,
+  .language-picker-toggle
+):is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--accent) 10%, var(--hero-control-surface));
+}
+
+.has-hero-background :is(
+  .site-title,
+  .page-heading > *,
+  .breadcrumbs,
+  .article-header > .eyebrow,
+  .article-header > h1,
+  .article-header > .project-lead,
+  .article-meta,
+  .project-detail .article-header > .project-tags,
+  .post-list .post-row:first-child .post-row-copy,
+  .search-status,
+  .not-found-code,
+  .not-found-copy > :is(.eyebrow, h1, p),
+  .empty-state > div
+) {
+  text-shadow: var(--hero-direct-text-shadow);
+}
+
+.has-hero-background :is(
+  .breadcrumbs svg,
+  .article-meta svg,
+  .post-list .post-row:first-child .post-row-meta svg
+) {
+  filter: var(--hero-direct-icon-shadow);
+}
+
+.has-hero-background :is(.page-heading, .post-row) {
+  border-bottom-color: var(--hero-content-divider);
+}
+
+@media (min-width: 961px) {
+  .has-hero-background .sidebar {
+    border-color: var(--hero-panel-border);
+    background: var(--hero-sidebar-surface);
+    box-shadow: var(--hero-panel-shadow);
+    backdrop-filter: blur(var(--hero-panel-blur));
+  }
+
+  .has-hero-background :is(.sidebar-toggle, .sidebar-link) {
+    border-color: var(--hero-panel-border);
+    background: var(--hero-control-surface);
+    box-shadow: var(--hero-panel-shadow);
+    backdrop-filter: blur(var(--hero-control-blur));
+  }
+
+  .has-hero-background :is(.sidebar-toggle, .sidebar-link):is(:hover, :focus-visible) {
+    background: color-mix(in srgb, var(--accent) 10%, var(--hero-control-surface));
+  }
+}
+
+@media (max-width: 700px) {
+  .has-hero-background .primary-nav {
+    border-color: var(--hero-panel-border);
+    background: var(--hero-nav-surface);
+    box-shadow: var(--hero-panel-shadow);
+    backdrop-filter: blur(var(--hero-panel-blur));
+  }
 }
 
 .breadcrumbs {
@@ -2559,6 +2730,10 @@ button {
 
   .site-header {
     padding-top: 14px;
+  }
+
+  .hero-banner {
+    height: var(--banner-mobile-height);
   }
 
   .title-row {

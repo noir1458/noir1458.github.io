@@ -1,0 +1,13 @@
+---
+import { APPEARANCE, sitePath } from "@/config";
+
+const { image, position, height, mobileHeight, overlayOpacity } = APPEARANCE.banner;
+---
+
+<div
+  class="hero-banner"
+  aria-hidden="true"
+  style={`--banner-height: ${height}px; --banner-mobile-height: ${mobileHeight}px; --banner-overlay-opacity: ${overlayOpacity}; --banner-position: ${position};`}
+>
+  <img src={sitePath(image)} alt="" decoding="async" fetchpriority="high" />
+</div>

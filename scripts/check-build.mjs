@@ -2,7 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import matter from "gray-matter";
-import { APPEARANCE, FEATURES, NAVIGATION, PROFILE, SITE, SOCIAL } from "../src/config.ts";
+import {
+  APPEARANCE,
+  FEATURES,
+  NAVIGATION,
+  PROFILE,
+  SITE,
+  SOCIAL,
+  sitePath
+} from "../src/config.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const distRoot = path.join(projectRoot, "dist");
@@ -47,6 +55,10 @@ function findTag(html, tagName, attribute, value) {
   return [...html.matchAll(new RegExp(`<${tagName}\\b[^>]*>`, "gi"))]
     .map((match) => match[0])
     .find((tag) => tagAttribute(tag, attribute) === value);
+}
+
+function countOccurrences(source, value) {
+  return source.split(value).length - 1;
 }
 
 function structuredData(html, label) {
@@ -148,7 +160,8 @@ const configuredPublicAssets = [
   SITE.author.profileImage,
   SITE.favicon,
   SITE.manifestIcon,
-  SITE.socialImage
+  SITE.socialImage,
+  ...(APPEARANCE.banner.enabled ? [APPEARANCE.banner.image] : [])
 ];
 for (const publicPath of configuredPublicAssets) {
   const target = publicPath.replace(/^\/+/, "");
@@ -227,8 +240,57 @@ if (!indexHtml.includes(`data-default-accent-hue="${APPEARANCE.accentHue}"`)) {
   errors.push(`index.html: configured accent hue is missing: ${APPEARANCE.accentHue}`);
 }
 
+const expectedBannerCount = APPEARANCE.banner.enabled ? 1 : 0;
+const expectedBannerSource = `src="${sitePath(APPEARANCE.banner.image)}"`;
+for (const file of htmlFiles) {
+  const html = fs.readFileSync(file, "utf8");
+  const label = path.relative(distRoot, file);
+  const bannerCount = countOccurrences(html, 'class="hero-banner"');
+  const heroClassCount = countOccurrences(html, 'class="has-hero-background"');
+  if (bannerCount !== expectedBannerCount) {
+    errors.push(`${label}: expected ${expectedBannerCount} site-wide banner, found ${bannerCount}`);
+  }
+  if (heroClassCount !== expectedBannerCount) {
+    errors.push(
+      `${label}: expected ${expectedBannerCount} hero background class, found ${heroClassCount}`
+    );
+  }
+  if (countOccurrences(html, expectedBannerSource) !== expectedBannerCount) {
+    errors.push(
+      `${label}: site-wide banner source does not match appearance.banner.enabled=${APPEARANCE.banner.enabled}`
+    );
+  }
+}
+if (APPEARANCE.banner.enabled) {
+  const banner = APPEARANCE.banner;
+  for (const value of [
+    `--banner-height: ${banner.height}px`,
+    `--banner-mobile-height: ${banner.mobileHeight}px`,
+    `--banner-overlay-opacity: ${banner.overlayOpacity}`,
+    `--banner-position: ${banner.position}`
+  ]) {
+    if (!indexHtml.includes(value)) errors.push(`index.html: missing banner style ${value}`);
+  }
+}
+
 if (!buildCss.includes("--accent-hue") || !buildCss.includes("writing-mode:vertical-lr")) {
   errors.push("build CSS: Hue palette or vertical slider is missing");
+}
+if (
+  !buildCss.includes(".hero-banner:after")
+  || !buildCss.includes("linear-gradient(to bottom")
+  || !buildCss.includes("var(--bg) 100%")
+  || !buildCss.includes("var(--banner-mobile-height)")
+  || !buildCss.includes(".has-hero-background .site-shell")
+) {
+  errors.push("build CSS: site-wide banner or theme-aware fade styles are missing");
+}
+const heroBannerRule = buildCss.match(/\.hero-banner\{([^}]*)\}/u)?.[1] ?? "";
+if (!heroBannerRule.includes("width:100vw") || !heroBannerRule.includes("position:absolute")) {
+  errors.push("build CSS: site-wide background does not span the viewport");
+}
+if (heroBannerRule.includes("border") || heroBannerRule.includes("margin")) {
+  errors.push("build CSS: site-wide background still has card styling");
 }
 if (buildCss.includes("data-accent=")) {
   errors.push("build CSS: removed accent mode selectors are still present");

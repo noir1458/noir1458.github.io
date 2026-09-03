@@ -57,6 +57,24 @@ appearance:
 모든 방문자는 이 Hue로 시작하며, palette 메뉴의 세로 slider로 개인 Hue를
 조정할 수 있습니다. 방문자가 조정한 값은 해당 브라우저에 저장됩니다.
 
+사이트 전체 배경 배너는 선택 기능이며 기본값은 꺼짐입니다. 로컬 이미지를 `public/`에 넣은 뒤
+`config/site.yaml`에서 활성화하고 표시 방식을 조정합니다.
+
+```yaml
+appearance:
+  banner:
+    enabled: true
+    image: /images/site/banner.webp
+    position: center
+    height: 600
+    mobileHeight: 420
+    overlayOpacity: 0.18
+```
+
+이미지는 공통 layout을 사용하는 모든 페이지의 기존 header와 navigation 뒤에서 viewport
+전체 폭을 채우고 현재 light/dark theme 배경으로 자연스럽게 이어집니다. 프로젝트 사이트의
+base path도 자동으로 적용됩니다.
+
 ```md
 ---
 title: 글 제목

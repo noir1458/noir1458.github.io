@@ -1,4 +1,5 @@
 import { loadSiteConfig } from "./lib/config/index.ts";
+import { prefixSitePath, siteBasePath } from "./lib/config/sitePaths.ts";
 
 export const USER_CONFIG = loadSiteConfig();
 
@@ -15,6 +16,7 @@ export const PROFILE = USER_CONFIG.profile;
 export const APPEARANCE = USER_CONFIG.appearance;
 
 const defaultLanguage = LANGUAGES[USER_CONFIG.site.language];
+const basePath = siteBasePath(USER_CONFIG.site.url);
 
 if (!defaultLanguage) {
   throw new Error(`No language configuration found for ${USER_CONFIG.site.language}.`);
@@ -24,6 +26,7 @@ export const SITE = {
   title: USER_CONFIG.site.title,
   description: USER_CONFIG.site.description,
   url: USER_CONFIG.site.url,
+  basePath,
   locale: defaultLanguage.locale,
   language: USER_CONFIG.site.language,
   timeZone: USER_CONFIG.site.timeZone,
@@ -41,3 +44,7 @@ export const SITE = {
   googleVerification: USER_CONFIG.integrations.googleSiteVerification,
   giscus: USER_CONFIG.integrations.giscus
 } as const;
+
+export function sitePath(value: string): string {
+  return prefixSitePath(value, SITE.basePath);
+}

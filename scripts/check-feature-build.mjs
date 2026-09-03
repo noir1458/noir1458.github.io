@@ -67,6 +67,7 @@ try {
   assert.equal(fs.existsSync(path.join(outputDirectory, "projects/index.html")), false);
 
   const indexHtml = fs.readFileSync(path.join(outputDirectory, "index.html"), "utf8");
+  const disabledHtmlFiles = walk(outputDirectory, (file) => file.endsWith(".html"));
   const robots = fs.readFileSync(path.join(outputDirectory, "robots.txt"), "utf8");
   const postHtmlFiles = walk(
     outputDirectory,
@@ -78,6 +79,21 @@ try {
   assert.equal(indexHtml.includes("data-search-shell"), false);
   assert.equal(indexHtml.includes("data-theme-picker"), false);
   assert.equal(indexHtml.includes("data-accent-picker"), false);
+  for (const file of disabledHtmlFiles) {
+    const html = fs.readFileSync(file, "utf8");
+    const page = path.relative(outputDirectory, file);
+    assert.equal(html.includes('class="hero-banner"'), false, `${page} rendered a disabled banner`);
+    assert.equal(
+      html.includes('class="has-hero-background"'),
+      false,
+      `${page} rendered the disabled hero body class`
+    );
+    assert.equal(
+      html.includes("/images/site/banner.webp"),
+      false,
+      `${page} rendered the disabled banner image`
+    );
+  }
   assert.equal(indexHtml.includes('type="application/rss+xml"'), false);
   assert.equal(indexHtml.includes('data-theme="light"'), true);
   assert.equal(robots.includes("Sitemap:"), false);
@@ -186,6 +202,15 @@ try {
       ""
     ].join("\n")
   );
+  const siteConfigPath = path.join(configDirectory, "site.yaml");
+  const bannerConfig = fs
+    .readFileSync(siteConfigPath, "utf8")
+    .replace("    enabled: false", "    enabled: true")
+    .replace("    position: center", "    position: bottom")
+    .replace("    height: 600", "    height: 640")
+    .replace("    mobileHeight: 420", "    mobileHeight: 360")
+    .replace("    overlayOpacity: 0.18", "    overlayOpacity: 0.24");
+  fs.writeFileSync(siteConfigPath, bannerConfig);
 
   const projectBuild = spawnSync(
     process.execPath,
@@ -211,11 +236,37 @@ try {
     path.join(projectsOutputDirectory, "projects/index.html"),
     "utf8"
   );
+  const bannerHtml = fs.readFileSync(path.join(projectsOutputDirectory, "index.html"), "utf8");
   const projectHtml = fs.readFileSync(
     path.join(projectsOutputDirectory, "projects/feature-build-fixture/index.html"),
     "utf8"
   );
   assert.equal(projectsHtml.includes("Feature Build Project"), true);
+  for (const [page, html] of [
+    ["index.html", bannerHtml],
+    ["projects/index.html", projectsHtml],
+    ["projects/feature-build-fixture/index.html", projectHtml]
+  ]) {
+    assert.equal(
+      (html.match(/class="hero-banner"/gu) ?? []).length,
+      1,
+      `${page} should render exactly one banner`
+    );
+    assert.equal(
+      (html.match(/class="has-hero-background"/gu) ?? []).length,
+      1,
+      `${page} should render exactly one hero body class`
+    );
+    assert.equal(
+      (html.match(/src="\/images\/site\/banner\.webp"/gu) ?? []).length,
+      1,
+      `${page} should render exactly one banner image`
+    );
+  }
+  assert.match(bannerHtml, /--banner-height: 640px/u);
+  assert.match(bannerHtml, /--banner-mobile-height: 360px/u);
+  assert.match(bannerHtml, /--banner-overlay-opacity: 0\.24/u);
+  assert.match(bannerHtml, /--banner-position: bottom/u);
   assert.equal(projectHtml.includes("Project overview"), true);
   assert.equal(projectHtml.includes("https://github.com/example/project"), true);
   assert.equal(projectHtml.includes("https://example.com/project"), true);

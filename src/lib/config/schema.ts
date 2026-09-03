@@ -36,6 +36,27 @@ const publicPath = nonEmptyString
     "must not contain backslashes, a query, or a fragment"
   );
 
+const bannerDefaults = {
+  enabled: false,
+  image: "/images/site/banner.webp",
+  position: "center" as const,
+  height: 600,
+  mobileHeight: 420,
+  overlayOpacity: 0.18
+};
+
+const bannerSchema = z
+  .object({
+    enabled: z.boolean().default(bannerDefaults.enabled),
+    image: publicPath.default(bannerDefaults.image),
+    position: z.enum(["center", "top", "bottom", "left", "right"]).default(bannerDefaults.position),
+    height: z.number().int().min(100).max(800).default(bannerDefaults.height),
+    mobileHeight: z.number().int().min(100).max(800).default(bannerDefaults.mobileHeight),
+    overlayOpacity: z.number().min(0).max(1).default(bannerDefaults.overlayOpacity)
+  })
+  .strict()
+  .default(bannerDefaults);
+
 const languageCode = z
   .string()
   .regex(
@@ -94,10 +115,11 @@ export const siteFileSchema = z
       .strict(),
     appearance: z
       .object({
-        accentHue: z.number().int().min(0).max(360).default(250)
+        accentHue: z.number().int().min(0).max(360).default(250),
+        banner: bannerSchema
       })
       .strict()
-      .default({ accentHue: 250 }),
+      .default({ accentHue: 250, banner: bannerDefaults }),
     languages: z
       .record(languageCode, languageDefinition)
       .refine(

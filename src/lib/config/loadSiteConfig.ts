@@ -167,6 +167,22 @@ function validateCombinedConfig(config: UserConfig, publicDirectory: string): vo
     }
   }
 
+  if (config.appearance.banner.enabled) {
+    const bannerPath = config.appearance.banner.image;
+    const filePath = path.join(publicDirectory, bannerPath.slice(1));
+    try {
+      if (!fs.statSync(filePath).isFile()) {
+        errors.push(
+          `config/site.yaml: appearance.banner.image: public asset is not a file (${bannerPath})`
+        );
+      }
+    } catch {
+      errors.push(
+        `config/site.yaml: appearance.banner.image: public asset does not exist (${bannerPath})`
+      );
+    }
+  }
+
   if (errors.length > 0) throw new SiteConfigError(errors.join("\n"));
 }
 
