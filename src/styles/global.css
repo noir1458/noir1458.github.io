@@ -1300,6 +1300,17 @@ body.has-hero-background {
   text-shadow: var(--hero-direct-text-shadow);
 }
 
+:root[data-theme="light"] .has-hero-background :is(
+  .breadcrumbs,
+  .article-meta
+),
+:root[data-theme="system"][data-resolved-theme="light"] .has-hero-background :is(
+  .breadcrumbs,
+  .article-meta
+) {
+  color: var(--text);
+}
+
 .has-hero-background :is(
   .breadcrumbs svg,
   .article-meta svg,
