@@ -1,6 +1,9 @@
-const CACHE_PREFIX = "astro-blog-";
-const CACHE_NAME = `${CACHE_PREFIX}v5`;
 const SCOPE_URL = new URL(self.registration.scope);
+const SCOPE_PATH = SCOPE_URL.pathname.replace(/\/{2,}/gu, "/").replace(/\/?$/u, "/");
+const SCOPE_KEY = encodeURIComponent(SCOPE_PATH);
+const CACHE_NAMESPACE = `astro-blog:${SCOPE_KEY}:`;
+const CACHE_NAME = `${CACHE_NAMESPACE}v6`;
+const LEGACY_CACHE_NAME = "astro-blog-v5";
 const OFFLINE_URL = new URL("404.html", SCOPE_URL).href;
 const ASTRO_ASSET_PATH = `${SCOPE_URL.pathname}_astro/`;
 const HASHED_ASSET_PATTERN = /\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9]+$/u;
@@ -30,7 +33,10 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+            .filter(
+              (key) =>
+                (key.startsWith(CACHE_NAMESPACE) && key !== CACHE_NAME) || key === LEGACY_CACHE_NAME
+            )
             .map((key) => caches.delete(key))
         )
       )

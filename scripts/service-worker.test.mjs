@@ -12,14 +12,23 @@ function cacheKey(request) {
   return typeof request === "string" ? request : request.url;
 }
 
+function scopedCacheName(scope, version = "v6") {
+  const pathname = new URL(scope).pathname.replace(/\/{2,}/gu, "/").replace(/\/?$/u, "/");
+  return `astro-blog:${encodeURIComponent(pathname)}:${version}`;
+}
+
 function createWorker({
   scope = "https://example.com/example-blog/",
   fetchImpl = async () => new Response("network"),
-  cacheNames = ["astro-blog-v5"],
+  cacheNames = [],
+  sharedStores,
   entries = []
 } = {}) {
   const listeners = new Map();
-  const stores = new Map(cacheNames.map((name) => [name, new Map()]));
+  const stores = sharedStores ?? new Map();
+  for (const name of cacheNames) {
+    if (!stores.has(name)) stores.set(name, new Map());
+  }
   const calls = {
     added: [],
     claimed: 0,
@@ -117,9 +126,13 @@ function createWorker({
   return { calls, dispatch, stores };
 }
 
-test("precache and cleanup stay inside the service worker scope and project cache prefix", async () => {
+test("precache and cleanup stay inside the service worker scope and cache namespace", async () => {
+  const scope = "https://example.com/example-blog/";
+  const currentCache = scopedCacheName(scope);
+  const previousCache = scopedCacheName(scope, "v5");
   const worker = createWorker({
-    cacheNames: ["astro-blog-v4", "astro-blog-v5", "another-app-v2"]
+    scope,
+    cacheNames: [previousCache, currentCache, "astro-blog-v5", "another-app-v2"]
   });
 
   await worker.dispatch("install");
@@ -129,21 +142,52 @@ test("precache and cleanup stay inside the service worker scope and project cach
   assert.equal(worker.calls.added[0].cache, "no-store");
 
   await worker.dispatch("activate");
-  assert.deepEqual(worker.calls.deleted, ["astro-blog-v4"]);
+  assert.deepEqual(worker.calls.deleted, [previousCache, "astro-blog-v5"]);
   assert.equal(worker.calls.claimed, 1);
   assert.equal(worker.stores.has("another-app-v2"), true);
 });
 
+test("workers on the same origin never delete another scope's caches", async () => {
+  const rootScope = "https://example.com/";
+  const projectScope = "https://example.com/astro_blog_template/";
+  const rootCurrent = scopedCacheName(rootScope);
+  const rootPrevious = scopedCacheName(rootScope, "v5");
+  const projectCurrent = scopedCacheName(projectScope);
+  const projectPrevious = scopedCacheName(projectScope, "v5");
+  const stores = new Map(
+    [rootPrevious, projectPrevious, "astro-blog-v5", "another-app-v2"].map((name) => [
+      name,
+      new Map()
+    ])
+  );
+  const rootWorker = createWorker({ scope: rootScope, sharedStores: stores });
+  const projectWorker = createWorker({ scope: projectScope, sharedStores: stores });
+
+  await rootWorker.dispatch("install");
+  await projectWorker.dispatch("install");
+  assert.equal(stores.has(rootCurrent), true);
+  assert.equal(stores.has(projectCurrent), true);
+
+  await rootWorker.dispatch("activate");
+  assert.deepEqual(rootWorker.calls.deleted, [rootPrevious, "astro-blog-v5"]);
+  assert.equal(stores.has(projectPrevious), true);
+  assert.equal(stores.has(projectCurrent), true);
+  assert.equal(stores.has("another-app-v2"), true);
+
+  await projectWorker.dispatch("activate");
+  assert.deepEqual(projectWorker.calls.deleted, [projectPrevious]);
+  assert.equal(stores.has(rootCurrent), true);
+  assert.equal(stores.has(projectCurrent), true);
+  assert.equal(stores.has("another-app-v2"), true);
+});
+
 test("document and ClientRouter HTML requests bypass stale cached pages", async () => {
   const pageUrl = "https://example.com/example-blog/posts/fresh/";
+  const cacheName = scopedCacheName("https://example.com/example-blog/");
   const worker = createWorker({
     entries: [
-      ["astro-blog-v5", pageUrl, new Response("<html>stale</html>")],
-      [
-        "astro-blog-v5",
-        "https://example.com/example-blog/404.html",
-        new Response("<html>offline</html>")
-      ]
+      [cacheName, pageUrl, new Response("<html>stale</html>")],
+      [cacheName, "https://example.com/example-blog/404.html", new Response("<html>offline</html>")]
     ],
     fetchImpl: async () => new Response("<html>fresh</html>")
   });
@@ -174,10 +218,11 @@ test("document and ClientRouter HTML requests bypass stale cached pages", async 
 test("network failure returns only the scoped offline fallback", async () => {
   const pageUrl = "https://example.com/example-blog/posts/old/";
   const fallbackUrl = "https://example.com/example-blog/404.html";
+  const cacheName = scopedCacheName("https://example.com/example-blog/");
   const worker = createWorker({
     entries: [
-      ["astro-blog-v5", pageUrl, new Response("<html>stale page</html>")],
-      ["astro-blog-v5", fallbackUrl, new Response("<html>offline fallback</html>")]
+      [cacheName, pageUrl, new Response("<html>stale page</html>")],
+      [cacheName, fallbackUrl, new Response("<html>offline fallback</html>")]
     ],
     fetchImpl: async () => {
       throw new TypeError("offline");
@@ -197,8 +242,9 @@ test("network failure returns only the scoped offline fallback", async () => {
 test("only content-hashed scoped Astro assets use cache-first", async () => {
   const cachedUrl = "https://example.com/example-blog/_astro/app.Abcdef12.js";
   const uncachedUrl = "https://example.com/example-blog/_astro/styles.Zyxwv987.css";
+  const cacheName = scopedCacheName("https://example.com/example-blog/");
   const worker = createWorker({
-    entries: [["astro-blog-v5", cachedUrl, new Response("cached asset")]],
+    entries: [[cacheName, cachedUrl, new Response("cached asset")]],
     fetchImpl: async () => new Response("network asset")
   });
 
