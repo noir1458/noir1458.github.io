@@ -1312,6 +1312,15 @@ body.has-hero-background {
   border-bottom-color: var(--hero-content-divider);
 }
 
+.has-hero-background .term-card {
+  border-top-color: var(--hero-content-divider);
+  border-bottom-color: var(--hero-content-divider);
+}
+
+.has-hero-background .archive-group {
+  border-top-color: var(--hero-content-divider);
+}
+
 @media (min-width: 961px) {
   .has-hero-background .sidebar {
     border-color: var(--hero-panel-border);
