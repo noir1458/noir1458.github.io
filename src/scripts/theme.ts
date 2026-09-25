@@ -46,9 +46,6 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
   targetRoot.dataset.theme = theme;
   targetRoot.dataset.resolvedTheme = resolved;
   targetRoot.style.setProperty("--accent-hue", String(accentHue));
-  targetRoot.dataset.sidebarCollapsed = String(
-    window.matchMedia("(min-width: 961px)").matches && storedValue("sidebar-collapsed") === "true"
-  );
   targetRoot.dataset.appearanceReady = "true";
   targetRoot.style.colorScheme = resolved;
 
@@ -58,27 +55,18 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
 const getThemeButtons = () => [
   ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")
 ];
-const getThemePicker = () => document.querySelector<HTMLElement>("[data-theme-picker]");
-const getThemeToggle = () => document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-const getThemeMenu = () => document.querySelector<HTMLElement>("[data-theme-menu]");
+const getAppearancePicker = () => document.querySelector<HTMLElement>("[data-appearance-picker]");
+const getAppearanceToggle = () =>
+  document.querySelector<HTMLButtonElement>("[data-appearance-toggle]");
+const getAppearanceMenu = () => document.querySelector<HTMLElement>("[data-appearance-menu]");
 const getThemeIcons = () => [...document.querySelectorAll<HTMLElement>("[data-theme-icon]")];
-const getAccentPicker = () => document.querySelector<HTMLElement>("[data-accent-picker]");
-const getAccentToggle = () => document.querySelector<HTMLButtonElement>("[data-accent-toggle]");
-const getAccentMenu = () => document.querySelector<HTMLElement>("[data-accent-menu]");
 const getAccentHueInput = () => document.querySelector<HTMLInputElement>("[data-accent-hue]");
 const getAccentHueOutput = () =>
   document.querySelector<HTMLOutputElement>("[data-accent-hue-output]");
 
-function closeThemeMenu({ restoreFocus = false } = {}) {
-  getThemeMenu()?.classList.remove("open");
-  const toggle = getThemeToggle();
-  toggle?.setAttribute("aria-expanded", "false");
-  if (restoreFocus) toggle?.focus();
-}
-
-function closeAccentMenu({ restoreFocus = false } = {}) {
-  getAccentMenu()?.classList.remove("open");
-  const toggle = getAccentToggle();
+function closeAppearanceMenu({ restoreFocus = false } = {}) {
+  getAppearanceMenu()?.classList.remove("open");
+  const toggle = getAppearanceToggle();
   toggle?.setAttribute("aria-expanded", "false");
   if (restoreFocus) toggle?.focus();
 }
@@ -102,7 +90,10 @@ function syncTheme({ broadcast = true } = {}) {
   });
   const selectedLabel =
     selected === "system" ? "Auto" : selected.charAt(0).toUpperCase() + selected.slice(1);
-  getThemeToggle()?.setAttribute("aria-label", `Choose color theme, current: ${selectedLabel}`);
+  getAppearanceToggle()?.setAttribute(
+    "aria-label",
+    `Choose appearance, current theme: ${selectedLabel}`
+  );
   if (broadcast) {
     document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
       {
@@ -122,7 +113,6 @@ function syncAccentHue() {
     root.style.getPropertyValue("--accent-hue"),
     validHue(root.dataset.defaultAccentHue, safeAccentHue)
   );
-  getAccentToggle()?.setAttribute("aria-label", `Choose accent hue, current: ${hue} degrees`);
   const hueInput = getAccentHueInput();
   if (hueInput) hueInput.value = String(hue);
   const hueOutput = getAccentHueOutput();
@@ -149,26 +139,14 @@ document.addEventListener("click", (event) => {
     root.dataset.theme = theme;
     storeValue("color-theme", theme);
     syncTheme();
-    closeThemeMenu({ restoreFocus: true });
+    closeAppearanceMenu({ restoreFocus: true });
     return;
   }
 
-  const accentToggle = event.target.closest<HTMLButtonElement>("[data-accent-toggle]");
-  if (accentToggle) {
-    const menu = getAccentMenu();
-    const open = !menu?.classList.contains("open");
-    closeThemeMenu();
-    menu?.classList.toggle("open", open);
-    accentToggle.setAttribute("aria-expanded", String(open));
-    if (open) getAccentHueInput()?.focus();
-    return;
-  }
-
-  const toggle = event.target.closest<HTMLButtonElement>("[data-theme-toggle]");
+  const toggle = event.target.closest<HTMLButtonElement>("[data-appearance-toggle]");
   if (!toggle) return;
-  const menu = getThemeMenu();
+  const menu = getAppearanceMenu();
   const open = !menu?.classList.contains("open");
-  closeAccentMenu();
   menu?.classList.toggle("open", open);
   toggle.setAttribute("aria-expanded", String(open));
   if (open) {
@@ -179,18 +157,13 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("pointerdown", (event) => {
-  const themePicker = getThemePicker();
-  if (themePicker && !themePicker.contains(event.target as Node)) closeThemeMenu();
-  const accentPicker = getAccentPicker();
-  if (accentPicker && !accentPicker.contains(event.target as Node)) closeAccentMenu();
+  const picker = getAppearancePicker();
+  if (picker && !picker.contains(event.target as Node)) closeAppearanceMenu();
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && getThemeMenu()?.classList.contains("open")) {
-    closeThemeMenu({ restoreFocus: true });
-  }
-  if (event.key === "Escape" && getAccentMenu()?.classList.contains("open")) {
-    closeAccentMenu({ restoreFocus: true });
+  if (event.key === "Escape" && getAppearanceMenu()?.classList.contains("open")) {
+    closeAppearanceMenu({ restoreFocus: true });
   }
 });
 
@@ -203,8 +176,7 @@ document.addEventListener("astro:before-swap", (event) => {
 });
 document.addEventListener("astro:page-load", () => {
   applyStoredAppearance(root);
-  closeThemeMenu();
-  closeAccentMenu();
+  closeAppearanceMenu();
   syncTheme({ broadcast: false });
   syncAccentHue();
 });

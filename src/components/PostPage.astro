@@ -86,12 +86,11 @@ const schema = {
 
   <article>
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="/" aria-label="Home"><Icon name="home" size={18} /></a>
+      <a href="/">Home</a>
       {post.data.categories[0] && (
         <>
-          <Icon name="chevron-right" size={16} />
+          <span aria-hidden="true">/</span>
           <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-            <Icon name="category" size={17} />
             {post.data.categories[0]}
           </a>
         </>
@@ -101,28 +100,25 @@ const schema = {
     <header class="article-header">
       <h1 data-pagefind-meta="title">{post.data.title}</h1>
       <div class="article-meta">
-        <span>
-          <Icon name="calendar" size={20} />
+        <span class="article-meta-item">
           <time datetime={post.data.publishedAt.toISOString()}>
             {formatDate(post.data.publishedAt, undefined, post.data.lang)}
           </time>
         </span>
         {post.data.updatedAt && (
-          <span title="Updated">
-            <Icon name="calendar-edit" size={20} />
+          <span class="article-meta-item" title="Updated">
+            <span aria-hidden="true">Updated</span>
             <span class="sr-only">Updated </span>
             <time datetime={post.data.updatedAt.toISOString()}>
               {formatDate(post.data.updatedAt, undefined, post.data.lang)}
             </time>
           </span>
         )}
-        <span>
-          <Icon name="clock" size={18} />
+        <span class="article-meta-item">
           {Math.max(1, Math.ceil((post.body ?? "").split(/\s+/u).length / 260))} min read
         </span>
         {post.data.tags.length > 0 && (
           <span class="article-meta-tags" data-pagefind-ignore>
-            <Icon name="tag" size={18} />
             <span class="article-meta-tag-list">
               {post.data.tags.map((tag) => (
                 <a href={`/tags/${slugifyTerm(tag)}/`}>{tag}</a>
@@ -143,7 +139,7 @@ const schema = {
           <Icon name="arrow-left" size={18} /> Newer
         </a>
       ) : <span></span>}
-      <a class="all-posts" href="/"><Icon name="menu" size={18} /> All posts</a>
+      <a class="all-posts" href="/">All posts</a>
       {older ? (
         <a href={postUrl(older)} title={older.data.title}>
           Older <Icon name="arrow-right" size={18} />

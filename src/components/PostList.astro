@@ -7,7 +7,6 @@ import {
   postUrl,
   slugifyTerm
 } from "@/utils/content";
-import Icon from "@/components/Icon.astro";
 import { Image } from "astro:assets";
 
 interface Props {
@@ -26,24 +25,25 @@ const entries = posts.map((post) => ({
 
 <div class="post-list" data-pagefind-ignore>
   {entries.map(({ post, cover, description }) => (
-    <article class="post-row">
+    <article class:list={["post-row", { "has-thumbnail": Boolean(cover) }]}>
       <div class="post-row-copy">
         <Heading class="post-row-title">
           <a href={postUrl(post)}>{post.data.title}</a>
         </Heading>
         <p class="post-row-description">{description}</p>
         <div class="post-row-meta">
-          <span><Icon name="calendar" size={17} /> {formatDate(post.data.publishedAt)}</span>
+          <time datetime={post.data.publishedAt.toISOString()}>
+            {formatDate(post.data.publishedAt)}
+          </time>
           {post.data.categories[0] && (
             <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-              <Icon name="category" size={17} />
               {post.data.categories[0]}
             </a>
           )}
         </div>
       </div>
-      <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
-        {cover ? (
+      {cover && (
+        <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
           <Image
             alt=""
             loading="lazy"
@@ -51,10 +51,8 @@ const entries = posts.map((post) => ({
             widths={[184, 360]}
             sizes="(max-width: 700px) 92px, 180px"
           />
-        ) : (
-          <span aria-hidden="true"><Icon name="arrow-right" size={22} /></span>
-        )}
-      </a>
+        </a>
+      )}
     </article>
   ))}
 </div>

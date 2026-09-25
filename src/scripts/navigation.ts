@@ -121,42 +121,6 @@ function initNavigation() {
     { signal }
   );
 
-  const layout = document.querySelector<HTMLElement>("[data-layout]");
-  const sidebarToggle = document.querySelector<HTMLButtonElement>("[data-sidebar-toggle]");
-  const sidebarRegion = document.querySelector<HTMLElement>("[data-sidebar-region]");
-  const sidebarIcon = sidebarToggle?.querySelector("svg");
-  const desktopSidebar = window.matchMedia("(min-width: 961px)");
-
-  function setSidebar(collapsed: boolean, { persist = true } = {}) {
-    document.documentElement.dataset.sidebarCollapsed = String(collapsed);
-    layout?.classList.toggle("sidebar-collapsed", collapsed);
-    sidebarRegion?.classList.toggle("collapsed", collapsed);
-    sidebarToggle?.setAttribute("aria-expanded", String(!collapsed));
-    sidebarToggle?.setAttribute("aria-label", collapsed ? "Show sidebar" : "Hide sidebar");
-    sidebarIcon?.classList.toggle("flip", collapsed);
-    if (persist) localStorage.setItem("sidebar-collapsed", String(collapsed));
-  }
-
-  sidebarToggle?.addEventListener(
-    "click",
-    () => {
-      setSidebar(!layout?.classList.contains("sidebar-collapsed"));
-    },
-    { signal }
-  );
-
-  const savedSidebarCollapsed = () => localStorage.getItem("sidebar-collapsed") === "true";
-  setSidebar(desktopSidebar.matches && savedSidebarCollapsed(), {
-    persist: false
-  });
-  desktopSidebar.addEventListener(
-    "change",
-    (event) => {
-      setSidebar(event.matches && savedSidebarCollapsed(), { persist: false });
-    },
-    { signal }
-  );
-
   document.querySelectorAll<HTMLDetailsElement>(".sidebar-widget").forEach((details) => {
     details.addEventListener(
       "toggle",

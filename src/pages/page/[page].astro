@@ -25,9 +25,7 @@ const page = paginatePosts(allPosts, currentPage);
   description={`전체 글 목록 ${page.currentPage}페이지`}
 >
   <header class="page-heading">
-    <span class="eyebrow">Latest writing</span>
-    <h1>All posts</h1>
-    <p>Page {page.currentPage} of {page.totalPages}</p>
+    <h1>Writing</h1>
   </header>
   <PostList posts={page.posts} />
   <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />

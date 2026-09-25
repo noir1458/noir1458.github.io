@@ -2,81 +2,74 @@
 import Icon from "@/components/Icon.astro";
 ---
 
-<div class="color-controls">
-  <div class="accent-picker" data-accent-picker>
-    <button
-      class="accent-picker-toggle icon-button"
-      data-accent-toggle
-      type="button"
-      aria-controls="accent-menu"
-      aria-expanded="false"
-      aria-haspopup="true"
-      aria-label="Choose accent color"
-    >
-      <Icon name="palette" />
-    </button>
+<div class="appearance-picker" data-appearance-picker>
+  <button
+    class="appearance-picker-toggle icon-button"
+    data-appearance-toggle
+    type="button"
+    aria-controls="appearance-menu"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    aria-label="Choose appearance, current theme: Auto"
+  >
+    <span data-theme-icon="system"><Icon name="system" /></span>
+    <span data-theme-icon="light" hidden><Icon name="sun" /></span>
+    <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
+  </button>
 
-    <div id="accent-menu" class="accent-menu" data-accent-menu aria-label="Accent hue">
-      <div class="accent-hue-control">
-        <output data-accent-hue-output for="accent-hue">250°</output>
-        <input
-          id="accent-hue"
-          data-accent-hue
-          type="range"
-          min="0"
-          max="360"
-          step="1"
-          value="250"
-          aria-label="Accent hue"
-          aria-orientation="vertical"
-        />
+  <div
+    id="appearance-menu"
+    class="appearance-menu"
+    data-appearance-menu
+    role="dialog"
+    aria-label="Appearance"
+  >
+    <div class="appearance-section">
+      <span class="appearance-label">Theme</span>
+      <div class="theme-options" role="group" aria-label="Color theme">
+        <button
+          data-theme-value="system"
+          type="button"
+          aria-label="Auto theme"
+          title="Auto"
+          aria-pressed="false"
+        >
+          <Icon name="system" />
+        </button>
+        <button
+          data-theme-value="light"
+          type="button"
+          aria-label="Light theme"
+          title="Light"
+          aria-pressed="false"
+        >
+          <Icon name="sun" />
+        </button>
+        <button
+          data-theme-value="dark"
+          type="button"
+          aria-label="Dark theme"
+          title="Dark"
+          aria-pressed="false"
+        >
+          <Icon name="moon" />
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="theme-picker" data-theme-picker>
-    <button
-      class="theme-picker-toggle icon-button"
-      data-theme-toggle
-      type="button"
-      aria-controls="theme-menu"
-      aria-expanded="false"
-      aria-haspopup="true"
-      aria-label="Choose color theme, current: Auto"
-    >
-      <span data-theme-icon="system"><Icon name="system" /></span>
-      <span data-theme-icon="light" hidden><Icon name="sun" /></span>
-      <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
-    </button>
-
-    <div id="theme-menu" class="theme-menu" data-theme-menu aria-label="Color theme">
-      <button
-        data-theme-value="system"
-        type="button"
-        aria-label="Auto theme"
-        title="Auto"
-        aria-pressed="false"
-      >
-        <Icon name="system" />
-      </button>
-      <button
-        data-theme-value="light"
-        type="button"
-        aria-label="Light theme"
-        title="Light"
-        aria-pressed="false"
-      >
-        <Icon name="sun" />
-      </button>
-      <button
-        data-theme-value="dark"
-        type="button"
-        aria-label="Dark theme"
-        title="Dark"
-        aria-pressed="false"
-      >
-        <Icon name="moon" />
-      </button>
-    </div>
+    <label class="accent-hue-control" for="accent-hue">
+      <span class="appearance-label">Accent</span>
+      <input
+        id="accent-hue"
+        data-accent-hue
+        type="range"
+        min="0"
+        max="360"
+        step="1"
+        value="250"
+        aria-label="Accent hue"
+      />
+      <output data-accent-hue-output for="accent-hue">250°</output>
+    </label>
   </div>
 </div>

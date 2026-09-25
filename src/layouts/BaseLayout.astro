@@ -134,12 +134,10 @@ const pageTransition: TransitionDirectionalAnimations = {
         const root = document.documentElement;
         let savedTheme = null;
         let savedAccentHue = null;
-        let sidebarCollapsed = false;
 
         try {
           savedTheme = localStorage.getItem("color-theme");
           savedAccentHue = localStorage.getItem("color-accent-hue");
-          sidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
         } catch {}
 
         const defaultAccentHue = Number(root.dataset.defaultAccentHue);
@@ -179,9 +177,6 @@ const pageTransition: TransitionDirectionalAnimations = {
           root.dataset.resolvedTheme = "light";
           root.style.colorScheme = "light";
         }
-        root.dataset.sidebarCollapsed = String(
-          window.matchMedia("(min-width: 961px)").matches && sidebarCollapsed
-        );
         root.dataset.appearanceReady = "true";
       })();
     </script>

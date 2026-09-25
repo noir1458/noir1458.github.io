@@ -243,12 +243,8 @@ if (indexHtml.includes("data-search-shell") !== FEATURES.search) {
   errors.push(`index.html: search UI does not match features.search=${FEATURES.search}`);
 }
 
-if (indexHtml.includes("data-theme-picker") !== FEATURES.darkMode) {
-  errors.push(`index.html: theme UI does not match features.darkMode=${FEATURES.darkMode}`);
-}
-
-if (indexHtml.includes("data-accent-picker") !== FEATURES.darkMode) {
-  errors.push(`index.html: accent UI does not match features.darkMode=${FEATURES.darkMode}`);
+if (indexHtml.includes("data-appearance-picker") !== FEATURES.darkMode) {
+  errors.push(`index.html: appearance UI does not match features.darkMode=${FEATURES.darkMode}`);
 }
 
 if (indexHtml.includes("data-accent-value")) {
@@ -258,9 +254,9 @@ if (indexHtml.includes("data-accent-value")) {
 if (
   !indexHtml.includes("data-accent-hue")
   || !indexHtml.includes('max="360"')
-  || !indexHtml.includes('aria-orientation="vertical"')
+  || !indexHtml.includes("data-appearance-menu")
 ) {
-  errors.push("index.html: vertical accent hue range is missing");
+  errors.push("index.html: combined appearance controls or accent hue range are missing");
 }
 
 if (!indexHtml.includes(`data-default-accent-hue="${APPEARANCE.accentHue}"`)) {
@@ -300,8 +296,12 @@ if (APPEARANCE.banner.enabled) {
   }
 }
 
-if (!buildCss.includes("--accent-hue") || !buildCss.includes("writing-mode:vertical-lr")) {
-  errors.push("build CSS: Hue palette or vertical slider is missing");
+if (
+  !buildCss.includes("--accent-hue")
+  || !buildCss.includes(".accent-hue-control input[type=range]")
+  || !buildCss.includes("width:100%")
+) {
+  errors.push("build CSS: Hue palette or horizontal slider is missing");
 }
 if (
   !buildCss.includes(".hero-banner:after")

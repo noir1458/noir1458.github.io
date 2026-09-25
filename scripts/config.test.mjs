@@ -43,9 +43,9 @@ test("the repository configuration is valid", () => {
     enabled: true,
     image: "/images/site/banner.webp",
     position: "center",
-    height: 600,
-    mobileHeight: 420,
-    overlayOpacity: 0.18
+    height: 360,
+    mobileHeight: 290,
+    overlayOpacity: 0.3
   });
 });
 

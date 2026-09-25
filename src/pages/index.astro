@@ -27,9 +27,7 @@ const schema = {
   {page.posts.length ? (
     <>
       <header class="page-heading">
-        <span class="eyebrow">Latest writing</span>
-        <h1>All posts</h1>
-        <p>Page {page.currentPage} of {page.totalPages}</p>
+        <h1>Writing</h1>
       </header>
       <PostList posts={page.posts} />
       <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />

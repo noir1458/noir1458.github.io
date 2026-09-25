@@ -82,8 +82,7 @@ try {
   const postHtml = postHtmlFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
 
   assert.equal(indexHtml.includes("data-search-shell"), false);
-  assert.equal(indexHtml.includes("data-theme-picker"), false);
-  assert.equal(indexHtml.includes("data-accent-picker"), false);
+  assert.equal(indexHtml.includes("data-appearance-picker"), false);
   for (const file of disabledHtmlFiles) {
     const html = fs.readFileSync(file, "utf8");
     const page = path.relative(outputDirectory, file);
@@ -211,9 +210,9 @@ try {
     .readFileSync(siteConfigPath, "utf8")
     .replace("    enabled: false", "    enabled: true")
     .replace("    position: center", "    position: bottom")
-    .replace("    height: 600", "    height: 640")
-    .replace("    mobileHeight: 420", "    mobileHeight: 360")
-    .replace("    overlayOpacity: 0.18", "    overlayOpacity: 0.24");
+    .replace("    height: 360", "    height: 640")
+    .replace("    mobileHeight: 290", "    mobileHeight: 360")
+    .replace("    overlayOpacity: 0.3", "    overlayOpacity: 0.24");
   fs.writeFileSync(siteConfigPath, bannerConfig);
 
   const projectBuild = spawnSync(

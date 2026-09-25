@@ -18,16 +18,6 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
 ---
 
 <div class="sidebar-region" data-sidebar-region>
-  <button
-    class="sidebar-toggle icon-button"
-    data-sidebar-toggle
-    type="button"
-    aria-expanded="true"
-    aria-label="Hide sidebar"
-    aria-controls="blog-sidebar"
-  >
-    <Icon name="chevron-right" />
-  </button>
   <aside id="blog-sidebar" class="sidebar" data-sidebar aria-label="Blog navigation">
     <nav class="sidebar-links" aria-label="Quick links">
       {sidebarLinks.map((link) => (
@@ -62,7 +52,7 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
       </details>
     )}
 
-    <details class="sidebar-widget" open={headings.length === 0}>
+    <details class="sidebar-widget categories-widget" open={headings.length === 0}>
       <summary>
         <span>Categories</span>
         <Icon name="chevron-down" size={20} />
