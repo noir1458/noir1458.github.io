@@ -1926,6 +1926,34 @@ body.has-hero-background {
   transform: translateY(-1px);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .article-content .code-block > :is(.code-language, .code-copy),
+  .article-content .mermaid-block > .mermaid-source {
+    opacity: 0;
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .article-content .code-block > .code-copy,
+  .article-content .mermaid-block > .mermaid-source {
+    pointer-events: none;
+  }
+
+  .article-content .code-block:is(:hover, :focus-within) > :is(.code-language, .code-copy),
+  .article-content .mermaid-block:is(:hover, :focus-within) > .mermaid-source {
+    opacity: 1;
+  }
+
+  .article-content .code-block:is(:hover, :focus-within) > .code-copy,
+  .article-content .mermaid-block:is(:hover, :focus-within) > .mermaid-source {
+    pointer-events: auto;
+  }
+}
+
 .mermaid-source-dialog {
   --mermaid-source-inline-space: clamp(32px, 8vw, 80px);
   --mermaid-source-block-space: clamp(48px, 10svh, 96px);
