@@ -2,7 +2,7 @@
 title: Astro Personal Blog Template
 description: 설정과 Markdown만으로 운영할 수 있도록 만든 Astro 기반 개인 블로그 템플릿입니다.
 repository: https://github.com/noir1458/astro_blog_template
-demo: https://noir1458.github.io
+demo: https://noir1458.github.io/astro_blog_template/
 image: ./cover.png
 tags:
   - Astro
@@ -49,4 +49,5 @@ Astro나 TypeScript 파일을 직접 수정하지 않아도 사이트의 기본 
 ## 링크
 
 - [GitHub 저장소](https://github.com/noir1458/astro_blog_template)
+- [템플릿 데모](https://noir1458.github.io/astro_blog_template/)
 - [실제 적용 블로그](https://noir1458.github.io)
