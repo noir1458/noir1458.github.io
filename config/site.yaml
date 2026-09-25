@@ -22,8 +22,8 @@ appearance:
     enabled: true
     image: /images/site/banner.webp
     position: center # center, top, bottom, left, or right
-    height: 360 # 100-800px
-    mobileHeight: 290 # 100-800px
+    height: 420 # 100-800px
+    mobileHeight: 320 # 100-800px
     overlayOpacity: 0.3 # 0-1
 
 languages:

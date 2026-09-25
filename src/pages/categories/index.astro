@@ -6,7 +6,11 @@ const posts = await getPublishedPosts();
 const categories = countTerms(posts, "categories");
 ---
 
-<BaseLayout title="Categories" description="주제별로 모아보는 게시글 카테고리">
+<BaseLayout
+  title="Categories"
+  description="주제별로 모아보는 게시글 카테고리"
+  sidebar={false}
+>
   <header class="page-heading">
     <span class="eyebrow">Index</span>
     <h1>Categories</h1>

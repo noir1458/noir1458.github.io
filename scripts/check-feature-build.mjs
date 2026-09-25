@@ -210,8 +210,8 @@ try {
     .readFileSync(siteConfigPath, "utf8")
     .replace("    enabled: false", "    enabled: true")
     .replace("    position: center", "    position: bottom")
-    .replace("    height: 360", "    height: 640")
-    .replace("    mobileHeight: 290", "    mobileHeight: 360")
+    .replace("    height: 420", "    height: 640")
+    .replace("    mobileHeight: 320", "    mobileHeight: 360")
     .replace("    overlayOpacity: 0.3", "    overlayOpacity: 0.24");
   fs.writeFileSync(siteConfigPath, bannerConfig);
 

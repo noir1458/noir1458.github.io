@@ -27,7 +27,6 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
           rel={link.external ? "noopener noreferrer" : undefined}
           target={link.external ? "_blank" : undefined}
           aria-label={link.label}
-          title={link.label}
         >
           <Icon name={link.icon!} />
         </a>
@@ -67,8 +66,8 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
                 aria-hidden="true"
               />
             )}
-            {group.categories.map((term) => (
-              <li>
+            {group.categories.map((term, termIndex) => (
+              <li class:list={{ "term-column-second": termIndex % 2 === 1 }}>
                 <a href={`/categories/${term.slug}/`}>
                   <span>{term.name}</span>
                   <span class="term-count">{term.count}</span>

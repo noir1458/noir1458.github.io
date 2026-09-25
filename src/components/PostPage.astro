@@ -102,7 +102,7 @@ const schema = {
       <div class="article-meta">
         <span class="article-meta-item">
           <time datetime={post.data.publishedAt.toISOString()}>
-            {formatDate(post.data.publishedAt, undefined, post.data.lang)}
+            {formatDate(post.data.publishedAt)}
           </time>
         </span>
         {post.data.updatedAt && (
@@ -110,7 +110,7 @@ const schema = {
             <span aria-hidden="true">Updated</span>
             <span class="sr-only">Updated </span>
             <time datetime={post.data.updatedAt.toISOString()}>
-              {formatDate(post.data.updatedAt, undefined, post.data.lang)}
+              {formatDate(post.data.updatedAt)}
             </time>
           </span>
         )}

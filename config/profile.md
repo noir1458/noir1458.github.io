@@ -1,7 +1,11 @@
 ---
 title: About
 eyebrow: About
-subtitle: Study notes, problem solving, software work, and everyday thoughts.
+subtitle: 컴퓨터 과학과 소프트웨어를 공부하고 만들며 남기는 기록입니다.
 ---
 
-This blog collects study notes, problem solving, software work, and everyday thoughts.
+이 블로그는 배운 내용을 정리하고, 문제를 해결한 과정을 오래 남기기 위해 운영하는 개인 기록 공간입니다.
+
+알고리즘 문제 풀이부터 데이터베이스, 클라우드, 보안과 암호학, 수학까지 관심사를 넓혀가며 공부한 내용을 기록합니다. 결과만 요약하기보다 어떤 문제를 만났고 어떻게 접근했는지를 되짚을 수 있도록 정리하려고 합니다.
+
+직접 만든 도구와 실험은 [Projects](/projects/)에 모으고, 공부 밖에서 겪은 일과 생각도 함께 남깁니다. 완벽한 답안보다는 나중에 다시 읽고 다음 작업으로 이어갈 수 있는 기록을 지향합니다.

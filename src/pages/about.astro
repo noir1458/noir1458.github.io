@@ -53,7 +53,7 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
       />
       <div class="about-profile-copy">
         <h1>{SITE.author.displayName}</h1>
-        <div class="profile-copy" set:html={profileHtml} />
+        {PROFILE.data.subtitle && <p class="about-summary">{PROFILE.data.subtitle}</p>}
         {
           profileLinks.length > 0 && (
             <nav class="about-links" aria-label="Profile links">
@@ -74,4 +74,7 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
       </div>
     </div>
   </header>
+  <div class="about-content">
+    <div class="profile-copy" set:html={profileHtml} />
+  </div>
 </BaseLayout>

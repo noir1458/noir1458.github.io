@@ -133,16 +133,22 @@ export function getPostTranslations(post: PostEntry, posts: PostEntry[]): PostTr
 
 export function formatDate(
   date: Date,
-  options?: Intl.DateTimeFormatOptions,
-  language: SupportedLanguage = SITE.language
+  { includeYear = true }: { includeYear?: boolean } = {}
 ): string {
-  return new Intl.DateTimeFormat(LANGUAGES[language].locale, {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    timeZone: SITE.timeZone,
-    ...options
-  }).format(date);
+  const parts = new Map(
+    new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: SITE.timeZone
+    })
+      .formatToParts(date)
+      .map(({ type, value }) => [type, value])
+  );
+
+  return [includeYear ? parts.get("year") : undefined, parts.get("month"), parts.get("day")]
+    .filter((part): part is string => Boolean(part))
+    .join(".");
 }
 
 export function slugifyTerm(term: string): string {
