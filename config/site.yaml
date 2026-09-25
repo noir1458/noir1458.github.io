@@ -21,6 +21,7 @@ appearance:
   banner:
     enabled: true
     image: /images/site/banner.webp
+    titleTone: light # light or dark
     position: center # center, top, bottom, left, or right
     height: 420 # 100-800px
     mobileHeight: 320 # 100-800px

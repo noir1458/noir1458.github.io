@@ -265,6 +265,7 @@ if (!indexHtml.includes(`data-default-accent-hue="${APPEARANCE.accentHue}"`)) {
 
 const expectedBannerCount = APPEARANCE.banner.enabled ? 1 : 0;
 const expectedBannerSource = `src="${sitePath(APPEARANCE.banner.image)}"`;
+const expectedBannerTitleTone = `data-banner-title-tone="${APPEARANCE.banner.titleTone}"`;
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");
   const label = path.relative(distRoot, file);
@@ -281,6 +282,11 @@ for (const file of htmlFiles) {
   if (countOccurrences(html, expectedBannerSource) !== expectedBannerCount) {
     errors.push(
       `${label}: site-wide banner source does not match appearance.banner.enabled=${APPEARANCE.banner.enabled}`
+    );
+  }
+  if (countOccurrences(html, expectedBannerTitleTone) !== expectedBannerCount) {
+    errors.push(
+      `${label}: banner title tone does not match appearance.banner.titleTone=${APPEARANCE.banner.titleTone}`
     );
   }
 }
@@ -309,6 +315,8 @@ if (
   || !buildCss.includes("var(--bg) 100%")
   || !buildCss.includes("var(--banner-mobile-height)")
   || !buildCss.includes(".has-hero-background .site-shell")
+  || !/\[data-banner-title-tone=(?:"dark"|dark)\]/u.test(buildCss)
+  || !buildCss.includes("var(--hero-title-color)")
 ) {
   errors.push("build CSS: site-wide banner or theme-aware fade styles are missing");
 }

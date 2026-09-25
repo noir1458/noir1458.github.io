@@ -97,6 +97,11 @@ try {
       false,
       `${page} rendered the disabled banner image`
     );
+    assert.equal(
+      html.includes("data-banner-title-tone"),
+      false,
+      `${page} rendered a title tone for the disabled banner`
+    );
   }
   assert.equal(indexHtml.includes('type="application/rss+xml"'), false);
   assert.equal(indexHtml.includes('data-theme="light"'), true);

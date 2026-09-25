@@ -42,6 +42,7 @@ test("the repository configuration is valid", () => {
   assert.deepEqual(config.appearance.banner, {
     enabled: true,
     image: "/images/site/banner.webp",
+    titleTone: "light",
     position: "center",
     height: 420,
     mobileHeight: 320,
@@ -118,6 +119,7 @@ test("a missing banner section uses disabled defaults", () => {
   assert.deepEqual(loadSiteConfig({ configDirectory: directory }).appearance.banner, {
     enabled: false,
     image: "/images/site/banner.webp",
+    titleTone: "light",
     position: "center",
     height: 600,
     mobileHeight: 420,
@@ -246,6 +248,22 @@ test("banner position accepts supported values and rejects arbitrary CSS", () =>
     () => loadSiteConfig({ configDirectory: directory }),
     (error) =>
       error instanceof SiteConfigError && /appearance\.banner\.position:/u.test(error.message)
+  );
+});
+
+test("banner title tone accepts light or dark and rejects other values", () => {
+  for (const value of ["light", "dark"]) {
+    const directory = configFixture();
+    replaceInFile(directory, "site.yaml", /^ {4}titleTone: .*$/mu, `    titleTone: ${value}`);
+    assert.equal(loadSiteConfig({ configDirectory: directory }).appearance.banner.titleTone, value);
+  }
+
+  const directory = configFixture();
+  replaceInFile(directory, "site.yaml", /^ {4}titleTone: .*$/mu, "    titleTone: auto");
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    (error) =>
+      error instanceof SiteConfigError && /appearance\.banner\.titleTone:/u.test(error.message)
   );
 });
 

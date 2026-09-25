@@ -45,15 +45,18 @@ appearance:
   banner:
     enabled: true
     image: /images/site/banner.webp
+    titleTone: light
     position: center
     height: 600
     mobileHeight: 420
     overlayOpacity: 0.18
 ```
 
-`position` accepts `center`, `top`, `bottom`, `left`, or `right`. Heights accept
-100–800 pixels, and `overlayOpacity` accepts 0–1. The enabled image path must
-identify an existing file under `public/`.
+`titleTone` controls the title contrast over the image: use `light` for light text
+on a dark image area or `dark` for dark text on a bright image area. `position`
+accepts `center`, `top`, `bottom`, `left`, or `right`. Heights accept 100–800
+pixels, and `overlayOpacity` accepts 0–1. The enabled image path must identify an
+existing file under `public/`.
 
 Do not put API keys, access tokens, passwords, or other secrets in this folder.
 Analytics, site-verification, and Giscus identifiers are public browser

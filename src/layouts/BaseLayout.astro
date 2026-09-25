@@ -222,6 +222,7 @@ const pageTransition: TransitionDirectionalAnimations = {
   </head>
   <body
     class:list={{ "has-hero-background": showHeroBackground }}
+    data-banner-title-tone={showHeroBackground ? APPEARANCE.banner.titleTone : undefined}
     data-pagefind-body={pagefindBody ? "" : undefined}
     transition:name="page-shell"
     transition:animate="none"

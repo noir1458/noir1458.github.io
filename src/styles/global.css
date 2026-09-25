@@ -1180,6 +1180,13 @@ body.has-hero-background {
   --hero-control-blur: 8px;
   --hero-panel-shadow: var(--glass-shadow);
   --hero-content-divider: color-mix(in srgb, var(--line) 72%, var(--text-soft));
+  --hero-title-color: #f8fafc;
+  --hero-title-shadow: 0 1px 12px rgba(0, 0, 0, 0.58);
+}
+
+body.has-hero-background[data-banner-title-tone="dark"] {
+  --hero-title-color: #17212b;
+  --hero-title-shadow: 0 1px 12px rgba(255, 255, 255, 0.72);
 }
 
 :root[data-theme="dark"] body.has-hero-background,
@@ -1216,8 +1223,8 @@ body.has-hero-background {
 }
 
 .has-hero-background .site-title {
-  color: #f8fafc;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.58);
+  color: var(--hero-title-color);
+  text-shadow: var(--hero-title-shadow);
 }
 
 .has-hero-background :is(.page-heading, .post-row) {

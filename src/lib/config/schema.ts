@@ -39,6 +39,7 @@ const publicPath = nonEmptyString
 const bannerDefaults = {
   enabled: false,
   image: "/images/site/banner.webp",
+  titleTone: "light" as const,
   position: "center" as const,
   height: 600,
   mobileHeight: 420,
@@ -49,6 +50,7 @@ const bannerSchema = z
   .object({
     enabled: z.boolean().default(bannerDefaults.enabled),
     image: publicPath.default(bannerDefaults.image),
+    titleTone: z.enum(["light", "dark"]).default(bannerDefaults.titleTone),
     position: z.enum(["center", "top", "bottom", "left", "right"]).default(bannerDefaults.position),
     height: z.number().int().min(100).max(800).default(bannerDefaults.height),
     mobileHeight: z.number().int().min(100).max(800).default(bannerDefaults.mobileHeight),
