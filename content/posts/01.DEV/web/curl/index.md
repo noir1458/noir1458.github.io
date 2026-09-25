@@ -1,3 +1,12 @@
+---
+title: 'curl 사용법 정리: 터미널에서 HTTP API 요청하기'
+slug: curl
+publishedAt: '2026-09-26'
+categories: web
+math: false
+draft: true
+---
+
 # curl 사용법 정리: 터미널에서 HTTP API 요청하기
 
 FastAPI를 공부하다 보면 Swagger UI를 통해 API를 간편하게 테스트할 수 있다. Postman 같은 GUI 도구를 사용해도 편하다.
