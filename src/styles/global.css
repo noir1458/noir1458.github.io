@@ -2390,12 +2390,12 @@ body.has-hero-background {
 }
 
 .project-hero {
+  display: block;
   width: min(100%, 1040px);
-  max-height: 620px;
+  height: auto;
   margin: 42px auto 0;
   border: 1px solid var(--line);
   border-radius: 6px;
-  object-fit: cover;
 }
 
 .project-content {
