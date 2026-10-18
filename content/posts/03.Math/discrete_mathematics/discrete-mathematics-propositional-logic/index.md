@@ -4,12 +4,13 @@ slug: discrete-mathematics-propositional-logic
 publishedAt: '2026-10-19'
 categories: discrete_mathematics
 math: true
-description: "명제 논리, 응용, 명제의 동치의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 핵심 개념과 수식
 
 ### 1.1 명제 논리: 출발점
+
 **명제(proposition)** 는 참 또는 거짓 중 하나의 진리값을 가진 선언문이다. 명령문, 의문문, 변수에 값이 주어지지 않은 열린 문장은 보통 명제가 아니다. 단순 명제에서 출발해 논리 연결사를 이용하여 복합 명제를 만든다.
 
 | 연결사 | 의미 | 참이 되는 조건 |
@@ -30,7 +31,7 @@ $$
 여기서 역은 q → p, 이는 ¬p → ¬q, 대우는 ¬q → ¬p이다. 원래 명제와 **대우**는 동치지만 역이나 이는 일반적으로 원래 명제와 동치가 아니다.
 복합 논리식의 진리표는 명제 변수가 n개이면 2ⁿ개의 진리값 조합으로 작성한다. 괄호와 연산 순서를 먼저 확인하고, 각 입력 조합에 대해 값을 계산한다.
 
-## 1.2 명제 논리의 응용
+### 1.2 명제 논리의 응용
 자연어 문장에서 원자 명제를 정하고 연결사의 우선순위와 범위를 명확히 표현한다. 시스템 명세가 **일관적(consistent)** 이라는 것은 모든 명세를 동시에 참으로 만드는 진리값 배정이 존재한다는 뜻이다. 부울 검색, 기사와 거짓말쟁이 논리 퍼즐, NOT/AND/OR 게이트로 구성하는 논리회로도 응용 예이다.
 
 $$
@@ -40,6 +41,7 @@ $$
 회로 문제는 입력부터 각 게이트의 출력을 순서대로 식으로 적어 분석한다. 각 중간 신호에 이름을 붙이면 복잡한 회로도 단계별로 진리표를 작성할 수 있다.
 
 ### 1.3 명제의 동치
+
 **항진명제**는 모든 진리값 배정에서 참, **모순명제**는 모든 배정에서 거짓, **불확정 명제**는 참인 배정과 거짓인 배정이 모두 있는 식이다. 논리적 동치란 두 식이 모든 배정에서 진리값이 같다는 뜻이며 진리표나 동치 법칙 연쇄로 증명한다.
 
 $$
@@ -56,7 +58,8 @@ $$
 p\land(q\lor r)\equiv(p\land q)\lor(p\land r)
 $$
 
-교환, 결합, 분배, 드모르간, 이중부정, 흡수, 항등, 지배, 멱등 법칙을 통해 식을 단계별로 변형한다. **충족가능성(satisfiability)** 은 식을 참으로 만드는 배정이 하나라도 있는가를 묻는다. 연습문제에는 복합 명제의 충족가능성, n-여왕 및 스도쿠의 논리 제약 모델링도 포함되어 있다.
+교환, 결합, 분배, 드모르간, 이중부정, 흡수, 항등, 지배, 멱등 법칙을 통해 식을 단계별로 변형한다. **충족가능성(satisfiability)** 은 식을 참으로 만드는 배정이 하나라도 있는가를 묻는다. n-여왕 문제나 스도쿠도 각 배치를 명제 변수로 나타내고 규칙을 논리식으로 연결하면 충족가능성 문제로 표현할 수 있다.
+
 ---
 
 ## 1.1 명제 논리
@@ -271,27 +274,15 @@ $$
 <details>
 <summary>일관된 시스템 명세</summary>
 
-시스템 명세는 일관성이 있어야 한다. 즉 시스템 명세는 모순이 나오게 되는 상호
+시스템 명세가 일관적이라는 것은 모든 요구사항을 동시에 참으로 만드는 진리값 배정이 존재한다는 뜻이다.
 
-배치되는요구사항을 포함해서는 안된다. 명제들의 목록이 일관적(consistent)이라는 것은, 그 모든
+$p$를 “진단 메시지를 버퍼에 저장한다”, $q$를 “진단 메시지를 재전송한다”라고 하자. 다음 세 요구사항을 생각해 보자.
 
-명제를 동시에 참으로 만드는 진리값 배정이 존재한다는 뜻이다.
+- 메시지를 버퍼에 저장하거나 재전송한다: $p\lor q$
+- 메시지를 버퍼에 저장하지 않는다: $\neg p$
+- 메시지를 버퍼에 저장하면 재전송한다: $p\to q$
 
-A list of propositions is consistent if it is possible to assign truth values so that each proposition is true.
-예제 Example 다음 시스템 명세가 일관성이 있는지 판정하라.
-
-“The diagnostic message is stored in the buffer or it is retransmitted”
-
-“The diagnostic message is not stored in the buffer”
-
-“If the diagnostic message is stored in the buffer, then it is retransmitted”
-풀이 : p=“ The diagnostic message is stored in the buffer”, q=“The diagnostic message is retransmitted”
-
-위의 문장은 각각 p ∨ q, ¬p, p → q 로 표현될 수 있는데, p=F, q=T 로 배정하면 세 명제가 모두 참 → 일관적이다
-
-여기에 “The diagnostic message is retransmitted”. ( ¬q)가 추가되면? → 만족하는 진리값이 없다 → 더 이상 일관
-
-적이지 않다.
+$p=F$, $q=T$로 두면 세 식이 모두 참이므로 일관적이다. 여기에 “메시지를 재전송하지 않는다”라는 요구사항 $\neg q$를 추가하면 모든 식을 동시에 만족시킬 수 없으므로 일관성이 깨진다.
 
 </details>
 
@@ -355,17 +346,9 @@ A list of propositions is consistent if it is possible to assign truth values so
 <details>
 <summary>명제의 동치</summary>
 
-1.3
+항진명제는 모든 진리값 배정에서 참이고, 모순명제는 항상 거짓이다. 둘 다 아닌 명제는 우연명제다. 두 명제가 모든 진리값 배정에서 같은 값을 가지면 논리적으로 동치라고 한다.
 
-명제의 동치
-
-PROPOSITIONAL EQUIVALENCES
-
-- 항진명제 , 모순명제 , 우연명제 Tautology, Contradiction, Contingency
-
-- 논리적 동치와 핵심 동치 법칙 Logical Equivalence
-
-- 선언표준형,논언표준형과 충족가능성 DNF, CNF, Satisfiability
+논리식을 표준형으로 나타내면 구조를 비교하기 쉽다. 선언표준형(DNF)은 리터럴의 논리곱들을 논리합으로 연결하고, 논언표준형(CNF)은 리터럴의 논리합들을 논리곱으로 연결한다. 적어도 하나의 진리값 배정에서 참이 되는 식은 충족 가능하다.
 
 </details>
 
@@ -521,6 +504,7 @@ PROPOSITIONAL EQUIVALENCES
 ### 문제 1\~4 (명제 논리)
 
 **문제 1.** 진리표를 사용하지 않고, 쌍조건문 p ↔ q은 p와 q가 동일한 진리값을 가질 때에만 참이 되는 이유를 설명하라.
+
 **문제 2.** p: “사용자가 유효한 비밀번호를 입력한다”, q: “접근이 허용된다”, r: “사용자가 구독료를 지불하였다”라고 할 때 다음 문장을 논리식으로 표현하라.
 
 1. 사용자는 구독료를 지불했지만 유효한 비밀번호를 입력하지 않았다.
@@ -528,13 +512,11 @@ PROPOSITIONAL EQUIVALENCES
 2. 사용자가 구독료를 지불하고 유효한 비밀번호를 입력하면 접근이 허용된다.
 
 3. 사용자가 구독료를 지불하지 않았으면 접근이 거부된다.
+
 **문제 3.** 진리표를 작성하여 다음 명제가 항진명제임을 보여라.
 
 1. (p ∧ q) → p
 
 2. ¬p → (p → q)
+
 **문제 4.** 논리적 동치 법칙의 연쇄를 이용하여 \[(p → q) ∧ (q → r)\] → (p → r)가 항진명제임을 보여라. 진리표 사용 금지.
-
-## 이어서 읽기
-
-- 다음 글: [02. 술어 논리, 한정 기호, 논리회로](/posts/discrete-mathematics-predicates-quantifiers-circuits/)

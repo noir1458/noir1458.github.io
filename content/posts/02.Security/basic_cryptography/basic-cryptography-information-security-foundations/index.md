@@ -4,10 +4,10 @@ slug: basic-cryptography-information-security-foundations
 publishedAt: '2026-10-19'
 categories: basic_cryptography
 math: true
-description: "정보보호의 기본 개념과 현대암호학의 개념, 수식과 예제를 정리한다."
+
 ---
 
-정보보호의 목표와 보안 용어를 정리하고, 대칭키·공개키 암호와 공격 모델을 연결해 본다.
+정보보호는 정보를 숨기는 것만으로 완성되지 않는다. 허가 없이 내용이 바뀌지 않아야 하고, 필요한 사람이 제때 이용할 수도 있어야 한다. 이 세 가지 목표가 기밀성, 무결성, 가용성이다.
 
 ## 1. 정보보호와 Computer Security
 
@@ -30,7 +30,7 @@ description: "정보보호의 기본 개념과 현대암호학의 개념, 수식
 
 - **Accountability, 책임추적성:** 수행된 작업을 책임 주체에 연결하고 추적할 수 있는가.
 
-암호화만으로는 모든 보안 목표가 충족되지 않는다. 이후에 배우는 해시, MAC, 전자서명, 인증 프로토콜이 각기 다른 목적을 갖는 이유다.
+암호화만으로는 모든 보안 목표가 충족되지 않는다. 해시, MAC, 전자서명, 인증 프로토콜이 각기 다른 목적을 갖는 이유다.
 
 ## 2. 보안 용어와 관계
 
@@ -48,7 +48,7 @@ description: "정보보호의 기본 개념과 현대암호학의 개념, 수식
 ### 2.1 Security Concepts and Relationships
 보안 개념의 관계를 살펴보면 자산을 소유한 **Owner**, 공격 주체인 **Threat Agent**, 공격받는 **Asset**, 발생 가능한 **Threat**, 이를 줄이려는 **Countermeasure**와 **Risk**가 상호 연결되어 있다.
 
-- 소유자는 자산에 가치를 부여하고 위험을 줄이기 위한 대응책을 부과한다.
+- 소유자는 자산에 가치를 부여하고 위험을 줄이기 위한 대응책을 적용한다.
 
 - 위협 주체는 자산에 대한 위협을 발생시키며, 위험을 증가시킬 수 있다.
 
@@ -57,6 +57,7 @@ description: "정보보호의 기본 개념과 현대암호학의 개념, 수식
 ![소유자, 자산, 위협과 대응책의 관계](./security-relationships.webp)
 
 ### 2.2 취약점, 공격, 대응책의 분류
+
 **취약점이 일으키는 손실**
 
 - Corrupted: 무결성 손실
@@ -64,6 +65,7 @@ description: "정보보호의 기본 개념과 현대암호학의 개념, 수식
 - Leaky: 기밀성 손실
 
 - Unavailable or very slow: 가용성 손실
+
 **공격의 구분**
 
 - Passive attack: 내용을 관찰하거나 정보를 수집하는 수동적 공격
@@ -73,6 +75,7 @@ description: "정보보호의 기본 개념과 현대암호학의 개념, 수식
 - Insider attack: 내부자가 수행하는 공격
 
 - Outsider attack: 외부 주체의 공격
+
 **대응의 구분**
 
 1. Prevent: 공격을 미리 방지
@@ -221,6 +224,7 @@ $$
 이 원칙은 앞의 **Open Design**과 일관된다.
 
 ### 7.2 기본 공격 유형
+
 **Brute-force attack:** 가능한 키를 모두 시도하는 공격.
 **Cryptanalysis:** 암호의 성질이나 공격자가 가진 정보를 이용해 암호를 분석하는 공격. 공격자가 얻을 수 있는 정보에 따라 네 가지로 구분한다.
 
@@ -231,8 +235,4 @@ $$
 | Chosen-plaintext attack, CPA | 공격자가 선택한 평문의 암호화 결과 |
 | Chosen-ciphertext attack, CCA | 공격자가 선택한 암호문의 복호화 결과 |
 
-이 표는 다음 글의 고전암호 분석에서 실제 계산으로 연결되고, 공개키 암호를 다룰 때 IND-CPA 및 IND-CCA 계열 안전성 정의의 출발점이 된다.
-
-## 이어서 읽기
-
-- 다음 글: [02. 고전암호, LFSR와 One-Time Pad](/posts/basic-cryptography-classical-ciphers-lfsr-otp/)
+공격자가 얻을 수 있는 정보와 사용할 수 있는 기능을 구분하면 고전암호의 공격 방법을 비교할 수 있다. 공개키 암호의 IND-CPA와 IND-CCA 안전성 정의도 이러한 공격자 모델을 바탕으로 한다.

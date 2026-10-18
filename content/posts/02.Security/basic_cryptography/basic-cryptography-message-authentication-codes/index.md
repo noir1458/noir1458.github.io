@@ -1,23 +1,24 @@
 ---
 title: "13. 메시지 인증 코드, HMAC와 CBC-MAC"
 slug: basic-cryptography-message-authentication-codes
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-07'
 categories: basic_cryptography
 math: true
-description: "메시지 인증 코드, HMAC와 CBC-MAC의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. Message Authentication Code(MAC)
 
 ### 1.1 왜 MAC이 필요한가
 Alice와 Bob은 안전한 비밀키 k를 공유하고 있다고 가정한다. Bob이 메시지 x를 보낼 때 **전송 중 변경되었는지** 확인하고, 메시지가 같은 비밀키를 가진 당사자로부터 왔다는 것을 인증하려고 한다.
+
 Bob은
 
 $$
 y=MAC_k(x)
 $$
 
-를 계산하여 메시지와 함께 $(x,y)$를 Alice에게 전송한다. Alice는 자신이 공유한 k로 받은 메시지 x에 대한 MAC를 다시 계산해 전달받은 y와 비교한다.
+를 계산하여 메시지와 함께 $(x,y)$를 Alice에게 전송한다. Alice는 자신이 공유한 k로 받은 메시지 x에 대한 MAC을 다시 계산해 전달받은 y와 비교한다.
 
 ### 1.2 MAC의 특성
 
@@ -61,15 +62,15 @@ $$
 \operatorname{Vrfy}(k,M,\operatorname{Mac}(k,M))=1.
 $$
 
-공격자가 메시지에 대한 MAC 태그를 요청할 수 있더라도, 아직 인증받지 않은 **새 메시지에 대한 유효한 MAC**를 생성하기 어려워야 한다. 이 조건을 선택 메시지 공격 상황의 unforgeability로 표현한다.
+공격자가 메시지에 대한 MAC 태그를 요청할 수 있더라도, 아직 인증받지 않은 **새 메시지에 대한 유효한 MAC**을 생성하기 어려워야 한다. 이 조건을 선택 메시지 공격 상황의 unforgeability로 표현한다.
 
 ## 4. HMAC(Hash-based MAC)
 
 ### 4.1 설계와 사용 배경
-HMAC은 Bellare, Canetti, Krawczyk가 1996년에 발표한 해시 함수 기반 MAC이다. IPsec, TLS 등에 사용된다. 특정 해시 함수의 특성과 적절한 가정 아래 **보안성을 증명할 수 있는 구성**이라는 점을 강조한다.
+HMAC은 Bellare, Canetti, Krawczyk가 1996년에 발표한 해시 함수 기반 MAC이다. IPsec, TLS 등에 사용된다. 사용하는 해시 함수에 대한 적절한 가정 아래 HMAC의 보안성을 증명할 수 있다.
 
 ### 4.2 HMAC의 핵심 식
-해시 함수 H의 압축함수 블록 길이를 b비트라 하고, K를 블록 길이에 맞춰 정규화한 키 $K'$라고 하자.
+해시 함수 H의 블록 길이를 b비트라 하고, 키 K를 이 길이에 맞춰 정규화한 결과를 $K'$라고 하자.
 
 $$
 HMAC(K,M)=H((K'\oplus opad)\parallel H((K'\oplus ipad)\parallel M)).
@@ -142,6 +143,7 @@ MAC_K(M)=Y_n.
 $$
 
 ### 5.2 Generation/Verification
+
 **Generation**
 
 1. 비밀키 K 준비
@@ -151,11 +153,12 @@ $$
 3. 고정 IV에서 시작하여 CBC chaining 수행
 
 4. 마지막 암호화 결과 $Y_n$을 태그로 출력
+
 **Verification**
 
 1. 받은 메시지 M에 대해 같은 키와 초기 상태로 CBC-MAC 다시 계산
 
-2. 수신한 태그와 일정 시간 비교를 수행
+2. 태그 내용에 따라 처리 시간이 달라지지 않는 방식으로 수신한 태그와 비교
 
 3. 같으면 수락, 다르면 거부
 
@@ -205,8 +208,3 @@ $$
 - **MAC:** 공유 비밀키로 무결성 및 메시지 인증
 
 - **Digital Signature:** 개인키 서명과 공개키 검증, 출처 인증 및 제삼자 검증
-
-## 이어서 읽기
-
-- 이전 글: [12. 암호학적 해시 함수와 SHA 계열](/posts/basic-cryptography-cryptographic-hash-functions/)
-- 다음 글: [14. 암호학 계산 문제와 복습](/posts/basic-cryptography-cryptography-review/)

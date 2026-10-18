@@ -1,16 +1,18 @@
 ---
 title: "03. 블록 암호, Feistel, DES와 Triple DES"
 slug: basic-cryptography-block-ciphers-feistel-des
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-17'
 categories: basic_cryptography
 math: true
-description: "블록 암호, Feistel, DES와 Triple DES의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. 대칭키 암호와 블록 암호
 
 ### 1.1 대칭키 암호의 정의
-송신자와 수신자는 암호화와 복호화에 같은 비밀키를 사용한다. 고전암호, 블록암호(DES, AES, ARIA, SEED), 스트림암호(RC4, ChaCha)로 나뉜다. 공개키 암호에 비해 일반적으로 빠르지만, 키 사전 공유와 사용자 수가 늘어날 때의 키 관리 문제가 있다.
+대칭키 암호에서는 송신자와 수신자가 같은 비밀키를 공유한다. 현대 대칭키 암호는 데이터를 일정한 길이로 묶어 처리하는 블록암호와 키스트림을 이용하는 스트림암호로 구분할 수 있다. 공개키 암호보다 일반적으로 빠르지만, 키를 안전하게 공유하고 관리해야 한다.
+
+고전적인 치환·순열 암호도 공유된 비밀키를 사용한다. 블록암호의 예로 DES, AES, ARIA, SEED가 있고 스트림암호의 예로 RC4와 ChaCha가 있다.
 
 | 비교 | 블록암호(Block Cipher) | 스트림암호(Stream Cipher) |
 | --- | --- | --- |
@@ -40,13 +42,13 @@ description: "블록 암호, Feistel, DES와 Triple DES의 개념, 수식과 예
 7. Ease of security analysis: 수학적으로 공격을 분석하기 쉬운지 여부
 
 ### 1.3 Computational Security
-Computationally secure란 암호를 무조건 못 깨는 뜻이 아니라 다음 조건 중 하나 또는 양쪽을 만족함을 뜻한다.
+계산적으로 안전하다는 것은 해독 자체가 불가능하다는 뜻은 아니다. 공격에 필요한 비용이나 시간이 다음 조건 중 하나 이상을 만족한다는 뜻이다.
 
 - 암호 해독 비용이 암호화한 정보의 가치보다 큼
 
 - 암호 해독 시간이 정보의 유효 수명보다 김
 
-![NIST(2020) Key Length Recommendations 원표](./figure-01.webp)
+![2020년 기준 NIST 키 길이 권고 비교](./figure-01.webp)
 
 표의 대표 항목:
 
@@ -113,8 +115,9 @@ P_{64}\xrightarrow{IP}(L_0,R_0)\xrightarrow{16\ \mathrm{rounds}}(R_{16},L_{16})\
 $$
 
 첫 Initial Permutation(IP)은 비트의 순서를 바꾸는 공개된 고정표이다. 첫 출력 비트는 입력의 58번째 비트가 된다. 마지막에는 역순열 $IP^{-1}$을 적용한다.
+
 **Initial Permutation (IP)**
-```javascript
+```text
 58 50 42 34 26 18 10  2
 60 52 44 36 28 20 12  4
 62 54 46 38 30 22 14  6
@@ -124,8 +127,9 @@ $$
 61 53 45 37 29 21 13  5
 63 55 47 39 31 23 15  7
 ```
+
 **Inverse Initial Permutation**
-```javascript
+```text
 40  8 48 16 56 24 64 32
 39  7 47 15 55 23 63 31
 38  6 46 14 54 22 62 30
@@ -155,8 +159,9 @@ $$
 5. Permutation $P$로 32비트의 위치를 섞는다.
 
 6. 왼쪽 32비트와 XOR하여 라운드 출력을 구성한다.
+
 **Expansion Permutation $E$, 32 → 48비트**
-```javascript
+```text
 32  1  2  3  4  5
  4  5  6  7  8  9
  8  9 10 11 12 13
@@ -166,8 +171,9 @@ $$
 24 25 26 27 28 29
 28 29 30 31 32  1
 ```
+
 **Permutation $P$, 32 → 32비트**
-```javascript
+```text
 16  7 20 21 29 12 28 17
  1 15 23 26  5 18 31 10
  2  8 24 14 32 27  3  9
@@ -185,7 +191,7 @@ $$
 
 입력 $b_0b_1b_2b_3b_4b_5$에 대해 **행은 바깥 두 비트** $b_0b_5$, **열은 가운데 네 비트** $b_1b_2b_3b_4$를 이진수로 읽어 구한다.
 $S_1$ 전체 표:
-```javascript
+```text
 row/col  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
 0       14  4 13  1  2 15 11  8  3 10  6 12  5  9  0  7
 1        0 15  7  4 14  2 13  1 10  6 12 11  9  5  3  8
@@ -194,16 +200,13 @@ row/col  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
 ```
 입력 101101은 row=11₂=3, column=0110₂=6이므로 $S_1[3,6]=1$, 출력 비트는 0001. 나머지 $S_2$부터 $S_8$까지는 각각 다른 테이블을 쓴다.
 
-![S-box 구조 및](./figure-06.webp)
-
-$S_1$
-
-![표](./figure-06.webp)
+![DES S-box의 입력 구조와 S1 치환표](./figure-06.webp)
 
 ### 3.5 DES Key Schedule
 먼저 64비트 키 형식에 **PC-1**을 적용해 56비트의 $(C_0,D_0)$, 즉 28비트 반쪽 두 개를 만든다.
+
 **PC-1, 64 -\> 56비트**
-```javascript
+```text
 LEFT HALF            RIGHT HALF
 57 49 41 33 25 17  9 | 63 55 47 39 31 23 15
  1 58 50 42 34 26 18 |  7 62 54 46 38 30 22
@@ -217,7 +220,7 @@ C_i=\operatorname{RotL}_{s_i}(C_{i-1}),\quad D_i=\operatorname{RotL}_{s_i}(D_{i-
 $$
 
 **PC-2, 56 -\> 48비트**
-```javascript
+```text
 14 17 11 24  1  5
  3 28 15  6 21 10
 23 19 12  4 26  8
@@ -227,8 +230,9 @@ $$
 44 49 39 56 34 53
 46 42 50 36 29 32
 ```
+
 **각 라운드의 왼쪽 순환 이동 수**
-```javascript
+```text
 ROUND: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 SHIFT: 1 1 2 2 2 2 2 2 1  2  2  2  2  2  2  1
 ```
@@ -294,8 +298,3 @@ $$
 | 라운드 | 구조에 따라 설정 | 16라운드 | DES 3회 |
 | 키 | 설계에 따라 설정 | 유효 56비트 | 형식상 112/168비트 |
 | 암복호화 차이 | 라운드 역순으로 처리 | 라운드 키 역순 | 세 연산을 역순으로 복원 |
-
-## 이어서 읽기
-
-- 이전 글: [02. 고전암호, LFSR와 One-Time Pad](/posts/basic-cryptography-classical-ciphers-lfsr-otp/)
-- 다음 글: [04. AES, 유한체와 라운드 변환](/posts/basic-cryptography-aes-finite-fields/)

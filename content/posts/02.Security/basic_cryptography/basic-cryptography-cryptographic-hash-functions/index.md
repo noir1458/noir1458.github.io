@@ -1,10 +1,10 @@
 ---
 title: "12. 암호학적 해시 함수와 SHA 계열"
 slug: basic-cryptography-cryptographic-hash-functions
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-08'
 categories: basic_cryptography
 math: true
-description: "암호학적 해시 함수와 SHA 계열의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. 일반 Hash Function과 Cryptographic Hash Function
@@ -42,7 +42,7 @@ $$
 를 해결하기 어려워야 한다. **입력 원문이 주어지지 않은 상태**에서 해시 출력값만 보고 원문을 찾으려는 공격이다.
 
 ### 2.3 Second-Preimage Resistance(제2역상 저항성)
-특정 메시지 M이 주어졌을 때 **M과 다른 메시지 **$M'$로
+특정 메시지 M이 주어졌을 때 **M과 다른 메시지** $M'$로
 
 $$
 M'\ne M,\qquad h(M')=h(M)
@@ -57,7 +57,7 @@ $$
 M\ne M',\qquad h(M)=h(M').
 $$
 
-역상은 y만 제시, 제2역상은 M이 먼저 제시, 충돌은 M과 $M'$ 둘 다 자유롭게 찾는 상황으로 구분했다.
+역상은 y만 제시, 제2역상은 M이 먼저 제시, 충돌은 M과 $M'$ 둘 다 자유롭게 찾는 상황으로 구분한다.
 
 ## 3. 보안강도와 Birthday Bound
 임의의 n비트 해시 출력이 균일하고 독립적이라고 가정하면,
@@ -150,8 +150,3 @@ SHA-3는 SHA-2가 당연히 깨졌기 때문에 생긴 대체물이 아니라, *
 
 ## 6. 해시 함수와 인증의 차이
 해시 함수가 충돌 저항성을 제공하더라도 **해시값을 누가 만들었는지 증명하지는 못한다.** 공개된 해시 알고리즘은 누구나 실행할 수 있기 때문이다. 통신 당사자 사이에서 무결성과 발신자 인증을 확인하려면 **MAC 또는 전자서명**을 함께 사용한다.
-
-## 이어서 읽기
-
-- 이전 글: [11. 타원곡선과 DSA, ECDSA](/posts/basic-cryptography-elliptic-curves-ecdsa/)
-- 다음 글: [13. 메시지 인증 코드, HMAC와 CBC-MAC](/posts/basic-cryptography-message-authentication-codes/)

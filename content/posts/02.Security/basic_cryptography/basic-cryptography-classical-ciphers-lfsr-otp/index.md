@@ -1,13 +1,13 @@
 ---
 title: "02. 고전암호, LFSR와 One-Time Pad"
 slug: basic-cryptography-classical-ciphers-lfsr-otp
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-18'
 categories: basic_cryptography
 math: true
-description: "고전암호, LFSR와 One-Time Pad의 개념, 수식과 예제를 정리한다."
+
 ---
 
-고전암호의 암복호화 계산부터 LFSR의 선형성, OTP의 완전비밀성 조건까지 정리한다.
+암호의 키 공간이 크다고 해서 반드시 안전한 것은 아니다. 문자 빈도나 선형 관계가 남아 있으면 키를 전부 시도하지 않고도 평문을 알아낼 수 있다. 고전암호와 LFSR을 살펴보고, OTP가 완전비밀성을 갖는 조건까지 비교해 보자.
 
 ## 1. 수학적 표기와 알파벳 표현
 
@@ -296,7 +296,7 @@ $$
 ```
 이다. 이는 무작위 비트열처럼 보이더라도 알고 있는 선형 규칙으로 생성할 수 있음을 보여준다.
 
-![의 LFSR 회로도](./figure-01.webp)
+![LFSR의 피드백 구조](./figure-01.webp)
 
 ### 8.2 LFSR Cipher와 Known-Plaintext Attack
 LFSR 암호는 생성된 키스트림을 평문 비트열과 XOR한다.
@@ -382,7 +382,7 @@ $$
 이 식에서 **OTP 키를 재사용하면 안 되는 이유**가 드러난다.
 완전비밀성을 얻는 대신 긴 키의 분배와 일회성 사용이라는 비용을 치른다.
 
-## 10. 시험 및 복습 연결
+## 10. 핵심 개념 정리
 
 1. Shift와 Affine Cipher는 키 공간을 세고, 알려진 평문과 암호문으로 키를 직접 복원할 수 있어야 한다.
 
@@ -393,8 +393,3 @@ $$
 4. LFSR은 선형성이 공격에 어떻게 쓰이는지 행렬 방정식으로 연결한다.
 
 5. OTP는 perfect secrecy를 만족하는 **조건**을 함께 설명해야 한다.
-
-## 이어서 읽기
-
-- 이전 글: [01. 정보보호의 기본 개념과 현대암호학](/posts/basic-cryptography-information-security-foundations/)
-- 다음 글: [03. 블록 암호, Feistel, DES와 Triple DES](/posts/basic-cryptography-block-ciphers-feistel-des/)

@@ -1,11 +1,14 @@
 ---
 title: "08. RSA, 정수론, 소수 판정과 OAEP"
 slug: basic-cryptography-rsa-number-theory-oaep
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-12'
 categories: basic_cryptography
 math: true
-description: "RSA, 정수론, 소수 판정과 OAEP의 개념, 수식과 예제를 정리한다."
+
 ---
+
+RSA는 큰 정수의 거듭제곱과 모듈러 연산을 바탕으로 평문을 암호화한다. 키를 만드는 데는 소수 판정과 확장 유클리드 알고리즘이 필요하고, 안전하게 사용하려면 OAEP 같은 인코딩도 필요하다.
+
 
 ## 1. 정수론의 기본 연산
 
@@ -202,6 +205,7 @@ repeat lambda times:
         return composite
 return probably_prime
 ```
+
 **확률적 소수 판정을 통과했다고 해서 소수임이 확정되는 것은 아니다.** 통과한 수는 probable prime으로 해석한다.
 
 ### 6.2 Carmichael Number 반례
@@ -252,6 +256,7 @@ for iteration in 1..lambda:
 return probably_prime
 ```
 합성수를 소수로 판단할 확률은 반복 횟수와 랜덤 밑의 선택으로 줄일 수 있다.
+
 **561 예시:** $560=2^4\cdot35$이고, 밑 a=5일 때
 
 $$
@@ -292,7 +297,7 @@ M'=C^d\bmod N.
 $$
 
 ### 7.4 Correctness
-$ed\equiv1\pmod{\varphi(N)}$이므로, 적절한 수론 정리 또는 p,q에 대한 나머지 분석을 통해
+$ed\equiv1\pmod{\varphi(N)}$이므로, 페르마의 소정리를 p와 q에 각각 적용한 뒤 CRT로 결합하면 다음 합동식이 성립한다.
 
 $$
 M^{ed}\equiv M\pmod N.
@@ -337,7 +342,7 @@ $$
 e\in\{3,\ 17,\ 2^{16}+1=65537\}
 $$
 
-을 예로 든다. 덧셈사슬로 계산하면 각각 대략 2,5,17회 곱셈 예시가 나온다. **낮은 공개 지수 자체가 문제인 것은 아니지만 잘못된 패딩과 결합하면 공격이 가능**하다는 점을 따로 구분한다.
+인 경우 덧셈사슬로 거듭제곱을 계산하면 제곱을 포함해 각각 2, 5, 17회의 모듈러 곱셈이 필요하다. 낮은 공개 지수 자체만으로 안전성을 판단할 수는 없지만, 잘못된 패딩과 결합하면 공격에 취약해질 수 있다.
 
 ### 8.2 비밀 지수 d를 너무 작게 두지 않기
 작은 비밀 지수 d는 공격의 대상이 될 수 있다. Boneh–Durfee 공격의 대표적인 경계는 $d<N^{0.292}$다. 따라서 e의 계산 편의성을 d를 임의로 짧게 만드는 식으로 얻으면 안 된다.
@@ -353,6 +358,7 @@ m_p=C^{d_p}\bmod p,\qquad m_q=C^{d_q}\bmod q.
 $$
 
 이후 CRT로 $m_p,m_q$를 결합한다.
+
 **같은 예제:** $N=221,p=13,q=17,d=77,C=22$.
 
 $$
@@ -416,9 +422,3 @@ $k$를 모듈러스 길이(바이트), $hLen$을 해시 출력 길이라 두고,
 Masking을 Seed와 DB 양쪽에 적용해 입력 메시지와 인코딩 결과 간에 복잡한 관계를 만든다. **기존 RSA의 결정성과 단순 곱셈 준동형성을 그대로 노출하지 않도록 하는 패딩**이라는 점이 핵심이다.
 
 ![OAEP 전체 그림](./figure-01.webp)
-
-
-## 이어서 읽기
-
-- 이전 글: [07. 공개키 암호와 안전성 모델](/posts/basic-cryptography-public-key-security-models/)
-- 다음 글: [09. 이산로그, Diffie-Hellman과 ElGamal](/posts/basic-cryptography-diffie-hellman-elgamal/)

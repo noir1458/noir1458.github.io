@@ -1,10 +1,10 @@
 ---
 title: "04. AES, 유한체와 라운드 변환"
 slug: basic-cryptography-aes-finite-fields
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-16'
 categories: basic_cryptography
 math: true
-description: "AES, 유한체와 라운드 변환의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. AES 개요
@@ -100,6 +100,7 @@ A\otimes B=(A(X)B(X))\bmod P(X).
 $$
 
 예를 들어 $X^8\equiv X^4+X^3+X+1\pmod{P(X)}$이므로 가장 높은 차수항을 이 관계로 줄일 수 있다. 모든 덧셈은 $\mathbb F_2$에서 XOR다.
+
 **핵심:** AES에서 곱하기 02는 1비트 왼쪽 이동을 기초로 구현하고, 최고 비트가 1이면 환원 다항식에 따른 XOR을 추가한다. 이 설명은 이후 MixColumns의 02, 03 계수와 연결된다.
 
 ## 3. 다항식 Euclidean Algorithm과 역원
@@ -337,7 +338,7 @@ EB&59&8B&1B\\40&2E&A1&C3\\F2&38&13&42\\1E&84&E7&D2
 \end{pmatrix}.
 $$
 
-AES 라운드 변환 중 비밀키 값을 직접 쓰는 부분이 AddRoundKey라는 점.
+AES의 라운드 변환 중 비밀키에서 유도한 라운드 키를 직접 사용하는 단계는 AddRoundKey다.
 
 ## 8. AES-128 Key Expansion
 
@@ -372,7 +373,7 @@ T(w_0,w_1,w_2,w_3)
 (S(w_1)\oplus r_i,\ S(w_2),\ S(w_3),\ S(w_0)).
 $$
 
-라운드 상수는 2원체에서 지수 연산한 값으로 구한다. $W^{(4)}$부터 $W^{(43)}$까지 만들어 최초 키 포함 총 11개 라운드 키를 사용한다.
+라운드 상수의 첫 바이트는 $GF(2^8)$에서 $02^{i-1}$을 계산해 구하고, 나머지 세 바이트는 0으로 둔다. $W^{(4)}$부터 $W^{(43)}$까지 만들어 최초 키 포함 총 11개 라운드 키를 사용한다.
 네 word마다 특수한 $T$가 개입한다는 점, Shift/Rotate와 S-box, Rcon이 서로 다른 단계임을 구별해야 한다.
 
 ![Key Expansion 설명 및 도식](./figure-02.webp)
@@ -394,8 +395,3 @@ AES-128의 전수 탐색 공간은 $2^{128}$. 2011년에는 Bogdanov, Khovratovi
 | 키 크기 | 56비트 | 112 또는 168비트 | 128/192/256비트 |
 | 라운드 | 16 | DES 연산 3회 | 10/12/14 |
 | 구조 | Feistel | Feistel 기반 EDE | SPN |
-
-## 이어서 읽기
-
-- 이전 글: [03. 블록 암호, Feistel, DES와 Triple DES](/posts/basic-cryptography-block-ciphers-feistel-des/)
-- 다음 글: [05. 스트림 암호, 난수 생성과 RC4](/posts/basic-cryptography-stream-ciphers-rc4/)

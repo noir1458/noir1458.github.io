@@ -1,11 +1,14 @@
 ---
 title: "09. 이산로그, Diffie-Hellman과 ElGamal"
 slug: basic-cryptography-diffie-hellman-elgamal
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-11'
 categories: basic_cryptography
 math: true
-description: "이산로그, Diffie-Hellman과 ElGamal의 개념, 수식과 예제를 정리한다."
+
 ---
+
+Diffie-Hellman은 공개된 통신만으로 두 사람이 같은 비밀값을 계산하게 한다. 그 기반에는 군의 연산과 이산로그 문제가 있으며, ElGamal 암호도 이 구조를 이용한다.
+
 
 ## 1. 군(Group)의 정의
 집합 G와 이항연산 $\circ$에 대해 다음 네 가지 조건을 만족하면 $(G,\circ)$를 군이라고 한다.
@@ -93,7 +96,7 @@ $$
 ### 3.2 알려진 공격 알고리즘
 군의 크기와 구조에 따라 다음 알고리즘을 고려한다.
 
-- 충분히 작지 않은 법 p가 요구된다. 유한체 곱셈군 전체에 대한 **General/Special Number Field Sieve** 공격을 고려해야 한다.
+- 법 p가 충분히 커야 한다. 유한체 곱셈군 전체에 대한 **General/Special Number Field Sieve** 공격을 고려해야 한다.
 
 - 부분군의 위수 q도 충분히 커야 한다. **Pollard rho** 같은 generic DLP 공격의 복잡도는 대략 $\sqrt q$에 비례한다.
 
@@ -123,6 +126,7 @@ Alice와 Bob이 **공개 채널만 이용해 같은 공유 비밀값을 생성**
 - 각 참여자는 별도의 개인 지수 a,b를 선택
 
 ### 4.3 키 교환 절차
+
 **Alice**
 
 1. 비밀 지수 a 선택
@@ -132,6 +136,7 @@ Alice와 Bob이 **공개 채널만 이용해 같은 공유 비밀값을 생성**
 3. A를 Bob에게 전송
 
 4. Bob의 B를 받아 $K_{AB}=B^a\bmod p$ 계산
+
 **Bob**
 
 1. 비밀 지수 b 선택
@@ -196,6 +201,7 @@ CDH는 지수 a 또는 b를 반드시 직접 구하지 않더라도 공유 비�
 따라서 Alice와 Bob이 같은 비밀키를 공유하지 못하고 **각각 Eve와 다른 비밀키**를 공유하게 된다. Eve는 Alice의 메시지를 복호화하고 재암호화하여 Bob에게 전달할 수 있다.
 
 ### 6.2 방어
+
 **참가자 인증(Authentication)**이 필요하다. 공개값을 보낼 때 **전자서명**을 덧붙여 인증할 수 있다. 단, 서명만 붙이는 것으로 끝나지 않고 검증키가 실제 해당 주체의 것이라는 신뢰 관계도 필요하다.
 
 ![MITM 공격 그림](./figure-01.webp)
@@ -259,7 +265,7 @@ $$
 \frac{C_2}{C_1^x}=\frac{MX^r}{X^r}=M.
 $$
 
-$C_1$만으로 메시지를 알아낼 수 없으며, 무작위 r 때문에 같은 메시지라도 암호문은 매번 바뀐다.
+$C_1$만으로 메시지를 알아낼 수 없으며, 무작위 r을 선택하므로 같은 메시지에서도 서로 다른 암호문이 나올 수 있다.
 
 ## 8. ElGamal의 곱셈 준동형성과 보안 모델
 ElGamal은 원래 구조에서
@@ -280,8 +286,3 @@ $$
 | DDH | 주어진 X가 $g^{ab}$인지 구별하는가? | 공유 비밀의 무작위성 구별 |
 | DH | 공개 채널로 같은 비밀을 공유할 수 있는가? | 가능하지만 인증 없는 MITM에 취약 |
 | ElGamal | 공개키로 확률적 메시지 암호화를 할 수 있는가? | DDH 가정 하 IND-CPA |
-
-## 이어서 읽기
-
-- 이전 글: [08. RSA, 정수론, 소수 판정과 OAEP](/posts/basic-cryptography-rsa-number-theory-oaep/)
-- 다음 글: [10. 전자서명, RSA, ElGamal과 PSS](/posts/basic-cryptography-digital-signatures-rsa-pss/)

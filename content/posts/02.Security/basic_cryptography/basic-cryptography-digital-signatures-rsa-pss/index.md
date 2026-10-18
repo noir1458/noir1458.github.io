@@ -1,10 +1,10 @@
 ---
 title: "10. 전자서명, RSA, ElGamal과 PSS"
 slug: basic-cryptography-digital-signatures-rsa-pss
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-10'
 categories: basic_cryptography
 math: true
-description: "전자서명, RSA, ElGamal과 PSS의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. Digital Signature의 목적
@@ -48,7 +48,7 @@ $$
 \operatorname{Verify}\bigl(pk,M,\operatorname{Sign}(sk,M)\bigr)=1.
 $$
 
-올바른 키쌍에서 정직하게 만들어진 서명은 반드시 검증되어야 한다.
+올바른 키쌍과 서명 알고리즘으로 생성한 서명은 반드시 검증을 통과해야 한다.
 
 ## 3. Digital Signature Security Game
 
@@ -89,6 +89,7 @@ RSA 암호화의 키 생성과 마찬가지다.
 4. $pk=(N,e)$, $sk=d$
 
 ### 4.2 Sign과 Verify
+
 **Raw/Textbook RSA Signature**
 
 $$
@@ -116,7 +117,7 @@ $$
 
 3. $(M,s)$를 유효한 서명으로 출력
 
-공개키만으로도 서명이 유효하다. **중요:** 비밀키 d를 계산하지 않았어도 위조가 성공한 것이다. 안전한 서명은 **메시지 인코딩 및 서명용 패딩**이 필요하다.
+공개 정보만으로 검증을 통과하는 메시지·서명 쌍을 만든 것이다. **중요:** 비밀키 d를 계산하지 않았어도 위조가 성공한 것이다. 안전한 서명은 **메시지 인코딩 및 서명용 패딩**이 필요하다.
 
 ## 5. RSA-PSS
 
@@ -291,8 +292,3 @@ DSA에서는 법 p와 법 q를 구분해야 한다. 서명에는 무작위 k와 
 - 단순 RSA 거듭제곱을 **그대로 서명 알고리즘으로 사용하면 위조**된다.
 
 - PSS/DSA 같은 이름을 아는 것만으로 안전한 구현이 되지 않는다. 해시, 입력 검증, 표준 매개변수 등을 적용해야 한다.
-
-## 이어서 읽기
-
-- 이전 글: [09. 이산로그, Diffie-Hellman과 ElGamal](/posts/basic-cryptography-diffie-hellman-elgamal/)
-- 다음 글: [11. 타원곡선과 DSA, ECDSA](/posts/basic-cryptography-elliptic-curves-ecdsa/)

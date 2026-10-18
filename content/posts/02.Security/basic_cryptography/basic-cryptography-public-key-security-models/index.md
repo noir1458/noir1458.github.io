@@ -1,16 +1,16 @@
 ---
 title: "07. 공개키 암호와 안전성 모델"
 slug: basic-cryptography-public-key-security-models
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-13'
 categories: basic_cryptography
 math: true
-description: "공개키 암호와 안전성 모델의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. Public Key Encryption
 
 ### 1.1 대칭키 암호와의 차이
-공개키 암호는 암호화 키와 복호화 키가 다르다. 공개키 $pk$는 공개해도 되고 비밀키 $sk$는 소유자만 보유한다. RSA, ElGamal, NTRU가 대표적인 예다.
+공개키 암호는 암호화 키와 복호화 키가 다르다. 암호화에 쓰는 공개키는 공개해도 되고, 복호화에 쓰는 비밀키는 소유자만 보유한다. RSA, ElGamal, NTRU가 대표적인 예다.
 
 | 비교 | 대칭키 암호 | 공개키 암호 |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ description: "공개키 암호와 안전성 모델의 개념, 수식과 예제�
 | 키 배포 | 공유 과정의 보안이 중요 | 공개키 자체를 공개 가능 |
 | 키의 안전성 | 비밀키 보호 | 비밀키 보호 및 공개키의 진위 확인 |
 
-공개키를 공개한다고 안전한 것이지, **공개키의 소유자가 누구인지를 인증해야 하는 문제까지 자동으로 해결되는 것은 아니다.**
+공개키 암호는 공개키를 알아도 평문을 복원하기 어렵도록 설계한다. 다만 **그 공개키가 누구의 것인지 인증하는 문제는 별도로 해결해야 한다.**
 
 ## 2. PKE의 세 알고리즘
 PKE는 다항시간에 수행되는 세 알고리즘으로 정의한다.
@@ -59,14 +59,17 @@ $$
 
 ### 3.1 Challenger와 Adversary
 공격자 $A$가 암호문이 두 메시지 중 **어느 메시지를 암호화한 것인지 구별할 수 있는가**를 시험한다. 도전자는 $C$라고 표기한다.
+
 **Setup**
 
 1. Challenger가 $KeyGen(\lambda)$을 수행하여 $(pk,sk)$를 생성한다.
 
 2. 공격자에게 공개키 $pk$를 준다.
+
 **Phase 1**
 
 1. 공격 모델에 따라 공격자는 복호화 오라클 $D_1$에 암호문을 제출하고 평문을 받는다.
+
 **Challenge**
 
 1. 공격자가 같은 길이의 후보 메시지 $M_0,M_1$을 도전자에게 제출한다.
@@ -74,11 +77,13 @@ $$
 2. 도전자가 무작위 비트 $b\in\{0,1\}$를 고른다.
 
 3. 도전자는 $C^*=\operatorname{Enc}(pk,M_b)$를 계산하여 공격자에게 보낸다.
+
 **Phase 2**
 
 1. 공격 모델에 따라 공격자가 복호화 오라클 $D_2$에 암호문을 제출한다.
 
 2. **도전 암호문 $C^*$ 자체는 이 오라클에 물어볼 수 없다.**
+
 **Guess**
 
 1. 공격자가 $b'$을 출력한다. $b'=b$이면 공격자가 성공한다.
@@ -129,8 +134,3 @@ PPT는 probabilistic polynomial time의 약자다. 공개키 암호의 computati
 - CCA2에서는 challenge 이후에도 공격할 수 있지만 **challenge ciphertext 직접 복호화 금지**다.
 
 - negligible하지 않은 advantage를 얻는 다항시간 공격자가 존재한다면 해당 게임 안전성이 깨진 것이다.
-
-## 이어서 읽기
-
-- 이전 글: [06. 블록 암호 운용 모드 ECB, CBC, CFB, OFB, CTR](/posts/basic-cryptography-block-cipher-modes/)
-- 다음 글: [08. RSA, 정수론, 소수 판정과 OAEP](/posts/basic-cryptography-rsa-number-theory-oaep/)

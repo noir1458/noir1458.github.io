@@ -1,16 +1,21 @@
 ---
 title: "14. 암호학 계산 문제와 복습"
 slug: basic-cryptography-cryptography-review
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-06'
 categories: basic_cryptography
 math: true
-description: "암호학 계산 문제와 복습의 개념, 수식과 예제를 정리한다."
+
 ---
+
+암호 알고리즘을 이해하려면 정의를 읽는 것과 함께 직접 계산해 보는 과정이 필요하다. 키 재사용의 문제부터 AES의 바이트 연산, RSA와 전자서명까지 대표적인 문제로 확인해 보자.
+
 
 ## 1. 대칭키 암호와 RSA 연습
 
 ### 문제 1: CIA Triad
-정답은 Confidentiality, Integrity, Availability. 무엇을 보호하는지와 각 속성의 차이를 설명할 수 있어야 한다.
+정보보호의 세 가지 목표는 무엇이며, 각각 무엇을 보호하는가?
+
+기밀성(Confidentiality)은 허가되지 않은 정보 열람을 막고, 무결성(Integrity)은 허가되지 않은 변경을 막는다. 가용성(Availability)은 정당한 사용자가 필요한 자원을 제때 이용할 수 있게 하는 성질이다.
 
 ### 문제 2: One-Time Pad(OTP)
 비밀키 $K_i$와 평문 $M$을 XOR하여 암호문 $C_i$를 만드는 OTP에서 키스트림 재사용 시 메시지 관계가 드러나는지 분석한다.
@@ -34,7 +39,7 @@ $$
 공격자는 암호문만으로 세 평문의 관계를 알 수 있으므로, 세 메시지를 함께 보았을 때 완전비밀성이 성립하지 않는다.
 
 ### 문제 3: Feistel Round
-도식을 채우고 식으로 표현한다.
+Feistel 구조의 한 라운드에서 왼쪽과 오른쪽 블록이 어떻게 바뀌는지 식으로 표현해 보자.
 
 $$
 L_i=R_{i-1},\qquad R_i=L_{i-1}\oplus F(R_{i-1},K_i).
@@ -78,13 +83,14 @@ AES의 SubBytes, ShiftRows, MixColumns, AddRoundKey와 DES의 Expansion, XOR, Su
 
 ![AES 계산 문제 7의 입력과 풀이](./aes-exercise-7.webp)
 주어진 4x4 바이트 State에 S-box를 적용하고 ShiftRows를 적용하는 문제다.
+
 **풀이 원칙**
 
 1. 각 바이트의 상위 16진수 한 자리는 S-box의 행, 하위 한 자리는 열
 
 2. 네 행을 각각 왼쪽으로 0, 1, 2, 3바이트 회전
 
-3. 계산을 소수 자리 숫자로 수행하지 않고 **16진수 바이트 표기를 유지**
+3. 바이트를 십진수로 읽지 않고 **16진수 바이트 표기를 유지**
 
 ### 문제 8: AES 유한체와 MixColumns
 
@@ -105,7 +111,7 @@ $$
 \end{pmatrix}
 $$
 
-계산은 다항식 곱셈 후 $P(X)$에 대한 나머지를 취한다. **중간 과정에서 XOR와 carry 처리, 환원항을 전부 적는 방식**으로 풀이한다.
+계산은 다항식 곱셈 후 $P(X)$에 대한 나머지를 취한다. **자리올림 없는 XOR 연산과 기약다항식에 의한 환원 과정을 차례로 적는 방식**으로 풀이한다.
 
 ### 문제 9: Left-to-Right Modular Exponentiation
 $g^{117}\bmod p$를 Left-to-Right 방법으로 계산하기 위한 경로를 쓰고 모듈러 곱셈 횟수를 구하는 문제.
@@ -126,7 +132,7 @@ $$
 OFB의 피드백은 CFB와 달리 **암호문이 아니라 이전 암호화 함수 출력**이다.
 
 ### 문제 11: Public Key Encryption과 IND-CPA
-PKE의 세 알고리즘 정의 및 결정적 PKE가 IND-CPA 안전하지 않은 이유를 제시한다.
+PKE를 구성하는 세 알고리즘을 정의하고, 결정적 공개키 암호가 IND-CPA 안전성을 만족할 수 없는 이유를 설명해 보자.
 
 $$
 (pk,sk)=KeyGen(\lambda),\quad C=Enc(pk,M),\quad M=Dec(sk,C).
@@ -175,6 +181,7 @@ RSA 개인키 d로 암호문 $CT$에서 인코딩된 메시지 $EM$을 얻은 �
 6. $DB=maskedDB\oplus dbMask$
 
 7. Label 해시, padding, 0x01 구분자를 검증해 메시지 M 추출
+
 **주의:** MGF의 입력과 출력 길이를 구분하고, 디코딩 후 패딩 구조와 해시를 모두 검증해야 한다.
 
 ### 문제 2: Diffie-Hellman, MITM, Authentication
@@ -249,6 +256,7 @@ y_3=s(3-0)-1=17\equiv3\pmod7.
 $$
 
 따라서 $P+Q=(0,3)$.
+
 **(c)** $2P$
 
 $$
@@ -270,6 +278,7 @@ x\ne x',\quad h(x)=h(x')
 $$
 
 를 찾기 어려워야 한다.
+
 **(b) 반례:** $h:\{0,1\}^*\to\{0,1\}^8$가 **입력의 마지막 비트만 출력하고 나머지는 0으로 패딩**한다고 하자. 이 함수가 충돌 저항성을 갖지 않는 이유는 입력이 달라도 마지막 비트가 같으면 결과가 동일하기 때문이다. 예를 들어 마지막 비트가 모두 0인 두 입력을 쉽게 찾을 수 있다.
 
 ### 문제 7: CBC-MAC
@@ -298,7 +307,27 @@ $$
 | 11 | AES $GF(2^8)$와 MixColumns | 모듈러 다항식, Shift/XOR와 reduction |
 | 12 | LFSR 키스트림과 XOR 복호화 | 점화식으로 12비트 생성, 암호문 XOR |
 | 13 | CTR Mode 암복호화 및 장점 | Counter 블록 암호화, 병렬/사전 계산 |
-| 14 | RSA $\varphi(N)$과 인수분해 | $N=pq$, Euler 함수 및 소인수분해 |
+| 14 | RSA 비밀 지수와 인수분해 | $N=pq$, Euler 함수, 모듈러 역원 |
+
+### 문제 1: 참과 거짓 판별
+
+| 주장 | 판정과 이유 |
+| --- | --- |
+| 암호화만으로 데이터 무결성을 보장한다. | 거짓. 기밀성과 무결성은 별개의 목표다. |
+| DES의 각 라운드는 같은 구조를 사용한다. | 참. 같은 Feistel 라운드 구조에 서로 다른 라운드 키를 넣는다. |
+| AES의 모든 라운드는 같은 구조다. | 거짓. 마지막 라운드에는 MixColumns가 없다. |
+| RC4와 ChaCha는 스트림 암호다. | 참. 다만 암호의 분류와 실제 사용 시의 안전성은 구별해야 한다. |
+| ECB, CBC, OFB는 모두 키스트림을 XOR하는 방식이다. | 거짓. OFB는 키스트림을 생성하지만 ECB와 CBC는 평문 블록을 블록암호에 입력한다. |
+
+### 문제 2: 위치 순열과 문자 치환
+
+알파벳 집합을 $A=\{1,2,3,4,5\}$로 두고 순열을 다음처럼 정의하자.
+
+$$
+\pi(1)=2,\quad\pi(2)=4,\quad\pi(3)=5,\quad\pi(4)=3,\quad\pi(5)=1.
+$$
+
+위치 순열 암호에서 $y_i=x_{\pi(i)}$라는 규칙을 사용하면 평문 24531은 $x_2x_4x_5x_3x_1$, 즉 **43152**가 된다. 반면 문자 치환은 각 문자에 $\pi$를 적용하므로 평문 12345가 **24531**이 된다. 순열의 표가 같아도 위치를 바꾸는지, 문자 값을 바꾸는지에 따라 계산이 달라진다.
 
 ### 문제 3: Affine Cipher 복습 예시
 선택 평문 N과 O가 각각 T와 Y에 대응한다면
@@ -309,7 +338,116 @@ $$
 
 빼면 $a\equiv5\pmod{26}$, 따라서 $b\equiv19-13\cdot5\equiv6\pmod{26}$. **키는 (5,6)**이다. 정합성: $\gcd(5,26)=1$.
 
-### 문제 14: RSA에서 $\varphi(N)$과 소인수분해
+### 문제 8: DES S-box의 행과 열
+
+입력 비트의 첫 비트와 마지막 비트로 행을 정하고, 가운데 네 비트로 열을 정한다. 행과 열은 0부터 센다. S-box $S_4$는 다음과 같다.
+
+```text
+행\열  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+0      7 13 14  3  0  6  9 10  1  2  8  5 11 12  4 15
+1     13  8 11  5  6 15  0  3  4  7  2 12  1 10 14  9
+2     10  6  9  0 12 11  7 13 15  1  3 14  5  2  8  4
+3      3 15  0  6 10  1 13  8  9  4  5 11 12  7  2 14
+```
+
+- 입력 **101000**: 행은 $10_2=2$, 열은 $0100_2=4$. 출력은 $12=1100_2$다.
+- 입력 **001110**: 행은 $00_2=0$, 열은 $0111_2=7$. 출력은 $10=1010_2$다.
+
+### 문제 9: Right-to-Left 거듭제곱
+
+$g^{213}\bmod p$를 계산해 보자. 지수를 이진수로 쓰면 $213=11010101_2=128+64+16+4+1$이다. 낮은 비트부터 처리할 때 누적값은 다음처럼 바뀐다. 모든 연산은 $p$로 나눈 나머지로 수행한다.
+
+$$
+1\to g\to g^5\to g^{21}\to g^{85}\to g^{213}.
+$$
+
+처음의 $1\times g$를 대입으로 처리하고 마지막 비트 이후의 불필요한 제곱을 생략하면, 제곱 7회와 누적 곱셈 4회로 총 **11회**의 모듈러 곱셈이 필요하다. 초기값과 반복문의 범위가 다른 구현에서는 연산 횟수도 달라질 수 있다.
+
+### 문제 10: AES SubBytes와 ShiftRows
+
+다음 State에 SubBytes와 ShiftRows를 차례로 적용하자. 행렬의 모든 값은 16진수 바이트다.
+
+$$
+\begin{bmatrix}
+\text{D2}&\text{60}&\text{0D}&\text{E7}\\
+\text{15}&\text{7A}&\text{BC}&\text{68}\\
+\text{63}&\text{39}&\text{E9}&\text{01}\\
+\text{C3}&\text{03}&\text{1E}&\text{FB}
+\end{bmatrix}
+\xrightarrow{\mathrm{SubBytes}}
+\begin{bmatrix}
+\text{B5}&\text{D0}&\text{D7}&\text{94}\\
+\text{59}&\text{DA}&\text{65}&\text{45}\\
+\text{FB}&\text{12}&\text{1E}&\text{7C}\\
+\text{2E}&\text{7B}&\text{72}&\text{0F}
+\end{bmatrix}.
+$$
+
+ShiftRows는 첫 번째 행을 그대로 두고 나머지 행을 각각 왼쪽으로 1, 2, 3바이트 순환 이동한다.
+
+$$
+\begin{bmatrix}
+\text{B5}&\text{D0}&\text{D7}&\text{94}\\
+\text{DA}&\text{65}&\text{45}&\text{59}\\
+\text{1E}&\text{7C}&\text{FB}&\text{12}\\
+\text{0F}&\text{2E}&\text{7B}&\text{72}
+\end{bmatrix}.
+$$
+
+### 문제 11: 유한체 환원과 MixColumns
+
+AES의 기약다항식은 $P(X)=X^8+X^4+X^3+X+1$이다. 따라서 $X^8$의 나머지는 $X^4+X^3+X+1$이며, 바이트 표현은 **00011011**, 즉 **1B**다.
+
+다음 State에 MixColumns를 적용한 결과의 $(2,2)$ 성분을 구하자. 여기서는 행과 열을 1부터 센다.
+
+$$
+\begin{bmatrix}
+\text{D6}&\text{D3}&\text{A3}&\text{97}\\
+\text{64}&\text{E8}&\text{92}&\text{04}\\
+\text{08}&\text{2E}&\text{B5}&\text{DD}\\
+\text{2B}&\text{8E}&\text{D5}&\text{76}
+\end{bmatrix}.
+$$
+
+두 번째 행의 계수는 $(01,02,03,01)$이므로 두 번째 열과 곱하면 다음과 같다. 곱셈은 $GF(2^8)$의 연산이다.
+
+$$
+\text{D3}\oplus(02\cdot\text{E8})\oplus(03\cdot\text{2E})\oplus\text{8E}
+=\text{D3}\oplus\text{CB}\oplus\text{72}\oplus\text{8E}
+=\boxed{\text{E4}}.
+$$
+
+$02\cdot\text{E8}$에서는 왼쪽 이동으로 넘친 최고 비트를 제거한 뒤 1B를 XOR해 CB를 얻는다. $03\cdot\text{2E}=(02\cdot\text{2E})\oplus\text{2E}=\text{5C}\oplus\text{2E}=\text{72}$다.
+
+### 문제 12: LFSR 키스트림과 복호화
+
+점화식과 초기 비트가 다음과 같다고 하자.
+
+$$
+s_{i+4}=s_{i+1}\oplus s_i,\qquad(s_0,s_1,s_2,s_3)=(1,0,0,0).
+$$
+
+초기 비트를 포함해 12비트를 생성하면 **1000 1001 1010**이다. 암호문이 **1110 0011 1100**이면 같은 길이의 키스트림을 XOR한다.
+
+```text
+암호문    1110 0011 1100
+키스트림  1000 1001 1010
+평문      0110 1010 0110
+```
+
+### 문제 14: RSA 비밀 지수 계산
+
+$N=667=23\cdot29$이고 공개 지수가 $e=59$라면 $\varphi(N)=22\cdot28=616$이다. 비밀 지수 $d$는 $59d\equiv1\pmod{616}$을 만족해야 한다.
+
+확장 유클리드 알고리즘으로 $1=25\cdot616-261\cdot59$를 얻으므로
+
+$$
+d\equiv-261\equiv\boxed{355}\pmod{616}.
+$$
+
+실제로 $59\cdot355=20945=34\cdot616+1$이다.
+
+### 확장: RSA에서 $\varphi(N)$과 소인수분해
 서로 다른 두 소수의 곱인 RSA 모듈러스 N과 $\varphi(N)$이 함께 주어졌다고 하자. 이 두 값으로 p와 q를 구할 수 있다.
 
 $$
@@ -343,7 +481,3 @@ $$
 8. **ECDSA/ECC:** Point Addition, Doubling, x좌표와 mod.
 
 9. **Hash/MAC:** collision resistance와 MAC 검증 알고리즘.
-
-## 이어서 읽기
-
-- 이전 글: [13. 메시지 인증 코드, HMAC와 CBC-MAC](/posts/basic-cryptography-message-authentication-codes/)

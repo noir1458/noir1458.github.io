@@ -1,14 +1,15 @@
 ---
 title: "05. 스트림 암호, 난수 생성과 RC4"
 slug: basic-cryptography-stream-ciphers-rc4
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-15'
 categories: basic_cryptography
 math: true
-description: "스트림 암호, 난수 생성과 RC4의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. Stream Cipher
-스트림암호는 데이터를 연속적으로 받아 비트 또는 바이트 단위로 출력한다. 블록암호보다 빠르게 구현할 수 있으며 LFSR Cipher, RC4, ChaCha가 대표적인 예다.
+스트림암호는 비밀키에서 생성한 키스트림을 평문과 결합해 암호문을 만든다. 비트 또는 바이트 단위로 처리하며, LFSR 기반 암호와 RC4, ChaCha가 예에 해당한다.
+
 키스트림 $Z_i$를 이용한 동기식 스트림암호는 다음과 같다.
 
 $$
@@ -28,7 +29,7 @@ $$
 C_1\oplus C_2=P_1\oplus P_2.
 $$
 
-이는 두 평문의 관계를 노출한다. **같은 키스트림(또는 현대식으로 같은 키와 nonce의 조합)을 재사용하지 말라**는 보안 조건이 중요하다.
+이는 두 평문의 관계를 노출한다. 따라서 **같은 키스트림을 재사용해서는 안 된다**. 키와 nonce로 키스트림을 생성하는 방식이라면 같은 키에서 nonce를 중복 사용하지 않아야 한다.
 
 ## 2. 난수의 암호학적 요구사항
 
@@ -143,8 +144,3 @@ RC4는 신규 서비스에서 사용하지 않는다.
 | RC4 PRGA | 변하는 S, i, j | 바이트 키스트림 출력 | 키스트림 통계적 편향 |
 | TRNG | 물리적 엔트로피 | 비결정적 | 엔트로피 품질 |
 | PRNG | 시드와 내부 상태 | 결정적 | 상태 노출, 예측 가능성 |
-
-## 이어서 읽기
-
-- 이전 글: [04. AES, 유한체와 라운드 변환](/posts/basic-cryptography-aes-finite-fields/)
-- 다음 글: [06. 블록 암호 운용 모드 ECB, CBC, CFB, OFB, CTR](/posts/basic-cryptography-block-cipher-modes/)

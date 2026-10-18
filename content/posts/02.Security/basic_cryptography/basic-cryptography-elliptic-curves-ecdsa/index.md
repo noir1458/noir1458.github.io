@@ -1,14 +1,14 @@
 ---
 title: "11. 타원곡선과 DSA, ECDSA"
 slug: basic-cryptography-elliptic-curves-ecdsa
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-09'
 categories: basic_cryptography
 math: true
-description: "타원곡선과 DSA, ECDSA의 개념, 수식과 예제를 정리한다."
+
 ---
 
 ## 1. ECC로 넘어가는 이유
-앞서 소개한 DSA와 Diffie-Hellman은 일반적인 유한체 곱셈군에서의 DLP 어려움에 기초한다. ECC는 **타원곡선 위 점들로 이루어진 유한군**을 사용하며, 같은 목표 보안강도에서 유한체 DLP보다 짧은 키/매개변수를 사용할 수 있다.
+DSA와 Diffie-Hellman은 일반적인 유한체 곱셈군에서의 DLP 어려움에 기초한다. ECC는 **타원곡선 위 점들로 이루어진 유한군**을 사용하며, 같은 목표 보안강도에서 유한체 DLP보다 짧은 키/매개변수를 사용할 수 있다.
 
 ## 2. Multiplicative vs. Additive Notation
 
@@ -59,7 +59,7 @@ $$
 4A^3+27B^2\ne0.
 $$
 
-점 집합에는 평면의 유한한 점 외에 **무한원점 **$\mathcal O$를 포함한다. 이 점은 타원곡선 덧셈의 항등원이다.
+점 집합에는 평면의 유한한 점 외에 **무한원점** $\mathcal O$를 포함한다. 이 점은 타원곡선 덧셈의 항등원이다.
 
 ### 3.2 Finite Field 위 곡선
 p가 소수인 경우,
@@ -101,13 +101,14 @@ y_3=s(x_1-x_3)-y_1\pmod p.
 $$
 
 그 결과 $P+Q=(x_3,y_3)$다. 수학적으로는 두 점을 잇는 직선이 곡선과 만나는 세 번째 교점에 대해 x축 대칭을 취한 점을 덧셈 결과로 정한다.
+
 **예외**
 
 - $\mathcal O+P=P$.
 
 - 같은 x좌표에 y가 서로 음수인 점들은 서로 역원이라 $P+(-P)=\mathcal O$.
 
-- $P=Q$이면 접선 기울기를 사용하는 **점의 배점** 공식 적용.
+- $P=Q$이면 접선 기울기를 사용하는 **점 두 배 연산** 공식 적용.
 
 ### 4.2 덧셈 공식의 기하학적 유도
 두 점을 지나는 직선을 $y=sx+t$라고 두고 곡선 식에 대입하면,
@@ -287,6 +288,7 @@ R'=kP=R.
 $$
 
 따라서 x좌표가 같아 검증에 성공한다.
+
 **주의:** ECDSA의 r은 점의 x좌표 자체가 아니라 $x_R\bmod q$다. 같은 k를 두 서명에 재사용하면 개인키를 복구할 수 있어 nonce 생성은 중요하다.
 
 ## 9. 표준 곡선 파라미터의 예
@@ -296,7 +298,7 @@ $$
 E:y^2=x^3-3x+B\pmod p.
 $$
 
-관련 매개변수에는 체의 법 p, 기약 부분군의 위수 q, 계수 B, 생성점 좌표 $(x_P,y_P)$가 있다. 구체적인 매개변수 값은 다음과 같다.
+관련 매개변수에는 체의 법 p, 생성점이 속한 소수 위수 부분군의 위수 q, 계수 B, 생성점 좌표 $(x_P,y_P)$가 있다. 구체적인 매개변수 값은 다음과 같다.
 
 ![Curve P-256 표](./figure-01.webp)
 
@@ -329,8 +331,3 @@ C_2-xC_1=M+rX-x(rG)=M+rxG-rxG=M.
 $$
 
 일반 ElGamal에서는 곱셈과 나눗셈을 썼지만 ECC로 옮긴 버전에서는 **덧셈과 뺄셈**을 쓴다는 점이 핵심이다.
-
-## 이어서 읽기
-
-- 이전 글: [10. 전자서명, RSA, ElGamal과 PSS](/posts/basic-cryptography-digital-signatures-rsa-pss/)
-- 다음 글: [12. 암호학적 해시 함수와 SHA 계열](/posts/basic-cryptography-cryptographic-hash-functions/)
