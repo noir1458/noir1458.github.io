@@ -1,7 +1,7 @@
 ---
 title: "05. 스트림 암호, 난수 생성과 RC4"
 slug: basic-cryptography-stream-ciphers-rc4
-publishedAt: '2026-10-10'
+publishedAt: '2025-10-10'
 categories: basic_cryptography
 math: true
 
