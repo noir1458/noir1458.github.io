@@ -7,526 +7,451 @@ math: true
 
 ---
 
-## 핵심 개념과 수식
+수열은 정수 인덱스를 입력으로 받는 함수이고, 행렬은 수를 행과 열에 맞춰 배열한 구조다. 바닥·천장 함수로 정수 단위의 자원을 계산하고, 점화식으로 반복되는 변화를 표현하고, 행렬로 여러 관계와 방정식을 한꺼번에 다룰 수 있다. 정의를 실제 계산에 적용하면서 각 구조의 성질을 살펴보자.
 
-### 2.3 함수의 성질 복습
-함수 f: A → B는 **정의역의 각 원소마다 정확히 하나의 공역 원소가 대응**되어야 한다. 상(image), 원상(preimage), 치역(range)을 구별하고 단사, 전사, 전단사를 각각 별도로 판단한다. 특히 역함수가 정의되려면 모든 공역 원소가 정확히 하나의 원상을 가져야 한다.
+## 1. 함수의 성질을 판단하는 연습
 
-$$
-f^{-1}:B\to A\ \text{존재}\iff f\text{가 전단사},\qquad
-(f\circ g)(x)=f(g(x))
-$$
+단사는 같은 출력에서 같은 입력이 따라오는지, 전사는 공역의 모든 값에 원상이 있는지 확인한다. 정의역과 공역을 함께 보아야 한다.
 
-함수 합성은 순서에 따라 결과가 달라질 수 있으므로 정의역과 공역 조건부터 확인한다. 항등함수는 입력을 그대로 돌려주고, 단조성은 입력의 순서와 함숫값의 순서가 어떤 관계인지 나타낸다. 바닥함수·천장함수·계승함수는 정수 계산에 자주 등장한다. 부분함수는 일부 입력에서 값이 정의되지 않을 수 있으며, 집합의 기수(cardinality)는 전단사의 존재 여부로 비교할 수 있다.
+| 함수 | 단사 | 전사 | 이유 |
+|---|---|---|---|
+| $f:\mathbb Z\to\mathbb Z$, $f(n)=n-1$ | O | O | $f(a)=f(b)$이면 $a=b$이고 $y$의 원상은 $y+1$ |
+| $f:\mathbb Z\to\mathbb Z$, $f(n)=n^2+1$ | X | X | $f(1)=f(-1)=2$, 0의 원상이 없음 |
+| $f:\mathbb Z\to\mathbb Z$, $f(n)=\lceil n/2\rceil$ | X | O | $f(1)=f(2)=1$, 각 정수 $y$에 $n=2y$를 선택 |
+| $f:\mathbb R\to\mathbb R$, $f(x)=-3x+4$ | O | O | $y$의 원상 $(4-y)/3$이 유일 |
+| $f:\mathbb R\to\mathbb R$, $f(x)=-3x^2+7$ | X | X | $f(1)=f(-1)=4$, 7보다 큰 값은 출력되지 않음 |
 
-### 2.4 수열과 합
-수열은 순서가 있는 원소들의 나열로 함수 a: ℕ → S로도 볼 수 있다. 등차수열은 연속하는 항의 차가 일정하고, 등비수열은 비가 일정하다. 문자열 역시 원소에 순서가 있는 유한 수열이다.
+실수에서 $f(x)=ax+b$, $a\ne0$이면 $f^{-1}(y)=(y-b)/a$다. 정수에서 $f(n)=n+5$의 역함수는 $f^{-1}(n)=n-5$다. 역함수는 출력을 다시 입력으로 되돌리는 함수이며 $1/f(x)$와는 다르다.
 
-$$
-a_n=a_1+(n-1)d,\qquad a_n=a_1r^{n-1}
-$$
+## 2. 바닥함수와 천장함수
 
-점화식(recurrence relation)은 앞선 항으로 다음 항을 정의한다. 단순 점화식은 반복 대입으로 닫힌 형식을 유도한다. 피보나치 수열과 복리는 점화식으로 나타낼 수 있는 대표적인 예다. 주어진 정수 수열에서 규칙을 추측할 때는 몇 항만 맞는 규칙과 전체 수열을 정의하는 규칙을 구별해야 한다. 온라인 정수열 백과사전(OEIS)은 알려진 수열과 그 성질을 찾아볼 때 유용하다.
+바닥함수 $\lfloor x\rfloor$는 $x$ 이하의 최대 정수, 천장함수 $\lceil x\rceil$은 $x$ 이상의 최소 정수다.
 
-$$
-\sum_{k=0}^{n}ar^k=\begin{cases}
-a\dfrac{1-r^{n+1}}{1-r},&r\ne1,\\
-a(n+1),&r=1.
-\end{cases}
-$$
+| $x$ | $\lfloor x\rfloor$ | $\lceil x\rceil$ |
+|---|---|---|
+| $3.5$ | 3 | 4 |
+| $-1.5$ | -2 | -1 |
+| $-0.5$ | -1 | 0 |
+| $-2.5$ | -3 | -2 |
+| $7$ | 7 | 7 |
 
-$$
-\sum_{k=1}^n k=\frac{n(n+1)}2,\qquad
-\sum_{k=1}^n k^2=\frac{n(n+1)(2n+1)}6
-$$
-
-합과 곱의 기호를 읽을 때는 지수와 첨자를 구별하고, 범위와 시작 인덱스를 먼저 확인한다. 이중합은 각 첨자의 범위를 따로 읽으며, 집합의 원소를 대상으로 합을 정의할 수도 있다.
-
-### 2.6 행렬
-m × n 행렬은 행과 열로 배열된 값들의 구조다. 덧셈은 같은 크기에서 정의되고, 행렬곱 AB는 A의 열 개수와 B의 행 개수가 같아야 한다.
+음수에서는 소수 부분을 지우는 것과 바닥함수가 다르다. 정의를 부등식으로 쓰면 정수 $n$에 대해
 
 $$
-(AB)_{ij}=\sum_k a_{ik}b_{kj}
+\lfloor x\rfloor=n\iff n\le x<n+1,\qquad
+\lceil x\rceil=n\iff n-1<x\le n.
 $$
 
-행렬곱은 **일반적으로 교환법칙이 성립하지 않는다**. 항등행렬은 곱셈의 항등원이고, 전치행렬은 행과 열을 맞바꾼 행렬이다. 자신의 전치와 같은 행렬을 대칭행렬이라고 한다. 0-1 행렬의 결합(join)과 만남(meet)은 각 성분에 OR와 AND를 적용한다. 불 곱(Boolean product)은 행렬곱의 덧셈과 곱셈을 각각 OR와 AND로 바꾸며, 이를 반복하면 불 거듭제곱이 된다.
+따라서
 
 $$
-(A\odot B)_{ij}=\bigvee_k(a_{ik}\land b_{kj})
+x-1<\lfloor x\rfloor\le x\le\lceil x\rceil<x+1,
 $$
 
----
-
-## 2.3 함수: 정의, 역함수, 합성
-
-
-<details>
-<summary>함수의 정의</summary>
-
-![함수의 정의](./figure-02.webp)
-
-</details>
-
-<details>
-<summary>정의역, 공역, 상, 원상, 치역</summary>
-
-![정의역, 공역, 상, 원상, 치역](./figure-03.webp)
-
-</details>
-
-<details>
-<summary>예제: 정의역, 공역, 상, 원상 확인하기</summary>
-
-![예제: 정의역, 공역, 상, 원상 확인하기](./figure-04.webp)
-
-</details>
-
-<details>
-<summary>함수의 합, 곱과 부분집합의 상</summary>
-
-![함수의 합, 곱과 부분집합의 상](./figure-05.webp)
-
-</details>
-
-### 연습문제 Practice 2.3-①
-
-![연습문제 Practice 2.3-①](./figure-45.webp)
-
-<details>
-<summary>단사, 전사, 전단사</summary>
-
-![단사, 전사, 전단사](./figure-06.webp)
-
-</details>
-
-<details>
-<summary>단사, 전사임을 보이는 방법</summary>
-
-![단사, 전사임을 보이는 방법](./figure-07.webp)
-
-</details>
-
-<details>
-<summary>증가·감소 함수와 항등함수</summary>
-
-![증가·감소 함수와 항등함수](./figure-08.webp)
-
-</details>
-
-<details>
-<summary>예제: 단사, 전사 판별</summary>
-
-![예제: 단사, 전사 판별](./figure-09.webp)
-
-</details>
-
-### 연습문제 Practice 2.3-②
-
-![연습문제 Practice 2.3-②](./figure-46.webp)
-
-<details>
-<summary>역함수</summary>
-
-![역함수](./figure-10.webp)
-
-</details>
-
-### 연습문제 Practice 2.3-③
-
-![연습문제 Practice 2.3-③](./figure-47.webp)
-
-<details>
-<summary>함수의 합성</summary>
-
-![함수의 합성](./figure-11.webp)
-
-</details>
-
-<details>
-<summary>합성의 예제와 역함수와의 관계</summary>
-
-![합성의 예제와 역함수와의 관계](./figure-12.webp)
-
-</details>
-
-<details>
-<summary>함수의 그래프</summary>
-
-![함수의 그래프](./figure-13.webp)
-
-</details>
-
-<details>
-<summary>바닥함수와 천장함수</summary>
-
-![바닥함수와 천장함수](./figure-14.webp)
-
-</details>
-
-<details>
-<summary>바닥·천장 함수의 유용한 성질</summary>
-
-![바닥·천장 함수의 유용한 성질](./figure-15.webp)
-
-</details>
-
-<details>
-<summary>함수의 성질 증명하기</summary>
-
-![함수의 성질 증명하기](./figure-16.webp)
-
-</details>
-
-<details>
-<summary>계승 함수와 부분함수</summary>
-
-![계승 함수와 부분함수](./figure-17.webp)
-
-</details>
-
-### 연습문제 Practice 2.3-④
-
-![연습문제 Practice 2.3-④](./figure-48.webp)
-
-<details>
-<summary>무한집합의 크기</summary>
-
-![무한집합의 크기](./figure-18.webp)
-
-</details>
-
-### 2.3 단원 연습문제
-
-![2.3 단원 연습문제](./figure-49.webp)
-
-## 2.4 수열과 합
-
-<details>
-<summary>수열</summary>
-
-![수열](./figure-19.webp)
-
-</details>
-
-<details>
-<summary>등비수열과 등차수열</summary>
-
-![등비수열과 등차수열](./figure-20.webp)
-
-</details>
-
-<details>
-<summary>문자열: 수열의 한 예</summary>
-
-![문자열: 수열의 한 예](./figure-21.webp)
-
-</details>
-
-<details>
-<summary>점화식</summary>
-
-![점화식](./figure-22.webp)
-
-</details>
-
-<details>
-<summary>피보나치 수열</summary>
-
-![피보나치 수열](./figure-23.webp)
-
-</details>
-
-<details>
-<summary>점화식의 해인지 확인하기</summary>
-
-![점화식의 해인지 확인하기](./figure-24.webp)
-
-</details>
-
-<details>
-<summary>점화식 풀이: 반복법</summary>
-
-![점화식 풀이: 반복법](./figure-25.webp)
-
-</details>
-
-<details>
-<summary>응용: 복리 계산</summary>
-
-![응용: 복리 계산](./figure-26.webp)
-
-</details>
-
-### 연습문제 Practice 2.4-①
-
-![연습문제 Practice 2.4-①](./figure-50.webp)
-
-<details>
-<summary>특수 정수 수열 찾기</summary>
-
-![특수 정수 수열 찾기](./figure-27.webp)
-
-</details>
-
-<details>
-<summary>유용한 수열과 수열 추측 예제</summary>
-
-![유용한 수열과 수열 추측 예제](./figure-28.webp)
-
-</details>
-
-<details>
-<summary>온라인 정수열 백과사전</summary>
-
-![온라인 정수열 백과사전](./figure-29.webp)
-
-</details>
-
-<details>
-<summary>합과 곱의 표기법</summary>
-
-![합과 곱의 표기법](./figure-30.webp)
-
-</details>
-
-<details>
-<summary>등비급수의 합</summary>
-
-![등비급수의 합](./figure-31.webp)
-
-</details>
-
-<details>
-<summary>유용한 합 공식</summary>
-
-![유용한 합 공식](./figure-32.webp)
-
-</details>
-
-<details>
-<summary>합의 공식의 계산</summary>
-
-![합의 공식의 계산](./figure-33.webp)
-
-</details>
-
-<details>
-<summary>합의 공식 연습</summary>
-
-![합의 공식 연습](./figure-34.webp)
-
-</details>
-
-<details>
-<summary>이중합과 집합 위의 합</summary>
-
-![이중합과 집합 위의 합](./figure-35.webp)
-
-</details>
-
-### 연습문제 Practice 2.4-②
-
-![연습문제 Practice 2.4-②](./figure-51.webp)
-
-## 2.6 행렬
-
-<details>
-<summary>행렬의 정의와 표기법</summary>
-
-![행렬의 정의와 표기법](./figure-36.webp)
-
-</details>
-
-<details>
-<summary>행렬의 덧셈</summary>
-
-![행렬의 덧셈](./figure-37.webp)
-
-</details>
-
-<details>
-<summary>행렬의 곱셈</summary>
-
-![행렬의 곱셈](./figure-38.webp)
-
-</details>
-
-### 연습문제 Practice 2.6-①
-
-![연습문제 Practice 2.6-①](./figure-52.webp)
-
-<details>
-<summary>곱셈의 비교환성과 항등행렬</summary>
-
-![곱셈의 비교환성과 항등행렬](./figure-39.webp)
-
-</details>
-
-<details>
-<summary>전치행렬과 대칭행렬</summary>
-
-![전치행렬과 대칭행렬](./figure-40.webp)
-
-</details>
-
-### 연습문제 Practice 2.6-②
-
-![연습문제 Practice 2.6-②](./figure-53.webp)
-
-<details>
-<summary>0-1 행렬의 결합과 만남</summary>
-
-![0-1 행렬의 결합과 만남](./figure-41.webp)
-
-</details>
-
-<details>
-<summary>0-1 행렬의 불 곱</summary>
-
-![0-1 행렬의 불 곱](./figure-42.webp)
-
-</details>
-
-### 연습문제 Practice 2.6-③
-
-![연습문제 Practice 2.6-③](./figure-54.webp)
-
-<details>
-<summary>영-일 행렬의 불 거듭제곱</summary>
-
-![영-일 행렬의 불 거듭제곱](./figure-43.webp)
-
-</details>
-
-<details>
-<summary>행렬의 핵심 개념</summary>
-
-![행렬의 핵심 개념](./figure-44.webp)
-
-</details>
-
-### 2.6 단원 연습문제
-
-![2.6 단원 연습문제](./figure-55.webp)
-
-### Chapter 2 종합 복습문제
-
-![Chapter 2 종합 복습문제](./figure-56.webp)
-
-## 추가 연습문제
-
-### 9. 단사와 전사
-다음 $f:\mathbb Z\to\mathbb Z$가 단사인지, 전사인지 판정하라. 성립하지 않으면 반례를 제시하라.
-
-1. $f(n)=n-1$
-2. $f(n)=n^2+1$
-3. $f(n)=\lceil n/2\rceil$
-
-### 10. 전단사
-다음 $f:\mathbb R\to\mathbb R$가 전단사인지 판정하라.
-
-1. $f(x)=-3x+4$
-2. $f(x)=-3x^2+7$
-
-### 11. 일차함수의 역함수
-$a\ne0$일 때 $f(x)=ax+b$가 $\mathbb R$에서 $\mathbb R$로 가는 가역함수임을 보이고 $f^{-1}$를 구하라.
-
-### 12. 천장함수와 저장 용량
-1바이트는 8비트다. n비트를 저장하는 데 필요한 바이트 수를 바닥함수 또는 천장함수로 표현하고, $n=4,10,500,3000$일 때의 값을 구하라.
-
-### 13. 점화식의 닫힌 형태
-반복 대입으로 각 수열의 일반항을 구하라.
-
-1. $a_n=3a_{n-1},\quad a_0=2$
-2. $a_n=a_{n-1}+n,\quad a_0=1$
-3. $a_n=3a_{n-1}+1,\quad a_0=1$
-
-### 14. 합 계산
-다음 값을 구하라.
-
 $$
-\sum_{j=1}^{8}2^j,\qquad
-\sum_{j=0}^{8}2(-3)^j,\qquad
-\sum_{i=1}^{2}\sum_{j=1}^{3}(i+j),\qquad
-\sum_{k=100}^{200}k.
+\lfloor-x\rfloor=-\lceil x\rceil,\qquad
+\lceil-x\rceil=-\lfloor x\rfloor,
 $$
 
-### 15. 행렬곱
-다음 행렬의 곱 AB를 구하라.
-
 $$
-A=\begin{pmatrix}1&-3&0\\1&2&2\\2&1&-1\end{pmatrix},\qquad
-B=\begin{pmatrix}1&-1&2&3\\-1&0&3&-1\\-3&-2&0&2\end{pmatrix}.
+\lfloor x+n\rfloor=\lfloor x\rfloor+n,\qquad
+\lceil x+n\rceil=\lceil x\rceil+n\quad(n\in\mathbb Z).
 $$
 
-### 16. 2×2 역행렬
-$ad-bc\ne0$일 때 다음 행렬을 양쪽 순서로 곱해 항등행렬이 되는지 확인하라.
+마지막 식은 이동량이 정수일 때의 성질이다. 임의의 실수끼리 더할 때는 성립하지 않는다. $x=y=1/2$이면 $\lceil x+y\rceil=1$이지만 $\lceil x\rceil+\lceil y\rceil=2$다.
+
+### 필요한 자원은 올림, 담을 수 있는 개수는 내림
+
+$n$비트를 8비트 단위로 저장하려면 $\lceil n/8\rceil$바이트가 필요하다.
+
+| 비트 수 | 필요한 바이트 |
+|---|---|
+| 4 | 1 |
+| 10 | 2 |
+| 100 | 13 |
+| 500 | 63 |
+| 3000 | 375 |
+
+500바이트를 셀당 48바이트의 데이터 영역에 넣는다면 $\lceil500/48\rceil=11$셀이 필요하다. 반대로 셀 전체 길이가 53바이트이고 초당 500,000비트를 전송한다면, 1분에 완전히 전송 가능한 셀 수는
 
 $$
-A=\begin{pmatrix}a&b\\c&d\end{pmatrix},\qquad
-A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}.
+\left\lfloor\frac{500000\cdot60}{53\cdot8}\right\rfloor=70754
 $$
 
-### 17. 연립방정식의 행렬 표현
-다음 연립방정식을 $AX=B$로 나타낼 수 있음을 보여라.
+개다. 앞의 문제는 필요한 공간을 확보하고, 뒤의 문제는 제한된 공간 안의 완전한 단위를 세므로 반올림 방향이 다르다.
+
+### 바닥함수 항등식의 증명
+
+모든 실수 $x$에 대해
 
 $$
-a_{i1}x_1+a_{i2}x_2+\cdots+a_{in}x_n=b_i\quad(i=1,\ldots,n).
+\lfloor2x\rfloor=\lfloor x\rfloor+\left\lfloor x+\frac12\right\rfloor.
 $$
 
-여기서 $A=[a_{ij}]$, $X=(x_1,\ldots,x_n)^T$, $B=(b_1,\ldots,b_n)^T$다. A가 가역이면 해가 $X=A^{-1}B$임을 보여라.
+$x=n+\varepsilon$로 쓰되 $n=\lfloor x\rfloor$, $0\le\varepsilon<1$로 둔다. $0\le\varepsilon<1/2$이면 왼쪽은 $2n$이고 오른쪽은 $n+n$이다. $1/2\le\varepsilon<1$이면 왼쪽은 $2n+1$이고 오른쪽은 $n+(n+1)$이다. 모든 실수가 두 경우 중 하나에 속하므로 증명이 끝난다.
 
-### 18. 역행렬로 연립방정식 풀기
-다음 연립방정식을 풀어라.
+## 3. 계승, 부분함수, 무한집합
+
+계승은 $n!=1\cdot2\cdots n$, $0!=1$로 정의한다. $5!=120$, $10!=3,628,800$이다. 점화식으로는 $n!=n(n-1)!$이다. 큰 $n$에서 스털링 근사
+
+$$
+n!\sim\sqrt{2\pi n}\left(\frac ne\right)^n
+$$
+
+를 사용할 수 있다. $f(n)\sim g(n)$은 두 값의 차가 0이 된다는 뜻이 아니라 비율 $f(n)/g(n)$이 1에 수렴한다는 뜻이다.
+
+부분함수는 지정한 입력 집합의 일부에서만 값이 정의된다. 정수에서 실수로 값을 생각할 때 $\sqrt n$은 $n\ge0$에서만 정의되고, $1/n$은 $n\ne0$에서만 정의된다. 입력 집합 전체에서 정의되면 전함수다. 정의역을 처음부터 $\mathbb Z\setminus\{0\}$로 잡은 $1/n$은 그 정의역에서는 전함수다.
+
+무한집합의 크기도 대응으로 비교한다. $A$에서 $B$로 전단사가 있으면 $|A|=|B|$, 단사가 있으면 $|A|\le|B|$로 정의한다. 유한집합이거나 양의 정수와 전단사인 집합을 가산집합이라고 한다.
+
+양의 홀수는 $n\mapsto2n-1$로 양의 정수와 전단사이고, 정수는 $0,1,-1,2,-2,\ldots$로 나열된다. 양의 유리수도 분자와 분모의 합이 작은 순서로 훑으면서 이미 나온 값을 건너뛰면 나열할 수 있다. 반면 실수는 비가산이다. 소수 전개를 목록으로 만들었다고 가정하고 $n$번째 수의 $n$번째 자릿수와 다른 숫자를 골라 새 실수를 만들면, 그 수는 목록의 모든 수와 적어도 한 자리에서 다르다. 자릿수를 1과 2 중에서 고르면 유한소수와 9가 반복되는 표현의 중복도 피할 수 있다.
+
+## 4. 수열과 점화식
+
+수열 $a_n$은 정수의 부분집합에서 어떤 집합으로 가는 함수다. 순서와 중복을 유지하므로 일반 집합과 다르다. $a_n=1/n$은 $n=1$부터 시작하고, $a_n=2^n$은 $n=0$부터 시작할 수도 있다. 시작 인덱스를 먼저 확인해야 한다.
+
+$n=0,1,2,\ldots$일 때 등차수열은 $a_n=a+nd$, 등비수열은 $a_n=ar^n$이다.
+
+| 일반항 | 처음 다섯 항 |
+|---|---|
+| $3\cdot2^n$ | $3,6,12,24,48$ |
+| $1+4n$ | $1,5,9,13,17$ |
+| $(-1)^n$ | $1,-1,1,-1,1$ |
+| $2\cdot5^n$ | $2,10,50,250,1250$ |
+| $6(1/3)^n$ | $6,2,2/3,2/9,2/27$ |
+| $7-3n$ | $7,4,1,-2,-5$ |
+
+문자열은 유한한 알파벳에서 고른 문자들의 유한 수열이다. `abcde`는 길이 5이고, 빈 문자열 $\lambda$는 길이 0이다.
+
+점화식은 앞선 항들로 다음 항을 정한다. $a_n=a_{n-1}+3$, $a_0=2$이면 $2,5,8,11,\ldots$이고, $a_n=a_{n-1}-a_{n-2}$, $a_0=3,a_1=5$이면 $a_2=2,a_3=-3$이다. 이전 두 항을 사용하는 점화식에는 보통 그에 맞는 두 초기조건이 필요하다.
+
+피보나치 수열은
+
+$$
+f_0=0,\quad f_1=1,\quad f_n=f_{n-1}+f_{n-2}\quad(n\ge2)
+$$
+
+로 정한다. 처음 항들은 $0,1,1,2,3,5,8,13,21$이다.
+
+### 제안된 식이 해인지 확인하기
+
+$a_n=2a_{n-1}-a_{n-2}$에서 $a_n=3n$을 대입하면 $2\cdot3(n-1)-3(n-2)=3n$이므로 해다. 상수수열 $a_n=5$도 $2\cdot5-5=5$여서 해다. 하지만 $a_n=2^n$은 $n=2$에서 $4\ne2\cdot2-1=3$이므로 해가 아니다. 점화식만 만족하는 것과 특정 초기조건까지 만족하는 것은 따로 확인한다.
+
+### 반복 대입으로 일반항 구하기
+
+$a_1=2$, $a_n=a_{n-1}+3$이면 뒤로 대입할 때마다 3이 하나씩 더해져
+
+$$
+a_n=a_{n-2}+2\cdot3=\cdots=a_1+3(n-1)=2+3(n-1).
+$$
+
+초기항이 $a_0=2$인 문제라면 $2+3n$이다. 인덱스 하나 차이로 상수항이 달라진다. 같은 방식으로 $a_0=2$, $a_n=a_{n-1}+5$의 해는 $2+5n$이고, $a_0=2$, $a_n=3a_{n-1}$의 해는 $2\cdot3^n$이다.
+
+$a_0=1$, $a_n=a_{n-1}+n$이면
+
+$$
+a_n=1+1+2+\cdots+n=1+\frac{n(n+1)}2.
+$$
+
+$a_0=1$, $a_n=3a_{n-1}+1$이면
 
 $$
 \begin{aligned}
-7x_1-8x_2+5x_3&=5,\\
--4x_1+5x_2-3x_3&=-3,\\
-x_1-x_2+x_3&=0.
+a_n&=3^na_0+\sum_{j=0}^{n-1}3^j\\
+&=3^n+\frac{3^n-1}{2}=\frac{3^{n+1}-1}{2}.
 \end{aligned}
 $$
 
-계수행렬과 그 역행렬은 다음과 같다. 먼저 곱이 항등행렬이 되는지 확인한 뒤 우변 벡터에 역행렬을 곱한다.
+각 식을 다시 점화식과 초기조건에 대입하면 결과를 확인할 수 있다.
+
+고정 비율의 증가도 등비수열이다. 초기값이 10,000이고 매 단계 11%씩 늘어난다는 수학적 모형이면 $P_n=1.11P_{n-1}$, $P_0=10000$이므로 $P_{30}=10000(1.11)^{30}\approx228922.97$이다. 초기값 5,000, 증가율 8%라면 $P_n=5000(1.08)^n$이다.
+
+### 처음 몇 항으로 규칙 추측하기
+
+$1,1/2,1/4,\ldots$에서는 $2^{-n}$, $1,3,5,\ldots$에서는 $2n+1$을 추측할 수 있다($n=0$부터). $5,11,17,23,\ldots$는 $6n-1$($n=1$부터), $1,7,25,79,241,727,\ldots$는 $3^n-2$($n=1$부터)에 맞는다. $1,3,4,7,11,18,\ldots$는 앞의 두 항의 합이라는 규칙에 맞는다. $1,2,2,3,3,3,\ldots$는 양의 정수 $k$를 $k$번씩 반복한 수열이다.
+
+알려진 정수 수열을 찾는 데 OEIS 같은 수열 데이터베이스를 사용할 수도 있다. 다만 유한하게 주어진 항들은 여러 규칙과 동시에 맞을 수 있다. 패턴을 발견하는 것은 추측이고, 일반항을 확정하려면 정의나 추가 조건, 증명이 필요하다.
+
+## 5. 합과 곱의 표기
 
 $$
-M=\begin{pmatrix}7&-8&5\\-4&5&-3\\1&-1&1\end{pmatrix},\qquad
-M^{-1}=\begin{pmatrix}2&3&-1\\1&2&1\\-1&-1&3\end{pmatrix}.
+\sum_{j=m}^{n}a_j=a_m+a_{m+1}+\cdots+a_n,\qquad
+\prod_{j=m}^{n}a_j=a_ma_{m+1}\cdots a_n.
 $$
 
-## 합의 공식 계산
-망원합을 이용하면 자연수의 합과 제곱합을 유도할 수 있다.
+아래와 위의 숫자는 합의 범위를 정하고, $j$는 합 안에서만 쓰는 인덱스다. $\sum_{j=1}^{5}j^2=55$이며, 인덱스를 $k=j-1$로 옮기면 $\sum_{k=0}^{4}(k+1)^2$가 된다. $\sum_{k=4}^{8}(-1)^k=1$이고 $n!=\prod_{j=1}^{n}j$다.
 
-### 문제 1. 망원합의 성질
-다음을 보여라.
+### 등비급수와 망원합
 
-$$
-\sum_{j=1}^{n}(a_j-a_{j-1})=a_n-a_0
-$$
-
-중간 항이 소거되는 망원합(telescoping sum)을 확인한다.
-
-### 문제 2. 홀수의 합과 자연수의 합
-다음 등식을 이용해 두 합을 구하라.
+$S=a+ar+\cdots+ar^n$이라고 하자. $rS$에서 $S$를 빼면 중간 항들이 사라져
 
 $$
-k^2-(k-1)^2=2k-1
+(r-1)S=ar^{n+1}-a.
+$$
+
+따라서
+
+$$
+\sum_{j=0}^{n}ar^j=
+\begin{cases}
+\dfrac{a(r^{n+1}-1)}{r-1},&r\ne1,\\
+(n+1)a,&r=1.
+\end{cases}
+$$
+
+$r=1$인 경우에는 0으로 나누지 말고 항의 개수로 계산한다. 망원합도 같은 소거 원리다.
+
+$$
+\sum_{j=1}^{n}(a_j-a_{j-1})=a_n-a_0.
+$$
+
+$k^2-(k-1)^2=2k-1$을 합하면 $\sum_{k=1}^{n}(2k-1)=n^2$이다. 따라서 $2\sum k-n=n^2$이고
+
+$$
+\sum_{k=1}^{n}k=\frac{n(n+1)}2.
+$$
+
+또 $k^3-(k-1)^3=3k^2-3k+1$을 합하면
+
+$$
+n^3=3\sum_{k=1}^{n}k^2-3\frac{n(n+1)}2+n,
+$$
+
+즉 $\sum_{k=1}^{n}k^2=\frac{n(n+1)(2n+1)}6$이다.
+
+| 합 | 공식 |
+|---|---|
+| $\sum_{k=1}^{n}k$ | $n(n+1)/2$ |
+| $\sum_{k=1}^{n}k^2$ | $n(n+1)(2n+1)/6$ |
+| $\sum_{k=1}^{n}k^3$ | $n^2(n+1)^2/4$ |
+| $\sum_{k=0}^{\infty}x^k$, $\lvert x\rvert<1$ | $1/(1-x)$ |
+| $\sum_{k=1}^{\infty}kx^{k-1}$, $\lvert x\rvert<1$ | $1/(1-x)^2$ |
+
+무한등비급수는 유한합 공식에서 $x^{n+1}\to0$인 조건 $\lvert x\rvert<1$을 사용한다. 마지막 공식은 수렴 구간 안에서 등비급수를 항별 미분해 얻는다.
+
+### 구간 합과 이중합의 계산
+
+시작점이 1이 아니면 앞부분을 빼면 된다.
+
+$$
+\sum_{k=50}^{100}k^2
+=\frac{100\cdot101\cdot201}{6}-\frac{49\cdot50\cdot99}{6}
+=297925.
+$$
+
+같은 방식으로 $\sum_{k=11}^{20}k=210-55=155$이고,
+
+$$
+\sum_{k=100}^{200}k
+=\frac{200\cdot201}{2}-\frac{99\cdot100}{2}=15150.
+$$
+
+지수의 합은
+
+$$
+\sum_{j=1}^{8}2^j=2^9-2=510,\qquad
+\sum_{j=0}^{8}2(-3)^j=\frac{2((-3)^9-1)}{-4}=9842.
+$$
+
+이중합은 안쪽부터 계산한다.
+
+$$
+\sum_{i=1}^{4}\sum_{j=1}^{3}ij
+=\sum_{i=1}^{4}(i+2i+3i)=6(1+2+3+4)=60.
 $$
 
 $$
-\sum_{k=1}^{n}(2k-1),\qquad \sum_{k=1}^{n}k
+\sum_{i=1}^{2}\sum_{j=1}^{3}(i+j)
+=\sum_{i=1}^{2}(3i+6)=9+12=21.
 $$
 
-### 문제 3. 제곱합
-앞의 결과를 이용하여 다음의 공식이 성립함을 보여라.
+범위가 $i=1,2,3$, $j=1,2$인 경우에도 $\sum_i(2i+3)=5+7+9=21$이지만, 합치는 항들은 다르다. 집합 위의 합 $\sum_{s\in\{0,2,4\}}s$는 그 원소를 한 번씩 더해 6이다.
+
+## 6. 행렬의 크기와 연산
+
+$m$개의 행과 $n$개의 열을 가진 배열을 $m\times n$ 행렬이라고 한다. $A=[a_{ij}]$에서 첫 인덱스는 행, 둘째는 열이다. 같은 행렬이려면 크기와 모든 성분이 같아야 한다. 3×2 행렬과 2×3 행렬은 성분의 수가 같아도 다른 크기다.
+
+### 덧셈
+
+같은 크기끼리 대응 성분을 더한다.
 
 $$
-\sum_{k=1}^{n}k^2=\frac{n(n+1)(2n+1)}6
+\begin{bmatrix}1&0&-1\\2&2&-3\\3&4&0\end{bmatrix}
++
+\begin{bmatrix}3&4&-1\\1&-3&0\\-1&1&2\end{bmatrix}
+=
+\begin{bmatrix}4&4&-2\\3&-1&-3\\2&5&2\end{bmatrix}.
 $$
 
-### 문제 4. 무한 등비급수
-절댓값이 1보다 작은 실수 x에 대해 다음 급수의 합을 구하라.
+### 곱셈
+
+$A$가 $m\times k$, $B$가 $k\times n$이면 $AB$는 $m\times n$이고
 
 $$
-\sum_{k=0}^{\infty}x^k=\frac{1}{1-x}
+(AB)_{ij}=\sum_{\ell=1}^{k}a_{i\ell}b_{\ell j}.
 $$
+
+왼쪽 행렬의 한 행과 오른쪽 행렬의 한 열을 곱해 더한다. 안쪽 크기가 맞지 않으면 곱을 정의할 수 없다. 2×3 행렬 $A$와 4×2 행렬 $B$에서는 $AB$는 정의되지 않지만 $BA$는 4×3이다.
+
+$$
+A=\begin{bmatrix}1&0&4\\2&1&1\\3&1&0\\0&2&2\end{bmatrix},\qquad
+B=\begin{bmatrix}2&4\\1&1\\3&0\end{bmatrix}
+$$
+
+이면
+
+$$
+AB=\begin{bmatrix}14&4\\8&9\\7&13\\8&2\end{bmatrix}.
+$$
+
+첫 성분은 $1\cdot2+0\cdot1+4\cdot3=14$이고, 둘째 행·둘째 열 성분은 $2\cdot4+1\cdot1+1\cdot0=9$다.
+
+연습으로
+
+$$
+C=\begin{bmatrix}1&-3&0\\1&2&2\\2&1&-1\end{bmatrix},\qquad
+D=\begin{bmatrix}1&-1&2&3\\-1&0&3&-1\\-3&-2&0&2\end{bmatrix}
+$$
+
+를 곱하면
+
+$$
+CD=\begin{bmatrix}4&-1&-7&6\\-7&-5&8&5\\4&0&7&3\end{bmatrix}.
+$$
+
+예를 들어 $(CD)_{23}=1\cdot2+2\cdot3+2\cdot0=8$이다.
+
+### 순서를 바꾸면 달라진다
+
+$$
+A=\begin{bmatrix}1&1\\2&1\end{bmatrix},\quad
+B=\begin{bmatrix}2&1\\1&1\end{bmatrix}
+$$
+
+이면
+
+$$
+AB=\begin{bmatrix}3&2\\5&3\end{bmatrix},\qquad
+BA=\begin{bmatrix}4&3\\3&2\end{bmatrix}.
+$$
+
+따라서 행렬곱은 교환되지 않는다. $A=\begin{bmatrix}1&0\\1&1\end{bmatrix}$, $B=\begin{bmatrix}1&1\\0&1\end{bmatrix}$에서도 $AB=\begin{bmatrix}1&1\\1&2\end{bmatrix}$, $BA=\begin{bmatrix}2&1\\1&1\end{bmatrix}$로 다르다.
+
+## 7. 항등행렬, 전치, 역행렬
+
+항등행렬 $I_n$은 주대각선 성분이 1이고 나머지가 0이다. $A$가 $m\times n$이면
+
+$$
+I_mA=AI_n=A.
+$$
+
+정사각행렬의 거듭제곱은 $A^0=I_n$, $A^r=A\cdots A$로 정의한다. 전치행렬 $A^{\mathsf T}$는 행과 열을 바꾼 것으로 $(A^{\mathsf T})_{ij}=a_{ji}$다.
+
+$$
+\begin{bmatrix}1&2&3\\4&5&6\end{bmatrix}^{\mathsf T}
+=\begin{bmatrix}1&4\\2&5\\3&6\end{bmatrix}.
+$$
+
+$A=A^{\mathsf T}$인 정사각행렬을 대칭행렬이라고 한다. $\begin{bmatrix}1&2\\2&1\end{bmatrix}$와 모든 항등행렬은 대칭이다.
+
+### 2×2 역행렬
+
+$AB=BA=I_n$이면 $B$를 $A$의 역행렬 $A^{-1}$이라고 한다. 행렬 $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$에서 $ad-bc\ne0$이면
+
+$$
+A^{-1}=\frac1{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}.
+$$
+
+실제로
+
+$$
+\begin{bmatrix}a&b\\c&d\end{bmatrix}
+\begin{bmatrix}d&-b\\-c&a\end{bmatrix}
+=\begin{bmatrix}ad-bc&0\\0&ad-bc\end{bmatrix}
+$$
+
+이고, 반대 순서의 곱도 같은 행렬이다. $ad-bc$로 나누면 양쪽 모두 $I_2$가 된다.
+
+### 연립방정식 풀기
+
+각 방정식이 $a_{i1}x_1+\cdots+a_{in}x_n=b_i$이면 계수행렬 $A$, 미지수 열벡터 $X$, 상수 열벡터 $B$를 사용해 $AX=B$로 쓴다. $A$가 가역이면 왼쪽에 $A^{-1}$을 곱해 $X=A^{-1}B$를 얻는다.
+
+$$
+M=\begin{bmatrix}7&-8&5\\-4&5&-3\\1&-1&1\end{bmatrix},\qquad
+M^{-1}=\begin{bmatrix}2&3&-1\\1&2&1\\-1&-1&3\end{bmatrix}
+$$
+
+일 때
+
+$$
+\begin{cases}
+7x_1-8x_2+5x_3=5,\\
+-4x_1+5x_2-3x_3=-3,\\
+x_1-x_2+x_3=0
+\end{cases}
+$$
+
+의 해는
+
+$$
+X=M^{-1}\begin{bmatrix}5\\-3\\0\end{bmatrix}
+=\begin{bmatrix}10-9\\5-6\\-5+3\end{bmatrix}
+=\begin{bmatrix}1\\-1\\-2\end{bmatrix}.
+$$
+
+이를 대입하면 좌변은 차례로 $7+8-10=5$, $-4-5+6=-3$, $1+1-2=0$으로 확인된다.
+
+## 8. 0–1 행렬과 불 연산
+
+성분이 0 또는 1인 행렬은 관계나 연결 여부를 나타내는 데 쓰인다. 같은 크기의 두 행렬에 대해 조인(join)은 성분별 OR, 미트(meet)는 성분별 AND다.
+
+$$
+A=\begin{bmatrix}1&0&1\\0&1&0\end{bmatrix},\quad
+B=\begin{bmatrix}0&1&0\\1&1&0\end{bmatrix}
+$$
+
+이면
+
+$$
+A\lor B=\begin{bmatrix}1&1&1\\1&1&0\end{bmatrix},\qquad
+A\land B=\begin{bmatrix}0&0&0\\0&1&0\end{bmatrix}.
+$$
+
+불 곱 $A\odot B$는 일반 행렬곱의 곱셈을 AND로, 덧셈을 OR로 바꾼다.
+
+$$
+(A\odot B)_{ij}=\bigvee_{\ell=1}^{k}(a_{i\ell}\land b_{\ell j}).
+$$
+
+즉 중간 인덱스 $\ell$ 중 하나라도 두 성분이 모두 1이면 출력이 1이다.
+
+$$
+\begin{bmatrix}1&0\\0&1\\1&0\end{bmatrix}
+\odot
+\begin{bmatrix}1&1&0\\0&1&1\end{bmatrix}
+=\begin{bmatrix}1&1&0\\0&1&1\\1&1&0\end{bmatrix}.
+$$
+
+예를 들어 $(2,3)$ 성분은 $(0\land0)\lor(1\land1)=1$이다. 일반 행렬곱은 해당 연결 방법의 수를 셀 수 있지만, 불 곱은 그런 방법이 존재하는지만 남긴다.
+
+### 불 거듭제곱
+
+$A^{[0]}=I_n$, $A^{[r]}=A\odot\cdots\odot A$로 정의한다. 일반 곱의 거듭제곱과 구별하기 위해 지수에 대괄호를 붙인다.
+
+$$
+A=\begin{bmatrix}0&0&1\\1&0&0\\1&1&0\end{bmatrix}
+$$
+
+이면 반복 계산하여
+
+$$
+A^{[2]}=\begin{bmatrix}1&1&0\\0&0&1\\1&0&1\end{bmatrix},\qquad
+A^{[3]}=\begin{bmatrix}1&0&1\\1&1&0\\1&1&1\end{bmatrix},
+$$
+
+$$
+A^{[4]}=\begin{bmatrix}1&1&1\\1&0&1\\1&1&1\end{bmatrix},\qquad
+A^{[5]}=\begin{bmatrix}1&1&1\\1&1&1\\1&1&1\end{bmatrix}.
+$$
+
+이 $A$의 각 열에는 적어도 하나의 1이 있으므로, 모든 성분이 1인 행렬 $J$에 대해 $J\odot A=J$다. 따라서 $n\ge5$에서 $A^{[n]}=J$가 유지된다. 단순히 어떤 단계에서 전부 1이 되었다는 사실뿐 아니라, 다음 곱에서도 유지되는 이유까지 확인해야 한다.
