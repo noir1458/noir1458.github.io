@@ -14,10 +14,12 @@ sidebar:
 
     - categories:
         - aws
+        - basic-cryptography
         - cryptography
         - cryptohack
 
     - categories:
+        - discrete-mathematics
         - numbertheory
 
     - categories:
