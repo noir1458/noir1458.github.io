@@ -1,7 +1,7 @@
 ---
 title: "13. 메시지 인증 코드, HMAC와 CBC-MAC"
 slug: basic-cryptography-message-authentication-codes
-publishedAt: '2026-10-07'
+publishedAt: '2026-10-18'
 categories: basic_cryptography
 math: true
 

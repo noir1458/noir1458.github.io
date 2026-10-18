@@ -1,7 +1,7 @@
 ---
 title: "03. 블록 암호, Feistel, DES와 Triple DES"
 slug: basic-cryptography-block-ciphers-feistel-des
-publishedAt: '2026-10-17'
+publishedAt: '2026-10-08'
 categories: basic_cryptography
 math: true
 

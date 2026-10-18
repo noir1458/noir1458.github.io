@@ -1,7 +1,7 @@
 ---
 title: "07. 공개키 암호와 안전성 모델"
 slug: basic-cryptography-public-key-security-models
-publishedAt: '2026-10-13'
+publishedAt: '2026-10-12'
 categories: basic_cryptography
 math: true
 

@@ -1,7 +1,7 @@
 ---
 title: "09. 이산로그, Diffie-Hellman과 ElGamal"
 slug: basic-cryptography-diffie-hellman-elgamal
-publishedAt: '2026-10-11'
+publishedAt: '2026-10-14'
 categories: basic_cryptography
 math: true
 

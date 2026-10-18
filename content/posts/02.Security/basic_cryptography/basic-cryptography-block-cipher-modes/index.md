@@ -1,7 +1,7 @@
 ---
 title: "06. 블록 암호 운용 모드 ECB, CBC, CFB, OFB, CTR"
 slug: basic-cryptography-block-cipher-modes
-publishedAt: '2026-10-14'
+publishedAt: '2026-10-11'
 categories: basic_cryptography
 math: true
 

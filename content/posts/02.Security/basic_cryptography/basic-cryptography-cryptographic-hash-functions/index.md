@@ -1,7 +1,7 @@
 ---
 title: "12. 암호학적 해시 함수와 SHA 계열"
 slug: basic-cryptography-cryptographic-hash-functions
-publishedAt: '2026-10-08'
+publishedAt: '2026-10-17'
 categories: basic_cryptography
 math: true
 

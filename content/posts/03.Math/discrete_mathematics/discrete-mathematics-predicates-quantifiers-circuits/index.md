@@ -1,7 +1,7 @@
 ---
 title: "02. 술어 논리, 한정 기호, 논리회로"
 slug: discrete-mathematics-predicates-quantifiers-circuits
-publishedAt: '2026-10-18'
+publishedAt: '2026-10-15'
 categories: discrete_mathematics
 math: true
 

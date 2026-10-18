@@ -1,7 +1,7 @@
 ---
 title: "01. 명제 논리, 응용, 명제의 동치"
 slug: discrete-mathematics-propositional-logic
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-14'
 categories: discrete_mathematics
 math: true
 

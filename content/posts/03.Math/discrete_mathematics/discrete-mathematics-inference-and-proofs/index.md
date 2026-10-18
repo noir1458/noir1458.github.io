@@ -1,7 +1,7 @@
 ---
 title: "03. 추론 규칙과 증명 방법"
 slug: discrete-mathematics-inference-and-proofs
-publishedAt: '2026-10-17'
+publishedAt: '2026-10-16'
 categories: discrete_mathematics
 math: true
 

@@ -1,7 +1,7 @@
 ---
 title: "05. 함수, 수열과 합, 행렬"
 slug: discrete-mathematics-functions-sequences-matrices
-publishedAt: '2026-10-15'
+publishedAt: '2026-10-18'
 categories: discrete_mathematics
 math: true
 

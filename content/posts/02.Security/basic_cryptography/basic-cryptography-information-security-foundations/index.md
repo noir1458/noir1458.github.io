@@ -1,7 +1,7 @@
 ---
 title: "01. 정보보호의 기본 개념과 현대암호학"
 slug: basic-cryptography-information-security-foundations
-publishedAt: '2026-10-19'
+publishedAt: '2026-10-06'
 categories: basic_cryptography
 math: true
 

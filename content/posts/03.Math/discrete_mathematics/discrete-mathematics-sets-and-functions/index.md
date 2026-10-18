@@ -1,7 +1,7 @@
 ---
 title: "04. 집합과 집합의 연산, 함수의 기초"
 slug: discrete-mathematics-sets-and-functions
-publishedAt: '2026-10-16'
+publishedAt: '2026-10-17'
 categories: discrete_mathematics
 math: true
 

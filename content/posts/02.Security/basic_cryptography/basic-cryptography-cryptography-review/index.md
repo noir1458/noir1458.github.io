@@ -1,7 +1,7 @@
 ---
 title: "14. 암호학 계산 문제와 복습"
 slug: basic-cryptography-cryptography-review
-publishedAt: '2026-10-06'
+publishedAt: '2026-10-19'
 categories: basic_cryptography
 math: true
 

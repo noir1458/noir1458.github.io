@@ -1,7 +1,7 @@
 ---
 title: "02. 고전암호, LFSR와 One-Time Pad"
 slug: basic-cryptography-classical-ciphers-lfsr-otp
-publishedAt: '2026-10-18'
+publishedAt: '2026-10-07'
 categories: basic_cryptography
 math: true
 

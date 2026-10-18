@@ -1,7 +1,7 @@
 ---
 title: "10. 전자서명, RSA, ElGamal과 PSS"
 slug: basic-cryptography-digital-signatures-rsa-pss
-publishedAt: '2026-10-10'
+publishedAt: '2026-10-15'
 categories: basic_cryptography
 math: true
 

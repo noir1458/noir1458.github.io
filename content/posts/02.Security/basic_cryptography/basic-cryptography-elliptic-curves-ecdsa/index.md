@@ -1,7 +1,7 @@
 ---
 title: "11. 타원곡선과 DSA, ECDSA"
 slug: basic-cryptography-elliptic-curves-ecdsa
-publishedAt: '2026-10-09'
+publishedAt: '2026-10-16'
 categories: basic_cryptography
 math: true
 

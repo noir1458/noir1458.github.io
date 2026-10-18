@@ -1,7 +1,7 @@
 ---
 title: "06. 알고리즘, 함수의 증가, 알고리즘의 복잡도"
 slug: discrete-mathematics-algorithms-and-complexity
-publishedAt: '2026-10-14'
+publishedAt: '2026-10-19'
 categories: discrete_mathematics
 math: true
 

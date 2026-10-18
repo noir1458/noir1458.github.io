@@ -1,7 +1,7 @@
 ---
 title: "08. RSA, 정수론, 소수 판정과 OAEP"
 slug: basic-cryptography-rsa-number-theory-oaep
-publishedAt: '2026-10-12'
+publishedAt: '2026-10-13'
 categories: basic_cryptography
 math: true
 

@@ -1,7 +1,7 @@
 ---
 title: "04. AES, 유한체와 라운드 변환"
 slug: basic-cryptography-aes-finite-fields
-publishedAt: '2026-10-16'
+publishedAt: '2026-10-09'
 categories: basic_cryptography
 math: true
 
