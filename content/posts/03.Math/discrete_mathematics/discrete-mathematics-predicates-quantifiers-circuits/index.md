@@ -9,6 +9,8 @@ math: true
 
 명제 논리만으로는 “모든 사람은 죽는다”와 “소크라테스는 사람이다” 사이의 관계를 표현하기 어렵다. 문장 전체에 참과 거짓을 붙이는 데서 더 나아가, 대상의 성질과 대상 사이의 관계를 나타내는 술어가 필요하다. 여기에 “모든”과 “적어도 하나”를 나타내는 한정 기호를 붙이면 수학적 주장과 시스템의 조건을 정확하게 쓸 수 있다.
 
+[연습문제로 바로 가기](#practice) · 먼저 풀어 본 뒤 각 문제의 **해설 보기**를 눌러 확인할 수 있다.
+
 ## 1. 술어와 명제함수
 
 $P(x)$를 “$x>3$”이라고 하자. 변수 $x$의 값이 정해지지 않은 상태에서는 참과 거짓을 결정할 수 없다. 정의역을 정수로 정하고 값을 대입하면 $P(-3)$과 $P(0)$은 거짓, $P(5)$는 참인 명제가 된다. 이렇게 변수를 포함한 문장을 **명제함수**라고 한다.
@@ -174,7 +176,7 @@ $$
 \end{aligned}
 $$
 
-두 번째 식은 “모든 $P$가 $Q$인 것은 아니다”를 반박하려면 $P$이면서 $Q$가 아닌 원소를 찾으면 된다는 뜻이다.
+두 번째 식은 “모든 $P$가 $Q$이다”를 반박하려면 $P$이면서 $Q$가 아닌 원소를 찾으면 된다는 뜻이다.
 
 ### 분배되는 경우와 그렇지 않은 경우
 
@@ -405,3 +407,263 @@ u=\neg p\land\neg q,\quad v=p\land r,\quad Y=u\lor v.
 $$
 
 따라서 $Y=(\neg p\land\neg q)\lor(p\land r)$다. 이 식은 $p=0$일 때 $\neg q$, $p=1$일 때 $r$을 출력한다. 게이트의 모양을 외우기보다 각 선이 전달하는 식을 차례로 적으면 복잡한 회로도 같은 방법으로 해석할 수 있다.
+
+<a id="practice"></a>
+
+## 9. 연습문제
+
+문제를 읽고 풀이를 적어 본 뒤 해설을 펼쳐 비교해 보자. 계산 결과뿐 아니라 사용한 정의와 추론 근거까지 설명하는 연습을 한다.
+
+### 01. 술어에 값을 대입하기
+
+1. 정수에서 $R(x,y,z):x+y=z$일 때 $R(2,-1,5)$, $R(3,4,7)$의 진리값을 구하자.
+2. $A(x)$가 컴퓨터 $x$가 공격받는다는 뜻이고 CS2와 MATH1만 공격받는다. $A(\mathrm{CS1}),A(\mathrm{CS2}),A(\mathrm{MATH1})$은?
+3. $C(c,n)$은 컴퓨터 $c$가 네트워크 $n$에 연결됨이다. MATH1은 CAMPUS2에만 연결되어 있다. $C(\mathrm{MATH1},\mathrm{CAMPUS1})$과 $C(\mathrm{MATH1},\mathrm{CAMPUS2})$는?
+4. $P(x):x\ge0$일 때 $P(3)\land P(-1)$과 $P(3)\to P(-1)$은?
+
+<details>
+<summary>해설 보기</summary>
+
+1. F, T다. $2-1=1\ne5$, $3+4=7$을 직접 대입한다.
+2. F, T, T다. 이름을 대입하면 각각 하나의 명제가 된다.
+3. F, T다. 컴퓨터와 네트워크의 인수 순서를 유지해야 한다.
+4. $P(3)=T,P(-1)=F$이므로 두 식 모두 F다. 특히 조건문은 전건 T, 후건 F일 때 거짓이다.
+
+</details>
+
+### 02. 정의역에 따른 전칭 명제
+
+다음 진리값을 구하고 거짓이면 반례를 들자.
+
+1. $\forall x\in\mathbb R\ (x+1>x)$.
+2. $\forall x\in\mathbb Z\ (x^2>0)$.
+3. $\forall x\ (x^2\ge x)$: 정의역이 실수일 때와 정수일 때.
+4. $N(x)$가 네트워크에 연결됨일 때, 캠퍼스의 컴퓨터를 정의역으로 하는 $\forall xN(x)$의 뜻은?
+5. 정의역이 공집합이면 $\forall xP(x)$는?
+
+<details>
+<summary>해설 보기</summary>
+
+1. 참이다. 양변에서 $x$를 빼면 $1>0$이다.
+2. 거짓이다. $x=0$이면 $x^2=0$이다.
+3. 실수에서는 거짓이다. $x=1/2$이면 $1/4<1/2$. 정수에서는 참이다. $x\le0$이면 $x^2\ge0\ge x$, $x\ge1$이면 $x^2\ge x$다. 이 둘 사이에 정수는 없다.
+4. 캠퍼스의 모든 컴퓨터가 네트워크에 연결되어 있다는 뜻이다.
+5. 반례가 없으므로 참이다. 이것을 공허하게 참이라고 한다.
+
+</details>
+
+### 03. 존재 증인과 유한 정의역
+
+1. 양의 정수에서 $\exists x(x\ge0)$, 실수에서 $\exists x(x>3)$, 실수에서 $\exists x(x=x+1)$을 판정하자.
+2. $U=\{1,2,3,4\}$에서 $\forall x(x^2<10)$과 $\exists x(x^2>10)$을 판정하자.
+3. 정수에서 $\forall x(x>0)$과 $\exists x(x>0)$을 판정하자.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 참, 참, 거짓이다. 앞의 두 증인은 각각 $1$, $4$다. 마지막 등식은 양변에서 $x$를 빼면 $0=1$이 되어 어떤 실수에서도 불가능하다.
+2. 거짓, 참이다. $x=4$가 첫 식의 반례이자 둘째 식의 증인이다.
+3. 거짓, 참이다. $x=0$은 전칭 명제의 반례, $x=1$은 존재 명제의 증인이다. 반례와 증인이 하는 역할을 구별한다.
+
+</details>
+
+### 04. 한정 기호의 범위와 학생 문장
+
+1. $\forall xP(x)\lor Q(x)$의 범위를 괄호로 명확히 쓰자. $P(x)\lor Q(x)$ 전체를 한정하려면?
+2. 정의역이 모든 사람일 때 “이 반의 모든 학생은 자바를 들었다”를 번역하자. $S(x)$는 이 반 학생, $J(x)$는 자바를 들었다는 뜻이다.
+3. “이 반의 모든 학생이 자바를 들은 것은 아니다”를 부정을 바깥에 둔 식과 안으로 옮긴 식으로 쓰자.
+4. $S(x)$는 이 학교 학생, $C(x)$는 캐나다 방문 경험이다. “이 학교의 어떤 학생은 캐나다에 가 본 적이 없다”를 번역하자.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 한정 기호가 바로 뒤의 술어에 먼저 결합하는 관례에서는 $(\forall xP(x))\lor Q(x)$다. 뒤의 $Q(x)$의 $x$는 자유변수로 남는다. 전체를 한정할 때는 $\forall x(P(x)\lor Q(x))$라고 쓴다.
+2. $\forall x(S(x)\to J(x))$. $\land$로 쓰면 모든 사람이 이 반 학생이라고까지 주장하게 된다.
+3. 정의역이 이 반 학생이면 $\neg\forall xJ(x)\equiv\exists x\neg J(x)$. 모든 사람이 정의역이면 $\neg\forall x(S(x)\to J(x))\equiv\exists x(S(x)\land\neg J(x))$다.
+4. $\exists x(S(x)\land\neg C(x))$. 실제 학생이면서 방문 경험이 없는 증인이 필요하므로 AND를 쓴다.
+
+</details>
+
+### 05. 존재 한정의 분배와 부정
+
+다음을 증명하거나 부정을 안으로 옮기자.
+
+1. $\exists x(P(x)\lor Q(x))\equiv(\exists xP(x))\lor(\exists xQ(x))$.
+2. $\neg\exists x(P(x)\land Q(x))$.
+3. $\neg\forall x(P(x)\to Q(x))$.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 왼쪽이 참이면 어떤 증인 $a$에서 $P(a)$ 또는 $Q(a)$가 참이다. 따라서 $\exists xP(x)$ 또는 $\exists xQ(x)$가 참이다. 반대로 오른쪽이 참이면 어느 쪽의 존재 증인이든 $P(a)\lor Q(a)$를 만족하므로 왼쪽도 참이다.
+2. $\forall x\neg(P(x)\land Q(x))\equiv\forall x(\neg P(x)\lor\neg Q(x))$.
+3. 다음처럼 전칭 부정과 조건문 부정을 적용한다.
+
+$$
+\neg\forall x(P(x)\to Q(x))
+\equiv\exists x\neg(\neg P(x)\lor Q(x))
+\equiv\exists x(P(x)\land\neg Q(x)).
+$$
+
+즉 “모든 $P$가 $Q$이다”를 반박하려면 $P$이면서 $Q$가 아닌 원소 하나를 찾으면 된다.
+
+</details>
+
+### 06. 자연어의 부정과 정의역
+
+1. “정직한 정치인이 있다”, “모든 미국인은 치즈버거를 먹는다”를 부정하자. 각각 정치인·미국인만 정의역으로 할 때와 모든 사람을 정의역으로 할 때의 식도 쓰자.
+2. $F,S,T$가 세 부류의 대상을 나타낸다. “어떤 $S$도 $T$가 아니다”를 존재 부정과 전칭식으로 쓰자.
+3. “$F$이면서 $S$인 것은 모두 $T$다”를 번역하자.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 정치인만 정의역이면 $\neg\exists xH(x)\equiv\forall x\neg H(x)$: 정직한 정치인은 없다. 모든 사람이 정의역이면 $\forall x(\operatorname{Politician}(x)\to\neg H(x))$다. 미국인만 정의역이면 $\neg\forall xE(x)\equiv\exists x\neg E(x)$: 치즈버거를 먹지 않는 미국인이 있다. 모든 사람이 정의역이면 $\exists x(\operatorname{American}(x)\land\neg E(x))$다.
+2. $\neg\exists x(S(x)\land T(x))\equiv\forall x(\neg S(x)\lor\neg T(x))$. 마지막은 $\forall x(S(x)\to\neg T(x))$로 써도 같다.
+3. $\forall x((F(x)\land S(x))\to T(x))$. “어떤 것이 $F$이고 $S$라면”이라는 조건이므로 단순히 존재를 주장하는 식과 다르다.
+
+</details>
+
+### 07. 사자와 새에 관한 문장
+
+1. $P(x)$: 사자, $Q(x)$: 사납다, $R(x)$: 커피를 마신다일 때 “모든 사자는 사납다”를 쓰자.
+2. 정의역은 모든 새다. $P$: 벌새, $Q$: 크다, $R$: 꿀을 먹는다, $S$: 색이 선명하다. 다음 네 문장을 번역하자: 모든 벌새는 색이 선명하다 / 큰 새는 꿀을 먹지 않는다 / 꿀을 먹지 않는 새는 색이 선명하지 않다 / 벌새는 크지 않다.
+
+<details>
+<summary>해설 보기</summary>
+
+1. $\forall x(P(x)\to Q(x))$. $R$은 이 문장에는 필요 없다.
+2. 각각
+
+$$
+\forall x(P(x)\to S(x)),\qquad
+\forall x(Q(x)\to\neg R(x)),
+$$
+
+$$
+\forall x(\neg R(x)\to\neg S(x)),\qquad
+\forall x(P(x)\to\neg Q(x)).
+$$
+
+“작다”를 “크지 않다”로 해석한 표현이다. 첫 세 문장에서 마지막을 추론하려면 $P\to S$, 셋째의 대우 $S\to R$, 둘째의 대우 $R\to\neg Q$를 연결하면 된다.
+
+</details>
+
+### 08. 중첩 한정 기호와 계산
+
+정의역은 실수다.
+
+1. “모든 실수보다 더 큰 실수가 있다”를 한정 기호로 쓰자.
+2. $\forall x\exists y(xy=0)$, $\exists x\forall y(xy=0)$를 판정하자.
+3. $\forall x\exists y(x/y=1)$을 판정하되 나눗셈의 정의 조건도 명시하자.
+4. $\forall x\exists y(x+y=0)$을 말로 옮기고 $\exists y\forall x(x+y=0)$과 비교하자.
+
+<details>
+<summary>해설 보기</summary>
+
+1. $\forall x\exists y(y>x)$이며 $y=x+1$로 고르면 된다.
+2. 둘 다 참이다. 첫 식은 각 $x$에 대해 $y=0$, 둘째는 먼저 $x=0$을 고르면 된다.
+3. 엄밀히는 $y\ne0$인 경우에만 $x/y$를 쓴다. $\forall x\exists y(y\ne0\land x=y)$로 표현하면 거짓이다. $x=0$에는 조건을 만족하는 $y$가 없다.
+4. “모든 실수에는 더해서 0이 되는 실수가 있다.” $y=-x$이므로 참이다. 순서를 바꾼 식은 모든 실수에 공통인 역원 하나를 요구한다. $x=0$에는 $y=0$, $x=1$에는 $y=-1$이 필요하므로 거짓이다.
+
+</details>
+
+### 09. 관계 문장과 중첩된 부정
+
+1. 정수 두 개의 곱이 홀수이면 둘 다 홀수라는 말을 $\operatorname{Odd}$로 쓰자.
+2. $L(x,y)$는 $x$가 $y$를 사랑함이다. “모두가 자신을 사랑하는 것은 아니다”를 쓰자.
+3. $\neg\forall x\exists yP(x,y)$와 $\neg\exists x\forall yP(x,y)$의 부정을 안으로 옮기자.
+4. 모든 사람을 정의역으로 하고 $S(x)$는 이 학교 학생, $C(x)$는 컴퓨터 보유, $F(x,y)$는 친구 관계다. “이 학교의 모든 학생은 컴퓨터를 갖고 있거나 컴퓨터를 가진 친구가 있다”를 쓰자.
+
+<details>
+<summary>해설 보기</summary>
+
+1. $\forall x\forall y(\operatorname{Odd}(xy)\to(\operatorname{Odd}(x)\land\operatorname{Odd}(y)))$.
+2. $\neg\forall xL(x,x)\equiv\exists x\neg L(x,x)$.
+3. 한정 기호를 하나 지날 때마다 $\forall$와 $\exists$를 바꾼다.
+
+$$
+\neg\forall x\exists yP(x,y)\equiv\exists x\forall y\neg P(x,y),
+$$
+
+$$
+\neg\exists x\forall yP(x,y)\equiv\forall x\exists y\neg P(x,y).
+$$
+
+4. $\forall x(S(x)\to[C(x)\lor\exists y(F(x,y)\land C(y))])$. 친구 $y$가 같은 학교 학생이어야 한다는 조건은 없으므로 $S(y)$를 임의로 추가하지 않는다.
+
+</details>
+
+### 10. 한정 기호를 옮길 수 있는 조건
+
+다음 동치를 판정하고 거짓이면 반례를 들자.
+
+1. $\forall x\forall yP(x,y)\equiv\forall y\forall xP(x,y)$.
+2. $\forall x\exists yP(x,y)\equiv\exists y\forall xP(x,y)$.
+3. $\forall x(P(x)\land Q(x))\equiv(\forall xP(x))\land(\forall xQ(x))$.
+4. $\forall x(P(x)\to Q(x))\equiv((\forall xP(x))\to(\forall xQ(x)))$.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 참이다. 둘 다 모든 순서쌍에서 $P$가 참이어야 한다.
+2. 거짓이다. 정수에서 $P(x,y):x+y=0$을 쓰면 왼쪽은 $y=-x$로 참, 오른쪽은 하나의 $y$가 0과 1의 역원일 수 없어 거짓이다.
+3. 참이다. 왼쪽에서 모든 원소에 대해 두 성분이 각각 참이다. 반대로 두 전칭 명제가 참이면 임의의 같은 원소에서 두 성분을 AND로 묶을 수 있다.
+4. 거짓이다. $U=\{a,b\}$에서 $P(a)=T,Q(a)=F,P(b)=F,Q(b)=F$로 두자. 왼쪽은 $a$ 때문에 거짓이다. 오른쪽은 $\forall xP(x)$가 거짓이라 참이다.
+
+</details>
+
+### 11. 실수에서 증인과 반례 찾기
+
+실수에서 다음 명제를 판정하자. 참이면 증인을 고르는 방법, 거짓이면 반례를 쓰자.
+
+1. $\forall x\exists y(x+y=1)$.
+2. $\exists x\forall y(xy=0)$.
+3. $\forall x\exists y(x=y^2)$.
+
+<details>
+<summary>해설 보기</summary>
+
+1. 참이다. 임의의 $x$가 주어지면 $y=1-x$로 고른다. 그러면 $x+y=1$이다.
+2. 참이다. $x=0$ 하나를 먼저 정하면 모든 실수 $y$에서 $0y=0$이다.
+3. 거짓이다. $x=-1$이면 실수의 제곱 $y^2\ge0$과 같아질 수 없다. $x$의 정의역을 음이 아닌 실수로 제한하면 참이 되지만 여기서는 모든 실수가 대상이다.
+
+</details>
+
+### 12. 사랑 관계의 네 문장
+
+모든 사람이 정의역이고 $L(x,y)$는 $x$가 $y$를 사랑한다는 뜻이다. 다음을 번역하자.
+
+1. 누구나 누군가를 사랑한다.
+2. 모두에게 사랑받는 사람이 있다.
+3. 모든 사람을 사랑하는 사람은 없다.
+4. 모두가 자기 자신을 사랑한다.
+
+<details>
+<summary>해설 보기</summary>
+
+1. $\forall x\exists yL(x,y)$. $y$는 $x$에 따라 달라도 된다.
+2. $\exists y\forall xL(x,y)$. 하나의 공통 대상 $y$가 필요하다.
+3. $\neg\exists x\forall yL(x,y)\equiv\forall x\exists y\neg L(x,y)$. 각 사람마다 사랑하지 않는 상대가 적어도 하나 있다는 뜻이다. “아무도 아무도 사랑하지 않는다”보다 약하다.
+4. $\forall xL(x,x)$. 두 인수가 같은 사람임을 명시한다.
+
+</details>
+
+### 13. 게이트 연결을 식으로 바꾸기
+
+다음 연결의 출력식을 쓰고 가능하면 간단히 하자.
+
+1. $p,q$를 각각 NOT한 뒤 두 결과를 OR한다.
+2. $p$를 NOT한 결과와 $q$를 AND한다. 이를 원래 $p$와 OR한 뒤 최종 출력을 NOT한다.
+3. $r$을 NOT하고 $q$와 OR한 결과를 $p$와 AND한 뒤 NOT한다.
+4. $p,q$를 각각 NOT하여 AND한 결과와, $p,r$을 AND한 결과를 OR한다.
+
+<details>
+<summary>해설 보기</summary>
+
+1. $Y=\neg p\lor\neg q=\neg(p\land q)$. NAND와 같다.
+2. $Y=\neg[p\lor(\neg p\land q)]$. 안쪽을 분배하면 $(p\lor\neg p)\land(p\lor q)=p\lor q$이므로 $Y=\neg(p\lor q)$, 즉 NOR다.
+3. $Y=\neg[p\land(q\lor\neg r)]\equiv\neg p\lor(\neg q\land r)$. 두 번의 드모르간과 이중부정을 사용한다.
+4. $Y=(\neg p\land\neg q)\lor(p\land r)$. $p=0$이면 $\neg q$, $p=1$이면 $r$을 출력한다. 입력이 갈라지는 곳에서도 같은 신호 $p$라는 점을 유지한다.
+
+</details>
