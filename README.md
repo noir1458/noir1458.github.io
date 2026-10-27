@@ -12,6 +12,8 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 `src/styles/orange-square-tokens.css`는 그 저장소에서 생성한 값을 그대로 복사한
 파일이며 직접 수정하지 않습니다. 블로그 적용 규칙은 `src/styles/orange-square.css`에
 있습니다. 기존 기능 스타일은 `legacy` CSS layer에 두어 새 스킨과 연결합니다.
+블로그의 초점 표시는 화면을 노란색으로 채우는 대신 테마에 맞춘 외곽선을 사용합니다.
+상단의 선택·호버 색상도 방문자가 고른 강조색을 따릅니다.
 
 > 사이트를 운영할 때 수정하는 영역은 `config/`, `content/`,
 > `public/images/` 세 곳뿐입니다.
