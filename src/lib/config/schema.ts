@@ -117,11 +117,11 @@ export const siteFileSchema = z
       .strict(),
     appearance: z
       .object({
-        accentHue: z.number().int().min(0).max(360).default(250),
+        accentHue: z.number().int().min(0).max(360).default(18),
         banner: bannerSchema
       })
       .strict()
-      .default({ accentHue: 250, banner: bannerDefaults }),
+      .default({ accentHue: 18, banner: bannerDefaults }),
     languages: z
       .record(languageCode, languageDefinition)
       .refine(

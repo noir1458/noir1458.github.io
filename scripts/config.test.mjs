@@ -38,9 +38,9 @@ test("the repository configuration is valid", () => {
   assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
   assert.equal("resume" in config.social, false);
-  assert.equal(config.appearance.accentHue, 250);
+  assert.equal(config.appearance.accentHue, 18);
   assert.deepEqual(config.appearance.banner, {
-    enabled: true,
+    enabled: false,
     image: "/images/site/banner.webp",
     titleTone: "light",
     position: "center",
@@ -108,7 +108,7 @@ test("a missing appearance section uses the default hue", () => {
   replaceInFile(directory, "site.yaml", /\nappearance:\n(?: {2,}[^\n]*\n)+(?=\nlanguages:)/u, "");
 
   const appearance = loadSiteConfig({ configDirectory: directory }).appearance;
-  assert.equal(appearance.accentHue, 250);
+  assert.equal(appearance.accentHue, 18);
   assert.equal(appearance.banner.enabled, false);
 });
 

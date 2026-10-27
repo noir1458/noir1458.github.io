@@ -23,6 +23,8 @@ const page = paginatePosts(allPosts, currentPage);
 <BaseLayout
   title={`Page ${page.currentPage}`}
   description={`전체 글 목록 ${page.currentPage}페이지`}
+  sidebar={false}
+  fullWidth
 >
   <header class="page-heading">
     <span class="eyebrow">Index</span>

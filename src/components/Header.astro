@@ -15,11 +15,16 @@ const { language = SITE.language, translations = [] } = Astro.props;
 const headerLinks = NAVIGATION.header.filter(
   (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
 );
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => href === "/"
+  ? currentPath === "/" || currentPath.startsWith("/page/")
+  : currentPath === href || currentPath.startsWith(`${href.replace(/\/$/u, "")}/`);
 ---
 
 <header class="site-header">
   <div class="title-row">
-    <a class="site-title" href="/">{SITE.title}</a>
+    <a class="site-title" href="/">{SITE.title}<span class="brand-square" aria-hidden="true"></span></a>
+    <p class="masthead-description">{SITE.description}</p>
     <div class="header-actions">
       <LanguageControls currentLanguage={language} translations={translations} />
       {FEATURES.darkMode && <ThemeControls />}
@@ -44,12 +49,14 @@ const headerLinks = NAVIGATION.header.filter(
       data-primary-nav
       aria-label="Primary navigation"
     >
-      {headerLinks.map((link) => (
+      {headerLinks.map((link, index) => (
         <a
           href={link.href}
           rel={link.external ? "noopener noreferrer" : undefined}
           target={link.external ? "_blank" : undefined}
+          aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}
         >
+          <span class="nav-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
           {link.label}
         </a>
       ))}

@@ -7,7 +7,11 @@ const footerLinks = NAVIGATION.footer.filter(
 ---
 
 <footer class="site-footer">
-  <span>© {new Date().getFullYear()} {SITE.author.name}</span>
+  <div class="footer-identity">
+    <a href="/" class="footer-title">{SITE.title}</a>
+    <p>{SITE.description}</p>
+    <span>© {new Date().getFullYear()} {SITE.author.name}</span>
+  </div>
   <nav aria-label="Footer navigation">
     {footerLinks.map((link) => (
       <a

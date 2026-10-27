@@ -1,5 +1,6 @@
 ---
 import Icon from "@/components/Icon.astro";
+import { APPEARANCE } from "@/config";
 ---
 
 <div class="appearance-picker" data-appearance-picker>
@@ -15,6 +16,7 @@ import Icon from "@/components/Icon.astro";
     <span data-theme-icon="system"><Icon name="system" /></span>
     <span data-theme-icon="light" hidden><Icon name="sun" /></span>
     <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
+    <span class="appearance-label">테마</span>
   </button>
 
   <div
@@ -35,6 +37,7 @@ import Icon from "@/components/Icon.astro";
           aria-pressed="false"
         >
           <Icon name="system" />
+          <span>자동</span>
         </button>
         <button
           data-theme-value="light"
@@ -44,6 +47,7 @@ import Icon from "@/components/Icon.astro";
           aria-pressed="false"
         >
           <Icon name="sun" />
+          <span>밝게</span>
         </button>
         <button
           data-theme-value="dark"
@@ -53,12 +57,13 @@ import Icon from "@/components/Icon.astro";
           aria-pressed="false"
         >
           <Icon name="moon" />
+          <span>어둡게</span>
         </button>
       </div>
     </div>
 
     <label class="accent-hue-control" for="accent-hue">
-      <span class="sr-only">Accent</span>
+      <span>강조색</span>
       <input
         id="accent-hue"
         data-accent-hue
@@ -66,10 +71,10 @@ import Icon from "@/components/Icon.astro";
         min="0"
         max="360"
         step="1"
-        value="250"
+        value={APPEARANCE.accentHue}
         aria-label="Accent hue"
       />
-      <output data-accent-hue-output for="accent-hue">250°</output>
+      <output data-accent-hue-output for="accent-hue">{APPEARANCE.accentHue}°</output>
     </label>
   </div>
 </div>

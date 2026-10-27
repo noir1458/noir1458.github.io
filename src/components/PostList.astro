@@ -2,12 +2,10 @@
 import type { PostEntry } from "@/utils/content";
 import {
   formatDate,
-  postCover,
   postDescription,
   postUrl,
   slugifyTerm
 } from "@/utils/content";
-import { Image } from "astro:assets";
 
 interface Props {
   posts: PostEntry[];
@@ -18,41 +16,32 @@ const { posts, headingLevel = "h2" } = Astro.props;
 const Heading = headingLevel;
 const entries = posts.map((post) => ({
   post,
-  cover: postCover(post),
   description: postDescription(post)
 }));
 ---
 
 <div class="post-list" data-pagefind-ignore>
-  {entries.map(({ post, cover, description }) => (
-    <article class:list={["post-row", { "has-thumbnail": Boolean(cover) }]}>
+  {entries.map(({ post, description }) => (
+    <article class="post-row">
+      <div class="post-row-category">
+        {post.data.categories[0] && (
+          <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
+            {post.data.categories[0]}
+          </a>
+        )}
+      </div>
       <div class="post-row-copy">
         <Heading class="post-row-title">
           <a href={postUrl(post)}>{post.data.title}</a>
         </Heading>
         <p class="post-row-description">{description}</p>
-        <div class="post-row-meta">
-          <time datetime={post.data.publishedAt.toISOString()}>
-            {formatDate(post.data.publishedAt)}
-          </time>
-          {post.data.categories[0] && (
-            <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-              {post.data.categories[0]}
-            </a>
-          )}
-        </div>
       </div>
-      {cover && (
-        <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
-          <Image
-            alt=""
-            loading="lazy"
-            src={cover}
-            widths={[184, 360]}
-            sizes="(max-width: 700px) 92px, 180px"
-          />
-        </a>
-      )}
+      <div class="post-row-meta">
+        <time datetime={post.data.publishedAt.toISOString()}>
+          {formatDate(post.data.publishedAt)}
+        </time>
+        <span class="post-row-arrow" aria-hidden="true">↗</span>
+      </div>
     </article>
   ))}
 </div>

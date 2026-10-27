@@ -1,7 +1,7 @@
 const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 const supportedThemes = ["system", "light", "dark"] as const;
-const safeAccentHue = 250;
+const safeAccentHue = 18;
 
 type Theme = (typeof supportedThemes)[number];
 
@@ -40,7 +40,7 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
         : "system"
     : "light";
   const configuredHue = validHue(targetRoot.dataset.defaultAccentHue, safeAccentHue);
-  const accentHue = validHue(storedValue("color-accent-hue"), configuredHue);
+  const accentHue = validHue(storedValue("orange-square-accent-hue"), configuredHue);
   const resolved = theme === "system" ? (media.matches ? "dark" : "light") : theme;
 
   targetRoot.dataset.theme = theme;
@@ -125,7 +125,7 @@ document.addEventListener("input", (event) => {
   }
   const hue = validHue(event.target.value, safeAccentHue);
   root.style.setProperty("--accent-hue", String(hue));
-  storeValue("color-accent-hue", String(hue));
+  storeValue("orange-square-accent-hue", String(hue));
   syncAccentHue();
 });
 

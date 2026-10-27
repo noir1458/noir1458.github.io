@@ -1,0 +1,65 @@
+/* Generated from styles/orange-square/DESIGN.md. Do not edit directly. */
+:root {
+  --color-background: #faf9f6;
+  --color-surface: #ffffff;
+  --color-text: #191815;
+  --color-muted: #625f58;
+  --color-line: #d5d2cc;
+  --color-accent: #c94712;
+  --color-accent-soft: #fff7f2;
+  --color-on-accent: #ffffff;
+  --color-focus: #ffdd00;
+  --color-danger: #b42318;
+  --color-success: #00643a;
+  --color-footer: #eeece7;
+  --space-xs: 5px;
+  --space-sm: 10px;
+  --space-md: 15px;
+  --space-lg: 20px;
+  --space-xl: 30px;
+  --space-2xl: 40px;
+  --space-3xl: 60px;
+  --space-4xl: 80px;
+  --radius-none: 0px;
+  --type-display-size: 72px;
+  --type-display-weight: 800;
+  --type-display-leading: 1.18;
+  --type-display-tracking: -0.055em;
+  --type-h1-size: 48px;
+  --type-h1-weight: 800;
+  --type-h1-leading: 1.25;
+  --type-h1-tracking: -0.045em;
+  --type-h2-size: 32px;
+  --type-h2-weight: 700;
+  --type-h2-leading: 1.35;
+  --type-h2-tracking: -0.035em;
+  --type-body-size: 18px;
+  --type-body-weight: 400;
+  --type-body-leading: 1.75;
+  --type-body-tracking: -0.02em;
+  --type-small-size: 14px;
+  --type-small-weight: 400;
+  --type-small-leading: 1.6;
+  --type-small-tracking: 0em;
+  --type-mono-size: 13px;
+  --type-mono-weight: 400;
+  --type-mono-leading: 1.6;
+  --type-mono-tracking: 0em;
+  --font-body: Arial, Apple SD Gothic Neo, Noto Sans KR, Malgun Gothic, sans-serif;
+  --font-mono: SFMono-Regular, Consolas, Liberation Mono, monospace;
+  --radius: 0px;
+}
+[data-theme="dark"] {
+  --color-background: #11110f;
+  --color-surface: #1c1c19;
+  --color-text: #f8f7f2;
+  --color-muted: #b7b3a9;
+  --color-line: #45433e;
+  --color-accent: #ff8a4c;
+  --color-accent-soft: #382014;
+  --color-on-accent: #17140f;
+  --color-focus: #ffdd00;
+  --color-danger: #ff9c90;
+  --color-success: #8cd2aa;
+  --color-footer: #1b1b18;
+}
