@@ -2,6 +2,7 @@
 import { render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Icon from "@/components/Icon.astro";
+import TermLabel from "@/components/TermLabel.astro";
 import Giscus from "@/components/Giscus.astro";
 import { FEATURES, SITE } from "@/config";
 import {
@@ -91,7 +92,7 @@ const schema = {
         <>
           <span aria-hidden="true">/</span>
           <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-            {post.data.categories[0]}
+            <TermLabel name={post.data.categories[0]} />
           </a>
         </>
       )}

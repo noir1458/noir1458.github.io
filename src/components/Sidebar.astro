@@ -3,6 +3,7 @@ import type { PostEntry } from "@/utils/content";
 import type { MarkdownHeading } from "astro";
 import { groupCategoriesForSidebar } from "@/utils/content";
 import Icon from "@/components/Icon.astro";
+import TermLabel from "@/components/TermLabel.astro";
 import { FEATURES, NAVIGATION } from "@/config";
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 
 const { posts, headings = [] } = Astro.props;
 const categoryGroups = groupCategoriesForSidebar(posts);
+const currentPath = Astro.url.pathname;
 const sidebarLinks = NAVIGATION.sidebar.filter(
   (link) => link.icon && (!link.requiresFeature || FEATURES[link.requiresFeature])
 );
@@ -68,8 +70,11 @@ const sidebarLinks = NAVIGATION.sidebar.filter(
             )}
             {group.categories.map((term, termIndex) => (
               <li class:list={{ "term-column-second": termIndex % 2 === 1 }}>
-                <a href={`/categories/${term.slug}/`}>
-                  <span>{term.name}</span>
+                <a
+                  href={`/categories/${term.slug}/`}
+                  aria-current={currentPath.startsWith(`/categories/${term.slug}/`) ? "page" : undefined}
+                >
+                  <TermLabel name={term.name} />
                   <span class="term-count">{term.count}</span>
                 </a>
               </li>

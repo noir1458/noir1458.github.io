@@ -1,0 +1,9 @@
+---
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<span class="term-label">{name.split("_").map((part, index) => <Fragment>{index > 0 && <Fragment>_<wbr /></Fragment>}{part}</Fragment>)}</span>

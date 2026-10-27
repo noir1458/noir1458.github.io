@@ -4,19 +4,26 @@ import Icon from "@/components/Icon.astro";
 interface Props {
   title?: string;
   description?: string;
+  headingLevel?: "h1" | "h2";
+  href?: string;
+  actionLabel?: string;
 }
 
 const {
   title = "No posts found",
-  description = "There are no published posts to show here."
+  description = "There are no published posts to show here.",
+  headingLevel = "h1",
+  href = "/",
+  actionLabel = "All posts"
 } = Astro.props;
+const Heading = headingLevel;
 ---
 
 <section class="empty-state" aria-labelledby="empty-state-title">
   <span class="empty-icon"><Icon name="search" size={28} /></span>
   <div>
-    <h1 id="empty-state-title">{title}</h1>
+    <Heading id="empty-state-title">{title}</Heading>
     <p>{description}</p>
   </div>
-  <a class="outline-button" href="/">All posts <Icon name="arrow-right" size={18} /></a>
+  <a class="outline-button" href={href}>{actionLabel} <Icon name="arrow-right" size={18} /></a>
 </section>

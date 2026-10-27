@@ -4,7 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostList from "@/components/PostList.astro";
 import Pagination from "@/components/Pagination.astro";
 import EmptyState from "@/components/EmptyState.astro";
-import Icon from "@/components/Icon.astro";
+import TermLabel from "@/components/TermLabel.astro";
 import {
   countTerms,
   getPublishedPosts,
@@ -30,7 +30,7 @@ const page = paginatePosts(filtered, 1);
 <BaseLayout title={`Tag: ${tagName}`} description={`Posts tagged ${tagName}`}>
   <header class="page-heading taxonomy-heading">
     <span class="eyebrow">Tag</span>
-    <h1><Icon name="tag" size={32} /> {tagName}</h1>
+    <h1><TermLabel name={tagName} /></h1>
     <p>{filtered.length} published {filtered.length === 1 ? "post" : "posts"}</p>
   </header>
   {filtered.length ? (
@@ -43,6 +43,6 @@ const page = paginatePosts(filtered, 1);
       />
     </>
   ) : (
-    <EmptyState />
+    <EmptyState headingLevel="h2" />
   )}
 </BaseLayout>

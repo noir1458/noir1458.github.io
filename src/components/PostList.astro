@@ -1,5 +1,6 @@
 ---
 import type { PostEntry } from "@/utils/content";
+import TermLabel from "@/components/TermLabel.astro";
 import {
   formatDate,
   postDescription,
@@ -10,9 +11,10 @@ import {
 interface Props {
   posts: PostEntry[];
   headingLevel?: "h2" | "h3";
+  showCategory?: boolean;
 }
 
-const { posts, headingLevel = "h2" } = Astro.props;
+const { posts, headingLevel = "h2", showCategory = true } = Astro.props;
 const Heading = headingLevel;
 const entries = posts.map((post) => ({
   post,
@@ -22,16 +24,16 @@ const entries = posts.map((post) => ({
 
 <div class="post-list" data-pagefind-ignore>
   {entries.map(({ post, description }) => (
-    <article class="post-row">
-      <div class="post-row-category">
+    <article class:list={["post-row", { "post-row-without-category": !showCategory }]}>
+      {showCategory && (
+        <div class="post-row-category">
         {post.data.categories[0] && (
           <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-            {post.data.categories[0].split("_").map((part, index) => (
-              <Fragment>{index > 0 && <Fragment>_<wbr /></Fragment>}{part}</Fragment>
-            ))}
+            <TermLabel name={post.data.categories[0]} />
           </a>
         )}
-      </div>
+        </div>
+      )}
       <div class="post-row-copy">
         <Heading class="post-row-title">
           <a href={postUrl(post)}>{post.data.title}</a>
