@@ -39,6 +39,17 @@ export function postCover(post: PostEntry): ImageMetadata | undefined {
   return localPostImages[imagePath];
 }
 
+export function postThumbnail(post: PostEntry): ImageMetadata | string | undefined {
+  const cover = postCover(post);
+  if (cover) return cover;
+
+  const body = (post.body ?? "").replace(/```[\s\S]*?```|~~~[\s\S]*?~~~|<!--[\s\S]*?-->/g, "");
+  const image = body.match(
+    /!\[[^\]]*\]\((https?:\/\/[^)\s]+|\/(?!\/)[^)\s]+)(?:\s+["'][^"']*["'])?\)|<img\b[^>]*\bsrc=["'](https?:\/\/[^"']+|\/(?!\/)[^"']+)["']/i
+  );
+  return image?.[1] ?? image?.[2];
+}
+
 const DESCRIPTION_LIMIT = 180;
 
 function truncateDescription(value: string): string {
