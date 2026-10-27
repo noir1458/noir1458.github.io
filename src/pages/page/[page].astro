@@ -28,7 +28,7 @@ const page = paginatePosts(allPosts, currentPage);
 >
   <header class="page-heading">
     <span class="eyebrow">Index</span>
-    <h1>Posts</h1>
+    <h1>Post</h1>
     <p>{allPosts.length} published posts · Page {page.currentPage} of {page.totalPages}</p>
   </header>
   <PostList posts={page.posts} />

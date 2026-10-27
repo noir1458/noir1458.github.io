@@ -26,7 +26,9 @@ const entries = posts.map((post) => ({
       <div class="post-row-category">
         {post.data.categories[0] && (
           <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-            {post.data.categories[0]}
+            {post.data.categories[0].split("_").map((part, index) => (
+              <Fragment>{index > 0 && <Fragment>_<wbr /></Fragment>}{part}</Fragment>
+            ))}
           </a>
         )}
       </div>

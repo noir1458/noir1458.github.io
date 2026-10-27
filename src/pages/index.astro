@@ -26,21 +26,11 @@ const schema = {
 <BaseLayout schema={schema} sidebar={false} fullWidth>
   {page.posts.length ? (
     <>
-      <header class="page-heading home-intro">
-        <div>
-          <span class="eyebrow">Computer science & notes</span>
-          <h1>공부하고,<br />기록합니다.</h1>
-        </div>
-        <p>{SITE.description}</p>
+      <header class="page-heading">
+        <span class="eyebrow">Index</span>
+        <h1>Post</h1>
+        <p>Browse all {allPosts.length} published posts.</p>
       </header>
-      <div class="list-toolbar">
-        <nav aria-label="글 탐색">
-          <a href="/" aria-current="page">전체 글</a>
-          <a href="/categories/">카테고리</a>
-          <a href="/archives/">아카이브</a>
-        </nav>
-        <p>{allPosts.length}개의 기록</p>
-      </div>
       <PostList posts={page.posts} />
       <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
     </>

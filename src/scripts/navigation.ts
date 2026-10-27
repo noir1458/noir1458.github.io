@@ -1,33 +1,22 @@
 let navigationController: AbortController | undefined;
-let searchCloseTimer: number | undefined;
 
 function initNavigation() {
   navigationController?.abort();
   navigationController = new AbortController();
   const { signal } = navigationController;
 
-  window.clearTimeout(searchCloseTimer);
-
   const searchShell = document.querySelector<HTMLElement>("[data-search-shell]");
   const searchToggle = document.querySelector<HTMLButtonElement>("[data-search-toggle]");
   const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
+  const searchField = searchShell?.querySelector<HTMLElement>(".header-search-field");
   const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
   const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
   const languagePicker = document.querySelector<HTMLDetailsElement>("[data-language-picker]");
 
   function closeSearch({ restoreFocus = false } = {}) {
-    const wasOpen = Boolean(searchShell?.classList.contains("open"));
     searchShell?.classList.remove("open");
-    if (wasOpen) {
-      searchShell?.classList.add("closing");
-      window.clearTimeout(searchCloseTimer);
-      searchCloseTimer = window.setTimeout(() => {
-        searchShell?.classList.remove("closing");
-        if (restoreFocus) searchToggle?.focus();
-      }, 240);
-    } else if (restoreFocus) {
-      searchToggle?.focus();
-    }
+    searchField?.setAttribute("inert", "");
+    if (restoreFocus) searchToggle?.focus();
     searchToggle?.setAttribute("aria-expanded", "false");
     searchToggle?.setAttribute("aria-label", "Open search");
   }
@@ -49,9 +38,8 @@ function initNavigation() {
         return;
       }
       setNavigation(false);
-      window.clearTimeout(searchCloseTimer);
-      searchShell?.classList.remove("closing");
       searchShell?.classList.add("open");
+      searchField?.removeAttribute("inert");
       searchToggle.setAttribute("aria-expanded", "true");
       searchToggle.setAttribute("aria-label", "Close search");
       window.setTimeout(() => searchInput?.focus(), 80);
@@ -112,7 +100,7 @@ function initNavigation() {
     { signal }
   );
 
-  const mobileNavigation = window.matchMedia("(max-width: 700px)");
+  const mobileNavigation = window.matchMedia("(max-width: 1000px)");
   mobileNavigation.addEventListener(
     "change",
     (event) => {
