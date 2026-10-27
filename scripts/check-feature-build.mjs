@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import rehypeMermaid from "rehype-mermaid";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
-const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "astro-blog-features-"));
+// Astro renames prerendered assets, so test output must share the project's filesystem.
+const temporaryRoot = fs.mkdtempSync(path.join(projectRoot, ".astro-blog-features-"));
 const configDirectory = path.join(temporaryRoot, "config");
 const outputDirectory = path.join(temporaryRoot, "dist");
 const projectsOutputDirectory = path.join(temporaryRoot, "dist-projects");

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .astro/
+.astro-blog-features-*/
 .DS_Store
 .env
 .env.*
