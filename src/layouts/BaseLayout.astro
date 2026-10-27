@@ -74,7 +74,8 @@ const pageTransition: TransitionDirectionalAnimations = {
 <html
   lang={language}
   data-default-accent-hue={String(APPEARANCE.accentHue)}
-  data-theme={FEATURES.darkMode ? "system" : "light"}
+  data-default-theme={APPEARANCE.defaultTheme}
+  data-theme={FEATURES.darkMode ? APPEARANCE.defaultTheme : "light"}
   data-theme-enabled={String(FEATURES.darkMode)}
   style={`--accent-hue: ${APPEARANCE.accentHue}`}
 >
@@ -152,15 +153,19 @@ const pageTransition: TransitionDirectionalAnimations = {
               && defaultAccentHue >= 0
               && defaultAccentHue <= 360
                 ? defaultAccentHue
-                : 18;
+                : 0;
         root.style.setProperty("--accent-hue", String(accentHue));
 
         if (root.dataset.themeEnabled === "true") {
+          const configuredTheme = root.dataset.defaultTheme;
+          const defaultTheme = configuredTheme === "dark" || configuredTheme === "system"
+            ? configuredTheme
+            : "light";
           const theme = savedTheme === "neon"
             ? "dark"
             : savedTheme === "light" || savedTheme === "dark" || savedTheme === "system"
               ? savedTheme
-              : "system";
+              : defaultTheme;
           root.dataset.theme = theme;
           const resolved = theme === "system"
             ? window.matchMedia("(prefers-color-scheme: dark)").matches

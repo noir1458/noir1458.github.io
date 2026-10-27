@@ -38,7 +38,8 @@ test("the repository configuration is valid", () => {
   assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
   assert.equal("resume" in config.social, false);
-  assert.equal(config.appearance.accentHue, 18);
+  assert.equal(config.appearance.defaultTheme, "light");
+  assert.equal(config.appearance.accentHue, 0);
   assert.deepEqual(config.appearance.banner, {
     enabled: false,
     image: "/images/site/banner.webp",
@@ -61,6 +62,33 @@ test("an invalid site URL reports its file and field", () => {
     (error) =>
       error instanceof SiteConfigError && /config\/site\.yaml: site\.url:/u.test(error.message)
   );
+});
+
+test("the default theme accepts light, dark, and system", () => {
+  for (const theme of ["light", "dark", "system"]) {
+    const directory = configFixture();
+    replaceInFile(directory, "site.yaml", /^ {2}defaultTheme: .*$/mu, `  defaultTheme: ${theme}`);
+    assert.equal(loadSiteConfig({ configDirectory: directory }).appearance.defaultTheme, theme);
+  }
+});
+
+test("unsupported default themes report their configuration field", () => {
+  for (const theme of ["neon", "sepia"]) {
+    const directory = configFixture();
+    replaceInFile(directory, "site.yaml", /^ {2}defaultTheme: .*$/mu, `  defaultTheme: ${theme}`);
+    assert.throws(
+      () => loadSiteConfig({ configDirectory: directory }),
+      (error) =>
+        error instanceof SiteConfigError
+        && /config\/site\.yaml: appearance\.defaultTheme:/u.test(error.message)
+    );
+  }
+});
+
+test("older appearance settings without a default theme use light", () => {
+  const directory = configFixture();
+  replaceInFile(directory, "site.yaml", /^ {2}defaultTheme: .*\n/mu, "");
+  assert.equal(loadSiteConfig({ configDirectory: directory }).appearance.defaultTheme, "light");
 });
 
 test("a configured accent hue is valid", () => {
@@ -103,12 +131,13 @@ test("accent hue rejects fractional values", () => {
   );
 });
 
-test("a missing appearance section uses the default hue", () => {
+test("a missing appearance section uses light and the default hue", () => {
   const directory = configFixture();
   replaceInFile(directory, "site.yaml", /\nappearance:\n(?: {2,}[^\n]*\n)+(?=\nlanguages:)/u, "");
 
   const appearance = loadSiteConfig({ configDirectory: directory }).appearance;
-  assert.equal(appearance.accentHue, 18);
+  assert.equal(appearance.defaultTheme, "light");
+  assert.equal(appearance.accentHue, 0);
   assert.equal(appearance.banner.enabled, false);
 });
 

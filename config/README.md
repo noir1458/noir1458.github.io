@@ -24,17 +24,19 @@ profile image in `public/images/profile/`, and favicon or social-card images in
 The build reports the exact field when a configured image is missing.
 Post- and project-specific images stay beside their Markdown files in `content/`.
 
-Choose the site's default accent hue in `site.yaml` with a value from 0 through
-360:
+Choose the site's default theme (`light`, `dark`, or `system`) and accent hue
+(an integer from 0 through 360) in `site.yaml`:
 
 ```yaml
 appearance:
-  accentHue: 18
+  defaultTheme: light
+  accentHue: 0
 ```
 
-The default value 18 preserves the original Orange Square 0.1.2 light and dark
-accent colors. Other values rotate that palette's hue. Visitors can adjust the
-horizontal slider in the theme menu; their choice is stored in the browser under
+The defaults are light mode and hue 0. A hue of 18 preserves the original Orange
+Square 0.1.2 light and dark accent colors. Other values rotate that palette's hue.
+Visitor choices override these defaults and persist in their browser. The system
+theme follows the operating system. The hue choice is stored under
 an Orange Square-specific key, independently of the previous skin's hue setting.
 
 The optional site-wide background banner is disabled by default. To use it, place a local

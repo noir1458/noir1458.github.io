@@ -1,6 +1,8 @@
 ---
 import Icon from "@/components/Icon.astro";
 import { APPEARANCE } from "@/config";
+const defaultTheme = APPEARANCE.defaultTheme;
+const defaultLabel = defaultTheme === "system" ? "Auto" : defaultTheme === "light" ? "Light" : "Dark";
 ---
 
 <div class="appearance-picker" data-appearance-picker>
@@ -11,11 +13,11 @@ import { APPEARANCE } from "@/config";
     aria-controls="appearance-menu"
     aria-expanded="false"
     aria-haspopup="dialog"
-    aria-label="Choose appearance, current theme: Auto"
+    aria-label={`Choose appearance, current theme: ${defaultLabel}`}
   >
-    <span data-theme-icon="system"><Icon name="system" /></span>
-    <span data-theme-icon="light" hidden><Icon name="sun" /></span>
-    <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
+    <span data-theme-icon="system" hidden={defaultTheme !== "system"}><Icon name="system" /></span>
+    <span data-theme-icon="light" hidden={defaultTheme !== "light"}><Icon name="sun" /></span>
+    <span data-theme-icon="dark" hidden={defaultTheme !== "dark"}><Icon name="moon" /></span>
   </button>
 
   <div
@@ -30,28 +32,31 @@ import { APPEARANCE } from "@/config";
       <div class="theme-options" role="group" aria-label="Color theme">
         <button
           data-theme-value="system"
+          class:list={{ active: defaultTheme === "system" }}
           type="button"
           aria-label="Auto theme"
           title="Auto"
-          aria-pressed="false"
+          aria-pressed={defaultTheme === "system" ? "true" : "false"}
         >
           <Icon name="system" />
         </button>
         <button
           data-theme-value="light"
+          class:list={{ active: defaultTheme === "light" }}
           type="button"
           aria-label="Light theme"
           title="Light"
-          aria-pressed="false"
+          aria-pressed={defaultTheme === "light" ? "true" : "false"}
         >
           <Icon name="sun" />
         </button>
         <button
           data-theme-value="dark"
+          class:list={{ active: defaultTheme === "dark" }}
           type="button"
           aria-label="Dark theme"
           title="Dark"
-          aria-pressed="false"
+          aria-pressed={defaultTheme === "dark" ? "true" : "false"}
         >
           <Icon name="moon" />
         </button>

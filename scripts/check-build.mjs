@@ -61,6 +61,13 @@ function countOccurrences(source, value) {
   return source.split(value).length - 1;
 }
 
+function layoutClasses(html) {
+  const layout = [...html.matchAll(/<div\b[^>]*>/gu)]
+    .map((match) => match[0])
+    .find((tag) => /\sdata-layout(?:[\s=>])/u.test(tag));
+  return new Set((tagAttribute(layout ?? "", "class") ?? "").split(/\s+/u));
+}
+
 function structuredData(html, label) {
   const source = html.match(
     /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/iu
@@ -220,10 +227,7 @@ for (const file of collectionFiles) {
   if (html.includes("data-sidebar")) {
     errors.push(`${label}: category and tag collections must not render a sidebar`);
   }
-  const layout = [...html.matchAll(/<div\b[^>]*>/gu)]
-    .map((match) => match[0])
-    .find((tag) => /\sdata-layout(?:[\s=>])/u.test(tag));
-  const classes = new Set((tagAttribute(layout ?? "", "class") ?? "").split(/\s+/u));
+  const classes = layoutClasses(html);
   if (!classes.has("without-sidebar") || !classes.has("full-width-content")) {
     errors.push(`${label}: category and tag collections must use the full-width layout`);
   }
@@ -291,6 +295,14 @@ if (
 
 if (!indexHtml.includes(`data-default-accent-hue="${APPEARANCE.accentHue}"`)) {
   errors.push(`index.html: configured accent hue is missing: ${APPEARANCE.accentHue}`);
+}
+
+if (!indexHtml.includes(`data-default-theme="${APPEARANCE.defaultTheme}"`)) {
+  errors.push(`index.html: configured default theme is missing: ${APPEARANCE.defaultTheme}`);
+}
+const initialTheme = FEATURES.darkMode ? APPEARANCE.defaultTheme : "light";
+if (!indexHtml.includes(`data-theme="${initialTheme}"`)) {
+  errors.push(`index.html: initial theme does not match configuration: ${initialTheme}`);
 }
 
 const expectedBannerCount = APPEARANCE.banner.enabled ? 1 : 0;
@@ -521,6 +533,14 @@ for (const entry of contentEntries) {
 
   const html = fs.readFileSync(outputFile, "utf8");
   const relativeOutput = path.relative(distRoot, outputFile);
+  const classes = layoutClasses(html);
+  if (
+    html.includes("data-sidebar")
+    || !classes.has("without-sidebar")
+    || !classes.has("full-width-content")
+  ) {
+    errors.push(`${relativeOutput}: posts must use the full-width layout without a sidebar`);
+  }
   const mermaidBlocks = (html.match(/class="mermaid-block"/gu) ?? []).length;
   const mermaidSources = (html.match(/<button\b[^>]*class="mermaid-source"/gu) ?? []).length;
   const lightDiagrams = (html.match(/mermaid-diagram-light/gu) ?? []).length;
