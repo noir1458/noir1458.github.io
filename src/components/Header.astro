@@ -15,29 +15,18 @@ const { language = SITE.language, translations = [] } = Astro.props;
 const headerLinks = NAVIGATION.header.filter(
   (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
 );
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => href === "/"
+  ? currentPath === "/" || currentPath.startsWith("/page/") || /\/posts\/[^/]+\/$/u.test(currentPath)
+  : currentPath === href || currentPath.startsWith(`${href.replace(/\/$/u, "")}/`);
 ---
 
 <header class="site-header">
   <div class="title-row">
-    <a class="site-title" href="/">{SITE.title}</a>
-    <div class="header-actions">
-      <LanguageControls currentLanguage={language} translations={translations} />
-      {FEATURES.darkMode && <ThemeControls />}
-    </div>
-  </div>
-
-  <div class="topbar">
-    <button
-      class="nav-toggle icon-button"
-      data-nav-toggle
-      type="button"
-      aria-controls="primary-navigation"
-      aria-expanded="false"
-      aria-label="Open navigation"
-    >
-      <span class="nav-toggle-menu"><Icon name="menu" /></span>
-      <span class="nav-toggle-close"><Icon name="close" /></span>
-    </button>
+    <a class="site-title" href="/" aria-label={SITE.title} title={SITE.title}>
+      <span class="site-title-text">{SITE.title}</span>
+      <span class="brand-square" aria-hidden="true"></span>
+    </a>
     <nav
       id="primary-navigation"
       class="primary-nav"
@@ -49,29 +38,47 @@ const headerLinks = NAVIGATION.header.filter(
           href={link.href}
           rel={link.external ? "noopener noreferrer" : undefined}
           target={link.external ? "_blank" : undefined}
+          aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}
         >
           {link.label}
         </a>
       ))}
     </nav>
-    {FEATURES.search && (
-      <div class="search-shell" data-search-shell>
-        <form action="/search/" class="header-search" role="search">
-          <button
-            class="search-toggle icon-button"
-            data-search-toggle
-            type="button"
-            aria-expanded="false"
-            aria-label="Open search"
-          >
-            <Icon name="search" />
-          </button>
-          <div class="header-search-field">
-            <label class="sr-only" for="site-search">Search the blog</label>
-            <input id="site-search" name="q" placeholder="Search posts" type="search" />
-          </div>
-        </form>
-      </div>
-    )}
+    <div class="header-actions">
+      <LanguageControls currentLanguage={language} translations={translations} />
+      {FEATURES.search && (
+        <div class="search-shell" data-search-shell>
+          <form action="/search/" class="header-search" role="search">
+            <button
+              class="search-toggle icon-button"
+              data-search-toggle
+              type="button"
+              aria-controls="header-search-field"
+              aria-expanded="false"
+              aria-label="Open search"
+            >
+              <Icon name="search" />
+            </button>
+            <div id="header-search-field" class="header-search-field" inert>
+              <label class="sr-only" for="site-search">Search the blog</label>
+              <input id="site-search" name="q" placeholder="Search posts" type="search" />
+              <button class="header-search-submit" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
+      )}
+      {FEATURES.darkMode && <ThemeControls />}
+      <button
+        class="nav-toggle icon-button"
+        data-nav-toggle
+        type="button"
+        aria-controls="primary-navigation"
+        aria-expanded="false"
+        aria-label="Open navigation"
+      >
+        <span class="nav-toggle-menu"><Icon name="menu" /></span>
+        <span class="nav-toggle-close"><Icon name="close" /></span>
+      </button>
+    </div>
   </div>
 </header>

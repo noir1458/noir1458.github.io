@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import TermLabel from "@/components/TermLabel.astro";
 import { countTerms, getPublishedPosts } from "@/utils/content";
 
 const posts = await getPublishedPosts();
@@ -10,6 +11,7 @@ const categories = countTerms(posts, "categories");
   title="Categories"
   description="주제별로 모아보는 게시글 카테고리"
   sidebar={false}
+  fullWidth
 >
   <header class="page-heading">
     <span class="eyebrow">Index</span>
@@ -19,7 +21,7 @@ const categories = countTerms(posts, "categories");
   <div class="term-grid">
     {categories.map((category) => (
       <a class="term-card" href={`/categories/${category.slug}/`}>
-        <span>{category.name}</span>
+        <TermLabel name={category.name} />
         <span class="term-count">{category.count}</span>
       </a>
     ))}

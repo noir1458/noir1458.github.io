@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostList from "@/components/PostList.astro";
+import TermLabel from "@/components/TermLabel.astro";
 import Pagination from "@/components/Pagination.astro";
 import { SITE } from "@/config";
 import {
@@ -38,10 +39,10 @@ const page = paginatePosts(filtered, currentPage);
 >
   <header class="page-heading">
     <span class="eyebrow">Category</span>
-    <h1>{categoryName}</h1>
+    <h1><TermLabel name={categoryName} /></h1>
     <p>Page {page.currentPage} of {page.totalPages}</p>
   </header>
-  <PostList posts={page.posts} />
+  <PostList posts={page.posts} showCategory={false} />
   <Pagination
     currentPage={page.currentPage}
     totalPages={page.totalPages}

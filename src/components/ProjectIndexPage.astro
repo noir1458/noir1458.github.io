@@ -11,6 +11,7 @@ const projects = await getPublishedProjects();
   title="Projects"
   description="Selected software projects and experiments."
   sidebar={false}
+  fullWidth
 >
   <header class="page-heading">
     <span class="eyebrow">Portfolio</span>
@@ -21,6 +22,7 @@ const projects = await getPublishedProjects();
     <ProjectList projects={projects} />
   ) : (
     <EmptyState
+      headingLevel="h2"
       title="No projects yet"
       description="Published projects will appear here."
     />

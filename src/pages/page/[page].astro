@@ -23,10 +23,12 @@ const page = paginatePosts(allPosts, currentPage);
 <BaseLayout
   title={`Page ${page.currentPage}`}
   description={`전체 글 목록 ${page.currentPage}페이지`}
+  sidebar={false}
+  fullWidth
 >
   <header class="page-heading">
     <span class="eyebrow">Index</span>
-    <h1>Posts</h1>
+    <h1>Post</h1>
     <p>{allPosts.length} published posts · Page {page.currentPage} of {page.totalPages}</p>
   </header>
   <PostList posts={page.posts} />

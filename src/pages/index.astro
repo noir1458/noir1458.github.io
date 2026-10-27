@@ -23,12 +23,12 @@ const schema = {
 };
 ---
 
-<BaseLayout schema={schema}>
+<BaseLayout schema={schema} sidebar={false} fullWidth>
   {page.posts.length ? (
     <>
       <header class="page-heading">
         <span class="eyebrow">Index</span>
-        <h1>Posts</h1>
+        <h1>Post</h1>
         <p>Browse all {allPosts.length} published posts.</p>
       </header>
       <PostList posts={page.posts} />

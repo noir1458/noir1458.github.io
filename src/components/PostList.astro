@@ -1,58 +1,84 @@
 ---
+import { Image } from "astro:assets";
 import type { PostEntry } from "@/utils/content";
+import TermLabel from "@/components/TermLabel.astro";
 import {
   formatDate,
-  postCover,
   postDescription,
+  postThumbnail,
   postUrl,
   slugifyTerm
 } from "@/utils/content";
-import { Image } from "astro:assets";
 
 interface Props {
   posts: PostEntry[];
   headingLevel?: "h2" | "h3";
+  showCategory?: boolean;
 }
 
-const { posts, headingLevel = "h2" } = Astro.props;
+const { posts, headingLevel = "h2", showCategory = true } = Astro.props;
 const Heading = headingLevel;
 const entries = posts.map((post) => ({
   post,
-  cover: postCover(post),
-  description: postDescription(post)
+  description: postDescription(post),
+  thumbnail: postThumbnail(post)
 }));
 ---
 
 <div class="post-list" data-pagefind-ignore>
-  {entries.map(({ post, cover, description }) => (
-    <article class:list={["post-row", { "has-thumbnail": Boolean(cover) }]}>
+  {entries.map(({ post, description, thumbnail }) => (
+    <article class="post-row">
       <div class="post-row-copy">
         <Heading class="post-row-title">
           <a href={postUrl(post)}>{post.data.title}</a>
         </Heading>
-        <p class="post-row-description">{description}</p>
         <div class="post-row-meta">
+          {showCategory && post.data.categories[0] && (
+            <a class="post-row-category" href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
+              <TermLabel name={post.data.categories[0]} />
+            </a>
+          )}
           <time datetime={post.data.publishedAt.toISOString()}>
             {formatDate(post.data.publishedAt)}
           </time>
-          {post.data.categories[0] && (
-            <a href={`/categories/${slugifyTerm(post.data.categories[0])}/`}>
-              {post.data.categories[0]}
-            </a>
-          )}
         </div>
+        <p class="post-row-description">{description}</p>
       </div>
-      {cover && (
-        <a class="post-thumbnail" href={postUrl(post)} aria-label={`Read ${post.data.title}`}>
-          <Image
-            alt=""
-            loading="lazy"
-            src={cover}
-            widths={[184, 360]}
-            sizes="(max-width: 700px) 92px, 180px"
-          />
-        </a>
-      )}
+      <a class="post-thumbnail" href={postUrl(post)} tabindex="-1" aria-hidden="true">
+        {thumbnail && (
+          typeof thumbnail === "string" ? (
+            <img src={thumbnail} alt="" width="360" height="240" loading="lazy" decoding="async" />
+          ) : (
+            <Image
+              src={thumbnail}
+              alt=""
+              width={360}
+              height={240}
+              widths={[180, 360]}
+              sizes="(max-width: 360px) 72px, (max-width: 700px) 88px, (max-width: 1080px) 160px, 180px"
+              fit="cover"
+              loading="lazy"
+              decoding="async"
+            />
+          )
+        )}
+      </a>
     </article>
   ))}
 </div>
+
+<script>
+  const hideFailedThumbnail = (image: HTMLImageElement) => {
+    if (image.complete && image.naturalWidth === 0) image.hidden = true;
+  };
+
+  document.addEventListener("error", (event) => {
+    if (event.target instanceof HTMLImageElement && event.target.matches(".post-thumbnail img")) {
+      hideFailedThumbnail(event.target);
+    }
+  }, true);
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLImageElement>(".post-thumbnail img").forEach(hideFailedThumbnail);
+  });
+</script>

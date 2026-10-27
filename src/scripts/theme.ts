@@ -1,7 +1,9 @@
+import { announceHeaderPanelOpen, onHeaderPanelOpen } from "@/scripts/header-panels";
+
 const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 const supportedThemes = ["system", "light", "dark"] as const;
-const safeAccentHue = 250;
+const safeAccentHue = 18;
 
 type Theme = (typeof supportedThemes)[number];
 
@@ -40,7 +42,7 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
         : "system"
     : "light";
   const configuredHue = validHue(targetRoot.dataset.defaultAccentHue, safeAccentHue);
-  const accentHue = validHue(storedValue("color-accent-hue"), configuredHue);
+  const accentHue = validHue(storedValue("orange-square-accent-hue"), configuredHue);
   const resolved = theme === "system" ? (media.matches ? "dark" : "light") : theme;
 
   targetRoot.dataset.theme = theme;
@@ -70,6 +72,10 @@ function closeAppearanceMenu({ restoreFocus = false } = {}) {
   toggle?.setAttribute("aria-expanded", "false");
   if (restoreFocus) toggle?.focus();
 }
+
+onHeaderPanelOpen((panel) => {
+  if (panel !== "appearance") closeAppearanceMenu();
+});
 
 function resolvedTheme() {
   return root.dataset.theme === "system" ? (media.matches ? "dark" : "light") : root.dataset.theme;
@@ -125,7 +131,7 @@ document.addEventListener("input", (event) => {
   }
   const hue = validHue(event.target.value, safeAccentHue);
   root.style.setProperty("--accent-hue", String(hue));
-  storeValue("color-accent-hue", String(hue));
+  storeValue("orange-square-accent-hue", String(hue));
   syncAccentHue();
 });
 
@@ -147,18 +153,29 @@ document.addEventListener("click", (event) => {
   if (!toggle) return;
   const menu = getAppearanceMenu();
   const open = !menu?.classList.contains("open");
+  if (open) announceHeaderPanelOpen("appearance");
   menu?.classList.toggle("open", open);
   toggle.setAttribute("aria-expanded", String(open));
   if (open) {
-    getThemeButtons()
-      .find((button) => button.classList.contains("active"))
-      ?.focus();
+    window.requestAnimationFrame(() => {
+      if (!menu?.isConnected || !menu.classList.contains("open")) return;
+      getThemeButtons()
+        .find((button) => button.classList.contains("active"))
+        ?.focus();
+    });
   }
 });
 
 document.addEventListener("pointerdown", (event) => {
   const picker = getAppearancePicker();
   if (picker && !picker.contains(event.target as Node)) closeAppearanceMenu();
+});
+
+document.addEventListener("focusin", (event) => {
+  const picker = getAppearancePicker();
+  if (getAppearanceMenu()?.classList.contains("open") && !picker?.contains(event.target as Node)) {
+    closeAppearanceMenu();
+  }
 });
 
 document.addEventListener("keydown", (event) => {

@@ -1,5 +1,6 @@
 ---
 import Icon from "@/components/Icon.astro";
+import { APPEARANCE } from "@/config";
 ---
 
 <div class="appearance-picker" data-appearance-picker>
@@ -58,7 +59,7 @@ import Icon from "@/components/Icon.astro";
     </div>
 
     <label class="accent-hue-control" for="accent-hue">
-      <span class="sr-only">Accent</span>
+      <span class="sr-only">Accent hue</span>
       <input
         id="accent-hue"
         data-accent-hue
@@ -66,10 +67,10 @@ import Icon from "@/components/Icon.astro";
         min="0"
         max="360"
         step="1"
-        value="250"
+        value={APPEARANCE.accentHue}
         aria-label="Accent hue"
       />
-      <output data-accent-hue-output for="accent-hue">250°</output>
+      <output data-accent-hue-output for="accent-hue">{APPEARANCE.accentHue}°</output>
     </label>
   </div>
 </div>

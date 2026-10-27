@@ -29,13 +29,13 @@ Choose the site's default accent hue in `site.yaml` with a value from 0 through
 
 ```yaml
 appearance:
-  accentHue: 248
+  accentHue: 18
 ```
 
-The theme controls saturation, lightness, and contrast for consistent light and
-dark palettes. Every visitor starts with the configured hue. They can adjust it
-with the vertical slider in the palette menu, and that personal hue is stored in
-their browser.
+The default value 18 preserves the original Orange Square 0.1.2 light and dark
+accent colors. Other values rotate that palette's hue. Visitors can adjust the
+horizontal slider in the theme menu; their choice is stored in the browser under
+an Orange Square-specific key, independently of the previous skin's hue setting.
 
 The optional site-wide background banner is disabled by default. To use it, place a local
 image under `public/` and configure `appearance.banner` in `site.yaml`:

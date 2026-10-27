@@ -7,7 +7,7 @@ const footerLinks = NAVIGATION.footer.filter(
 ---
 
 <footer class="site-footer">
-  <span>© {new Date().getFullYear()} {SITE.author.name}</span>
+  <span class="footer-copyright">© {new Date().getFullYear()} {SITE.author.name}</span>
   <nav aria-label="Footer navigation">
     {footerLinks.map((link) => (
       <a

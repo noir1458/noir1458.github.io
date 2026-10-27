@@ -1,44 +1,59 @@
+import { announceHeaderPanelOpen, onHeaderPanelOpen } from "@/scripts/header-panels";
+
 let navigationController: AbortController | undefined;
-let searchCloseTimer: number | undefined;
 
 function initNavigation() {
   navigationController?.abort();
   navigationController = new AbortController();
   const { signal } = navigationController;
-
-  window.clearTimeout(searchCloseTimer);
+  let searchFocusTimer: number | undefined;
+  signal.addEventListener("abort", () => window.clearTimeout(searchFocusTimer), { once: true });
 
   const searchShell = document.querySelector<HTMLElement>("[data-search-shell]");
   const searchToggle = document.querySelector<HTMLButtonElement>("[data-search-toggle]");
   const searchInput = searchShell?.querySelector<HTMLInputElement>("input");
+  const searchField = searchShell?.querySelector<HTMLElement>(".header-search-field");
   const primaryNav = document.querySelector<HTMLElement>("[data-primary-nav]");
   const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
   const languagePicker = document.querySelector<HTMLDetailsElement>("[data-language-picker]");
 
   function closeSearch({ restoreFocus = false } = {}) {
-    const wasOpen = Boolean(searchShell?.classList.contains("open"));
+    window.clearTimeout(searchFocusTimer);
     searchShell?.classList.remove("open");
-    if (wasOpen) {
-      searchShell?.classList.add("closing");
-      window.clearTimeout(searchCloseTimer);
-      searchCloseTimer = window.setTimeout(() => {
-        searchShell?.classList.remove("closing");
-        if (restoreFocus) searchToggle?.focus();
-      }, 240);
-    } else if (restoreFocus) {
-      searchToggle?.focus();
-    }
+    searchField?.setAttribute("inert", "");
+    if (restoreFocus) searchToggle?.focus();
     searchToggle?.setAttribute("aria-expanded", "false");
     searchToggle?.setAttribute("aria-label", "Open search");
   }
 
   function setNavigation(open: boolean) {
+    if (open) announceHeaderPanelOpen("navigation");
     primaryNav?.classList.toggle("open", open);
     navToggle?.classList.toggle("open", open);
     navToggle?.setAttribute("aria-expanded", String(open));
     navToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-    if (open) closeSearch();
+    if (open) {
+      window.requestAnimationFrame(() => {
+        if (!signal.aborted && primaryNav?.classList.contains("open")) {
+          primaryNav.querySelector("a")?.focus();
+        }
+      });
+    }
   }
+
+  onHeaderPanelOpen((panel) => {
+    if (panel !== "search") closeSearch();
+    if (panel !== "navigation") setNavigation(false);
+    if (panel !== "language" && languagePicker) languagePicker.open = false;
+  }, signal);
+
+  languagePicker?.addEventListener(
+    "toggle",
+    () => {
+      if (languagePicker.open) announceHeaderPanelOpen("language");
+    },
+    { signal }
+  );
 
   searchToggle?.addEventListener(
     "click",
@@ -48,13 +63,14 @@ function initNavigation() {
         closeSearch();
         return;
       }
-      setNavigation(false);
-      window.clearTimeout(searchCloseTimer);
-      searchShell?.classList.remove("closing");
+      announceHeaderPanelOpen("search");
       searchShell?.classList.add("open");
+      searchField?.removeAttribute("inert");
       searchToggle.setAttribute("aria-expanded", "true");
       searchToggle.setAttribute("aria-label", "Close search");
-      window.setTimeout(() => searchInput?.focus(), 80);
+      searchFocusTimer = window.setTimeout(() => {
+        if (searchShell?.classList.contains("open")) searchInput?.focus();
+      }, 80);
     },
     { signal }
   );
@@ -71,6 +87,23 @@ function initNavigation() {
     "click",
     (event) => {
       if ((event.target as Element).closest("a")) setNavigation(false);
+    },
+    { signal }
+  );
+
+  document.addEventListener(
+    "focusin",
+    (event) => {
+      const target = event.target as Node;
+      if (searchShell?.classList.contains("open") && !searchShell.contains(target)) closeSearch();
+      if (
+        primaryNav?.classList.contains("open")
+        && !primaryNav.contains(target)
+        && !navToggle?.contains(target)
+      ) {
+        setNavigation(false);
+      }
+      if (languagePicker?.open && !languagePicker.contains(target)) languagePicker.open = false;
     },
     { signal }
   );
@@ -112,7 +145,7 @@ function initNavigation() {
     { signal }
   );
 
-  const mobileNavigation = window.matchMedia("(max-width: 700px)");
+  const mobileNavigation = window.matchMedia("(max-width: 1000px)");
   mobileNavigation.addEventListener(
     "change",
     (event) => {

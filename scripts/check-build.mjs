@@ -201,15 +201,28 @@ const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
 const buildCss = walk(distRoot, (file) => file.endsWith(".css"))
   .map((file) => fs.readFileSync(file, "utf8"))
   .join("\n");
-const visibleNavigationLinks = [
-  ...NAVIGATION.header,
-  ...NAVIGATION.sidebar,
-  ...NAVIGATION.footer
-].filter((link) => !link.requiresFeature || FEATURES[link.requiresFeature]);
+const visibleNavigationLinks = [...NAVIGATION.header, ...NAVIGATION.footer].filter(
+  (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
+);
 
 for (const link of visibleNavigationLinks) {
   if (!indexHtml.includes(`href="${link.href}"`)) {
     errors.push(`index.html: configured navigation link is missing: ${link.href}`);
+  }
+}
+
+// Collection pages retain sidebar links; articles use the floating contents button.
+const collectionWithSidebar = htmlFiles
+  .filter((file) =>
+    ["categories", "tags"].some((section) => file.includes(`${path.sep}${section}${path.sep}`))
+  )
+  .map((file) => fs.readFileSync(file, "utf8"))
+  .find((html) => html.includes("data-sidebar"));
+for (const link of NAVIGATION.sidebar.filter(
+  (item) => !item.requiresFeature || FEATURES[item.requiresFeature]
+)) {
+  if (!collectionWithSidebar?.includes(`href="${link.href}"`)) {
+    errors.push(`collection sidebar: configured navigation link is missing: ${link.href}`);
   }
 }
 

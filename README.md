@@ -4,6 +4,20 @@
 번역을 포함한 114개 글 경로를 제공하며 `/posts/<slug>/` 주소를 유지합니다.
 Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을 지원합니다.
 
+화면은 개인 디자인 저장소의 **Orange Square 0.1.2**를 적용합니다.
+따뜻한 흰 바탕·주황색 강조·직각·시스템 서체·구분선으로 글 목록과 본문을
+구성하며, 본문은 최대 720px·18px·행간 1.85를 사용합니다. 디자인 값의 원본은
+`noir1458/orange-square`의 `styles/orange-square/DESIGN.md`
+(commit `1ea6d1cd92295d86a587f7dfc1faafc7a1850d02`)입니다.
+`src/styles/orange-square-tokens.css`는 그 저장소에서 생성한 값을 그대로 복사한
+파일이며 직접 수정하지 않습니다. 블로그 적용 규칙은 `src/styles/orange-square.css`에
+있습니다. 기존 기능 스타일은 `legacy` CSS layer에 두어 새 스킨과 연결합니다.
+블로그의 초점 표시는 화면을 노란색으로 채우는 대신 테마에 맞춘 외곽선을 사용합니다.
+상단의 선택·호버 색상도 방문자가 고른 강조색을 따릅니다.
+글 목록은 제목 아래에 카테고리·날짜를 표시하고 요약은 한 줄을 넘으면 생략합니다.
+오른쪽에는 썸네일을 두며, 이미지가 없거나 불러오지 못하면 회색 영역을 표시합니다.
+본문의 H2는 제목 아래에 얇은 구분선을 두며, H2~H6 앞에는 현재 강조색의 `#`를 표시합니다.
+
 > 사이트를 운영할 때 수정하는 영역은 `config/`, `content/`,
 > `public/images/` 세 곳뿐입니다.
 
@@ -51,11 +65,13 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 
 ```yaml
 appearance:
-  accentHue: 250
+  accentHue: 18
 ```
 
-모든 방문자는 이 Hue로 시작하며, palette 메뉴의 세로 slider로 개인 Hue를
-조정할 수 있습니다. 방문자가 조정한 값은 해당 브라우저에 저장됩니다.
+기본값 18은 Orange Square 원본의 밝은·어두운 주황색을 유지합니다. 다른 값은
+원본 팔레트의 색상각을 회전합니다. 테마 메뉴의 가로 슬라이더로 방문자별
+강조색을 조정할 수도 있으며, 선택은 해당 브라우저에 저장됩니다. 이전 스킨의
+강조색 기록과 저장 키를 분리해 첫 방문에 새 기본 디자인이 표시됩니다.
 
 사이트 전체 배경 배너는 선택 기능이며 기본값은 꺼짐입니다. 로컬 이미지를 `public/`에 넣은 뒤
 `config/site.yaml`에서 활성화하고 표시 방식을 조정합니다.
@@ -146,6 +162,7 @@ flowchart LR
 로컬 이미지가 글 목록과 공유 메타데이터의 대표 이미지로 자동 선택됩니다.
 다른 이미지를 대표로 지정하고 싶을 때만 `cover`를 추가합니다. Astro는
 빌드할 때 파일 존재 여부와 이미지 정보를 검사하고 최적화합니다.
+글 목록은 대표 로컬 이미지가 없을 때 본문의 외부·공용 이미지도 썸네일로 사용합니다.
 
 ```yaml
 cover: ./cover.png
@@ -390,7 +407,9 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 - `src/components/` — 공통 UI
 - `src/layouts/` — HTML/SEO 레이아웃
 - `src/pages/` — 정적 페이지와 동적 경로
-- `src/styles/global.css` — 디자인 토큰과 반응형 스타일
+- `src/styles/orange-square.css` — Orange Square 스킨과 반응형 적용 규칙
+- `src/styles/orange-square-tokens.css` — 디자인 저장소에서 복사한 원본 토큰
+- `src/styles/global.css` — 기존 기능의 기반 스타일 (`legacy` layer)
 - `scripts/` — 새 글·번역·검증·배포 안내
 - `tests/baselines/published-post-routes.txt` — 공개 게시물 URL 보존 기준선
 
