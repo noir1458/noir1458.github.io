@@ -16,7 +16,6 @@ import { APPEARANCE } from "@/config";
     <span data-theme-icon="system"><Icon name="system" /></span>
     <span data-theme-icon="light" hidden><Icon name="sun" /></span>
     <span data-theme-icon="dark" hidden><Icon name="moon" /></span>
-    <span class="appearance-label">테마</span>
   </button>
 
   <div
@@ -37,7 +36,6 @@ import { APPEARANCE } from "@/config";
           aria-pressed="false"
         >
           <Icon name="system" />
-          <span>자동</span>
         </button>
         <button
           data-theme-value="light"
@@ -47,7 +45,6 @@ import { APPEARANCE } from "@/config";
           aria-pressed="false"
         >
           <Icon name="sun" />
-          <span>밝게</span>
         </button>
         <button
           data-theme-value="dark"
@@ -57,13 +54,12 @@ import { APPEARANCE } from "@/config";
           aria-pressed="false"
         >
           <Icon name="moon" />
-          <span>어둡게</span>
         </button>
       </div>
     </div>
 
     <label class="accent-hue-control" for="accent-hue">
-      <span>강조색</span>
+      <span class="sr-only">Accent hue</span>
       <input
         id="accent-hue"
         data-accent-hue
