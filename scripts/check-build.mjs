@@ -211,18 +211,35 @@ for (const link of visibleNavigationLinks) {
   }
 }
 
-// Collection pages retain sidebar links; articles use the floating contents button.
-const collectionWithSidebar = htmlFiles
-  .filter((file) =>
-    ["categories", "tags"].some((section) => file.includes(`${path.sep}${section}${path.sep}`))
-  )
+const collectionFiles = htmlFiles.filter((file) =>
+  /^(?:categories|tags)\//u.test(path.relative(distRoot, file).replaceAll(path.sep, "/"))
+);
+for (const file of collectionFiles) {
+  const html = fs.readFileSync(file, "utf8");
+  const label = path.relative(distRoot, file);
+  if (html.includes("data-sidebar")) {
+    errors.push(`${label}: category and tag collections must not render a sidebar`);
+  }
+  const layout = [...html.matchAll(/<div\b[^>]*>/gu)]
+    .map((match) => match[0])
+    .find((tag) => /\sdata-layout(?:[\s=>])/u.test(tag));
+  const classes = new Set((tagAttribute(layout ?? "", "class") ?? "").split(/\s+/u));
+  if (!classes.has("without-sidebar") || !classes.has("full-width-content")) {
+    errors.push(`${label}: category and tag collections must use the full-width layout`);
+  }
+}
+
+// Validate configured sidebar links only on pages that actually render a sidebar.
+const pageWithSidebar = htmlFiles
   .map((file) => fs.readFileSync(file, "utf8"))
   .find((html) => html.includes("data-sidebar"));
-for (const link of NAVIGATION.sidebar.filter(
-  (item) => !item.requiresFeature || FEATURES[item.requiresFeature]
-)) {
-  if (!collectionWithSidebar?.includes(`href="${link.href}"`)) {
-    errors.push(`collection sidebar: configured navigation link is missing: ${link.href}`);
+if (pageWithSidebar) {
+  for (const link of NAVIGATION.sidebar.filter(
+    (item) => !item.requiresFeature || FEATURES[item.requiresFeature]
+  )) {
+    if (!pageWithSidebar.includes(`href="${link.href}"`)) {
+      errors.push(`sidebar: configured navigation link is missing: ${link.href}`);
+    }
   }
 }
 

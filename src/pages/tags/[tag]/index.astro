@@ -27,7 +27,7 @@ const tagName = termNameFromSlug(allPosts, "tags", tagSlug) ?? tagSlug;
 const page = paginatePosts(filtered, 1);
 ---
 
-<BaseLayout title={`Tag: ${tagName}`} description={`Posts tagged ${tagName}`}>
+<BaseLayout title={`Tag: ${tagName}`} description={`Posts tagged ${tagName}`} sidebar={false} fullWidth>
   <header class="page-heading taxonomy-heading">
     <span class="eyebrow">Tag</span>
     <h1><TermLabel name={tagName} /></h1>

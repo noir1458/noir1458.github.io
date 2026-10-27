@@ -27,7 +27,7 @@ const categoryName = termNameFromSlug(allPosts, "categories", categorySlug) ?? c
 const page = paginatePosts(filtered, 1);
 ---
 
-<BaseLayout title={`Category: ${categoryName}`} description={`Posts in ${categoryName}`}>
+<BaseLayout title={`Category: ${categoryName}`} description={`Posts in ${categoryName}`} sidebar={false} fullWidth>
   <header class="page-heading taxonomy-heading">
     <span class="eyebrow">Category</span>
     <h1><TermLabel name={categoryName} /></h1>
