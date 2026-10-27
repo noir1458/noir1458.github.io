@@ -8,8 +8,9 @@ const projectRoot = path.resolve(import.meta.dirname, "..");
 // Astro renames prerendered assets, so test output must share the project's filesystem.
 const temporaryRoot = fs.mkdtempSync(path.join(projectRoot, ".astro-blog-features-"));
 const configDirectory = path.join(temporaryRoot, "config");
-const outputDirectory = path.join(temporaryRoot, "dist");
-const projectsOutputDirectory = path.join(temporaryRoot, "dist-projects");
+// Match dist/'s depth so bundled config resolves the project's public assets.
+const outputDirectory = `${temporaryRoot}-dist`;
+const projectsOutputDirectory = `${temporaryRoot}-projects`;
 const disabledCacheDirectory = path.join(temporaryRoot, "cache-disabled");
 const projectsCacheDirectory = path.join(temporaryRoot, "cache-projects");
 const astroEntry = path.join(projectRoot, "node_modules/astro/bin/astro.mjs");
@@ -370,5 +371,7 @@ try {
   );
 } finally {
   if (fs.existsSync(projectFixture)) fs.rmSync(projectFixture);
-  fs.rmSync(temporaryRoot, { recursive: true, force: true });
+  for (const directory of [temporaryRoot, outputDirectory, projectsOutputDirectory]) {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 }
