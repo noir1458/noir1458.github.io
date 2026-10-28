@@ -5,7 +5,7 @@
 /* Source: Orange Square 0.1.2, styles/orange-square/DESIGN.md (see README).
    The optional hue control rotates the source palette; 18 is its unchanged default. */
 :root {
-  --accent-hue: 18;
+  --accent-hue: 0;
   --bg: var(--color-background);
   --surface: var(--color-surface);
   --surface-solid: var(--color-surface);
@@ -126,6 +126,7 @@ button, summary { cursor: pointer; }
   color: #faf9f6;
 }
 .appearance-picker-toggle { width: 44px; padding: 8px; }
+.appearance-picker { position: static; }
 .appearance-picker-toggle:hover, .language-picker-toggle:hover { border-color: #faf9f6; color: #ffffff; }
 .appearance-menu, .language-menu {
   z-index: 60;
@@ -135,9 +136,9 @@ button, summary { cursor: pointer; }
   background: var(--surface);
   color: var(--text);
 }
-.appearance-menu { width: 224px; }
+.appearance-menu { top: calc(100% + 10px); width: 224px; padding: 12px; }
 .appearance-menu.open { transition-property: opacity, transform; }
-.appearance-section { padding: 0 0 15px; }
+.appearance-section { padding: 0; }
 .theme-options { justify-content: center; gap: 12px; }
 .theme-options button {
   display: flex;
@@ -154,9 +155,9 @@ button, summary { cursor: pointer; }
   font-size: 14px;
 }
 .theme-options button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
-.accent-hue-control { display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 14px; }
-.accent-hue-control input[type="range"] { grid-column: 1 / -1; grid-row: 2; width: 100%; height: 24px; writing-mode: horizontal-tb; }
-.accent-hue-control output { grid-column: 2; grid-row: 1; }
+.accent-hue-control { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 12px; padding-top: 12px; font-size: 14px; }
+.accent-hue-control input[type="range"] { grid-column: 1; grid-row: 1; width: 100%; height: 24px; writing-mode: horizontal-tb; background-size: 100% 8px; background-repeat: no-repeat; background-position: center; }
+.accent-hue-control output { grid-column: 2; grid-row: 1; width: 4ch; }
 .language-menu a { min-height: 44px; }
 .primary-nav {
   position: static;
@@ -224,7 +225,7 @@ button, summary { cursor: pointer; }
 .content-grid { flex: 1; grid-template-columns: minmax(0, 720px) minmax(0, 260px); gap: 60px; margin-top: 65px; }
 .content-grid.without-sidebar { grid-template-columns: minmax(0, 1fr); gap: 0; }
 .main-content { max-width: 720px; }
-.content-grid.full-width-content .main-content { max-width: none; }
+.content-grid.full-width-content :is(.main-content, .article-content) { max-width: none; }
 .page-heading { margin: 0 0 40px; padding: 0 0 30px; border-bottom: 3px solid var(--text); }
 .page-heading:has(+ .post-list) { margin-bottom: 0; }
 .page-heading:has(+ .term-grid) { margin-bottom: 20px; }
@@ -297,6 +298,7 @@ button, summary { cursor: pointer; }
 .article-content :not(.katex-display) > .katex { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: 2px; vertical-align: middle; }
 .article-content details { margin: 25px 0; padding: 15px 20px; border: 1px solid var(--line); background: var(--surface); }
 .article-content details summary { min-height: 44px; font-weight: 700; }
+.article-floating-tools { right: max(12px, calc((100vw - var(--content-width)) / 2 - 60px)); }
 .article-floating-tools .icon-button { width: 44px; height: 44px; border: 2px solid var(--text); background: var(--surface); }
 .post-navigation a { padding-inline: 10px; font-size: 14px; }
 .comments { padding: 30px 0; }

@@ -1,5 +1,5 @@
 ---
-import { SITE, type SupportedLanguage } from "@/config";
+import { APPEARANCE, FEATURES, SITE, type SupportedLanguage } from "@/config";
 
 interface Props {
   language?: SupportedLanguage;
@@ -7,6 +7,8 @@ interface Props {
 
 const { language = SITE.language } = Astro.props;
 const giscus = SITE.giscus;
+const defaultTheme = FEATURES.darkMode ? APPEARANCE.defaultTheme : "light";
+const commentTheme = defaultTheme === "system" ? "preferred_color_scheme" : defaultTheme === "dark" ? "dark_dimmed" : "light";
 ---
 
 {giscus && (
@@ -28,7 +30,7 @@ const giscus = SITE.giscus;
         data-reactions-enabled="1"
         data-emit-metadata="0"
         data-input-position="top"
-        data-theme="preferred_color_scheme"
+        data-theme={commentTheme}
         data-lang={language}
         crossorigin="anonymous"
         async

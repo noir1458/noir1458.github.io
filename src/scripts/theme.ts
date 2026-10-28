@@ -3,9 +3,11 @@ import { announceHeaderPanelOpen, onHeaderPanelOpen } from "@/scripts/header-pan
 const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 const supportedThemes = ["system", "light", "dark"] as const;
-const safeAccentHue = 18;
+const safeAccentHue = 0;
 
 type Theme = (typeof supportedThemes)[number];
+let lastGiscusFrame: Window | null = null;
+let lastGiscusTheme: string | undefined;
 
 function storedValue(key: string) {
   try {
@@ -34,12 +36,15 @@ function validHue(value: string | null | undefined, fallback: number) {
 function applyStoredAppearance(targetRoot: HTMLElement) {
   const themeEnabled = targetRoot.dataset.themeEnabled === "true";
   const storedTheme = storedValue("color-theme");
+  const defaultTheme = includesValue(supportedThemes, targetRoot.dataset.defaultTheme)
+    ? targetRoot.dataset.defaultTheme
+    : "light";
   const theme: Theme = themeEnabled
     ? storedTheme === "neon"
       ? "dark"
       : includesValue(supportedThemes, storedTheme)
         ? storedTheme
-        : "system"
+        : defaultTheme
     : "light";
   const configuredHue = validHue(targetRoot.dataset.defaultAccentHue, safeAccentHue);
   const accentHue = validHue(storedValue("orange-square-accent-hue"), configuredHue);
@@ -82,7 +87,7 @@ function resolvedTheme() {
 }
 
 function syncTheme({ broadcast = true } = {}) {
-  const selected = root.dataset.theme ?? "system";
+  const selected = root.dataset.theme ?? "light";
   const resolved = resolvedTheme() === "dark" ? "dark" : "light";
   root.dataset.resolvedTheme = resolved;
   root.style.colorScheme = resolved;
@@ -101,16 +106,20 @@ function syncTheme({ broadcast = true } = {}) {
     `Choose appearance, current theme: ${selectedLabel}`
   );
   if (broadcast) {
-    document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow?.postMessage(
-      {
-        giscus: {
-          setConfig: {
-            theme: root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light"
+    const frame = document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow;
+    const theme = root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light";
+    if (frame && (frame !== lastGiscusFrame || theme !== lastGiscusTheme)) {
+      lastGiscusFrame = frame;
+      lastGiscusTheme = theme;
+      frame.postMessage(
+        {
+          giscus: {
+            setConfig: { theme }
           }
-        }
-      },
-      "https://giscus.app"
-    );
+        },
+        "https://giscus.app"
+      );
+    }
   }
 }
 
@@ -186,7 +195,8 @@ document.addEventListener("keydown", (event) => {
 
 media.addEventListener("change", () => syncTheme());
 window.addEventListener("message", (event) => {
-  if (event.origin === "https://giscus.app") syncTheme({ broadcast: false });
+  const frame = document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow;
+  if (event.origin === "https://giscus.app" && event.source === frame) syncTheme();
 });
 document.addEventListener("astro:before-swap", (event) => {
   applyStoredAppearance(event.newDocument.documentElement);
