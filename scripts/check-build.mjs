@@ -495,11 +495,127 @@ const contentEntries = walk(contentRoot, (file) => file.endsWith(".md"))
       slug: data.slug,
       lang: data.lang ?? defaultLanguage,
       translationKey: data.translationKey ?? data.slug,
+      publishedAt: new Date(data.publishedAt),
       mermaidBlocks: (parsed.content.match(/^```mermaid\s*$/gmu) ?? []).length,
       draft: data.draft === true
     };
   })
   .filter((entry) => !entry.draft);
+
+// Check the emitted archive HTML against source content, independently of the paginator.
+const archiveYears = new Map();
+const archiveYearFormatter = new Intl.DateTimeFormat("en", {
+  year: "numeric",
+  timeZone: SITE.timeZone
+});
+for (const entry of contentEntries
+  .filter((entry) => entry.lang === defaultLanguage)
+  .sort((a, b) => b.publishedAt - a.publishedAt)) {
+  const year = Number(archiveYearFormatter.format(entry.publishedAt));
+  if (!archiveYears.has(year)) archiveYears.set(year, []);
+  archiveYears.get(year).push(entry);
+}
+const archiveCases = [];
+const latestArchiveYear = Math.max(...archiveYears.keys());
+for (const [year, entries] of archiveYears) {
+  const pageCount = Math.ceil(entries.length / 30);
+  for (let page = 1; page <= pageCount; page++) {
+    const route = `/archives/${year}/${page > 1 ? `page/${page}/` : ""}`;
+    const expected = entries.slice((page - 1) * 30, page * 30).map(postPath);
+    archiveCases.push({ route, year, page, pageCount, count: entries.length, expected });
+    if (year === latestArchiveYear && page === 1) {
+      archiveCases.push({
+        route: "/archives/",
+        year,
+        page,
+        pageCount,
+        count: entries.length,
+        expected
+      });
+    }
+  }
+}
+if (!archiveYears.size) {
+  archiveCases.push({ route: "/archives/", expected: [] });
+}
+const archivePostLinks = [];
+for (const { route, year, page, pageCount, count, expected } of archiveCases) {
+  const file = outputFileForPath(route);
+  if (!fs.existsSync(file)) {
+    errors.push(`archive page is missing: ${route}`);
+    continue;
+  }
+  const html = fs.readFileSync(file, "utf8");
+  const list = html.match(/<ol\b[^>]*class="archive-posts"[^>]*>([\s\S]*?)<\/ol>/u)?.[1] ?? "";
+  const links = [...list.matchAll(/<a\b[^>]*href="([^"]+)"/gu)].map((match) => match[1]);
+  const entries = new Map((archiveYears.get(year) ?? []).map((entry) => [postPath(entry), entry]));
+  // Equal publication timestamps may have either source order; keep date order and membership strict.
+  if (
+    links.length !== expected.length
+    || links.length > 30
+    || links.some((link, index) => {
+      const actual = entries.get(link);
+      return (
+        !actual
+        || actual.publishedAt.valueOf() !== entries.get(expected[index])?.publishedAt.valueOf()
+      );
+    })
+  ) {
+    errors.push(
+      `${route}: archive posts must match the selected year and 30-post page in date order`
+    );
+  }
+  if (route !== "/archives/") archivePostLinks.push(...links);
+  const classes = layoutClasses(html);
+  if (html.includes("data-sidebar") || !classes.has("full-width-content")) {
+    errors.push(`${route}: archives must use the full-width layout without a sidebar`);
+  }
+  if (year === undefined) continue;
+  const canonicalPath = `/archives/${year}/${page > 1 ? `page/${page}/` : ""}`;
+  const canonical = findTag(html, "link", "rel", "canonical");
+  if (tagAttribute(canonical ?? "", "href") !== new URL(canonicalPath, SITE.url).href) {
+    errors.push(`${route}: archive canonical must include its year and page`);
+  }
+  const navigation =
+    html.match(/<nav\b[^>]*class="archive-years"[^>]*>([\s\S]*?)<\/nav>/u)?.[1] ?? "";
+  for (const [optionYear, entries] of archiveYears) {
+    const option = findTag(navigation, "a", "href", `/archives/${optionYear}/`);
+    if (!option || (tagAttribute(option, "aria-current") === "true") !== (optionYear === year)) {
+      errors.push(`${route}: missing or incorrect archive year option ${optionYear}`);
+    }
+    if (!navigation.includes(`>${entries.length}<span`)) {
+      errors.push(`${route}: missing post count for archive year ${optionYear}`);
+    }
+  }
+  const first = (page - 1) * 30 + 1;
+  if (!html.includes(`${first}–${first + expected.length - 1} of ${count} posts`)) {
+    errors.push(`${route}: incorrect archive post range`);
+  }
+  if (!html.includes(`Page ${page} of ${pageCount}`)) {
+    errors.push(`${route}: missing archive page position`);
+  }
+  const pagination = html.match(/<nav\b[^>]*class="pagination"[^>]*>([\s\S]*?)<\/nav>/u)?.[1] ?? "";
+  if (Boolean(pagination) !== pageCount > 1) {
+    errors.push(`${route}: archive pagination must appear only for multiple pages`);
+  }
+  for (const match of pagination.matchAll(/<a\b[^>]*href="([^"]+)"/gu)) {
+    if (!match[1].startsWith(`/archives/${year}/`)) {
+      errors.push(`${route}: pagination must stay within the selected year`);
+    }
+  }
+}
+const expectedArchiveLinks = contentEntries
+  .filter((entry) => entry.lang === defaultLanguage)
+  .map(postPath);
+if (JSON.stringify(archivePostLinks.sort()) !== JSON.stringify(expectedArchiveLinks.sort())) {
+  errors.push("archive year pages must contain every published default-language post exactly once");
+}
+const archiveFiles = htmlFiles.filter((file) =>
+  path.relative(distRoot, file).replaceAll(path.sep, "/").startsWith("archives/")
+);
+if (archiveFiles.length !== archiveCases.length) {
+  errors.push(`expected ${archiveCases.length} archive pages, found ${archiveFiles.length}`);
+}
 
 const groups = new Map();
 for (const entry of contentEntries) {
@@ -676,6 +792,7 @@ console.log(
   JSON.stringify(
     {
       htmlFiles: htmlFiles.length,
+      archivePages: archiveFiles.length,
       expectedPostPages: contentEntries.length,
       postPages: generatedPostPages.length,
       multilingualPostPages,
