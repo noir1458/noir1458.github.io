@@ -14,13 +14,8 @@ console.log(
       accentHue: config.appearance.accentHue,
       defaultLanguage: config.site.language,
       supportedLanguages: config.supportedLanguageCodes,
-      navigationLinks:
-        config.navigation.header.length
-        + config.navigation.sidebar.length
-        + config.navigation.footer.length,
+      navigationLinks: config.navigation.header.length + config.navigation.footer.length,
       configuredSocialLinks,
-      sidebarCategoryGroups: config.categories.sidebar.groups.length,
-      hiddenSidebarCategories: config.categories.sidebar.hidden.length,
       enabledFeatures
     },
     null,

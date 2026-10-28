@@ -38,7 +38,7 @@ test("the repository configuration is valid", () => {
   assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
   assert.equal("resume" in config.social, false);
-  assert.equal(config.appearance.defaultTheme, "light");
+  assert.equal(config.appearance.defaultTheme, "system");
   assert.equal(config.appearance.accentHue, 0);
   assert.deepEqual(config.appearance.banner, {
     enabled: false,
@@ -311,7 +311,7 @@ test("a navigation item without href reports its exact field", () => {
   const directory = configFixture();
   fs.writeFileSync(
     path.join(directory, "navigation.yaml"),
-    "header:\n  - label: Home\nsidebar: []\nfooter: []\n"
+    "header:\n  - label: Home\nfooter: []\n"
   );
 
   assert.throws(
@@ -380,20 +380,6 @@ test("a missing user-replaceable image reports its exact field", () => {
     (error) =>
       error instanceof SiteConfigError
       && /config\/site\.yaml: author\.profileImage: public asset does not exist/u.test(
-        error.message
-      )
-  );
-});
-
-test("a sidebar category cannot be both grouped and hidden", () => {
-  const directory = configFixture();
-  replaceInFile(directory, "categories.yaml", "  hidden: []", "  hidden:\n    - blog");
-
-  assert.throws(
-    () => loadSiteConfig({ configDirectory: directory }),
-    (error) =>
-      error instanceof SiteConfigError
-      && /config\/categories\.yaml: sidebar\.hidden\.0: duplicates sidebar\.groups\.0\.categories\.0/u.test(
         error.message
       )
   );

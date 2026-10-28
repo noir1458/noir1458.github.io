@@ -5,18 +5,22 @@ This folder is the user-facing source for site settings.
 1. Edit `site.yaml` for the site identity, author, branding, accent color,
    languages, and public service integrations.
 2. Edit `navigation.yaml` to change visible links and their order.
-3. Edit `categories.yaml` to group, order, or hide sidebar categories. Categories
-   omitted from both `groups` and `hidden` appear automatically in a final group.
-4. Edit `social.yaml` to add GitHub, LinkedIn, X, Facebook, or email profile
+3. Edit `social.yaml` to add GitHub, LinkedIn, X, Facebook, or email profile
    links. Empty values are hidden.
-5. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
+4. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
    article tables of contents, Mermaid diagrams, projects, and comments.
-6. Write the About page introduction in `profile.md`.
+5. Write the About page introduction and the project summaries below it in
+   `profile.md`. Both use ordinary Markdown. Add each project under `## Projects`
+   with a `###` heading, a short description, and repository or related-post links.
+   Replace the empty-list message when adding the first project; a commented
+   example is included in the file.
 
-Category values in `categories.yaml` use the URL slug shown after
-`/categories/`. The build reports categories that are displayed automatically
-because they are not configured. `hidden` only removes a category from the
-sidebar; its page and post links remain available.
+The standalone Projects feature is disabled on this blog, and its header link has
+been removed. Keep project write-ups in ordinary posts with a `project` category.
+
+Category pages are generated automatically from each post's `categories` value.
+No separate category settings file is needed. Navigation settings contain only
+header and footer links; pages do not render a sidebar.
 
 Paths beginning with `/` refer to files or pages in this site. Replace the
 profile image in `public/images/profile/`, and favicon or social-card images in
@@ -29,11 +33,11 @@ Choose the site's default theme (`light`, `dark`, or `system`) and accent hue
 
 ```yaml
 appearance:
-  defaultTheme: light
+  defaultTheme: system
   accentHue: 0
 ```
 
-The defaults are light mode and hue 0. A hue of 18 preserves the original Orange
+This blog defaults to the system theme and hue 0. A hue of 18 preserves the original Orange
 Square 0.1.2 light and dark accent colors. Other values rotate that palette's hue.
 Visitor choices override these defaults and persist in their browser. The system
 theme follows the operating system. The hue choice is stored under

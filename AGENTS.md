@@ -6,7 +6,7 @@ This repository is the production source for `noir1458.github.io`.
 
 Normal site updates belong in:
 
-- `config/` for site identity, navigation, sidebar categories, social links, and features
+- `config/` for site identity, navigation, social links, profile text, and features
 - `content/` for posts and projects
 - `public/images/` for replaceable profile, project, and site images
 

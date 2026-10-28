@@ -43,7 +43,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
 - 한국어·영어·일본어 번역 경로와 `hreflang`
 - 다크 모드, 수식, admonition, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
-- 설정으로 노출을 제어하는 프로젝트 목록과 상세 페이지
+- Markdown으로 작성하는 About 소개와 프로젝트 요약
 
 ## 기본 설정
 
@@ -51,11 +51,10 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 
 1. `config/site.yaml`: 사이트 URL, 제목, 설명, 언어, 시간대, 작성자, 공용 이미지,
    Analytics·Search Console·Giscus 공개 식별자
-2. `config/navigation.yaml`: header, sidebar, footer 메뉴와 순서
-3. `config/categories.yaml`: 사이드바 카테고리 묶음, 순서, 숨김
-4. `config/social.yaml`: GitHub, LinkedIn, X, Facebook, 이메일 링크
-5. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, Mermaid, 프로젝트, 댓글
-6. `config/profile.md`: About 제목과 소개 Markdown
+2. `config/navigation.yaml`: header, footer 메뉴와 순서
+3. `config/social.yaml`: GitHub, LinkedIn, X, Facebook, 이메일 링크
+4. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, Mermaid, 프로젝트, 댓글
+5. `config/profile.md`: About 제목, 소개와 프로젝트 요약 Markdown
 
 빈 선택 값은 화면에서 자동으로 숨겨집니다. 메뉴의 `requiresFeature`를 사용하면
 기능이 꺼졌을 때 연결된 메뉴도 함께 숨길 수 있습니다. YAML과 Markdown 설정은
@@ -66,11 +65,11 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 
 ```yaml
 appearance:
-  defaultTheme: light
+  defaultTheme: system
   accentHue: 0
 ```
 
-기본값은 밝은 테마와 `0°`입니다. 강조색 값 18은 Orange Square 원본의
+이 블로그의 기본값은 시스템 테마와 `0°`입니다. 강조색 값 18은 Orange Square 원본의
 밝은·어두운 주황색을 유지하고, 다른 값은 원본 팔레트의 색상각을 회전합니다.
 방문자가 테마와 강조색을 직접 선택하면 해당 브라우저에 저장되며 설정 파일의
 기본값보다 우선합니다. `system`은 운영체제의 밝고 어두운 모드를 따릅니다. 이전 스킨의
@@ -127,10 +126,9 @@ npm run new
 질문에 답하면 `content/posts/<번호-큰분류>/<대표-category>/<slug>/` 아래에
 한국어는 `index.md`, 영어는 `en.md`, 일본어는 `ja.md`로 생성됩니다.
 기존 카테고리는 해당 큰 분류를 자동으로 재사용하고, 새 카테고리일 때만
-큰 분류를 묻습니다. 이 폴더 구조는 소스 정리용이며 우측 사이드바의 묶음과
-순서는 `config/categories.yaml`에서 관리합니다. `groups`와 `hidden` 어디에도
-없는 카테고리는 마지막 묶음에 자동 표시되고 검사 결과에도 출력됩니다.
-`hidden`은 사이드바에서만 숨깁니다. 초안은 기본적으로 `draft: true`입니다.
+큰 분류를 묻습니다. 이 폴더 구조는 소스 정리용입니다. Categories 페이지와
+각 카테고리의 글 목록은 게시글의 `categories` 값에서 자동으로 생성되며,
+별도의 카테고리 설정 파일은 필요하지 않습니다. 초안은 기본적으로 `draft: true`입니다.
 확인이 끝나면 `draft` 줄을 제거합니다.
 글 분류에는 `categories`만 사용합니다. `description`은 선택 사항이며,
 생략하면 본문의 첫 번째 유효 문단이 글 목록, 검색, RSS와 SEO 설명으로
@@ -183,36 +181,26 @@ cover: ./cover.png
 
 ## 프로젝트
 
-프로젝트는 `content/projects/<project-slug>/index.md`에 추가합니다. 폴더명이
-`/projects/<project-slug>/` URL이 됩니다.
+About 소개 아래의 프로젝트 요약은 `config/profile.md`의 `## Projects` 아래에
+일반 Markdown으로 작성합니다. 첫 프로젝트를 추가할 때 빈 목록 안내를 지우고,
+파일에 주석으로 넣어둔 예시를 참고합니다.
 
 ```md
----
-title: 프로젝트 이름
-description: 프로젝트를 설명하는 짧은 문장
-repository: https://github.com/username/project
-demo:
-image: ./cover.webp
-tags:
-  - Astro
-  - TypeScript
-featured: true
-order: 1
----
+## Projects
 
-프로젝트에 관한 자세한 설명을 Markdown으로 작성합니다.
+### 프로젝트 이름
 
-![프로젝트 화면](./screenshot.webp)
+프로젝트를 설명하는 짧은 문장.
+
+[GitHub](https://github.com/username/project) · [관련 글](/posts/post-slug/)
 ```
 
-`repository`, `demo`, `image`는 선택 사항이며 빈 값은 화면에서 숨겨집니다.
-대표 이미지와 본문 이미지는 `index.md`와 같은 프로젝트 폴더에 둡니다. 기존
-`content/projects/<project-slug>.md` 형식도 URL 호환을 위해 계속 지원합니다.
-`featured: true`인
-프로젝트가 먼저 나오고, 그 안에서는 `order`가 작은 순서로 정렬됩니다.
-공개 전에는 `draft: true`를 사용합니다. 프로젝트 화면을 표시하려면
-`config/features.yaml`의 `projects`를 `true`로 바꾸면 설정된 Projects 메뉴와
-목록·상세 페이지가 함께 생성됩니다.
+구현 과정이나 회고는 다른 글과 똑같이 `content/posts/`에 작성하고,
+`categories: [project]`를 지정하면 됩니다. 카테고리는 공개된 글이 생기면
+자동으로 생성됩니다. About에는 짧은 소개와 관련 글 링크를 남깁니다.
+
+이 블로그의 전용 Projects 목록·상세 페이지는 `config/features.yaml`의
+`projects: false`로 비활성화되어 있고, 상단 메뉴에서도 제거했습니다.
 
 ## 글 언어와 번역본
 
@@ -385,7 +373,6 @@ GitHub Actions 방식에서는 저장소의 `CNAME` 파일이 필요하지 않�
   `public/images/`의 실제 파일명 일치 여부 확인
 - 게시물 날짜 오류: `publishedAt: 'YYYY-MM-DD'` 형식 사용
 - 중복 slug 오류: 같은 언어의 게시물마다 고유한 `slug` 사용
-- 프로젝트 URL 오류: `repository`와 `demo`에 `http://` 또는 `https://` 사용
 - 빈 프로젝트 경고: `content/projects/`가 비어 있고 projects 기능이 꺼진 운영
   블로그에서는 정상이며 build 실패가 아님
 
@@ -404,7 +391,7 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 ## 주요 경로
 
 - `content/posts/<ordered-group>/<category>/<slug>/` — Markdown 글과 글 전용 이미지
-- `content/projects/<slug>/` — 프로젝트 Markdown과 프로젝트 전용 이미지
+- `content/projects/` — 비활성화된 전용 프로젝트 기능의 콘텐츠 위치
 - `config/` — 사이트, 내비게이션, 소셜 링크와 기능 설정
 - `public/images/` — 프로필, favicon과 기본 OG 이미지
 - `src/components/` — 공통 UI

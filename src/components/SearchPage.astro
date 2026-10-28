@@ -13,7 +13,7 @@ const fallbackPosts = (await getAllPublishedPosts()).map((post) => ({
 const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003c");
 ---
 
-<BaseLayout title="Search" description="Search all published posts." noindex>
+<BaseLayout title="Search" description="Search all published posts." noindex fullWidth>
   <header class="page-heading">
     <span class="eyebrow">Full-text search</span>
     <h1>Search</h1>

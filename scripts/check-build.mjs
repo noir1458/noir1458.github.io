@@ -233,17 +233,9 @@ for (const file of collectionFiles) {
   }
 }
 
-// Validate configured sidebar links only on pages that actually render a sidebar.
-const pageWithSidebar = htmlFiles
-  .map((file) => fs.readFileSync(file, "utf8"))
-  .find((html) => html.includes("data-sidebar"));
-if (pageWithSidebar) {
-  for (const link of NAVIGATION.sidebar.filter(
-    (item) => !item.requiresFeature || FEATURES[item.requiresFeature]
-  )) {
-    if (!pageWithSidebar.includes(`href="${link.href}"`)) {
-      errors.push(`sidebar: configured navigation link is missing: ${link.href}`);
-    }
+for (const file of htmlFiles) {
+  if (fs.readFileSync(file, "utf8").includes("data-sidebar")) {
+    errors.push(`${path.relative(distRoot, file)}: pages must not render a sidebar`);
   }
 }
 

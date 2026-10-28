@@ -17,7 +17,7 @@ branding:
   defaultOgImage: /images/site/og-default.png
 
 appearance:
-  defaultTheme: light # light, dark, or system
+  defaultTheme: system # light, dark, or system
   accentHue: 0 # 0-360; 18 preserves the original Orange Square palette
   banner:
     enabled: false

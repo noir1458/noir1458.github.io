@@ -153,18 +153,6 @@ function initNavigation() {
     },
     { signal }
   );
-
-  document.querySelectorAll<HTMLDetailsElement>(".sidebar-widget").forEach((details) => {
-    details.addEventListener(
-      "toggle",
-      () => {
-        const icon = details.querySelector<SVGElement>("summary svg");
-        icon?.classList.toggle("open", details.open);
-      },
-      { signal }
-    );
-    details.querySelector<SVGElement>("summary svg")?.classList.toggle("open", details.open);
-  });
 }
 
 document.addEventListener("astro:page-load", initNavigation);

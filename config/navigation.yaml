@@ -7,23 +7,8 @@ header:
     href: /tags/
   - label: Archives
     href: /archives/
-  - label: Projects
-    href: /projects/
-    requiresFeature: projects
   - label: About
     href: /about/
-
-sidebar:
-  - label: Profile
-    href: /about/
-    icon: user
-  - label: GitHub profile
-    href: https://github.com/noir1458
-    icon: github
-    external: true
-  - label: Email
-    href: "mailto:"
-    icon: mail
 
 footer:
   - label: RSS

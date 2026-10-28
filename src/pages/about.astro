@@ -38,7 +38,6 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
 <BaseLayout
   title={PROFILE.data.title}
   description={PROFILE.data.subtitle ?? SITE.description}
-  sidebar={false}
   fullWidth
 >
   <header class="page-heading">

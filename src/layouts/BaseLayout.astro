@@ -2,13 +2,12 @@
 import "katex/dist/katex.min.css";
 import "@/styles/orange-square.css";
 import { ClientRouter } from "astro:transitions";
-import type { MarkdownHeading, TransitionDirectionalAnimations } from "astro";
+import type { TransitionDirectionalAnimations } from "astro";
 import { APPEARANCE, FEATURES, LANGUAGES, SITE, type SupportedLanguage } from "@/config";
 import Header from "@/components/Header.astro";
 import HeroBanner from "@/components/HeroBanner.astro";
-import Sidebar from "@/components/Sidebar.astro";
 import Footer from "@/components/Footer.astro";
-import { getPublishedPosts, type PostTranslation } from "@/utils/content";
+import type { PostTranslation } from "@/utils/content";
 
 interface Props {
   title?: string;
@@ -16,14 +15,12 @@ interface Props {
   canonicalPath?: string;
   image?: string;
   noindex?: boolean;
-  sidebar?: boolean;
   fullWidth?: boolean;
   pagefindBody?: boolean;
   ogType?: "website" | "article";
   schema?: Record<string, unknown>;
   language?: SupportedLanguage;
   translations?: PostTranslation[];
-  sidebarHeadings?: MarkdownHeading[];
   heroBackground?: boolean;
 }
 
@@ -33,21 +30,18 @@ const {
   canonicalPath,
   image,
   noindex = false,
-  sidebar = true,
   fullWidth = false,
   pagefindBody = false,
   ogType = "website",
   schema,
   language = SITE.language,
   translations = [],
-  sidebarHeadings = [],
   heroBackground = true
 } = Astro.props;
 const showHeroBackground = APPEARANCE.banner.enabled && heroBackground;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, SITE.url);
 const socialImage = new URL(image ?? SITE.socialImage, SITE.url);
-const posts = sidebar ? await getPublishedPosts() : [];
 const isProduction = import.meta.env.PROD;
 const xDefaultTranslation =
   translations.find((translation) => translation.lang === SITE.language)
@@ -240,8 +234,8 @@ const pageTransition: TransitionDirectionalAnimations = {
       <Header language={language} translations={translations} />
       <div
         class:list={[
-          "content-grid",
-          { "without-sidebar": !sidebar, "full-width-content": fullWidth }
+          "content-grid without-sidebar",
+          { "full-width-content": fullWidth }
         ]}
         data-layout
       >
@@ -253,7 +247,6 @@ const pageTransition: TransitionDirectionalAnimations = {
         >
           <slot />
         </main>
-        {sidebar && <Sidebar posts={posts} headings={sidebarHeadings} />}
       </div>
       <slot name="floating" />
       <Footer />

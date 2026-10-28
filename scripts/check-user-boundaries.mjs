@@ -30,9 +30,7 @@ const userValues = new Set(
     config.integrations.giscus?.repo,
     config.integrations.giscus?.repoId,
     config.integrations.giscus?.category,
-    config.integrations.giscus?.categoryId,
-    ...config.categories.sidebar.groups.flatMap((group) => group.categories),
-    ...config.categories.sidebar.hidden
+    config.integrations.giscus?.categoryId
   ].filter((value) => typeof value === "string" && value.length >= 5)
 );
 

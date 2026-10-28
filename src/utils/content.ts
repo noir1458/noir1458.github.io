@@ -1,17 +1,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
-import {
-  CATEGORY_SIDEBAR,
-  LANGUAGES,
-  SITE,
-  SUPPORTED_LANGUAGE_CODES,
-  type SupportedLanguage
-} from "@/config";
-import {
-  arrangeSidebarCategories,
-  type SidebarCategoryGroup,
-  slugifyTermValue
-} from "@/lib/content/sidebarCategories";
+import { LANGUAGES, SITE, SUPPORTED_LANGUAGE_CODES, type SupportedLanguage } from "@/config";
+import { slugifyTermValue } from "@/lib/content/termSlugs";
 
 export type PostEntry = CollectionEntry<"posts">;
 
@@ -189,10 +179,6 @@ export function countTerms(
   return [...counts]
     .map(([slug, value]) => ({ slug, ...value }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, SITE.locale));
-}
-
-export function groupCategoriesForSidebar(posts: PostEntry[]): SidebarCategoryGroup[] {
-  return arrangeSidebarCategories(countTerms(posts, "categories"), CATEGORY_SIDEBAR).groups;
 }
 
 export function groupPostsByYear(posts: PostEntry[]) {
