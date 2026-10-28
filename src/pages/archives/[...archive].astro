@@ -1,0 +1,106 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import Pagination from "@/components/Pagination.astro";
+import { archivePages, archivePath } from "@/lib/content/archives";
+import {
+  formatDate,
+  getPublishedPosts,
+  groupPostsByYear,
+  postUrl,
+  type PostEntry
+} from "@/utils/content";
+
+interface Props {
+  years: { year: number; count: number }[];
+  allPostCount: number;
+  year?: number;
+  posts: PostEntry[];
+  currentPage: number;
+  totalPages: number;
+  totalPosts: number;
+  firstPost: number;
+}
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  const groups = groupPostsByYear(posts);
+  const years = groups.map(([year, entries]) => ({ year, count: entries.length }));
+  const pages = archivePages(groups).map((page) => ({
+    params: { archive: archivePath(page.year, page.currentPage).slice("/archives/".length, -1) },
+    props: { ...page, years, allPostCount: posts.length }
+  }));
+
+  return [
+    {
+      params: { archive: undefined },
+      props: pages[0]?.props ?? {
+        years,
+        allPostCount: 0,
+        posts: [],
+        currentPage: 1,
+        totalPages: 0,
+        totalPosts: 0,
+        firstPost: 0
+      }
+    },
+    ...pages
+  ];
+}) satisfies GetStaticPaths;
+
+const { years, allPostCount, year, posts, currentPage, totalPages, totalPosts, firstPost } = Astro.props;
+const title = year
+  ? `Archives · ${year}${currentPage > 1 ? ` · Page ${currentPage}` : ""}`
+  : "Archives";
+---
+
+<BaseLayout
+  title={title}
+  description={year ? `${year}년 게시글 ${totalPosts}개 · ${currentPage}/${totalPages}페이지` : "연도별로 모아보는 전체 게시글"}
+  canonicalPath={year ? archivePath(year, currentPage) : undefined}
+  sidebar={false}
+  fullWidth
+>
+  <header class="page-heading archive-heading">
+    <span class="eyebrow">Chronology</span>
+    <h1>Archives</h1>
+    <p>{allPostCount} posts · {years.length} {years.length === 1 ? "year" : "years"}</p>
+  </header>
+  {year !== undefined ? (
+    <>
+      <nav class="archive-years" aria-label="Archive year">
+        {years.map((entry) => (
+          <a href={archivePath(entry.year)} aria-current={entry.year === year ? "true" : undefined}>
+            <span>{entry.year}</span>
+            <span class="archive-year-count">{entry.count}<span class="sr-only"> posts</span></span>
+          </a>
+        ))}
+      </nav>
+      <section class="archive-selection" aria-labelledby="archive-year-title">
+        <header class="archive-selection-heading">
+          <h2 class="archive-year" id="archive-year-title">{year}</h2>
+          <p class="archive-summary">
+            <span>{firstPost}–{firstPost + posts.length - 1} of {totalPosts} posts</span>
+            <span>Page {currentPage} of {totalPages}</span>
+          </p>
+        </header>
+        <ol class="archive-posts" start={firstPost}>
+          {posts.map((post) => (
+            <li>
+              <a href={postUrl(post)}>
+                <time datetime={post.data.publishedAt.toISOString()}>
+                  {formatDate(post.data.publishedAt, { includeYear: false })}
+                </time>
+                <span>{post.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <Pagination currentPage={currentPage} totalPages={totalPages} basePath={archivePath(year)} />
+    </>
+  ) : (
+    <EmptyState headingLevel="h2" />
+  )}
+</BaseLayout>
