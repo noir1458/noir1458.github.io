@@ -332,13 +332,15 @@ button, summary { cursor: pointer; }
 .project-tags { font-size: 14px; }
 .project-featured { color: var(--accent); background: var(--accent-soft); font-size: 14px; }
 .archive-heading { margin-bottom: 24px; }
-.archive-years { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
-.archive-years a { display: inline-flex; align-items: baseline; gap: 16px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); font-size: 18px; font-weight: 700; }
-.archive-years a:hover { border-color: var(--text); }
-.archive-years a[aria-current] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
-.archive-year-count { color: var(--muted); font: 13px/1.5 var(--font-mono); }
+.archive-year-picker { position: relative; display: inline-flex; max-width: 100%; }
+.archive-year-picker select { width: 220px; max-width: 100%; min-height: 48px; appearance: none; padding: 10px 44px 10px 16px; border: 1px solid var(--line); border-radius: 0; background: var(--surface); color: var(--text); font: 700 18px/1.4 var(--font-body); cursor: pointer; }
+.archive-year-picker select:hover { border-color: var(--text); }
+.archive-year-picker svg { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.archive-year-picker option { background: var(--surface); color: var(--text); }
+.archive-year-fallback { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 16px; }
+.archive-year-fallback a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); }
+.archive-year-fallback a[aria-current] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .archive-selection-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
-.archive-year { font: 700 32px/1.35 var(--font-body); }
 .archive-summary { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0; color: var(--muted); font-size: 14px; }
 .archive-posts { min-width: 0; border-bottom: 1px solid var(--line); }
 .archive-posts a { grid-template-columns: 70px minmax(0, 1fr); align-items: baseline; gap: 20px; padding-block: 16px; }
@@ -458,7 +460,6 @@ button, summary { cursor: pointer; }
   .project-card:only-child .project-card-image { height: auto; aspect-ratio: 16 / 9; border-right: 0; border-bottom: 1px solid var(--line); }
   .project-card:only-child h2 { font-size: 26px; }
   .project-card-copy { padding: 20px; }
-  .archive-years { gap: 8px; margin-bottom: 24px; }
   .archive-selection-heading { gap: 8px 20px; padding-bottom: 16px; }
   .archive-posts a { grid-template-columns: 50px minmax(0, 1fr); gap: 15px; }
   .search-page-form { flex-wrap: wrap; }
@@ -475,8 +476,8 @@ button, summary { cursor: pointer; }
 }
 
 @media (max-width: 480px) {
-  .archive-years { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .archive-years a { justify-content: space-between; }
+  .archive-year-picker, .archive-year-picker select { width: 100%; }
+  .archive-summary { justify-content: space-between; width: 100%; }
 }
 
 @media (max-width: 360px) {

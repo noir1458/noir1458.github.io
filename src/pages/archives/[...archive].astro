@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import EmptyState from "@/components/EmptyState.astro";
+import Icon from "@/components/Icon.astro";
 import Pagination from "@/components/Pagination.astro";
 import { archivePages, archivePath } from "@/lib/content/archives";
 import {
@@ -69,22 +70,35 @@ const title = year
   </header>
   {year !== undefined ? (
     <>
-      <nav class="archive-years" aria-label="Archive year">
-        {years.map((entry) => (
-          <a href={archivePath(entry.year)} aria-current={entry.year === year ? "true" : undefined}>
-            <span>{entry.year}</span>
-            <span class="archive-year-count">{entry.count}<span class="sr-only"> posts</span></span>
-          </a>
-        ))}
-      </nav>
       <section class="archive-selection" aria-labelledby="archive-year-title">
         <header class="archive-selection-heading">
-          <h2 class="archive-year" id="archive-year-title">{year}</h2>
+          <h2 class="sr-only" id="archive-year-title">{year}</h2>
+          <label class="archive-year-picker">
+            <span class="sr-only">Archive year</span>
+            <select name="year" data-archive-year-select>
+              {years.map((entry) => (
+                <option value={archivePath(entry.year)} selected={entry.year === year}>
+                  {entry.year} · {entry.count} {entry.count === 1 ? "post" : "posts"}
+                </option>
+              ))}
+            </select>
+            <Icon name="chevron-down" size={18} />
+          </label>
           <p class="archive-summary">
             <span>{firstPost}–{firstPost + posts.length - 1} of {totalPosts} posts</span>
             <span>Page {currentPage} of {totalPages}</span>
           </p>
         </header>
+        <noscript>
+          <style is:inline>.archive-year-picker { display: none; }</style>
+          <nav class="archive-year-fallback" aria-label="Archive year">
+            {years.map((entry) => (
+              <a href={archivePath(entry.year)} aria-current={entry.year === year ? "true" : undefined}>
+                {entry.year} · {entry.count}
+              </a>
+            ))}
+          </nav>
+        </noscript>
         <ol class="archive-posts" start={firstPost}>
           {posts.map((post) => (
             <li>
@@ -104,3 +118,22 @@ const title = year
     <EmptyState headingLevel="h2" />
   )}
 </BaseLayout>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  function initArchiveYearPicker() {
+    const select = document.querySelector<HTMLSelectElement>("[data-archive-year-select]");
+    if (!select) return;
+    const selected = select.querySelector<HTMLOptionElement>("option[selected]");
+    if (selected) select.value = selected.value;
+    if (select.dataset.initialized) return;
+    select.dataset.initialized = "true";
+    select.addEventListener("change", () => {
+      void navigate(select.value);
+    });
+  }
+
+  document.addEventListener("astro:page-load", initArchiveYearPicker);
+  window.addEventListener("pageshow", initArchiveYearPicker);
+</script>

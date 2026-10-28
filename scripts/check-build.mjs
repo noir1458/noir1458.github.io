@@ -576,15 +576,37 @@ for (const { route, year, page, pageCount, count, expected } of archiveCases) {
   if (tagAttribute(canonical ?? "", "href") !== new URL(canonicalPath, SITE.url).href) {
     errors.push(`${route}: archive canonical must include its year and page`);
   }
+  const options =
+    html.match(/<select\b[^>]*data-archive-year-select[^>]*>([\s\S]*?)<\/select>/u)?.[1] ?? "";
+  const optionTags = [...options.matchAll(/<option\b[^>]*>/gu)].map((match) => match[0]);
+  if (optionTags.length !== archiveYears.size) {
+    errors.push(
+      `${route}: archive year picker must contain exactly the years with published posts`
+    );
+  }
+  if (optionTags.filter((tag) => /\sselected(?:[\s=>])/u.test(tag)).length !== 1) {
+    errors.push(`${route}: archive year picker must have one selected year`);
+  }
   const navigation =
-    html.match(/<nav\b[^>]*class="archive-years"[^>]*>([\s\S]*?)<\/nav>/u)?.[1] ?? "";
+    html.match(/<nav\b[^>]*class="archive-year-fallback"[^>]*>([\s\S]*?)<\/nav>/u)?.[1] ?? "";
   for (const [optionYear, entries] of archiveYears) {
-    const option = findTag(navigation, "a", "href", `/archives/${optionYear}/`);
-    if (!option || (tagAttribute(option, "aria-current") === "true") !== (optionYear === year)) {
+    const option = findTag(options, "option", "value", `/archives/${optionYear}/`);
+    if (!option || /\sselected(?:[\s=>])/u.test(option) !== (optionYear === year)) {
       errors.push(`${route}: missing or incorrect archive year option ${optionYear}`);
     }
-    if (!navigation.includes(`>${entries.length}<span`)) {
+    if (
+      !options.includes(
+        `${optionYear} · ${entries.length} ${entries.length === 1 ? "post" : "posts"}`
+      )
+    ) {
       errors.push(`${route}: missing post count for archive year ${optionYear}`);
+    }
+    const fallback = findTag(navigation, "a", "href", `/archives/${optionYear}/`);
+    if (
+      !fallback
+      || (tagAttribute(fallback, "aria-current") === "true") !== (optionYear === year)
+    ) {
+      errors.push(`${route}: archive year links must work without JavaScript`);
     }
   }
   const first = (page - 1) * 30 + 1;
