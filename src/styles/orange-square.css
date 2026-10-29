@@ -263,14 +263,14 @@ button, summary { cursor: pointer; }
 .article-meta { gap: 10px; margin-top: 25px; color: var(--muted); font-size: 14px; }
 .article-content { max-width: 720px; padding: 40px 0; font-size: 18px; line-height: 1.85; letter-spacing: -0.02em; overflow-wrap: anywhere; word-break: keep-all; }
 .article-content p { margin-block: 0 1.25em; }
-.article-content :is(h2, h3, h4, h5, h6) { position: relative; padding-left: 1.05em; color: var(--text); font-family: var(--font-body); font-weight: 700; line-height: 1.4; letter-spacing: -0.035em; scroll-margin-top: 30px; }
+.article-content :is(h2, h3, h4, h5, h6) { color: var(--text); font-family: var(--font-body); font-weight: 700; line-height: 1.4; letter-spacing: -0.035em; scroll-margin-top: 30px; }
 .article-content h2 { margin: 60px 0 25px; padding-block: 0 12px; border-top: 0; border-bottom: 1px solid var(--line); font-size: 32px; line-height: 1.35; }
 .article-content > :first-child { margin-top: 0; }
 .article-content h3 { margin: 40px 0 20px; font-size: 26px; line-height: 1.4; }
 .article-content h4 { margin: 30px 0 15px; font-size: 22px; }
 .article-content h5 { margin: 30px 0 15px; font-size: 20px; }
 .article-content h6 { margin: 25px 0 15px; font-size: 18px; }
-.article-content :is(h2, h3, h4, h5, h6)::before { position: absolute; top: 0.18em; left: 0; display: block; margin: 0; color: var(--accent); font-family: var(--font-mono); font-size: 0.7em; font-weight: 700; line-height: inherit; letter-spacing: 0; opacity: 1; content: "#"; }
+.article-content :is(h2, h3, h4, h5, h6)::before { display: inline; margin-right: 0.3em; color: var(--accent); font-family: var(--font-mono); font-size: 0.7em; font-weight: 700; line-height: inherit; letter-spacing: 0; vertical-align: 0.08em; opacity: 1; content: "#"; }
 .article-content a, .profile-copy a, .search-result h2 a { color: var(--text); text-decoration: underline; }
 .article-content a:hover, .profile-copy a:hover, .search-result h2 a:hover { color: var(--accent); text-decoration-thickness: 2px; }
 .article-content blockquote { margin: 30px 0; padding: 5px 0 5px 25px; border-left: 5px solid var(--text); color: var(--muted); background: transparent; }
