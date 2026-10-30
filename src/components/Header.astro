@@ -62,7 +62,9 @@ const isCurrent = (href: string) => href === "/"
             <div id="header-search-field" class="header-search-field" inert>
               <label class="sr-only" for="site-search">Search the blog</label>
               <input id="site-search" name="q" placeholder="Search posts" type="search" />
-              <button class="header-search-submit" type="submit">Search</button>
+              <button class="header-search-submit" type="submit" aria-label="Search" title="Search">
+                <Icon name="search" />
+              </button>
             </div>
           </form>
         </div>
