@@ -15,36 +15,26 @@ draft: false
 
 ## 필기 원본
 
-이 글에서 다룬 원본 PDF **24–27쪽**이다. 두 단과 여백 필기를 포함한 페이지 전체를 실었다. 이미지를 누르면 새 탭에서 원본 크기로 볼 수 있다.
-
-[정리 글로 바로 가기](#들어가며)
+이 글에서 다룬 원본 PDF **24–27쪽**이다. 두 단과 여백 필기를 포함한 페이지 전체를 실었다. 이미지를 누르면 확대해서 볼 수 있다.
 
 <figure style="margin: 2rem 0;">
-  <a href="/images/posts/cryptography-handwritten-notes/page-024.webp" target="_blank" rel="noopener">
-    <img src="/images/posts/cryptography-handwritten-notes/page-024-preview.webp" alt="인공지능보안 필기 원본 PDF 24쪽 전체" width="1400" height="1934" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
-  </a>
-  <figcaption>원본 PDF 24쪽. <a href="/images/posts/cryptography-handwritten-notes/page-024.webp" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+  <img data-full-src="/images/posts/cryptography-handwritten-notes/page-024.webp" src="/images/posts/cryptography-handwritten-notes/page-024-preview.webp" alt="인공지능보안 필기 원본 PDF 24쪽 전체" width="1400" height="1934" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
+  <figcaption>원본 PDF 24쪽.</figcaption>
 </figure>
 
 <figure style="margin: 2rem 0;">
-  <a href="/images/posts/cryptography-handwritten-notes/page-025.webp" target="_blank" rel="noopener">
-    <img src="/images/posts/cryptography-handwritten-notes/page-025-preview.webp" alt="인공지능보안 필기 원본 PDF 25쪽 전체" width="1400" height="2065" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
-  </a>
-  <figcaption>원본 PDF 25쪽. <a href="/images/posts/cryptography-handwritten-notes/page-025.webp" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+  <img data-full-src="/images/posts/cryptography-handwritten-notes/page-025.webp" src="/images/posts/cryptography-handwritten-notes/page-025-preview.webp" alt="인공지능보안 필기 원본 PDF 25쪽 전체" width="1400" height="2065" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
+  <figcaption>원본 PDF 25쪽.</figcaption>
 </figure>
 
 <figure style="margin: 2rem 0;">
-  <a href="/images/posts/cryptography-handwritten-notes/page-026.webp" target="_blank" rel="noopener">
-    <img src="/images/posts/cryptography-handwritten-notes/page-026-preview.webp" alt="인공지능보안 필기 원본 PDF 26쪽 전체" width="1400" height="1930" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
-  </a>
-  <figcaption>원본 PDF 26쪽. <a href="/images/posts/cryptography-handwritten-notes/page-026.webp" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+  <img data-full-src="/images/posts/cryptography-handwritten-notes/page-026.webp" src="/images/posts/cryptography-handwritten-notes/page-026-preview.webp" alt="인공지능보안 필기 원본 PDF 26쪽 전체" width="1400" height="1930" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
+  <figcaption>원본 PDF 26쪽.</figcaption>
 </figure>
 
 <figure style="margin: 2rem 0;">
-  <a href="/images/posts/cryptography-handwritten-notes/page-027.webp" target="_blank" rel="noopener">
-    <img src="/images/posts/cryptography-handwritten-notes/page-027-preview.webp" alt="인공지능보안 필기 원본 PDF 27쪽 전체" width="1400" height="1930" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
-  </a>
-  <figcaption>원본 PDF 27쪽. <a href="/images/posts/cryptography-handwritten-notes/page-027.webp" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+  <img data-full-src="/images/posts/cryptography-handwritten-notes/page-027.webp" src="/images/posts/cryptography-handwritten-notes/page-027-preview.webp" alt="인공지능보안 필기 원본 PDF 27쪽 전체" width="1400" height="1930" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
+  <figcaption>원본 PDF 27쪽.</figcaption>
 </figure>
 
 ## 들어가며

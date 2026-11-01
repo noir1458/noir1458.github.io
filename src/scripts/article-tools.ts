@@ -167,7 +167,7 @@ function initArticleTools() {
       }
       const alt = image.alt.trim();
       articleImageTrigger = image;
-      articleImagePreview.src = image.currentSrc || image.src;
+      articleImagePreview.src = image.dataset.fullSrc || image.currentSrc || image.src;
       articleImagePreview.alt = alt;
       if (!articleImageDialog.open) articleImageDialog.showModal();
       articleImageClose?.focus();
