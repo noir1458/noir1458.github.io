@@ -1,0 +1,1016 @@
+{
+  "source": "인공지능보안_중간정리.pdf",
+  "sourceSha256": "ea545b0c98b1510c4f2869219775ca6c00d9e6fcf7d255acf4c6cbba68b8fc00",
+  "pageCount": 54,
+  "rendering": {
+    "renderer": "Poppler pdftoppm",
+    "width": 3600,
+    "pageBox": "full MediaBox",
+    "annotations": "included (default)",
+    "format": "lossless WebP",
+    "preview": {
+      "width": 1400,
+      "quality": 95,
+      "resampling": "Lanczos",
+      "format": "WebP",
+      "fullResolutionOnClick": true
+    }
+  },
+  "pages": [
+    {
+      "page": 1,
+      "url": "/images/posts/cryptography-handwritten-notes/page-001.webp",
+      "width": 3600,
+      "height": 5147,
+      "bytes": 6471714,
+      "sha256": "135d3a5e40dffd475664ac32b9bd71a489df5ebeca887a9b08c0b76298514496",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-001-preview.webp",
+        "width": 1400,
+        "height": 2002,
+        "bytes": 623118,
+        "sha256": "aca1787710f6e0114434203da946d7d91bc14573b44a2b5ca6faaeda0d5146ce"
+      }
+    },
+    {
+      "page": 2,
+      "url": "/images/posts/cryptography-handwritten-notes/page-002.webp",
+      "width": 3600,
+      "height": 5385,
+      "bytes": 5499422,
+      "sha256": "37bd01458faa578ff675e78ec7ff4f21d411add42f945a0bf0a9ac301b24802b",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-002-preview.webp",
+        "width": 1400,
+        "height": 2094,
+        "bytes": 568864,
+        "sha256": "8b734b738833c9918952dae2a3b081f4eb43e155351251736d8b2d639a04fb9f"
+      }
+    },
+    {
+      "page": 3,
+      "url": "/images/posts/cryptography-handwritten-notes/page-003.webp",
+      "width": 3600,
+      "height": 5385,
+      "bytes": 5218566,
+      "sha256": "3018e497e9667274aa29ad0373944c70403c94c3f8ce119e46f95ded4bfef7e9",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-003-preview.webp",
+        "width": 1400,
+        "height": 2094,
+        "bytes": 531426,
+        "sha256": "1225219216f39c9a97846c78be0539116c79f05d1a618d70260e92ae1985723c"
+      }
+    },
+    {
+      "page": 4,
+      "url": "/images/posts/cryptography-handwritten-notes/page-004.webp",
+      "width": 3600,
+      "height": 4805,
+      "bytes": 4808614,
+      "sha256": "b406c22bf414feaa916b5fa95a41663296fce957349c98c74a936d35caaf6c6f",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-004-preview.webp",
+        "width": 1400,
+        "height": 1869,
+        "bytes": 486154,
+        "sha256": "ee733be48b39726643fcb44bf17812480de1676a75ef03bfc1ab9cc1c258f708"
+      }
+    },
+    {
+      "page": 5,
+      "url": "/images/posts/cryptography-handwritten-notes/page-005.webp",
+      "width": 3600,
+      "height": 5385,
+      "bytes": 2832326,
+      "sha256": "7cbabda5c9a7dd58a4894126a7dd4758f7ca29efd1463a41ed8992daca6ade2f",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-005-preview.webp",
+        "width": 1400,
+        "height": 2094,
+        "bytes": 438296,
+        "sha256": "d92d365307ed7ccb6098f020f7976b696a882dac296c263d1df8a97c97f9a36c"
+      }
+    },
+    {
+      "page": 6,
+      "url": "/images/posts/cryptography-handwritten-notes/page-006.webp",
+      "width": 3600,
+      "height": 4805,
+      "bytes": 2485774,
+      "sha256": "e7d82bbddbc46ddf1be74d8604be7e65800cc90e3a4f20e5b1530069595c6bc7",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-006-preview.webp",
+        "width": 1400,
+        "height": 1869,
+        "bytes": 379356,
+        "sha256": "b9ad67898e07d6a62d6a7f6b46d03740a958b99a89f8c6de9418c28b6b007564"
+      }
+    },
+    {
+      "page": 7,
+      "url": "/images/posts/cryptography-handwritten-notes/page-007.webp",
+      "width": 3600,
+      "height": 5385,
+      "bytes": 3356004,
+      "sha256": "bc6db6b2a1f47ab42551812351bed9b4f125509fee5d6c65859ef87469cfdb5c",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-007-preview.webp",
+        "width": 1400,
+        "height": 2094,
+        "bytes": 485844,
+        "sha256": "c6e87eec537fd6b451e361e672c1c19be182897952ed40e1e577630f8f3bb204"
+      }
+    },
+    {
+      "page": 8,
+      "url": "/images/posts/cryptography-handwritten-notes/page-008.webp",
+      "width": 3600,
+      "height": 5129,
+      "bytes": 2312530,
+      "sha256": "b8bcc2b75d39b1dd7b96a46a7c9ae131d169fc8bea7135cc5b1f58fd266f0e15",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-008-preview.webp",
+        "width": 1400,
+        "height": 1995,
+        "bytes": 372494,
+        "sha256": "dfaa14382dd7006114c2960029212ad6a1b093958c72bb491ff24ac609ac69f0"
+      }
+    },
+    {
+      "page": 9,
+      "url": "/images/posts/cryptography-handwritten-notes/page-009.webp",
+      "width": 3600,
+      "height": 5083,
+      "bytes": 3253172,
+      "sha256": "91a30b4a757336924708046f92c93e79618dfd8d4e88ee7e58de8e216a4f290b",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-009-preview.webp",
+        "width": 1400,
+        "height": 1977,
+        "bytes": 503038,
+        "sha256": "daa6b47238c3eec35d1f9d86c321f2056d0264cb6d645f410f902d94ee5a36a4"
+      }
+    },
+    {
+      "page": 10,
+      "url": "/images/posts/cryptography-handwritten-notes/page-010.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2737648,
+      "sha256": "0e6bafbf1ed8b6b0c27487aba2ee38598037f36375d6fcfc8b9dc4b1b60ec867",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-010-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 438750,
+        "sha256": "2bbcdf0910ba3799643a2c97282a765754d6343f1f7acc3d79349a1eb967f290"
+      }
+    },
+    {
+      "page": 11,
+      "url": "/images/posts/cryptography-handwritten-notes/page-011.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2824648,
+      "sha256": "226fa26fdca089c9c5be639582df758fdd936f441b629167d36d57a458c1c8f9",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-011-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 424186,
+        "sha256": "631fa29fd3edd8bbb02b7949ddc38aa2d952c3c23c0eb8d794a420e705f86aaf"
+      }
+    },
+    {
+      "page": 12,
+      "url": "/images/posts/cryptography-handwritten-notes/page-012.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2396566,
+      "sha256": "88cbcb18c0ccf7481b87698eb69836bd0854c2907ec8220a3b2acfd317dc8188",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-012-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 399206,
+        "sha256": "77be338145c3a3eb84b91acb6e763c3ed247aca01d2b85c15315459b482d32aa"
+      }
+    },
+    {
+      "page": 13,
+      "url": "/images/posts/cryptography-handwritten-notes/page-013.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2510566,
+      "sha256": "e1e54ff705581556ea91a158de68b8fcc83dc0c4c0b6ee19866f5a6b9dfe3d83",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-013-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 385550,
+        "sha256": "6c1ff9418f2c84625fff00248726218677960348b5cffd656192bf443050df44"
+      }
+    },
+    {
+      "page": 14,
+      "url": "/images/posts/cryptography-handwritten-notes/page-014.webp",
+      "width": 3600,
+      "height": 4901,
+      "bytes": 2997812,
+      "sha256": "0f4b50e02ec6a40f236f6dcac8c6512aed07c99fc33188ea43e22af4c0131104",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-014-preview.webp",
+        "width": 1400,
+        "height": 1906,
+        "bytes": 462544,
+        "sha256": "5509e2691a397a5361f4b848c9ed9cea742df66eec579edb3ca707742477fb38"
+      }
+    },
+    {
+      "page": 15,
+      "url": "/images/posts/cryptography-handwritten-notes/page-015.webp",
+      "width": 3600,
+      "height": 5443,
+      "bytes": 2735392,
+      "sha256": "a09c0357492a12c26893b19d0e682cabcfa7d658f946e43df40115628a41a019",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-015-preview.webp",
+        "width": 1400,
+        "height": 2117,
+        "bytes": 423998,
+        "sha256": "39f99cc3cc15ed889ad26890fa3f2e46a3b408e3f43612b3b0f487dcdcfe92cb"
+      }
+    },
+    {
+      "page": 16,
+      "url": "/images/posts/cryptography-handwritten-notes/page-016.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2272176,
+      "sha256": "f91919bda4a3f108605c744ce9a9189021dd237952862bc04d29796ccfc9c482",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-016-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 357094,
+        "sha256": "7767346d5ac602b7b0a8af7f25aa3362af9fa5fa89b4d2231551a553737dbd50"
+      }
+    },
+    {
+      "page": 17,
+      "url": "/images/posts/cryptography-handwritten-notes/page-017.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2882604,
+      "sha256": "b5bfea77b5c9b3d6a9f8291d359f09ab18319a295fcb249fe1dd8e839e904da0",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-017-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 453486,
+        "sha256": "1fb5a75f23a3e24cfa1a045b69f669c0bd5ef2138085b1b8704031c7117ab571"
+      }
+    },
+    {
+      "page": 18,
+      "url": "/images/posts/cryptography-handwritten-notes/page-018.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2797198,
+      "sha256": "1d84d922cd3cb8e145302dc3b01dd2c8dd6222cb6feff39f43eb79faf3de6ab7",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-018-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 443362,
+        "sha256": "585d6770e681683d82f7ae9e56f54b28d969406139fb12013787f98285b32d29"
+      }
+    },
+    {
+      "page": 19,
+      "url": "/images/posts/cryptography-handwritten-notes/page-019.webp",
+      "width": 3600,
+      "height": 5645,
+      "bytes": 3694896,
+      "sha256": "f411abdb9bf61c2eccd6f2f77e1cc329f70e2af8e53a30e4ebbf23205d47ed8a",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-019-preview.webp",
+        "width": 1400,
+        "height": 2195,
+        "bytes": 532730,
+        "sha256": "e371cf087ca5ea3d8607567615c54a16ffe2319815c04f48d66877d55a3c43cf"
+      }
+    },
+    {
+      "page": 20,
+      "url": "/images/posts/cryptography-handwritten-notes/page-020.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2946256,
+      "sha256": "9c31e81c0de6fdc11df2419166571f1da8b2643208a4ed69bc1764c2351a501b",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-020-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 442500,
+        "sha256": "bc98f31ae4a57f17dffd9b0b0462ff2d8e1131f2f4fbbeee2e32ce5d79f16789"
+      }
+    },
+    {
+      "page": 21,
+      "url": "/images/posts/cryptography-handwritten-notes/page-021.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 3054104,
+      "sha256": "962f2bfc37e29ceab704d39c87e1c95abef3dec8972cb4c60d300e48c91af355",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-021-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 450274,
+        "sha256": "684ce2b54f0e6064f4e5d4db6b393a397844032d5d14001b6206002a15c530d7"
+      }
+    },
+    {
+      "page": 22,
+      "url": "/images/posts/cryptography-handwritten-notes/page-022.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 3480892,
+      "sha256": "bb2e05f406f270ec8982765b3774ee6218470ed0c022cd05eefa8832095aacf2",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-022-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 515434,
+        "sha256": "3b19e7321062a8c8760dc22708e9339a18fad511afdd48f353f867701fc4c976"
+      }
+    },
+    {
+      "page": 23,
+      "url": "/images/posts/cryptography-handwritten-notes/page-023.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2696132,
+      "sha256": "c2e82b583eb33d12e96d6baa36b34f621f63a4e82541ccd01ff0fc3ce6fc0275",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-023-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 409984,
+        "sha256": "169bc777de5fddb310e2cc93b09210849e65a8423649691171d32c7f6e9a64d8"
+      }
+    },
+    {
+      "page": 24,
+      "url": "/images/posts/cryptography-handwritten-notes/page-024.webp",
+      "width": 3600,
+      "height": 4974,
+      "bytes": 3624570,
+      "sha256": "e95640a8b82b917c6891cafa42c000453102c0ba7e3dc89ad8c1c1c9dcf422f3",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-024-preview.webp",
+        "width": 1400,
+        "height": 1934,
+        "bytes": 532190,
+        "sha256": "14d5739771f83375f11e4dd636ba1791694ffa962cf1fe9df344d4ab8a613263"
+      }
+    },
+    {
+      "page": 25,
+      "url": "/images/posts/cryptography-handwritten-notes/page-025.webp",
+      "width": 3600,
+      "height": 5309,
+      "bytes": 3230104,
+      "sha256": "10ba1196ce9cef8cd5ca996cc879887573811389629169d6fa00a56e47e1f34d",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-025-preview.webp",
+        "width": 1400,
+        "height": 2065,
+        "bytes": 460696,
+        "sha256": "daceefe0e679c51f63c1d0057a2d5d951b25b999d9f60bc2f05ffbc948375471"
+      }
+    },
+    {
+      "page": 26,
+      "url": "/images/posts/cryptography-handwritten-notes/page-026.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2232376,
+      "sha256": "5502564fb7cd59fbdde35f667a2bd9de9e5bad47001c20f9a92bb9ed125864ac",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-026-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 366840,
+        "sha256": "05878fc0931a022b99b9dea3d7dac41f1bc4c4173554cafa1e9ca1cbd7f59b51"
+      }
+    },
+    {
+      "page": 27,
+      "url": "/images/posts/cryptography-handwritten-notes/page-027.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2594594,
+      "sha256": "8a1a9bf201772ec116978daefc11c9b723bf2a9284db65d455238fbeb0725405",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-027-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 411204,
+        "sha256": "ddf88a37dea84e4eda28888d631256a85a938c7efe82d40ea3c383681c325080"
+      }
+    },
+    {
+      "page": 28,
+      "url": "/images/posts/cryptography-handwritten-notes/page-028.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2482836,
+      "sha256": "c1fcbb4147182289c245cb40714ae79eaedbcc04ba7a6c637df2695affd6e703",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-028-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 406082,
+        "sha256": "2f44ecf48685821aa155bcafa535860265f5ec9e9dc2afa45eb9a181a2333a50"
+      }
+    },
+    {
+      "page": 29,
+      "url": "/images/posts/cryptography-handwritten-notes/page-029.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2399556,
+      "sha256": "f5969c57b4ac26bce9a52ab2b759e15ed91ea3f0a6dfd5acb9186ca343a5f6b9",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-029-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 384208,
+        "sha256": "6d6fb14c0ee7cdcfca65523f75601601cc5b1ff2f3b3324a0df2e3df69b31195"
+      }
+    },
+    {
+      "page": 30,
+      "url": "/images/posts/cryptography-handwritten-notes/page-030.webp",
+      "width": 3600,
+      "height": 4962,
+      "bytes": 2656592,
+      "sha256": "e6dbf88336723280ae182e061d6510804ca3339731dccac9a3d75157bd2677e0",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-030-preview.webp",
+        "width": 1400,
+        "height": 1930,
+        "bytes": 423620,
+        "sha256": "7cae8c463587173c71f17a1e54e7a0508ec0a589715b147d8b5dc1ed118e8427"
+      }
+    },
+    {
+      "page": 31,
+      "url": "/images/posts/cryptography-handwritten-notes/page-031.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 283244,
+      "sha256": "2b5191763a9ca7d9ec816ae76bb1e9965a64097b1186aa0231962487322113aa",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-031-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 190632,
+        "sha256": "22efca131b5a7ee9f7f04671d8d7b62a062225d5a49e823848edde5ab59abf52"
+      }
+    },
+    {
+      "page": 32,
+      "url": "/images/posts/cryptography-handwritten-notes/page-032.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 249152,
+      "sha256": "7bc3807ada240242af1c597088cd375d63482c669a2eb52e7250b0c9aea91328",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-032-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 172824,
+        "sha256": "86705ce6787b5548403a45c2772a135a33d991a9422c6e5c0394007c05abf5bc"
+      }
+    },
+    {
+      "page": 33,
+      "url": "/images/posts/cryptography-handwritten-notes/page-033.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 284422,
+      "sha256": "7917690dc2c7b2eeea9c23333f44ee19bda7d0ba796de95256f3d1d5748b1c07",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-033-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 196506,
+        "sha256": "af8e4b4c2a7d22995ee17abfb0a64cfc9aff04af4d3d5e24f880f4f4155b681e"
+      }
+    },
+    {
+      "page": 34,
+      "url": "/images/posts/cryptography-handwritten-notes/page-034.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 378658,
+      "sha256": "475a0c79efb3a1730f4dfe894b3517ffb977b3644c29572d45922a4373754038",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-034-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 257144,
+        "sha256": "537dab2998d8e11a5ce66f3e0ca368c140df870c0fe084b8b9ffc70d00e4ad74"
+      }
+    },
+    {
+      "page": 35,
+      "url": "/images/posts/cryptography-handwritten-notes/page-035.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 254654,
+      "sha256": "3bf4dc67a50e18f546d0230c0dbead6a50e9e97a16da2d4623bd3c14225d54a0",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-035-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 178562,
+        "sha256": "342b053e5c9b14f72996dac16f40d1dc98dd6def7e389997acefa157907d01a5"
+      }
+    },
+    {
+      "page": 36,
+      "url": "/images/posts/cryptography-handwritten-notes/page-036.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 294870,
+      "sha256": "76344892e5fd86fc4b85adac60515f64d5312712e034526c926eefb5a9907570",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-036-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 200300,
+        "sha256": "76e7a8890d88adb3b7c08b0c7c3ce625b412635e92d40ac05029b2b8363ef144"
+      }
+    },
+    {
+      "page": 37,
+      "url": "/images/posts/cryptography-handwritten-notes/page-037.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 357200,
+      "sha256": "2fe98159a08a900e47b0a7fed7f9fedc5f01ff41851f2819e0b19e3762836029",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-037-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 272514,
+        "sha256": "4313c92ea23ab25bcfc07dd5788b5518798c7ed3b53fefc006345d06c91bfd46"
+      }
+    },
+    {
+      "page": 38,
+      "url": "/images/posts/cryptography-handwritten-notes/page-038.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 316152,
+      "sha256": "100fa0e2c007e57398a8ea1965732d86716421d6a129cd1a053b1ab5bf59f77f",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-038-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 230776,
+        "sha256": "cc6167b180f6739dd3e167548f4ba648dcba0c0ceadb93c6616f5d0353f09894"
+      }
+    },
+    {
+      "page": 39,
+      "url": "/images/posts/cryptography-handwritten-notes/page-039.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 308340,
+      "sha256": "e5e9844f7e73c41f9fa3e3b870c1fdcbc0bd24de72b9b1208bc56f4f1fad8a16",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-039-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 223508,
+        "sha256": "da5cfe048dbc7170b31285ff90ce8064ebfc3ed1c40f514cf50ef42d5cc876a7"
+      }
+    },
+    {
+      "page": 40,
+      "url": "/images/posts/cryptography-handwritten-notes/page-040.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 347334,
+      "sha256": "ab655d7c86a16c7c0c624ddfac8b5bf239ab5d510f3dd30430417680c2617692",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-040-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 250468,
+        "sha256": "fc0c1fe6027bc5d9cd971ba990bde4503dda353504af8f537f79160b12599721"
+      }
+    },
+    {
+      "page": 41,
+      "url": "/images/posts/cryptography-handwritten-notes/page-041.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 274412,
+      "sha256": "c5a960ae5d716a91d7f9f2571c99fb5b76900b9d65323de2e862a5b71810423d",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-041-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 183538,
+        "sha256": "7cce97177d048922a6e1a6c431adfadd2ec22d2d7d73bb4ef9505f2bcee81af5"
+      }
+    },
+    {
+      "page": 42,
+      "url": "/images/posts/cryptography-handwritten-notes/page-042.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 705006,
+      "sha256": "dca43a0d205a1a579ad96bce601f0a74b2db3608c635084d0d58eb2cd9093d51",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-042-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 221786,
+        "sha256": "0ef420ef4237a112178580b27b32645e96ec75034d6e406ccd32e3eeff31258e"
+      }
+    },
+    {
+      "page": 43,
+      "url": "/images/posts/cryptography-handwritten-notes/page-043.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 373572,
+      "sha256": "37bd453d38bbd08e2d82e82e31a814eb0acedd8f0b4e7f916ba6a880963b7deb",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-043-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 116372,
+        "sha256": "74556502151e9cca3b69f8a093e2cdeb765bdae0d5e31060095d6eeafcce252d"
+      }
+    },
+    {
+      "page": 44,
+      "url": "/images/posts/cryptography-handwritten-notes/page-044.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 1162136,
+      "sha256": "581f4b9236e8bc4152f21bcdd78ae19f4ec576c62905d08a63b6e68579b1100a",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-044-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 335880,
+        "sha256": "15eafc37b1f930eb6f8f54fca3106ecf0877fd0cd16a1ff868733c5e858a90f8"
+      }
+    },
+    {
+      "page": 45,
+      "url": "/images/posts/cryptography-handwritten-notes/page-045.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 338694,
+      "sha256": "5be2627fb354dfce95223e8602d8c177188aaf5339e887902aace0c2812f25ca",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-045-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 195438,
+        "sha256": "3efa2a04786d086edda7098ed377d633e1426de78cf2dcc8de7b94725d4d7d9a"
+      }
+    },
+    {
+      "page": 46,
+      "url": "/images/posts/cryptography-handwritten-notes/page-046.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 1932182,
+      "sha256": "10c22faeacc0fe4b71821e9722d42e5dd1bc85c7617c4051ed6a4482244b6ad5",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-046-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 399434,
+        "sha256": "508668774f7c8986c6d70d76ab3b2f6effbb436e504635e8ef166af2cc1a2c5d"
+      }
+    },
+    {
+      "page": 47,
+      "url": "/images/posts/cryptography-handwritten-notes/page-047.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 355336,
+      "sha256": "46c4089d8258c9e936b1e79b5c89ed0354aea753156573845255a00311576b68",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-047-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 264804,
+        "sha256": "9ba1928370798115d2baa82ae5b85d0d4be92098b1a106f20e555262e2697e40"
+      }
+    },
+    {
+      "page": 48,
+      "url": "/images/posts/cryptography-handwritten-notes/page-048.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 346808,
+      "sha256": "329f268a06c1d10c87b6781e76f322ba414a98580a203caab76e80e9e518c481",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-048-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 252698,
+        "sha256": "a8f05d67f69d543ccb648c595cafaae839ee2756e2a2b52727a0777429aa65ee"
+      }
+    },
+    {
+      "page": 49,
+      "url": "/images/posts/cryptography-handwritten-notes/page-049.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 327274,
+      "sha256": "f11604b386c31521cf2770a2380340955517d23a20ddae55cb6fdad605273236",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-049-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 253392,
+        "sha256": "1850e1e53a731178cf578fef45fd4e4f97eddcf67788be3698af46e58d05ff75"
+      }
+    },
+    {
+      "page": 50,
+      "url": "/images/posts/cryptography-handwritten-notes/page-050.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 406394,
+      "sha256": "38a041c5cbcffbb48adddebbf4667df1d4b5be27db9b4785359226f797c81cfd",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-050-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 323086,
+        "sha256": "cc0a81c4ffae6add5464144cef33e809bae89110f25e8bbd7722f4d27e0fe506"
+      }
+    },
+    {
+      "page": 51,
+      "url": "/images/posts/cryptography-handwritten-notes/page-051.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 155570,
+      "sha256": "521af7c10c656c1a57fd3aada421cc9128b67965464396622bf20b521a6b1e28",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-051-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 180970,
+        "sha256": "38ef9bca5ae5bb081b072121a6241faf81d0b21f8d358d3de2910a4ec6217082"
+      }
+    },
+    {
+      "page": 52,
+      "url": "/images/posts/cryptography-handwritten-notes/page-052.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 183610,
+      "sha256": "7a54268255ff7068a4912f28d6f2e79bcb5018bab142a1eb4aba3755a75b478a",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-052-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 207334,
+        "sha256": "f4b9c21a9fa8d179e468080ebc029965c43a0f4656881729d61eccfe75b48fcc"
+      }
+    },
+    {
+      "page": 53,
+      "url": "/images/posts/cryptography-handwritten-notes/page-053.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 160532,
+      "sha256": "31312beba6b6eec238b3d59f268f18d9878eae565c9c848a6175b07f8c4b7fe8",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-053-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 130916,
+        "sha256": "977c14298384b4e46fc5f70a796745e4b549505c5c7e572d86036d882fc323f7"
+      }
+    },
+    {
+      "page": 54,
+      "url": "/images/posts/cryptography-handwritten-notes/page-054.webp",
+      "width": 3600,
+      "height": 5092,
+      "bytes": 11202,
+      "sha256": "467763810c77ca96fee6ba808c3693aef2b7e92b1331cca928606c8031580fd9",
+      "pixelsMatchRenderedPNG": true,
+      "preview": {
+        "url": "/images/posts/cryptography-handwritten-notes/page-054-preview.webp",
+        "width": 1400,
+        "height": 1980,
+        "bytes": 14134,
+        "sha256": "3a6d1af05e673edf6815911774603cbecb934b8e0a67853bcfa624d0c6ca20c7"
+      }
+    }
+  ],
+  "posts": [
+    {
+      "number": 1,
+      "title": "01. Algebraic Foundations of Learning With Errors",
+      "slug": "ai-security-lwe-mathematical-foundations",
+      "file": "content/posts/02.Security/ai_security/ai-security-lwe-mathematical-foundations/index.md",
+      "pages": [1, 2, 3, 4, 5],
+      "originalSha256": "1ae51d6ea38e2e9264f2e945080de29bea1c00432dd1a1b16b153cb223c1b3f4",
+      "gallerySha256": "aca72e786f076ec75162826f2825c9fc7814798b73368a31e84c6a72b55ce666"
+    },
+    {
+      "number": 2,
+      "title": "02. Lattice Problems and the Hardness of LWE",
+      "slug": "ai-security-lattices-and-lwe-hardness",
+      "file": "content/posts/02.Security/ai_security/ai-security-lattices-and-lwe-hardness/index.md",
+      "pages": [6, 7, 8, 9, 10],
+      "originalSha256": "a792f7d1732b54b753524a03881b23780a41edc397aca204034732507b9e75ac",
+      "gallerySha256": "a96a368b597c8fdcaf6e65c3a7eb0f83217de89d885864568888679f46bd57c4"
+    },
+    {
+      "number": 3,
+      "title": "03. Public-Key Encryption from LWE and Ring-LWE",
+      "slug": "ai-security-lwe-public-key-encryption-and-ring-lwe",
+      "file": "content/posts/02.Security/ai_security/ai-security-lwe-public-key-encryption-and-ring-lwe/index.md",
+      "pages": [11, 12, 13, 14, 15, 16, 17],
+      "originalSha256": "0a78c982a273b9f21b56dd74ef8676192838056a55c562307fe4fc08f68a4b5c",
+      "gallerySha256": "3ff8b4da3d1ecb41d1ebfca460f27511f2e287ace8271260ca7e60aaa10e6b52"
+    },
+    {
+      "number": 4,
+      "title": "04. Homomorphic Encryption: Definitions and IND-CPA Security",
+      "slug": "ai-security-homomorphic-encryption-definitions-and-security",
+      "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-encryption-definitions-and-security/index.md",
+      "pages": [18, 19, 20, 21, 22, 23],
+      "originalSha256": "3a6ff50d4303d457c1552d4060df11b5fada4ca7bc86355cc0d3768d9ccec545",
+      "gallerySha256": "ed4162a0b13b19af7676fe92eb4462402593c30fed38ad9d25f459d6ab685a0a"
+    },
+    {
+      "number": 5,
+      "title": "05. Real-Number Encoding and Scaling in Approximate Homomorphic Encryption",
+      "slug": "ai-security-real-number-encoding-and-scale",
+      "file": "content/posts/02.Security/ai_security/ai-security-real-number-encoding-and-scale/index.md",
+      "pages": [24, 25, 26, 27],
+      "originalSha256": "edada6a434c5a248318d2b418ead3cf558f86a8868da5e64bd3ac8090a501ce6",
+      "gallerySha256": "d284d05da324ea7b3a086abc5b7f25bff7c2cbdbdaf7816012ab2d041c7907af"
+    },
+    {
+      "number": 6,
+      "title": "06. Ciphertext Multiplication, Key Switching, and Rescaling",
+      "slug": "ai-security-ciphertext-multiplication-key-switching-and-rescaling",
+      "file": "content/posts/02.Security/ai_security/ai-security-ciphertext-multiplication-key-switching-and-rescaling/index.md",
+      "pages": [28, 29, 30, 31, 32, 33],
+      "originalSha256": "9e1c37c5f5b1c4be61f0f91994187fe24110bd86c5bcac216901274b750ff8e9",
+      "gallerySha256": "47f5cdfce95b1b84729f105eb7cf4232c60374c07910b168390acb21b3a11a7c"
+    },
+    {
+      "number": 7,
+      "title": "07. Lagrange Interpolation and Canonical Embedding",
+      "slug": "ai-security-lagrange-interpolation-and-canonical-embedding",
+      "file": "content/posts/02.Security/ai_security/ai-security-lagrange-interpolation-and-canonical-embedding/index.md",
+      "pages": [34, 35, 36],
+      "originalSha256": "edf6651b30a54ae9c7a0736d231cc09392efc838e590db5047bb4b82b36d64b2",
+      "gallerySha256": "a7406116ad68029e2dbe51d497fd8ef42e045cb9f7be3b84e74fdb6c9a359fc4"
+    },
+    {
+      "number": 8,
+      "title": "08. Slot Rotations and Complex Conjugation in CKKS",
+      "slug": "ai-security-slot-rotation-and-homomorphic-conjugation",
+      "file": "content/posts/02.Security/ai_security/ai-security-slot-rotation-and-homomorphic-conjugation/index.md",
+      "pages": [37, 38, 39],
+      "originalSha256": "0854abbea1ba95b256ad5eacc80992fc4dd7af383398d3d5f7e04564c539e9e0",
+      "gallerySha256": "7a7a84b973aca2d03489a8e79819328081e80d8e4c0c07c273c4007df2665d56"
+    },
+    {
+      "number": 9,
+      "title": "09. Matrix-Vector Multiplication in CKKS: Diagonal and BSGS Methods",
+      "slug": "ai-security-ckks-matrix-vector-multiplication-and-bsgs",
+      "file": "content/posts/02.Security/ai_security/ai-security-ckks-matrix-vector-multiplication-and-bsgs/index.md",
+      "pages": [39, 40, 41, 42],
+      "originalSha256": "d83963e00d6df303a8ab736fa400d24e6992609dc9b3da4cb05935bd33923af3",
+      "gallerySha256": "a81b49741bd4a779a781dc2be43c4658f1565a579b3d23a81f0665cd0a02339b"
+    },
+    {
+      "number": 10,
+      "title": "10. Homomorphic Convolution: Rotations, Masks, and Multiple Channels",
+      "slug": "ai-security-homomorphic-convolution-rotations-masks-and-channels",
+      "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-convolution-rotations-masks-and-channels/index.md",
+      "pages": [42, 43],
+      "originalSha256": "5da0b4d4abf91a5ff0e14c51742fca9db4965718abf26615511db6acee2b09bc",
+      "gallerySha256": "0cc68e343cc65093cc778e927b59768531c62e561c38d8ef7e07d1d3c635b8df"
+    },
+    {
+      "number": 11,
+      "title": "11. Homomorphic Matrix Multiplication via Slot Permutations",
+      "slug": "ai-security-homomorphic-matrix-multiplication-and-permutations",
+      "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-matrix-multiplication-and-permutations/index.md",
+      "pages": [44, 45],
+      "originalSha256": "9d56241195d0523f866ed6685f7803b8d4579bc53fb7c2bc655f0df4124b7054",
+      "gallerySha256": "423b0de9ce5ee7be8f4cc1bf7f6ad12a59773c8a3f36d56095a907d910aadcc3"
+    },
+    {
+      "number": 12,
+      "title": "12. Polynomial Approximation and Evaluation: Chebyshev and Paterson-Stockmeyer",
+      "slug": "ai-security-polynomial-approximation-chebyshev-and-paterson-stockmeyer",
+      "file": "content/posts/02.Security/ai_security/ai-security-polynomial-approximation-chebyshev-and-paterson-stockmeyer/index.md",
+      "pages": [46],
+      "originalSha256": "e02b3ab3548fa47766fec74e0c5027642b75db71e641718f5f5ef8ba9907e6c5",
+      "gallerySha256": "e1026f2535d32baf36e442dd7767aeb5add75c851bd78f7ee4ea091724df1ef0"
+    },
+    {
+      "number": 13,
+      "title": "13. NP Proofs, Witnesses, and Zero Knowledge",
+      "slug": "ai-security-np-proofs-witnesses-and-zero-knowledge",
+      "file": "content/posts/02.Security/ai_security/ai-security-np-proofs-witnesses-and-zero-knowledge/index.md",
+      "pages": [47, 48, 49],
+      "originalSha256": "093b9b80609349fb96582432ec34729077a6373865f0c350601479e8b3637bac",
+      "gallerySha256": "13f7e3b4fb230243b39a7b7391f1f1ced91e146251ec216a13ca06b193e761a8"
+    },
+    {
+      "number": 14,
+      "title": "14. Interactive Proofs: Quadratic Residuosity and Soundness Amplification",
+      "slug": "ai-security-interactive-proofs-quadratic-residues-and-soundness",
+      "file": "content/posts/02.Security/ai_security/ai-security-interactive-proofs-quadratic-residues-and-soundness/index.md",
+      "pages": [50, 51, 52, 53, 54],
+      "originalSha256": "13d887bf6e7b18c5870861cd594ee33afb3c3b8f39fc1c51d3139e495f5cb827",
+      "gallerySha256": "b7e2efcb4af8b5d744a4254817a958dcff3c20a25d329b3a177354c3f7efeb2d"
+    }
+  ],
+  "pageReferences": 56,
+  "category": "Modern Cryptography",
+  "draft": false
+}

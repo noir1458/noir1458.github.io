@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="550" viewBox="0 0 460 550" role="img" aria-labelledby="title desc">
+  <title id="title">Divide and round versus a modular inverse</title>
+  <desc id="desc">Start with 11 equals 5 times 2 plus 1 modulo 35. The left path rounds 11 divided by 5 and returns 2 modulo 7. The right path first reduces 11 modulo 7 to 4, then multiplies by the inverse of 5 modulo 7, which is 3, and returns 5. The operations produce different results.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="458" height="548" rx="16" fill="#fff" stroke="#cbd5e1"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#0f172a">
+    <text x="230" y="35" font-size="22" font-weight="700">Divide-and-round vs inverse</text>
+    <rect x="40" y="65" width="380" height="75" rx="12" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="230" y="97" font-size="24">11 = 5 × 2 + 1 (mod 35)</text>
+    <text x="230" y="124" font-size="18" fill="#334155">t = 5, q = 7, u = 2, e = 1</text>
+    <rect x="22" y="200" width="194" height="90" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="119" y="233" font-size="20">round(11 / 5)</text>
+    <text x="119" y="272" font-size="30">2</text>
+    <rect x="244" y="200" width="194" height="90" rx="12" fill="#fff7ed" stroke="#c2410c"/>
+    <text x="341" y="233" font-size="20">11 mod 7</text>
+    <text x="341" y="272" font-size="30">4</text>
+    <rect x="22" y="350" width="194" height="90" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="119" y="383" font-size="20">2 mod 7</text>
+    <text x="119" y="422" font-size="30">2</text>
+    <rect x="244" y="350" width="194" height="90" rx="12" fill="#fff7ed" stroke="#c2410c"/>
+    <text x="341" y="383" font-size="20">4 × 3 mod 7</text>
+    <text x="341" y="422" font-size="30">5</text>
+    <g fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 195 142 L 128 194"/>
+      <path d="M 265 142 L 332 194"/>
+      <path d="M 119 292 V 344"/>
+      <path d="M 341 292 V 344"/>
+    </g>
+    <text x="174" y="321" font-size="17" fill="#334155">mod 7</text>
+    <text x="341" y="474" font-size="18" fill="#9a3412">5⁻¹ = 3 (mod 7)</text>
+    <text x="119" y="474" font-size="18" fill="#1d4ed8">recovers u</text>
+    <text x="230" y="523" font-size="17" fill="#475569">Rounding division is a different operation.</text>
+  </g>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="565" viewBox="0 0 480 565" role="img" aria-labelledby="title desc">
+<title id="title">Decoding on the modular circle for even q</title>
+<desc id="desc">The two message centres are 0 at the top and q/2 at the bottom. The boundaries q/4 and 3q/4 separate points closer to each centre. Small noise preserves the correct centre.</desc>
+<rect width="480" height="565" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" fill="#262626" text-anchor="middle">
+<text x="240" y="38" font-size="24">Decoding on Zq (even q)</text>
+<text x="240" y="70" font-size="18">Two well-separated message centres</text>
+<circle cx="240" cy="280" r="145" fill="#fafafa" stroke="#d0d0d0" stroke-width="2"/>
+<path d="M95 280 A145 145 0 0 1 385 280" fill="none" stroke="#b73443" stroke-width="9"/>
+<path d="M385 280 A145 145 0 0 1 95 280" fill="none" stroke="#285f9b" stroke-width="9"/>
+<line x1="95" y1="280" x2="385" y2="280" stroke="#8b8b8b" stroke-dasharray="5 5"/>
+<circle cx="240" cy="135" r="7" fill="#b73443"/>
+<circle cx="240" cy="425" r="7" fill="#285f9b"/>
+<circle cx="95" cy="280" r="6" fill="#ffffff" stroke="#555555" stroke-width="2"/>
+<circle cx="385" cy="280" r="6" fill="#ffffff" stroke="#555555" stroke-width="2"/>
+<text x="240" y="112" font-size="22" fill="#b73443">0</text>
+<text x="240" y="458" font-size="22" fill="#285f9b">q / 2</text>
+<text x="430" y="287" font-size="18">q / 4</text>
+<text x="43" y="287" font-size="18">3q / 4</text>
+<text x="240" y="218" font-size="21" fill="#b73443">message 0</text>
+<text x="240" y="248" font-size="17">closer to 0</text>
+<text x="240" y="326" font-size="21" fill="#285f9b">message 1</text>
+<text x="240" y="356" font-size="17">closer to q / 2</text>
+<text x="240" y="508" font-size="18">Small noise stays near its centre.</text>
+<text x="240" y="538" font-size="17">Distance is measured modulo q.</text>
+</g>
+</svg>

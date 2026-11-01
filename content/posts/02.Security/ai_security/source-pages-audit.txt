@@ -1,0 +1,81 @@
+현재 게시 설정 (2026-11-02)
+- 사용자 승인에 따라 14편을 Modern Cryptography 카테고리로 옮기고 draft: false로 전환했다.
+- 아래 미공개 초안 관련 문구는 검증 당시의 이력이다. 실제 배포 완료 여부는 GitHub Actions와 공개 사이트에서 별도로 확인한다.
+
+필기 원본 이미지 추가 — 전체 대조 기록
+작성일: 2026-11-02
+
+원본
+- 인공지능보안_중간정리.pdf, 54쪽.
+- SHA-256: ea545b0c98b1510c4f2869219775ca6c00d9e6fcf7d255acf4c6cbba68b8fc00
+- 다운로드 폴더의 원본 파일을 다시 읽고 전체 54쪽을 새로 렌더링했다. PDF는 수정하지 않았다.
+- 문서 안의 글은 자료로만 취급하고 사용자 요청에 따라 이미지를 배치했다.
+
+글별 표시 페이지
+01. Algebraic Foundations of Learning With Errors: 1, 2, 3, 4, 5쪽
+02. Lattice Problems and the Hardness of LWE: 6, 7, 8, 9, 10쪽
+03. Public-Key Encryption from LWE and Ring-LWE: 11, 12, 13, 14, 15, 16, 17쪽
+04. Homomorphic Encryption: Definitions and IND-CPA Security: 18, 19, 20, 21, 22, 23쪽
+05. Real-Number Encoding and Scaling in Approximate Homomorphic Encryption: 24, 25, 26, 27쪽
+06. Ciphertext Multiplication, Key Switching, and Rescaling: 28, 29, 30, 31, 32, 33쪽
+07. Lagrange Interpolation and Canonical Embedding: 34, 35, 36쪽
+08. Slot Rotations and Complex Conjugation in CKKS: 37, 38, 39쪽
+09. Matrix-Vector Multiplication in CKKS: Diagonal and BSGS Methods: 39, 40, 41, 42쪽
+10. Homomorphic Convolution: Rotations, Masks, and Multiple Channels: 42, 43쪽
+11. Homomorphic Matrix Multiplication via Slot Permutations: 44, 45쪽
+12. Polynomial Approximation and Evaluation: Chebyshev and Paterson-Stockmeyer: 46쪽
+13. NP Proofs, Witnesses, and Zero Knowledge: 47, 48, 49쪽
+14. Interactive Proofs: Quadratic Residuosity and Soundness Amplification: 50, 51, 52, 53, 54쪽
+
+범위와 보존
+- 고유 페이지 54개, 글 안의 배치 56회. 1–54쪽 중 누락된 페이지 없음.
+- 39쪽은 08·09편, 42쪽은 09·10편에 전체 페이지를 중복 표시한다.
+- 왼쪽/오른쪽 단을 따로 자르지 않고 제목·본문·필기·삽입 그림·여백을 함께 보존했다.
+- 54쪽은 제목 메모만 있으므로 14편 본문 범위 50–53쪽과 구별해 캡션을 달았다.
+- 각 글의 첫 H2는 필기 원본이다. 이어서 들어가며와 기존 본문이 나온다.
+- 기존 본문과 frontmatter는 추가한 이미지 절을 제거하면 바이트 단위로 원상 복구된다.
+- 14개 원문 대조 기록을 유지하고 이미지 추가 기록을 덧붙였다. 기존 그림 27개도 변경하지 않았다.
+
+이미지 및 탐색
+- Poppler pdftoppm, 전체 MediaBox, 주석 표시 기본값, 너비 3600px, 비율 유지.
+- 고해상도 54개는 lossless WebP. 저장 후 다시 읽은 모든 RGB 픽셀이 렌더링 PNG와 일치한다.
+- 글에는 너비 1400px, WebP 품질 95의 미리보기 54개를 지연 로딩한다.
+- 고해상도 이미지와 미리보기의 크기, 파일 크기, SHA-256은 source-pages.json에 기록했다.
+- 이미지를 누르거나 원본 크기로 보기 링크를 누르면 새 탭에서 해당 고해상도 전체 페이지가 열린다.
+- 정리 글로 바로 가기 링크로 긴 이미지 목록을 건너뛸 수 있다.
+- 전체 페이지를 9개씩 모은 검토용 이미지 6장에서 1–54쪽의 구성과 순서를 육안 확인했다.
+- 1쪽 스캔, 39쪽 색 필기·수식, 46쪽 작은 슬라이드 수식, 53쪽 삽입 이미지의 표와 수식을 확대해서 확인했다.
+
+검증
+- 파일·본문 무결성 검사 통과: 14개 본문, 14개 frontmatter, draft: true 유지, PDF 원본 불변.
+- npm run check 전체가 종료 코드 0으로 통과했다.
+- 기존 공개 게시글 경로 112개 유지, 내부 링크 216개, 서비스 워커 검사 통과.
+- feature 검사: 활성 프로젝트 경로 2개, 잘못된 Mermaid 거부, 게시글 140개, 오류 0개.
+- 기존 안내: 빈 content/projects glob, document.execCommand 사용 중단 예정 힌트, 한국어·일본어 검색 어간 추출 미지원.
+- 14편 전체를 1440px PC와 390px 모바일에서 확인했다: 총 28개 화면 조건.
+- 원본 이미지 배치 112건(56회 × 2개 화면 크기)의 번호, 순서, 크기, 비율, 캡션, 주소, 지연 로딩을 확인했다.
+- 28개 화면에서 새 탭 원본 열기와 실제 3600px 너비 확대를 확인했다.
+- 14편의 기존 수식 3760개가 각 화면 크기에서 동일하게 렌더링됐다. KaTeX 오류, 남은 수식 구분자, 페이지 가로 넘침 없음.
+- 이미지 클릭뿐 아니라 키보드 Enter로 새 탭이 열리는 것도 모바일 너비 조건에서 확인했다.
+- 첫 글의 PC·모바일 상단, 09편의 42쪽 캡션, 10편의 42쪽 전체 페이지, 14편의 54쪽 캡션과 본문 전환을 육안 확인했다.
+- 본문 바로가기 28건은 스크롤 애니메이션 종료 후 들어가며 제목이 화면 안의 목표 위치에 도착하는 것까지 확인했다.
+- 일반 빌드에서 원본·미리보기 자산 108개는 정상 복사되고 14편의 초안 게시글 경로는 제외된다. 실제 사이트에 배포하지 않았다.
+- 별도 미리보기 빌드 후 14편의 draft: true를 바이트 단위로 복원했고 재검사했다.
+- 기존 추적 파일에 변경 없음. 공개 게시·커밋·푸시는 실행하지 않았다.
+
+영문 제목 변경 (2026-11-02)
+- 14편의 제목을 표준 영어 용어로 변경하고 위 페이지 매핑 및 source-pages.json의 제목도 일치시켰다.
+- 원본 페이지 매핑과 이미지, 본문, 수식, 기존 slug, 카테고리, draft: true를 유지했다.
+- 영문 제목 변경 후 npm run check 전체가 종료 코드 0으로 통과했다. 기존 공개 경로 112개를 유지했다.
+- 14편 × PC 1440px·모바일 390px의 28개 화면에서 영문 제목과 문서·Open Graph·BlogPosting 제목이 일치한다. 가로 넘침 없음.
+- 카테고리의 세 페이지에서 14편의 변경된 제목을 양쪽 화면 크기로 확인했다. 12·14편의 PC·모바일 줄바꿈을 육안 확인했다.
+- 기존 경고·힌트만 유지: 빈 프로젝트 폴더, document.execCommand 사용 중단 예정, 한국어·일본어 검색 어간 추출 미지원.
+- 별도 미리보기 빌드 후 14개 draft 상태를 복원했다. 공개 게시·커밋·푸시는 하지 않았다.
+
+배포 전 검증 (2026-11-02)
+- 공개 설정으로 npm run check 전체 통과: 게시글 154개, 필수 공개 경로 112개 유지.
+- 14편 × PC·모바일 28개 화면의 제목, Modern Cryptography 카테고리, 본문 첫 절과 수식 표시를 확인했다.
+- 카테고리 3개 페이지, RSS·사이트맵의 14편, 이미지 108개 파일의 해시가 정상이다.
+- 검색어 Algebraic Foundations / Quadratic Residuosity로 각 글을 찾을 수 있다.
+- 별도 관찰: 수정하지 않은 기존 검색 코드에서 동일 결과가 3회 반복 표시된다. 기존 Flutter·Database System 글도 동일하며 검색 결과 링크는 정상이다.
+- 기존 안내: 빈 프로젝트 폴더, document.execCommand 사용 중단 예정, 한국어·일본어 검색 어간 추출 미지원.

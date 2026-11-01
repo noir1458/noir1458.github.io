@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="670" viewBox="0 0 460 670" role="img" aria-labelledby="title desc">
+  <title id="title">Real number encoding and decoding at scale 100</title>
+  <desc id="desc">Multiply negative 1.23456 by 100, round negative 123.456 to negative 123, reduce modulo 1009 to store 886, recover the centered integer negative 123, and divide by 100 to decode negative 1.23. Encryption noise is omitted.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="458" height="668" rx="16" fill="#fff" stroke="#cbd5e1"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#0f172a">
+    <text x="230" y="35" font-size="22" font-weight="700">Encoding at scale 100</text>
+    <rect x="80" y="65" width="300" height="58" rx="11" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="230" y="102" font-size="26">m = -1.23456</text>
+    <rect x="80" y="163" width="300" height="58" rx="11" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="230" y="200" font-size="26">100m = -123.456</text>
+    <rect x="80" y="261" width="300" height="58" rx="11" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="230" y="298" font-size="26">M = -123</text>
+    <rect x="80" y="359" width="300" height="58" rx="11" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="230" y="396" font-size="26">Stored residue: 886</text>
+    <rect x="80" y="457" width="300" height="58" rx="11" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="230" y="494" font-size="26">Centered: -123</text>
+    <rect x="80" y="555" width="300" height="58" rx="11" fill="#f0fdf4" stroke="#15803d"/>
+    <text x="230" y="592" font-size="26">Decoded: -1.23</text>
+    <g fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 230 125 V 159"/>
+      <path d="M 230 223 V 257"/>
+      <path d="M 230 321 V 355"/>
+      <path d="M 230 419 V 453"/>
+      <path d="M 230 517 V 551"/>
+    </g>
+    <g text-anchor="start" font-size="18" fill="#334155">
+      <text x="250" y="149">multiply by 100</text>
+      <text x="250" y="247">nearest integer</text>
+      <text x="250" y="345">modulo 1009</text>
+      <text x="250" y="443">centered lift</text>
+      <text x="250" y="541">divide by 100</text>
+    </g>
+    <text x="230" y="649" font-size="16" fill="#475569">q = 1009; encryption noise omitted</text>
+  </g>
+</svg>
