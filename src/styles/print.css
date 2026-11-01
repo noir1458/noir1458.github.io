@@ -1,0 +1,162 @@
+/* These additions are absent from screen layout and the accessibility tree. */
+.print-source, .print-reference, .print-references, .print-comments { display: none; }
+
+@media print {
+  @page { margin: 18mm; }
+
+  :root {
+    color-scheme: light !important;
+    --color-background: #fff !important;
+    --color-surface: #fff !important;
+    --color-footer: #fff !important;
+    --color-text: #111 !important;
+    --color-muted: #444 !important;
+    --color-line: #aaa !important;
+    --color-accent: #111 !important;
+    --color-accent-soft: #fff !important;
+    --accent: #111;
+    --accent-ink: #111;
+    font-size: 100%;
+  }
+
+  *, *::before, *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html, body {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  body { margin: 0; font-size: 1rem; line-height: 1.6; letter-spacing: normal; }
+
+  .site-header, .site-footer, .hero-banner, .skip-link,
+  .breadcrumbs, .reading-progress, .article-floating-tools,
+  .post-navigation, .comments, .giscus, dialog, dialog::backdrop,
+  .code-copy, .code-language, .mermaid-source, .pagination {
+    display: none !important;
+  }
+
+  :root .site-shell, :root .content-grid, :root .main-content {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .article-header { margin: 0 0 1.25rem; padding: 0 0 0.75rem; border-bottom: 1pt solid #777; }
+  .article-header h1, .page-heading h1 { font-size: 1.65rem; line-height: 1.3; }
+  .article-meta { margin-top: 0.6rem; font-size: 0.8rem; }
+  .print-source { display: block; margin: 0.6rem 0 0; font-size: 0.8rem; overflow-wrap: anywhere; }
+
+  :root .article-content { width: 100%; max-width: none; padding: 0; font-size: 1rem; line-height: 1.6; letter-spacing: normal; }
+  .article-content p { margin: 0 0 0.85em; orphans: 3; widows: 3; }
+  .article-content :is(h2, h3, h4, h5, h6) {
+    margin: 1.4em 0 0.6em;
+    padding: 0;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .article-content h2 { font-size: 1.3rem; }
+  .article-content h3 { font-size: 1.15rem; }
+  .article-content :is(h4, h5, h6) { font-size: 1rem; }
+  .article-content :is(h2, h3, h4, h5, h6)::before { content: none; }
+  a, a:visited { color: #111 !important; text-decoration: underline; }
+
+  .article-content :is(blockquote, .admonition, details) {
+    margin: 1em 0;
+    padding: 0.5em 0.8em;
+    border-color: #888;
+    background: #fff;
+    color: #111;
+    break-inside: auto;
+  }
+  .article-content .admonition-title { color: #111; }
+  .article-content details summary { min-height: 0; }
+  /* Progressive fallback for browsers supporting ::details-content, even without JS. */
+  .article-content details::details-content { display: block; content-visibility: visible; }
+
+  .article-content .code-block { margin: 1em 0; break-inside: auto; }
+  .article-content pre, .article-content .code-block pre {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible !important;
+    padding: 0.6em;
+    border: 0.5pt solid #aaa;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    break-inside: auto;
+    box-decoration-break: clone;
+  }
+  /* Override Shiki's inline colors and the legacy dark theme's !important rules. */
+  .article-content pre, .article-content pre *, .article-content code {
+    color: #111 !important;
+    background: transparent !important;
+  }
+  .article-content pre code, .article-content .code-block pre code {
+    display: block;
+    min-width: 0;
+    font-size: inherit;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .article-content pre:has(.line) code { white-space: normal; }
+  .article-content pre code > .line { display: block; white-space: pre-wrap; break-inside: avoid; }
+  .article-content .code-block pre code > .line { min-height: 1.5em; padding-left: 3.5em; }
+  .article-content .code-block pre code > .line::before { color: #555; }
+
+  .article-content table { display: table; width: 100%; overflow: visible; font-size: 0.85rem; }
+  .article-content :is(th, td) { padding: 0.35em 0.5em; font-size: inherit; overflow-wrap: anywhere; }
+  .article-content th { background: #fff; }
+  .article-content thead { display: table-header-group; }
+  .article-content tr { break-inside: avoid; }
+
+  .article-content :is(img, svg) { max-width: 100%; max-height: 220mm; object-fit: contain; break-inside: avoid; }
+  .article-content img { height: auto; margin-inline: auto; }
+  .article-content figure { margin: 1em 0; break-inside: avoid; }
+  .article-content .mermaid-diagram {
+    display: block;
+    min-height: 0;
+    max-height: none;
+    padding: 0.5em;
+    overflow: visible;
+    background: #fff;
+    break-inside: avoid;
+  }
+  .article-content .mermaid-theme-images { display: block; }
+  .article-content .mermaid-diagram-image { max-height: 180mm; margin-inline: auto; }
+  :root .article-content .mermaid-diagram-light { display: block !important; }
+  :root .article-content .mermaid-diagram-dark { display: none !important; }
+  .article-content .katex-display { overflow: visible; padding: 0.3em 0; break-inside: avoid; }
+  .article-content :not(.katex-display) > .katex { overflow: visible; }
+
+  .print-reference { display: inline; margin-left: 0.15em; font-size: 0.7em; line-height: 0; }
+  .print-references { display: block; margin-top: 1.5rem; border-top: 0.5pt solid #aaa; font-size: 0.8rem; }
+  .article-content .print-references-title { margin-top: 0.8em; font-size: 1rem; font-weight: 700; break-after: avoid; }
+  .print-references ol { padding-left: 2em; }
+  .print-references li { margin: 0.3em 0; overflow-wrap: anywhere; break-inside: avoid; }
+
+  .print-comments { display: block; margin-top: 1.5rem; padding-top: 0.8rem; border-top: 0.5pt solid #aaa; }
+  .print-comments.has-comments { break-before: page; }
+  .print-comments h2 { margin: 0 0 0.6em; font-size: 1.3rem; break-after: avoid; }
+  .print-comments-note, .print-comment-source { font-size: 0.75rem; overflow-wrap: anywhere; }
+  .print-comments-list, .print-comment-replies { list-style: none; padding: 0; }
+  .print-comment-replies { margin-left: 1rem; padding-left: 0.8rem; border-left: 1pt solid #aaa; }
+  .print-comment { margin-top: 1.5em; break-inside: auto; }
+  .print-comment-meta { margin-bottom: 0.2em; break-after: avoid; }
+  .print-comment-source { margin: 0 0 0.6em; break-after: avoid; }
+  .print-comment-body a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; overflow-wrap: anywhere; }
+}

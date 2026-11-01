@@ -1,5 +1,6 @@
 ---
 import { APPEARANCE, FEATURES, SITE, type SupportedLanguage } from "@/config";
+import PrintComments from "./PrintComments.astro";
 
 interface Props {
   language?: SupportedLanguage;
@@ -38,3 +39,4 @@ const commentTheme = defaultTheme === "system" ? "preferred_color_scheme" : defa
     </div>
   </section>
 )}
+{giscus && <PrintComments language={language} />}

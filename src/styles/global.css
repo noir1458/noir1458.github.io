@@ -1837,15 +1837,17 @@ body.has-hero-background[data-banner-title-tone="dark"] {
   }
 }
 
-:root[data-theme="dark"] .astro-code,
-:root[data-theme="system"][data-resolved-theme="dark"] .astro-code {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-}
+@media screen {
+  :root[data-theme="dark"] .astro-code,
+  :root[data-theme="system"][data-resolved-theme="dark"] .astro-code {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
 
-:root[data-theme="dark"] .astro-code span,
-:root[data-theme="system"][data-resolved-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
+  :root[data-theme="dark"] .astro-code span,
+  :root[data-theme="system"][data-resolved-theme="dark"] .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
 }
 
 .article-content table {

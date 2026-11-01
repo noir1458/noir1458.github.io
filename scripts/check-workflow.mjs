@@ -37,6 +37,27 @@ const build = workflow?.jobs?.build;
 const deploy = workflow?.jobs?.deploy;
 expect(build?.permissions?.contents === "read", "build must use contents: read");
 expect(build?.permissions?.pages === "read", "build must use pages: read");
+expect(build?.permissions?.discussions === "read", "comment collection requires discussions: read");
+for (const event of ["discussion", "discussion_comment"]) {
+  expect(
+    ["created", "edited", "deleted"].every((type) => workflow.on[event]?.types?.includes(type)),
+    `${event} changes must refresh printable comments`
+  );
+}
+const collectIndex = build?.steps?.findIndex((step) => step.run === "npm run comments:sync");
+const validateIndex = build?.steps?.findIndex((step) => step.run === "npm run check");
+expect(
+  collectIndex >= 0 && collectIndex < validateIndex,
+  "collect comments before validating and building"
+);
+expect(
+  !build?.steps?.[collectIndex]?.["continue-on-error"],
+  "failed comment collection must prevent deployment"
+);
+expect(
+  String(build?.steps?.[collectIndex]?.if).includes("github.event_name != 'pull_request'"),
+  "pull requests must not need GitHub comment access"
+);
 expect(
   build?.steps?.some((step) => step.run === "npm run check"),
   "build must run the complete local validation"

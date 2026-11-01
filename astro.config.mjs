@@ -3,8 +3,9 @@ import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import rehypeMermaid from "rehype-mermaid";
-import { FEATURES, SITE } from "./src/config.ts";
+import { FEATURES, LANGUAGES, SITE } from "./src/config.ts";
 import {
   MERMAID_DARK_CONFIG,
   MERMAID_LIGHT_CONFIG,
@@ -12,6 +13,7 @@ import {
   rehypeMermaidTheme
 } from "./src/lib/markdown/rehypeMermaid.ts";
 import { remarkAdmonitions } from "./src/lib/markdown/remarkAdmonitions.ts";
+import { rehypePrint } from "./src/lib/markdown/rehypePrint.ts";
 
 const mermaidPlugins = FEATURES.mermaid
   ? [
@@ -49,7 +51,24 @@ export default defineConfig({
     },
     processor: unified({
       remarkPlugins: [remarkMath, remarkAdmonitions],
-      rehypePlugins: [[rehypeKatex, { output: "htmlAndMathml", strict: false }], ...mermaidPlugins]
+      rehypePlugins: [
+        rehypeRaw,
+        [rehypeKatex, { output: "htmlAndMathml", strict: false }],
+        ...mermaidPlugins,
+        [
+          rehypePrint,
+          {
+            siteUrl: SITE.url,
+            defaultLanguage: SITE.language,
+            languagePrefixes: Object.fromEntries(
+              Object.entries(LANGUAGES).map(([language, settings]) => [
+                language,
+                settings.pathPrefix
+              ])
+            )
+          }
+        ]
+      ]
     }),
     shikiConfig: {
       themes: {

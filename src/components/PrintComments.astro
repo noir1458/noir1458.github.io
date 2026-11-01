@@ -1,0 +1,58 @@
+---
+import { SITE, type SupportedLanguage } from "@/config";
+import { giscusPathHash, readCommentSnapshot } from "@/lib/comments/snapshot";
+import { renderPrintComment } from "@/lib/comments/render";
+
+interface Props { language?: SupportedLanguage }
+const { language = SITE.language } = Astro.props;
+const giscus = SITE.giscus!;
+const snapshot = readCommentSnapshot();
+const available = snapshot?.repo === giscus.repo && snapshot?.categoryId === giscus.categoryId;
+const hash = giscusPathHash(Astro.url.pathname);
+const discussion = available ? snapshot.discussions.find((entry) => entry.hash === hash) : undefined;
+const source = discussion?.url ?? `https://github.com/${giscus.repo}/discussions?discussions_q=${encodeURIComponent(`in:body ${hash}`)}`;
+const comments = await Promise.all((discussion?.comments ?? []).map(async (comment) => ({
+  ...comment,
+  html: await renderPrintComment(comment.bodyHTML),
+  replies: await Promise.all(comment.replies.map(async (reply) => ({
+    ...reply, html: await renderPrintComment(reply.bodyHTML)
+  })))
+})));
+const locale = language;
+const copy = locale === "ja"
+  ? { title: "コメント", snapshot: "取得日時", empty: "取得時点で公開コメントはありません。", unavailable: "印刷用コメントを取得していません。原文で確認してください。", removed: "削除または非表示のコメント", latest: "最新のコメント", replies: "返信" }
+  : locale === "en"
+    ? { title: "Comments", snapshot: "Snapshot captured", empty: "No public comments at collection time.", unavailable: "Comments were not collected for this build. Check the original discussion.", removed: "Deleted or hidden comment", latest: "Latest discussion", replies: "Replies" }
+    : { title: "댓글", snapshot: "댓글 수집 시각", empty: "수집 시점에 공개 댓글이 없습니다.", unavailable: "이 빌드에는 인쇄용 댓글이 수집되지 않았습니다. 원문에서 확인해 주세요.", removed: "삭제되거나 숨겨진 댓글", latest: "최신 댓글 원문", replies: "답글" };
+const timestamp = (value: string) => value.replace("T", " ").replace(/(?:\.\d+)?Z$/u, " UTC");
+---
+
+<section class:list={["print-comments", { "has-comments": comments.length > 0 }]} data-pagefind-ignore aria-labelledby="print-comments-heading">
+  <h2 id="print-comments-heading">{copy.title}</h2>
+  <p class="print-comments-note">
+    {available && <>{copy.snapshot}: <time datetime={snapshot.fetchedAt}>{timestamp(snapshot.fetchedAt)}</time><br /></>}
+    {copy.latest}: <a href={source}>{source}</a>
+  </p>
+  {!available ? <p>{copy.unavailable}</p> : !comments.length ? <p>{copy.empty}</p> : (
+    <ol class="print-comments-list">
+      {comments.map((comment) => (
+        <li class="print-comment">
+          <p class="print-comment-meta"><strong>{comment.unavailable ? copy.removed : comment.author}</strong> · <time datetime={comment.createdAt}>{timestamp(comment.createdAt)}</time></p>
+          <p class="print-comment-source"><a href={comment.url}>{comment.url}</a></p>
+          <div class="article-content print-comment-body" set:html={comment.html} />
+          {comment.replies.length > 0 && (
+            <ol class="print-comment-replies" aria-label={copy.replies}>
+              {comment.replies.map((reply) => (
+                <li class="print-comment">
+                  <p class="print-comment-meta"><strong>{reply.author}</strong> · <time datetime={reply.createdAt}>{timestamp(reply.createdAt)}</time></p>
+                  <p class="print-comment-source"><a href={reply.url}>{reply.url}</a></p>
+                  <div class="article-content print-comment-body" set:html={reply.html} />
+                </li>
+              ))}
+            </ol>
+          )}
+        </li>
+      ))}
+    </ol>
+  )}
+</section>
