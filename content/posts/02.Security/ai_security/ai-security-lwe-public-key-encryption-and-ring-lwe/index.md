@@ -2,7 +2,7 @@
 title: "03. Public-Key Encryption from LWE and Ring-LWE"
 slug: ai-security-lwe-public-key-encryption-and-ring-lwe
 description: "LWE와 Ring-LWE 공개키 암호의 키 생성·암호화·복호화를 전개하고, 오차 조건과 negacyclic 행렬 구조, 키·암호문 크기를 비교한다."
-publishedAt: '2026-10-29'
+publishedAt: '2026-10-20'
 categories: Modern Cryptography
 tags:
   - LWE

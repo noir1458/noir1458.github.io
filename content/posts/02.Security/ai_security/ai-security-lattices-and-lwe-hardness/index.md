@@ -2,7 +2,7 @@
 title: "02. Lattice Problems and the Hardness of LWE"
 slug: ai-security-lattices-and-lwe-hardness
 description: "환원의 방향, 격자와 기저, successive minima, SVP·SIVP와 근사 문제를 정리하고 Regev의 LWE 난해성 정리를 읽는다."
-publishedAt: '2026-10-29'
+publishedAt: '2026-10-19'
 categories: Modern Cryptography
 tags:
   - LWE

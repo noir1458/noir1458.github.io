@@ -2,7 +2,7 @@
 title: "01. Algebraic Foundations of Learning With Errors"
 slug: ai-security-lwe-mathematical-foundations
 description: "합동식, 동치류와 분할, 정수·다항식의 몫환을 정리하고 LWE 표본과 오차의 역할을 계산 예제로 살펴본다."
-publishedAt: '2026-10-29'
+publishedAt: '2026-10-18'
 categories: Modern Cryptography
 tags:
   - LWE

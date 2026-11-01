@@ -2,7 +2,7 @@
 title: "07. Lagrange Interpolation and Canonical Embedding"
 slug: ai-security-lagrange-interpolation-and-canonical-embedding
 description: "Lagrange 보간에서 출발해 X^N+1의 근, canonical embedding과 N/2개의 복소 슬롯을 유도한다. 계수의 체를 구별하고 스케일·반올림 및 홀수 지수 치환을 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-24'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

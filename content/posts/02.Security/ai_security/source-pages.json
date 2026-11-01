@@ -890,7 +890,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-lwe-mathematical-foundations/index.md",
       "pages": [1, 2, 3, 4, 5],
       "originalSha256": "1ae51d6ea38e2e9264f2e945080de29bea1c00432dd1a1b16b153cb223c1b3f4",
-      "gallerySha256": "aca72e786f076ec75162826f2825c9fc7814798b73368a31e84c6a72b55ce666"
+      "gallerySha256": "597b8624cbf3f52861b0b6a15bb5e2997d45a4c3bc59c37a8c5cd778def27612"
     },
     {
       "number": 2,
@@ -899,7 +899,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-lattices-and-lwe-hardness/index.md",
       "pages": [6, 7, 8, 9, 10],
       "originalSha256": "a792f7d1732b54b753524a03881b23780a41edc397aca204034732507b9e75ac",
-      "gallerySha256": "a96a368b597c8fdcaf6e65c3a7eb0f83217de89d885864568888679f46bd57c4"
+      "gallerySha256": "e9cdacca0e66da4fd56deab5168192bb477579764fec73580288866fef2b4161"
     },
     {
       "number": 3,
@@ -908,7 +908,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-lwe-public-key-encryption-and-ring-lwe/index.md",
       "pages": [11, 12, 13, 14, 15, 16, 17],
       "originalSha256": "0a78c982a273b9f21b56dd74ef8676192838056a55c562307fe4fc08f68a4b5c",
-      "gallerySha256": "3ff8b4da3d1ecb41d1ebfca460f27511f2e287ace8271260ca7e60aaa10e6b52"
+      "gallerySha256": "bb2ba0e61190e1b1a9119ec8eef8727d6bd429c365f2c81077a09fc6b09e0d9e"
     },
     {
       "number": 4,
@@ -917,7 +917,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-encryption-definitions-and-security/index.md",
       "pages": [18, 19, 20, 21, 22, 23],
       "originalSha256": "3a6ff50d4303d457c1552d4060df11b5fada4ca7bc86355cc0d3768d9ccec545",
-      "gallerySha256": "ed4162a0b13b19af7676fe92eb4462402593c30fed38ad9d25f459d6ab685a0a"
+      "gallerySha256": "7f1e96af4b6c45fc8daf4d3c1bfe1fef931c37aed69abe10d05152c824506e8f"
     },
     {
       "number": 5,
@@ -926,7 +926,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-real-number-encoding-and-scale/index.md",
       "pages": [24, 25, 26, 27],
       "originalSha256": "edada6a434c5a248318d2b418ead3cf558f86a8868da5e64bd3ac8090a501ce6",
-      "gallerySha256": "d284d05da324ea7b3a086abc5b7f25bff7c2cbdbdaf7816012ab2d041c7907af"
+      "gallerySha256": "8d273b0286bd1aa6290d72247430b6ddffc3d78dc8a2edc564aa061308e021b6"
     },
     {
       "number": 6,
@@ -935,7 +935,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-ciphertext-multiplication-key-switching-and-rescaling/index.md",
       "pages": [28, 29, 30, 31, 32, 33],
       "originalSha256": "9e1c37c5f5b1c4be61f0f91994187fe24110bd86c5bcac216901274b750ff8e9",
-      "gallerySha256": "47f5cdfce95b1b84729f105eb7cf4232c60374c07910b168390acb21b3a11a7c"
+      "gallerySha256": "5989287112a4afa515e3a135989d08b96c97a611ddc7d63bf9aca18f94a3450c"
     },
     {
       "number": 7,
@@ -944,7 +944,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-lagrange-interpolation-and-canonical-embedding/index.md",
       "pages": [34, 35, 36],
       "originalSha256": "edf6651b30a54ae9c7a0736d231cc09392efc838e590db5047bb4b82b36d64b2",
-      "gallerySha256": "a7406116ad68029e2dbe51d497fd8ef42e045cb9f7be3b84e74fdb6c9a359fc4"
+      "gallerySha256": "5c8e2a0149161c91badd42716acceca03f8469ab9f73c550adfa52549a5835c8"
     },
     {
       "number": 8,
@@ -953,7 +953,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-slot-rotation-and-homomorphic-conjugation/index.md",
       "pages": [37, 38, 39],
       "originalSha256": "0854abbea1ba95b256ad5eacc80992fc4dd7af383398d3d5f7e04564c539e9e0",
-      "gallerySha256": "7a7a84b973aca2d03489a8e79819328081e80d8e4c0c07c273c4007df2665d56"
+      "gallerySha256": "96d122d4b9a299584aa80a3db3409e3590a3a6e2a0987c447bb5e0bf85aa5e38"
     },
     {
       "number": 9,
@@ -962,7 +962,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-ckks-matrix-vector-multiplication-and-bsgs/index.md",
       "pages": [39, 40, 41, 42],
       "originalSha256": "d83963e00d6df303a8ab736fa400d24e6992609dc9b3da4cb05935bd33923af3",
-      "gallerySha256": "a81b49741bd4a779a781dc2be43c4658f1565a579b3d23a81f0665cd0a02339b"
+      "gallerySha256": "0fce12e588ebdddd3ee90797fac8dd973a6fb4134a49fa219e0d8e897b271103"
     },
     {
       "number": 10,
@@ -971,7 +971,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-convolution-rotations-masks-and-channels/index.md",
       "pages": [42, 43],
       "originalSha256": "5da0b4d4abf91a5ff0e14c51742fca9db4965718abf26615511db6acee2b09bc",
-      "gallerySha256": "0cc68e343cc65093cc778e927b59768531c62e561c38d8ef7e07d1d3c635b8df"
+      "gallerySha256": "ad2e056e7d93a2e9023ffe42d9978ba7162106778f274b2e33ca033c57d7109c"
     },
     {
       "number": 11,
@@ -980,7 +980,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-homomorphic-matrix-multiplication-and-permutations/index.md",
       "pages": [44, 45],
       "originalSha256": "9d56241195d0523f866ed6685f7803b8d4579bc53fb7c2bc655f0df4124b7054",
-      "gallerySha256": "423b0de9ce5ee7be8f4cc1bf7f6ad12a59773c8a3f36d56095a907d910aadcc3"
+      "gallerySha256": "4dab7d217548cfbd25310a16d3a25acd149117b0748785605ff5ae7e8a010822"
     },
     {
       "number": 12,
@@ -989,7 +989,7 @@
       "file": "content/posts/02.Security/ai_security/ai-security-polynomial-approximation-chebyshev-and-paterson-stockmeyer/index.md",
       "pages": [46],
       "originalSha256": "e02b3ab3548fa47766fec74e0c5027642b75db71e641718f5f5ef8ba9907e6c5",
-      "gallerySha256": "e1026f2535d32baf36e442dd7767aeb5add75c851bd78f7ee4ea091724df1ef0"
+      "gallerySha256": "f0cff9fa2088d2eb2ed16aa91b51494317101212c2fd64c6305c6f3523d711b8"
     },
     {
       "number": 13,
@@ -998,19 +998,19 @@
       "file": "content/posts/02.Security/ai_security/ai-security-np-proofs-witnesses-and-zero-knowledge/index.md",
       "pages": [47, 48, 49],
       "originalSha256": "093b9b80609349fb96582432ec34729077a6373865f0c350601479e8b3637bac",
-      "gallerySha256": "13f7e3b4fb230243b39a7b7391f1f1ced91e146251ec216a13ca06b193e761a8"
+      "gallerySha256": "72cc292409a306b93821d0dd19872fbc76af873c55f38a42de4ce16257cc32a7"
     },
     {
       "number": 14,
       "title": "14. Interactive Proofs: Quadratic Residuosity and Soundness Amplification",
       "slug": "ai-security-interactive-proofs-quadratic-residues-and-soundness",
       "file": "content/posts/02.Security/ai_security/ai-security-interactive-proofs-quadratic-residues-and-soundness/index.md",
-      "pages": [50, 51, 52, 53, 54],
+      "pages": [50, 51, 52, 53],
       "originalSha256": "13d887bf6e7b18c5870861cd594ee33afb3c3b8f39fc1c51d3139e495f5cb827",
-      "gallerySha256": "b7e2efcb4af8b5d744a4254817a958dcff3c20a25d329b3a177354c3f7efeb2d"
+      "gallerySha256": "abc82b8f848539df959e821fc6c02c9d8953c4fa862f78e77716310886ff3489"
     }
   ],
-  "pageReferences": 56,
+  "pageReferences": 55,
   "category": "Modern Cryptography",
   "draft": false
 }

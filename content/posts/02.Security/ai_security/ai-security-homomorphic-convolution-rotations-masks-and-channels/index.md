@@ -2,7 +2,7 @@
 title: "10. Homomorphic Convolution: Rotations, Masks, and Multiple Channels"
 slug: ai-security-homomorphic-convolution-rotations-masks-and-channels
 description: "커널을 겹쳐 곱하고 더하는 계산에서 시작해 동형 합성곱의 슬롯 회전과 경계 마스크를 유도한다. 원문의 32×32×3 배치와 입력·출력 채널을 수식으로 옮기고 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-27'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

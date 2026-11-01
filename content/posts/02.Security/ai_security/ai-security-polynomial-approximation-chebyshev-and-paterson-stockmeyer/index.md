@@ -2,7 +2,7 @@
 title: "12. Polynomial Approximation and Evaluation: Chebyshev and Paterson-Stockmeyer"
 slug: ai-security-polynomial-approximation-chebyshev-and-paterson-stockmeyer
 description: "활성함수를 다항식으로 근사하는 과정과 암호문에서 평가하는 과정을 구별한다. 교대 정리·Remez·Chebyshev 기저·재귀 PS 평가를 옮기고, 곱셈 횟수와 깊이를 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-29'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

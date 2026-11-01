@@ -2,7 +2,7 @@
 title: "09. Matrix-Vector Multiplication in CKKS: Diagonal and BSGS Methods"
 slug: ai-security-ckks-matrix-vector-multiplication-and-bsgs
 description: "CKKS의 키 생성·인코딩·암호화와 스케일을 복습하고, 행렬벡터곱을 순환 대각선과 슬롯 회전으로 분해한다. BSGS의 가중치 사전 회전과 연산 횟수도 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-26'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

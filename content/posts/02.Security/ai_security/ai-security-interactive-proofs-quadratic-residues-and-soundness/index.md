@@ -16,7 +16,7 @@ draft: false
 
 ## 필기 원본
 
-이 글에서 다룬 원본 PDF **50–53쪽**과 마지막 **54쪽의 제목 메모**를 함께 실었다. 두 단과 여백 필기를 포함한 페이지 전체를 보존했다. 이미지를 누르면 확대해서 볼 수 있다.
+이 글에서 다룬 원본 PDF **50–53쪽**이다. 두 단과 여백 필기를 포함한 페이지 전체를 보존했다. 이미지를 누르면 확대해서 볼 수 있다.
 
 <figure style="margin: 2rem 0;">
   <img data-full-src="/images/posts/cryptography-handwritten-notes/page-050.webp" src="/images/posts/cryptography-handwritten-notes/page-050-preview.webp" alt="인공지능보안 필기 원본 PDF 50쪽 전체" width="1400" height="1980" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
@@ -38,16 +38,11 @@ draft: false
   <figcaption>원본 PDF 53쪽.</figcaption>
 </figure>
 
-<figure style="margin: 2rem 0;">
-  <img data-full-src="/images/posts/cryptography-handwritten-notes/page-054.webp" src="/images/posts/cryptography-handwritten-notes/page-054-preview.webp" alt="인공지능보안 필기 원본 PDF 54쪽 전체" width="1400" height="1980" loading="lazy" decoding="async" style="display: block; width: 100%; height: auto; margin: 0;">
-  <figcaption>원본 PDF 54쪽. 추가 본문 없이 제목 메모만 있는 마지막 페이지도 함께 보존했다.</figcaption>
-</figure>
-
 ## 들어가며
 
 [앞 글](/posts/ai-security-np-proofs-witnesses-and-zero-knowledge/)에서는 witness를 직접 보내면 검증과 함께 비밀도 공개된다는 문제를 봤다. 이번에는 **증거를 통째로 보내는 대신, 검증자의 무작위 질문에 응답하는 방식**을 살펴본다. 검증 결과의 올바름과 대화에서 비밀이 드러나지 않는 성질은 따로 확인한다.
 
-**범위는 원본 PDF 50–53쪽 전체다.** 영지식증명의 목표, 상호작용과 무작위성, 대화형 증명 모형, 색 구별 실험, 제곱잉여(QR) 프로토콜, 완전성·건전성, 반복 증폭, 두 응답의 공개와 난수 재사용, 마지막 구조 요약까지 포함한다. 54쪽에는 제목 메모만 있고 추가 본문은 없다.
+**범위는 원본 PDF 50–53쪽 전체다.** 영지식증명의 목표, 상호작용과 무작위성, 대화형 증명 모형, 색 구별 실험, 제곱잉여(QR) 프로토콜, 완전성·건전성, 반복 증폭, 두 응답의 공개와 난수 재사용, 마지막 구조 요약까지 포함한다.
 
 51쪽의 비어 있는 응답식은 52쪽 설명으로 채운다. 단위군과 역원 조건은 앞 글의 정의에 맞춰 명시한다. 수치 예제와 마지막의 정직한 검증자 시뮬레이션은 **보충**으로 구별한다.
 

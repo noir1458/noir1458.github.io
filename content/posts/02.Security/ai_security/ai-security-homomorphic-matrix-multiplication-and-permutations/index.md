@@ -2,7 +2,7 @@
 title: "11. Homomorphic Matrix Multiplication via Slot Permutations"
 slug: ai-security-homomorphic-matrix-multiplication-and-permutations
 description: "두 암호화된 행렬의 곱을 데이터 재배치와 슬롯별 곱의 합으로 유도한다. σ·τ·φ·ψ, 경계 마스크와 BSGS 회전 수를 원문과 대조하고 4×4 예제를 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-28'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

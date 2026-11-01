@@ -2,7 +2,7 @@
 title: "05. Real-Number Encoding and Scaling in Approximate Homomorphic Encryption"
 slug: ai-security-real-number-encoding-and-scale
 description: "실수 계수 다항식을 스케일링·반올림해 Ring-LWE에 담고, 근사 복호화와 덧셈·평문 곱셈의 오차를 전개한다. 중심 대표값, 표현 범위, 스케일의 변화도 함께 확인한다."
-publishedAt: '2026-10-29'
+publishedAt: '2026-10-22'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

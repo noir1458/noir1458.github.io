@@ -2,7 +2,7 @@
 title: "08. Slot Rotations and Complex Conjugation in CKKS"
 slug: ai-security-slot-rotation-and-homomorphic-conjugation
 description: "5의 위수와 근의 재배열로 슬롯 순환이동을 증명하고, X의 역원 치환으로 켤레 연산을 유도한다. 바뀐 비밀키를 원래 키로 돌리는 키 전환과 오차도 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-25'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

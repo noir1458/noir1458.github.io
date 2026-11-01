@@ -2,7 +2,7 @@
 title: "04. Homomorphic Encryption: Definitions and IND-CPA Security"
 slug: ai-security-homomorphic-encryption-definitions-and-security
 description: "준동형의 의미에서 출발해 동형암호의 알고리즘과 정확성, IND-CPA 실험을 정리한다. 공개 평가 연산과 평가키의 안전성을 구분하고 leveled HE·FHE로 이어지는 흐름을 살펴본다."
-publishedAt: '2026-10-29'
+publishedAt: '2026-10-21'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

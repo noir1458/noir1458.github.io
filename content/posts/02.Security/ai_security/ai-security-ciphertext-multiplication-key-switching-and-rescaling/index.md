@@ -2,7 +2,7 @@
 title: "06. Ciphertext Multiplication, Key Switching, and Rescaling"
 slug: ai-security-ciphertext-multiplication-key-switching-and-rescaling
 description: "암호문 곱셈의 s² 항을 relinearization으로 처리하고, 보조 법 Pq에서의 키 전환과 divide-and-round를 전개한다. Rescaling의 법·스케일·오차 변화도 검산한다."
-publishedAt: '2026-10-30'
+publishedAt: '2026-10-23'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption

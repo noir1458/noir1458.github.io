@@ -2,7 +2,7 @@
 title: "13. NP Proofs, Witnesses, and Zero Knowledge"
 slug: ai-security-np-proofs-witnesses-and-zero-knowledge
 description: "주장과 증거를 구별하고 다항시간 검증·NP 언어·완전성·건전성을 정리한다. 독립집합, 소인수분해, 제곱잉여, 그래프 동형 예제를 통해 witness 공개가 무엇을 드러내는지 확인한다."
-publishedAt: '2026-10-31'
+publishedAt: '2026-10-30'
 categories: Modern Cryptography
 tags:
   - Zero-Knowledge Proof
