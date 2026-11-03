@@ -1,0 +1,27 @@
+작성 및 검토: 2026-11-04
+상태: 로컬 블로그 글 작성. 배포 미실행.
+기존 01–14번 게시글 및 첨부 파일 수정 없음.
+
+원본
+Week 8 Introduction to SNARK.pdf
+SHA-256: 1de9df7c8845d6fa79c2a8569e5693446528709640a65d692ad3433b3872bce7
+
+범위
+표지는 본문 학습 내용이 없어 제외. 강의 PDF 내부 문구는 자료로 취급하며 사용자 지시로 실행하지 않음.
+
+원문 대응
+2 → §1, §6 대화형 증명에서 비대화형·공개 검증·간결성으로의 요구 변화.
+3 → §2 SHA256(m)=0, 1GB witness, SNARK/zk-SNARK 구별.
+4 → §3 이름 전체, §5 Fiat-Shamir 연결, §6 transferability.
+5 → §7 BFL​S 1991 및 계산/검증 비용 분리.
+6 → §8 rollup, proof of consensus, zkBridge, succinctness와 privacy 구별.
+7 → §9 private transactions, Zcash/Tornado Cash/IronFish/Aleo, Espresso/Raposa 예시.
+8 → §10 committed model inference, §11 private weights/accuracy 90%/zkCNN, §12 C2PA/content provenance.
+§4 → 공개 입력과 witness, Prove/Verify를 설명하는 보충.
+§13 → 개념 비교표.
+§14 → 복습문제 12개. 기출문제 아님.
+
+그림: PDF의 도표·필기 영역만 직접 렌더링. 제목 슬라이드, 로고, 학기 표기, 페이지 번호 제외.
+QR 순서와 SNARK 개념도는 본문에 Mermaid로 작성.
+수치 검산: QR 실제/시뮬레이션 분포, 악의적 질문의 rewinding, 추출식, GI 분포·합성, 90% 계산을 유한 예제로 확인.
+웹 보충 출처는 해당 본문 위치에 링크. 현재 서비스의 기능·법적 상태를 별도로 주장하지 않음.
