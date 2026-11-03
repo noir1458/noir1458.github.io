@@ -191,6 +191,22 @@ read(fd, buffer, nbytes)
 
 “복사”는 모든 물리 메모리를 생성 순간에 통째로 복제한다는 뜻은 아니다. 다음 주차의 copy-on-write처럼 실제 데이터 복사를 지연할 수 있다. 공유와 복사의 차이는 **자원 객체를 함께 가리키는지, 별도 상태를 갖는지**로 판단해야 한다. 새 태스크를 깨웠다는 사실도 즉시 CPU를 얻었다는 뜻은 아니다.
 
+### 커널 설계와 적재 가능한 모듈
+
+*별도 `note.pdf` 3~4쪽의 커널 설계·모듈 메모*
+
+Linux는 주요 운영체제 기능이 커널 공간에서 함께 동작하는 **monolithic kernel** 구조를 사용하면서, 필요한 기능을 따로 적재하는 **loadable kernel module**도 지원한다. 모듈화는 코드를 나누어 빌드·적재하는 방식이고, 사용자 모드와 커널 모드는 실행 권한의 구분이다. 따라서 파일시스템을 모듈로 만들었다고 사용자 프로세스로 바뀌는 것은 아니다. 적재된 모듈도 커널의 권한으로 실행된다. [커널 구조와 모듈에 관한 Red Hat 설명](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/epub/kernel_administration_guide/chap-documentation-kernel_administration_guide-working_with_kpatch)
+
+모듈 파일의 확장자는 `.ko`다. `insmod`는 모듈을 적재하고, `lsmod`는 현재 적재된 모듈을 확인하며, `rmmod`는 제거할 때 사용한다. 초기화 함수는 적재할 때 필요한 상태를 준비하고, 종료 함수는 사용 중인 작업을 끝낸 뒤 자원을 정리한다. 커널 전체를 다시 부팅하는 과정과 모듈을 교체하는 과정을 구별하면 이후 PXT4 실습의 목적이 분명해진다. 외부 모듈을 빌드할 때에도 실행 대상 커널의 설정과 헤더가 필요하다. [외부 모듈 빌드 문서](https://docs.kernel.org/kbuild/modules.html)
+
+### 매크로와 inline 함수를 읽는 방법
+
+*별도 `note.pdf` 4쪽의 macro 메모를 풀어 쓴 보충*
+
+함수처럼 보이는 `NAME(...)`도 `#define`으로 정의한 매크로일 수 있다. 매크로는 전처리 단계에서 코드가 확장되므로, 먼저 정의를 찾아 실제로 무엇이 실행되는지 확인해야 한다. 인자를 여러 번 쓰는 매크로에 `i++`나 함수 호출을 넘기면 그 부수 효과가 반복될 수 있다. 반면 inline 함수는 함수의 자료형 검사와 인자 평가 규칙을 따르면서 호출부에 본문을 펼치는 최적화를 허용한다. `inline`을 썼다고 반드시 펼쳐지거나 항상 빨라지는 것은 아니다. [GCC의 매크로 인자 중복 평가 설명](https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html)
+
+커널의 여러 문장으로 된 매크로에서 자주 보이는 `do { ... } while (0)`은 본문을 한 문장처럼 사용하기 위한 형태다. 반복 조건이 0이므로 본문을 한 번 실행한다. 이후 `preempt_disable()`이나 `spin_lock()`의 정의를 따라갈 때, 함수 호출처럼 보이는 여러 겹의 매크로와 실제 함수 구현을 구별해서 읽으면 된다. [커널 코딩 스타일의 매크로·inline 지침](https://docs.kernel.org/process/coding-style.html#macros-enums-and-rtl)
+
 ## 8. 실습: Linux 명령어와 도구
 
 *Practical Class 2, 1~37쪽*
@@ -240,6 +256,7 @@ tar -xvf sources.tar
 | `apt update` | 패키지 목록 갱신 |
 | `apt upgrade`, `apt install`, `apt remove` | 패키지 갱신·설치·제거 |
 | `pacman`, `yum`, `rpm` | 배포판별 패키지 관리 도구 |
+| `service` | 서비스 시작·중지·상태 확인 |
 | `ssh user@host` | 원격 로그인 |
 | `wget` | URL의 파일 다운로드 |
 | `ifconfig`, `traceroute` | 인터페이스 정보, 네트워크 경로 확인 |
@@ -450,4 +467,4 @@ tar -cvf는 아카이브 생성이며 그 자체로 압축을 뜻하지 않는�
 | `[Practical Class 2] linux commands and tools.pdf` | 1~37쪽: 명령어·소스 탐색·tmux |
 | `[Practical Class 3] Kernel Compile.pdf` | 1~33쪽: 소스·설정·빌드·설치·부팅·문제 해결 |
 | `Assignment-2.pdf` | 1~2쪽: 커널 빌드 과제 |
-| `note.pdf` | 사용자/커널 경계와 커널 버전·태스크 생성 관련 필기 |
+| `note.pdf` | 사용자/커널 경계, 커널 설계·모듈·매크로, 커널 버전·태스크 생성 관련 필기 |
