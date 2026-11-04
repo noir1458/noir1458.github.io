@@ -1,10 +1,21 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import TermLabel from "@/components/TermLabel.astro";
+import { USER_CONFIG } from "@/config";
 import { countTerms, getPublishedPosts } from "@/utils/content";
 
 const posts = await getPublishedPosts();
 const categories = countTerms(posts, "categories");
+const remaining = new Map(categories.map((category) => [category.slug, category]));
+const groups = USER_CONFIG.categories.groups.map(({ title, categories: slugs }) => ({
+  title,
+  categories: slugs.flatMap((slug) => {
+    const category = remaining.get(slug);
+    remaining.delete(slug);
+    return category ? [category] : [];
+  })
+})).filter((group) => group.categories.length > 0);
+if (remaining.size > 0) groups.push({ title: "More categories", categories: [...remaining.values()] });
 ---
 
 <BaseLayout
@@ -18,11 +29,22 @@ const categories = countTerms(posts, "categories");
     <p>Browse {categories.length} categories across {posts.length} published posts.</p>
   </header>
   <div class="term-grid">
-    {categories.map((category) => (
-      <a class="term-card" href={`/categories/${category.slug}/`}>
-        <TermLabel name={category.name} />
-        <span class="term-count">{category.count}</span>
-      </a>
+    {groups.map((group) => (
+      <Fragment>
+        <h2 class="term-card"><span>{group.title}</span></h2>
+        {group.categories.map((category) => (
+          <a class="term-card" href={`/categories/${category.slug}/`}>
+            <TermLabel name={category.name} />
+            <span class="term-count">{category.count}</span>
+          </a>
+        ))}
+      </Fragment>
     ))}
   </div>
 </BaseLayout>
+
+<style>
+  .term-grid h2 { margin: 0; justify-content: flex-start; gap: 0.6rem; font-weight: 800; overflow-wrap: anywhere; }
+  .term-grid h2::before { content: ""; width: 0.5rem; height: 0.5rem; flex: none; background: var(--accent); }
+  .term-grid h2 span { font-size: 1.25rem; line-height: 1lh; }
+</style>

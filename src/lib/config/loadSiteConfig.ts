@@ -5,6 +5,7 @@ import matter from "gray-matter";
 import { parseDocument } from "yaml";
 import type { z } from "zod";
 import {
+  categoriesFileSchema,
   featuresFileSchema,
   navigationFileSchema,
   profileFrontmatterSchema,
@@ -204,6 +205,7 @@ export function loadSiteConfig(options: LoadSiteConfigOptions = {}): UserConfig 
   const profile = loadProfile(configDirectory);
   const config: UserConfig = {
     ...site,
+    categories: loadYaml(configDirectory, "categories.yaml", categoriesFileSchema),
     navigation,
     social,
     features,

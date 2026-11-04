@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { SITE, SUPPORTED_LANGUAGE_CODES } from "../src/config.ts";
+import { SITE, SUPPORTED_LANGUAGE_CODES, USER_CONFIG } from "../src/config.ts";
 import { projectFrontmatterSchema } from "../src/lib/content/projectSchema.ts";
+import { slugifyTermValue } from "../src/lib/content/termSlugs.ts";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "content/posts");
@@ -160,6 +161,21 @@ for (const [translationKey, group] of groups) {
 }
 
 const translations = entries.length - groups.size;
+const configuredCategories = new Set(USER_CONFIG.categories.groups.flatMap((g) => g.categories));
+const ungroupedCategories = new Set();
+for (const entry of entries) {
+  if (entry.draft || entry.lang !== defaultLanguage) continue;
+  for (const category of entry.categories) {
+    const slug = slugifyTermValue(category);
+    if (!configuredCategories.has(slug)) ungroupedCategories.add(slug);
+  }
+}
+if (ungroupedCategories.size > 0) {
+  console.warn(
+    `[config/categories.yaml] 미분류 카테고리: ${[...ungroupedCategories].sort().join(", ")} (More categories에 표시됩니다.)`
+  );
+}
+
 const projectFiles = walk(projectContentRoot, (file) => file.endsWith(".md"));
 let publishedProjects = 0;
 

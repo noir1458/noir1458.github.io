@@ -1,0 +1,11 @@
+groups:
+  - title: Blog
+    categories: [blog]
+  - title: DEV
+    categories: [atcoder, boj, cpp, databasesystem, flutter, linux-systems, numpy-pandas, programmers]
+  - title: Security
+    categories: [aws, basic-cryptography, cryptography, cryptohack, modern-cryptography]
+  - title: Math
+    categories: [discrete-mathematics, numbertheory]
+  - title: Other
+    categories: [certification, finance101]

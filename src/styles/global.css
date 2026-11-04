@@ -2074,8 +2074,8 @@ body.has-hero-background[data-banner-title-tone="dark"] {
     color 150ms ease;
 }
 
-.term-card:hover,
-.term-card:focus-visible {
+a.term-card:hover,
+a.term-card:focus-visible {
   border-color: color-mix(in srgb, var(--line) 55%, var(--accent));
   background: color-mix(in srgb, var(--accent) 3%, transparent);
   color: var(--accent-ink);

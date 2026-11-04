@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type {
+  categoriesFileSchema,
   featuresFileSchema,
   navigationFileSchema,
   profileFrontmatterSchema,
@@ -19,6 +20,7 @@ export interface ProfileConfig {
 }
 
 export interface UserConfig extends SiteFileConfig {
+  categories: z.infer<typeof categoriesFileSchema>;
   navigation: NavigationConfig;
   social: SocialConfig;
   features: FeatureConfig;

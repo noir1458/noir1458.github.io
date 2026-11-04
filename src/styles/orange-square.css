@@ -305,7 +305,7 @@ button, summary { cursor: pointer; }
 .primary-button:hover, .header-search-submit:hover { border-color: color-mix(in srgb, var(--accent) 88%, var(--text)); background: color-mix(in srgb, var(--accent) 88%, var(--text)); color: var(--accent-contrast); }
 .term-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 30px; border-top: 0; }
 .term-card { min-width: 0; min-height: 60px; gap: 20px; padding: 20px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; font-size: 18px; }
-.term-card:hover { transform: none; background: transparent; }
+a.term-card:hover { transform: none; background: transparent; }
 .project-grid { gap: 30px; }
 .project-grid:has(> .project-card:only-child) { grid-template-columns: minmax(0, 1fr); }
 .project-card { border: 1px solid var(--line); background: transparent; }

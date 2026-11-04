@@ -186,6 +186,29 @@ export const navigationFileSchema = z
   })
   .strict();
 
+export const categoriesFileSchema = z
+  .object({
+    groups: z.array(
+      z.object({ title: nonEmptyString, categories: z.array(nonEmptyString) }).strict()
+    )
+  })
+  .strict()
+  .superRefine(({ groups }, context) => {
+    const seen = new Set<string>();
+    groups.forEach((group, index) => {
+      group.categories.forEach((slug, position) => {
+        if (seen.has(slug)) {
+          context.addIssue({
+            code: "custom",
+            path: ["groups", index, "categories", position],
+            message: `duplicate category slug: ${slug}`
+          });
+        }
+        seen.add(slug);
+      });
+    });
+  });
+
 export const socialFileSchema = z
   .object({
     github: optionalWebUrl,

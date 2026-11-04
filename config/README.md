@@ -19,7 +19,10 @@ The standalone Projects feature is disabled on this blog, and its header link ha
 been removed. Keep project write-ups in ordinary posts with a `project` category.
 
 Category pages are generated automatically from each post's `categories` value.
-No separate category settings file is needed. Navigation settings contain only
+Edit `categories.yaml` to order the groups and category links on the Categories
+page. Use the slug from each category URL. Groups with no published posts are
+omitted, and unlisted categories appear under “More categories”. The content
+check lists their slugs without blocking deployment or editing the YAML file. Navigation settings contain only
 header and footer links; pages do not render a sidebar.
 
 Paths beginning with `/` refer to files or pages in this site. Replace the
