@@ -51,6 +51,21 @@ test("the repository configuration is valid", () => {
   });
 });
 
+test("a category display name reports its YAML position and canonical slug", () => {
+  const directory = configFixture();
+  const file = path.join(directory, "categories.yaml");
+  fs.writeFileSync(file, "groups:\n  - title: DEV\n    categories: [rust, Linux Systems]\n");
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    /config\/categories\.yaml: groups\.0\.categories\.1: .*Linux Systems.*linux-systems/u
+  );
+  replaceInFile(directory, "categories.yaml", "Linux Systems", "linux-systems");
+  assert.deepEqual(loadSiteConfig({ configDirectory: directory }).categories.groups[0].categories, [
+    "rust",
+    "linux-systems"
+  ]);
+});
+
 test("an invalid site URL reports its file and field", () => {
   const directory = configFixture();
   const sitePath = path.join(directory, "site.yaml");

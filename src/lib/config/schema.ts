@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { slugifyTermValue } from "../content/termSlugs.ts";
 
 export const FEATURE_NAMES = [
   "search",
@@ -197,6 +198,14 @@ export const categoriesFileSchema = z
     const seen = new Set<string>();
     groups.forEach((group, index) => {
       group.categories.forEach((slug, position) => {
+        const expected = slugifyTermValue(slug);
+        if (slug !== expected) {
+          context.addIssue({
+            code: "custom",
+            path: ["groups", index, "categories", position],
+            message: `"${slug}"의 카테고리 URL 슬러그 "${expected}"를 입력하세요.`
+          });
+        }
         if (seen.has(slug)) {
           context.addIssue({
             code: "custom",

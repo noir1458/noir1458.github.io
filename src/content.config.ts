@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 import { SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
+import { postCategoriesSchema } from "@/lib/content/postCategories";
 import { projectSchema } from "@/lib/content/projectSchema";
 
 const posts = defineCollection({
@@ -11,7 +12,7 @@ const posts = defineCollection({
     generateId: ({ entry }) => entry.replace(/\.md$/u, "")
   }),
   schema: ({ image }) =>
-    z.object({
+    postCategoriesSchema.safeExtend({
       title: z.string().min(1),
       slug: z.string().regex(/^[^/\\?#\s]+$/u),
       lang: z.enum(SUPPORTED_LANGUAGE_CODES).default(SITE.language),
@@ -23,11 +24,6 @@ const posts = defineCollection({
       publishedAt: z.coerce.date(),
       updatedAt: z.coerce.date().optional(),
       tags: z.array(z.string().min(1)).default([]),
-      categories: z.preprocess(
-        (value) => (typeof value === "string" ? [value] : value),
-        z.array(z.string().trim().min(1)).default([])
-      ),
-      draft: z.boolean().default(false),
       math: z.boolean().default(false),
       cover: image().optional()
     })

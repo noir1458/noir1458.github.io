@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { SITE, SUPPORTED_LANGUAGE_CODES, USER_CONFIG } from "../src/config.ts";
+import { postCategoriesSchema } from "../src/lib/content/postCategories.ts";
 import { projectFrontmatterSchema } from "../src/lib/content/projectSchema.ts";
 import { slugifyTermValue } from "../src/lib/content/termSlugs.ts";
 
@@ -38,7 +39,7 @@ for (const file of files) {
     continue;
   }
 
-  const { title, slug, description, publishedAt, tags, categories, translationKey } = parsed.data;
+  const { title, slug, description, publishedAt, tags, translationKey } = parsed.data;
   const lang = parsed.data.lang ?? defaultLanguage;
   const filename = path.basename(file);
   const expectedFilename = lang === defaultLanguage ? "index.md" : `${lang}.md`;
@@ -66,17 +67,11 @@ for (const file of files) {
   if (tags !== undefined && !Array.isArray(tags)) {
     errors.push(`${relative}: tags must be an array when provided`);
   }
-  if (typeof categories !== "string" && !Array.isArray(categories)) {
-    errors.push(`${relative}: categories must be a string or an array`);
-  }
-  if (typeof categories === "string" && !categories.trim()) {
-    errors.push(`${relative}: categories cannot be empty`);
-  }
-  if (
-    Array.isArray(categories)
-    && categories.some((category) => typeof category !== "string" || !category.trim())
-  ) {
-    errors.push(`${relative}: categories must contain non-empty strings`);
+  const categoryResult = postCategoriesSchema.safeParse(parsed.data);
+  if (!categoryResult.success) {
+    for (const issue of categoryResult.error.issues) {
+      errors.push(`${relative}: ${issue.path.join(".")}: ${issue.message}`);
+    }
   }
   if (/\{%|\{\{|\{::/.test(parsed.content)) {
     errors.push(`${relative}: unsupported Jekyll/Liquid syntax`);
@@ -100,9 +95,7 @@ for (const file of files) {
     slug,
     translationKey: translationKey ?? slug,
     draft: parsed.data.draft === true,
-    categories: (Array.isArray(categories) ? categories : [categories]).filter(
-      (category) => typeof category === "string" && category.trim()
-    )
+    categories: categoryResult.success ? categoryResult.data.categories : []
   });
 
   if (parsed.data.math) mathPosts += 1;
