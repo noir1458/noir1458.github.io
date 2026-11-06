@@ -19,6 +19,7 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "check:workflow": "node scripts/check-workflow.mjs",
+    "check:security": "npm audit --audit-level=low",
     "check:config": "node --test scripts/config.test.mjs scripts/site-paths.test.mjs && node scripts/check-config.mjs && node scripts/check-user-boundaries.mjs",
     "check:translation": "node --test scripts/translation-safety.test.mjs",
     "check:content": "node --test scripts/post-categories.test.mjs scripts/project-content.test.mjs scripts/archive-pagination.test.mjs scripts/print-references.test.mjs scripts/print-comments.test.mjs && node scripts/check-content.mjs",
@@ -30,12 +31,12 @@
     "comments:sync": "node scripts/sync-print-comments.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.0.0",
+    "@astrojs/markdown-remark": "^7.3.6",
     "@astrojs/rss": "^4.0.0",
     "@astrojs/sitemap": "^3.0.0",
-    "astro": "7.1.3",
+    "astro": "7.4.7",
     "gray-matter": "^4.0.3",
-    "katex": "^0.16.0",
+    "katex": "^0.18.2",
     "pagefind": "^1.0.0",
     "rehype-katex": "^7.0.0",
     "rehype-mermaid": "^3.0.0",
@@ -44,12 +45,15 @@
     "remark-math": "^6.0.0",
     "uqr": "^0.1.3",
     "yaml": "^2.9.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
     "@biomejs/biome": "2.5.11",
     "playwright": "^1.62.1",
     "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "katex": "$katex"
   }
 }

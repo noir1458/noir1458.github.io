@@ -63,14 +63,17 @@ int main(){
 ## 방법 비교
 1.처음에 내가 하려고 했던 $\sqrt{n}$ 까지 나누는 소인수분해는 각 i 마다 $\sqrt{i}$ 만큼 시도하면, 총 연산이
 
-$$ \sum_{i=1}^{N} 
+$$
+\sum_{i=1}^{N}
 \sqrt{i} 
 \approx 
-\frac{2}{3}N^{3/2} $$
+\frac{2}{3}N^{3/2}
+$$
 
 2.반면 약수를 배수에 더하는 방식의 체는, 내부 반복 횟수가 d,2d,3d... 상황에서 $ kd \le N$ 인 최대 k는 $k= \left\lfloor N/d \right\rfloor $ 번
 
-$$ \sum_{d=1}^{N} \left\lfloor 
+$$
+\sum_{d=1}^{N} \left\lfloor
 \frac{N}{d}
 \right\rfloor 
 \approx

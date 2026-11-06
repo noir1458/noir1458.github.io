@@ -35,6 +35,10 @@ expect(
 
 const build = workflow?.jobs?.build;
 const deploy = workflow?.jobs?.deploy;
+expect(build?.["runs-on"] === "ubuntu-24.04", "build must use the supported, pinned Ubuntu image");
+expect(deploy?.["runs-on"] === "ubuntu-24.04", "deploy must use the pinned Ubuntu image");
+expect(build?.["timeout-minutes"] === 20, "build must have a bounded runtime");
+expect(deploy?.["timeout-minutes"] === 10, "deploy must have a bounded runtime");
 expect(build?.permissions?.contents === "read", "build must use contents: read");
 expect(build?.permissions?.pages === "read", "build must use pages: read");
 expect(build?.permissions?.discussions === "read", "comment collection requires discussions: read");
@@ -46,6 +50,12 @@ for (const event of ["discussion", "discussion_comment"]) {
 }
 const collectIndex = build?.steps?.findIndex((step) => step.run === "npm run comments:sync");
 const validateIndex = build?.steps?.findIndex((step) => step.run === "npm run check");
+const securityIndex = build?.steps?.findIndex((step) => step.run === "npm run check:security");
+expect(securityIndex >= 0 && securityIndex < validateIndex, "audit dependencies before building");
+expect(
+  !build?.steps?.[securityIndex]?.["continue-on-error"],
+  "known dependency vulnerabilities must prevent deployment"
+);
 expect(
   collectIndex >= 0 && collectIndex < validateIndex,
   "collect comments before validating and building"

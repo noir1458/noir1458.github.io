@@ -695,6 +695,9 @@ for (const entry of contentEntries) {
 
   const html = fs.readFileSync(outputFile, "utf8");
   const relativeOutput = path.relative(distRoot, outputFile);
+  if (/<span\b[^>]*\bclass="[^"]*\bkatex-error\b/u.test(html)) {
+    errors.push(`${relativeOutput}: a math expression failed to render`);
+  }
   const printCategories =
     html.match(/<p\b[^>]*class="print-categories"[^>]*>([\s\S]*?)<\/p>/u)?.[1] ?? "";
   const categoryLinks = [...printCategories.matchAll(/<a\b[^>]*href="([^"]+)"/gu)].map(

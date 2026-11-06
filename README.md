@@ -361,6 +361,7 @@ Codex는 지정한 파일을 원문으로 보고 현재 폴더에 없는 나머�
 npm run translate:snapshot -- content/posts/.../ja.md
 npm run translate:verify -- content/posts/.../ja.md --source-hash <출력된 해시>
 npm run check
+npm run check:security
 ```
 
 각 언어 페이지는 자기 URL을 canonical로 사용하고 `html lang`, Open Graph,
@@ -382,6 +383,7 @@ locale, OG locale, URL prefix를 추가합니다. 라우트와 콘텐츠 스키�
 
 ```bash
 npm run check
+npm run check:security
 ```
 
 다음을 한 번에 검사합니다.
@@ -389,12 +391,19 @@ npm run check
 - front matter, 언어별 중복 slug와 지원하지 않는 lang
 - 언어 파일명, 번역본 중복, translationKey·slug와 draft 상태 불일치
 - 로컬 이미지 누락
+- 수식 렌더링 실패
 - Astro/TypeScript
 - 프로덕션 빌드와 Pagefind 색인
 - 생성된 내부 링크, 언어별 페이지와 상호 hreflang
 - canonical, html lang과 기본 Open Graph 이미지
 - RSS, sitemap, search, archive, 404와 게시물 페이지
-- 공개 게시물 URL 기준선 114개
+- 공개 게시물 URL 기준선 보존
+
+`npm run check:security`는 개발 도구를 포함한 의존성을 `npm audit`로 점검합니다.
+GitHub Actions는 이 검사를 빌드 전에 실행하며, 낮은 등급을 포함해 알려진 취약점이
+있거나 감사에 실패하면 배포를 중단합니다. 이 검사는 실행 시점에 알려진 권고를 대상으로 합니다.
+KaTeX는 직접 의존성과 `overrides`의 `$katex` 참조로 버전을 통일해,
+수식·도식 플러그인에 취약한 이전 버전이 별도로 남지 않도록 합니다.
 
 ## 배포
 
@@ -404,10 +413,11 @@ Source**를 **GitHub Actions**로 설정합니다. 그다음 `config/site.yaml`�
 
 `.github/workflows/deploy.yml`은 다음을 자동으로 수행합니다.
 
-- pull request: 읽기 전용 권한으로 `npm ci`와 전체 `npm run check`
+- pull request: 읽기 전용 권한으로 `npm ci`, `npm run check:security`와 전체 `npm run check`
 - `main` push 또는 수동 실행: 같은 검증 후 Pages artifact 생성과 배포
 - deploy job만 `pages: write`와 `id-token: write` 사용
 - 모든 외부 GitHub Action을 전체 commit SHA로 고정
+- Ubuntu 24.04와 Node.js 24 기반 Action을 사용하고 빌드 20분·배포 10분으로 실행 시간을 제한
 
 ```bash
 npm run publish

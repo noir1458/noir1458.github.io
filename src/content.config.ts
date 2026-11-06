@@ -1,7 +1,7 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
-import { SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
+import { FEATURES, SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
 import { postCategoriesSchema } from "@/lib/content/postCategories";
 import { projectSchema } from "@/lib/content/projectSchema";
 
@@ -30,11 +30,13 @@ const posts = defineCollection({
 });
 
 const projects = defineCollection({
-  loader: glob({
-    pattern: ["*.md", "*/index.md"],
-    base: "./content/projects",
-    generateId: ({ entry }) => entry.replace(/(?:\/index)?\.md$/u, "")
-  }),
+  loader: FEATURES.projects
+    ? glob({
+        pattern: ["*.md", "*/index.md"],
+        base: "./content/projects",
+        generateId: ({ entry }) => entry.replace(/(?:\/index)?\.md$/u, "")
+      })
+    : async () => [],
   schema: ({ image }) => projectSchema(image())
 });
 

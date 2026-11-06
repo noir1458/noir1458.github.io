@@ -193,19 +193,10 @@ function initArticleTools() {
   syncArticleTools();
 
   async function copyText(text: string) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
+    if (!navigator.clipboard || !window.isSecureContext) {
+      throw new Error("Clipboard access requires a secure context");
     }
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.setAttribute("readonly", "");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.append(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    textarea.remove();
+    await navigator.clipboard.writeText(text);
   }
 
   const copyIcon = `
@@ -221,9 +212,14 @@ function initArticleTools() {
 `;
 
   const mermaidSourceLabels = {
-    en: { copy: "Copy", copied: "Copied", title: "Mermaid source" },
-    ja: { copy: "コピー", copied: "コピーしました", title: "Mermaid ソース" },
-    ko: { copy: "복사", copied: "복사됨", title: "Mermaid 소스" }
+    en: { copy: "Copy", copied: "Copied", failed: "Copy failed; retry", title: "Mermaid source" },
+    ja: {
+      copy: "コピー",
+      copied: "コピーしました",
+      failed: "コピー失敗・再試行",
+      title: "Mermaid ソース"
+    },
+    ko: { copy: "복사", copied: "복사됨", failed: "복사 실패 · 다시 시도", title: "Mermaid 소스" }
   } as const;
 
   const mermaidSourceButtons = document.querySelectorAll<HTMLButtonElement>(".mermaid-source");
@@ -282,6 +278,8 @@ function initArticleTools() {
         sourceCopy.setAttribute("aria-label", labels.copied);
       } catch {
         sourceCopy.classList.add("failed");
+        sourceCopy.title = labels.failed;
+        sourceCopy.setAttribute("aria-label", labels.failed);
       }
       resetTimer = window.setTimeout(() => {
         resetCopyButton();
