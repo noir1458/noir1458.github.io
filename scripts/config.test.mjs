@@ -51,6 +51,51 @@ test("the repository configuration is valid", () => {
   });
 });
 
+test("one profile Markdown config supplies the CV header and body", () => {
+  const directory = configFixture();
+  fs.writeFileSync(
+    path.join(directory, "profile.md"),
+    "---\ntitle: About\nname: Example Name\nsubtitle:\nemail: contact@example.com\nlanguage: en\n---\n\n## Education\n\nOne shared body\n"
+  );
+  const config = loadSiteConfig({ configDirectory: directory });
+  assert.equal(config.profile.data.name, "Example Name");
+  assert.equal(config.profile.data.subtitle, undefined);
+  assert.equal(config.profile.data.email, "contact@example.com");
+  assert.equal(config.profile.data.language, "en");
+  assert.match(config.profile.body, /One shared body/u);
+  assert.equal("cv" in config, false);
+});
+
+test("older profile settings without CV metadata remain valid", () => {
+  const directory = configFixture();
+  fs.writeFileSync(path.join(directory, "profile.md"), "---\ntitle: About\n---\nIntroduction\n");
+  const config = loadSiteConfig({ configDirectory: directory });
+  assert.equal(config.profile.data.name, undefined);
+  assert.equal(config.profile.data.email, undefined);
+  assert.equal(config.profile.data.language, undefined);
+  assert.equal(config.profile.body, "Introduction");
+});
+
+test("invalid profile metadata and a comments-only body report the profile file", () => {
+  const directory = configFixture();
+  const file = path.join(directory, "profile.md");
+  fs.writeFileSync(file, "---\ntitle: About\nemail: invalid-email\n---\nBody\n");
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    /config\/profile\.md: email:/u
+  );
+  fs.writeFileSync(file, "---\ntitle: About\nlanguage: fr\n---\nBody\n");
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    /config\/profile\.md: language:/u
+  );
+  fs.writeFileSync(file, "---\ntitle: About\n---\n<!-- 작성 전 -->\n");
+  assert.throws(
+    () => loadSiteConfig({ configDirectory: directory }),
+    /config\/profile\.md: body:/u
+  );
+});
+
 test("a category display name reports its YAML position and canonical slug", () => {
   const directory = configFixture();
   const file = path.join(directory, "categories.yaml");

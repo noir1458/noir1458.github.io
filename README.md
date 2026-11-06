@@ -43,7 +43,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
 - 한국어·영어·일본어 번역 경로와 `hreflang`
 - 다크 모드, 수식, admonition, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
-- Markdown으로 작성하는 About 소개와 프로젝트 요약
+- Markdown 한 파일로 관리하는 About / CV와 A4 인쇄 형식
 
 ## 기본 설정
 
@@ -54,7 +54,7 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 2. `config/navigation.yaml`: header, footer 메뉴와 순서
 3. `config/social.yaml`: GitHub, LinkedIn, X, Facebook, 이메일 링크
 4. `config/features.yaml`: search, RSS, sitemap, dark mode, 목차, Mermaid, 프로젝트, 댓글
-5. `config/profile.md`: About 제목, 소개와 프로젝트 요약 Markdown
+5. `config/profile.md`: About / CV의 이름, 연락처, 언어와 단일 본문 Markdown
 
 빈 선택 값은 화면에서 자동으로 숨겨집니다. 메뉴의 `requiresFeature`를 사용하면
 기능이 꺼졌을 때 연결된 메뉴도 함께 숨길 수 있습니다. YAML과 Markdown 설정은
@@ -219,28 +219,59 @@ PR 검증은 댓글 수집 없이 실행되며 실제 배포는 항상 새로 �
 확인하고, 밝은·어두운 테마 모두 PDF로 점검합니다. 수식·표가 용지 폭보다 넓으면
 내용 자체의 분할 또는 가로 방향 인쇄가 필요할 수 있습니다.
 
-## 프로젝트
+## About / CV 작성과 PDF 저장
 
-About 소개 아래의 프로젝트 요약은 `config/profile.md`의 `## Projects` 아래에
-일반 Markdown으로 작성합니다. 첫 프로젝트를 추가할 때 빈 목록 안내를 지우고,
-파일에 주석으로 넣어둔 예시를 참고합니다.
+`config/profile.md` 한 파일이 About 아래쪽 문서 영역과 인쇄용 CV의 원본입니다.
+상단에는 기존 프로필 사진, 사이트 표시 이름과 소셜 아이콘 링크를 유지합니다.
+이 상단 프로필은 인쇄에서 제외되고, 아래쪽 실명·텍스트 연락처·문서 본문만 출력됩니다.
+기존 LaTeX CV의 항목과 문구를 이 파일로 옮겼으며, 앞으로 이력은 이곳에서 수정합니다.
+화면과 인쇄를 위한 본문을 따로 작성하지 않습니다.
+
+파일 위쪽의 `name`, `email`, `eyebrow`, `language`로 이름, 연락처, 문서 종류와 언어를
+정합니다. `name`을 비워두면 사이트 표시 이름을, `email`을 비워두면 `social.yaml`의
+이메일을 사용합니다. `subtitle`은 선택 항목입니다. `language`를 생략하면 사이트
+기본 언어를 사용하고, 입력할 때는 `site.yaml`에 등록된 언어 코드여야 합니다.
+상단 소셜 아이콘 링크는 `social.yaml`에서 가져옵니다. 아래쪽 CV 연락처에는
+이메일과 GitHub만 표시합니다. 이메일은 설정 파일에 원래 주소로 입력하고,
+화면과 인쇄에서는 `@` 대신 `(at)`으로 표시합니다.
+
+본문은 일반 Markdown입니다. `##`는 섹션, `###`는 기관·프로젝트 등 개별 항목이며,
+소제목 끝의 기울임꼴은 기간을 나타냅니다. 예를 들어:
 
 ```md
+## Education
+
+### University *Mar 2024 - Feb 2027 (Expected)*
+
+Degree · GPA
+
 ## Projects
 
-### 프로젝트 이름
+### Project name *Jan 2026 - Apr 2026*
 
-프로젝트를 설명하는 짧은 문장.
+- 본인이 맡은 역할과 구현 내용
+- 직접 확인한 결과
 
-[GitHub](https://github.com/username/project) · [관련 글](/posts/post-slug/)
+[Repository](https://github.com/username/project)
 ```
 
-구현 과정이나 회고는 다른 글과 똑같이 `content/posts/`에 작성하고,
-`categories: [project]`를 지정하면 됩니다. 카테고리는 공개된 글이 생기면
-자동으로 생성됩니다. About에는 짧은 소개와 관련 글 링크를 남깁니다.
+About의 **CV · PDF 저장** 버튼 또는 Ctrl+P / ⌘P를 누르면 같은 내용을 A4 문서로
+인쇄합니다. 화면에서는 여유 있게 표시하고, 인쇄에서는 메뉴·버튼을 숨기며 간격을 줄입니다.
+인쇄 설정에서 **PDF로 저장**을 선택하고 브라우저 머리글·바닥글을 끄면 됩니다.
+내용이 늘어나면 여러 페이지로 이어집니다. 모든 이력과 연락처는 공개됩니다.
 
-이 블로그의 전용 Projects 목록·상세 페이지는 `config/features.yaml`의
-`projects: false`로 비활성화되어 있고, 상단 메뉴에서도 제거했습니다.
+기존 글을 인쇄할 때는 상단 글 정보에 모든 카테고리도 함께 출력합니다.
+
+## 프로젝트
+
+About의 `## Projects` 아래에 프로젝트 요약과
+저장소·관련 글 링크를 작성합니다. Non-PQC 프로젝트를 맨 위에 두고 다른 프로젝트를
+그 아래에 이어 작성합니다. 구현 과정이나 회고는 일반 글처럼 `content/posts/`에
+작성하고 `categories: [project]`를 지정하면 됩니다. 카테고리는 공개 글이 생기면
+자동으로 생성됩니다.
+
+전용 Projects 목록·상세 페이지는 `config/features.yaml`의 `projects: false`로
+비활성화되어 있고 상단 메뉴에서도 제거되어 있습니다.
 
 ## 글 언어와 번역본
 

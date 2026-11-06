@@ -2,46 +2,41 @@
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PROFILE, SITE, SOCIAL } from "@/config";
+import "@/styles/cv.css";
 
 interface ProfileLink {
   label: string;
   href: string;
   icon: "github" | "linkedin" | "x" | "facebook" | "mail";
-  external: boolean;
 }
 
-const profileLinks: ProfileLink[] = [];
-const configuredProfileLinks: Array<Omit<ProfileLink, "href"> & { href: string | undefined }> = [
-  { label: "GitHub", href: SOCIAL.github, icon: "github", external: true },
-  { label: "LinkedIn", href: SOCIAL.linkedin, icon: "linkedin", external: true },
-  { label: "X", href: SOCIAL.x, icon: "x", external: true },
-  { label: "Facebook", href: SOCIAL.facebook, icon: "facebook", external: true },
-  {
-    label: "Email",
-    href: SOCIAL.email ? `mailto:${SOCIAL.email}` : undefined,
-    icon: "mail",
-    external: false
-  }
-];
-
-for (const link of configuredProfileLinks) {
-  if (link.href) profileLinks.push({ ...link, href: link.href });
-}
+const name = PROFILE.data.name ?? SITE.author.displayName;
+const email = PROFILE.data.email ?? SOCIAL.email;
+const profileLinks = [
+  { label: "GitHub", href: SOCIAL.github, icon: "github" }
+].filter((link): link is ProfileLink => Boolean(link.href));
+const socialLinks = [
+  { label: "GitHub", href: SOCIAL.github, icon: "github" },
+  { label: "LinkedIn", href: SOCIAL.linkedin, icon: "linkedin" },
+  { label: "X", href: SOCIAL.x, icon: "x" },
+  { label: "Facebook", href: SOCIAL.facebook, icon: "facebook" },
+  { label: "Email", href: SOCIAL.email ? `mailto:${SOCIAL.email}` : undefined, icon: "mail" }
+].filter((link): link is ProfileLink => Boolean(link.href));
 
 const markdown = await createMarkdownProcessor({ syntaxHighlight: false });
 const { code: profileHtml } = await markdown.render(PROFILE.body, {
   fileURL: new URL("../../config/profile.md", import.meta.url)
 });
-
 ---
 
 <BaseLayout
   title={PROFILE.data.title}
-  description={PROFILE.data.subtitle ?? SITE.description}
+  description={PROFILE.data.subtitle ?? `${name} · ${PROFILE.data.eyebrow}`}
+  language={PROFILE.data.language ?? SITE.language}
   fullWidth
 >
-  <header class="page-heading">
-    <span class="eyebrow">{PROFILE.data.eyebrow}</span>
+  <header class="page-heading about-screen-header">
+    <span class="eyebrow">{PROFILE.data.title}</span>
     <div class="about-profile">
       <img
         class="profile-image"
@@ -52,28 +47,59 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
       />
       <div class="about-profile-copy">
         <h1>{SITE.author.displayName}</h1>
-        {PROFILE.data.subtitle && <p class="about-summary">{PROFILE.data.subtitle}</p>}
-        {
-          profileLinks.length > 0 && (
-            <nav class="about-links" aria-label="Profile links">
-              {profileLinks.map((link) => (
-                <a
-                  href={link.href}
-                  data-icon={link.icon}
-                  aria-label={link.label}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                >
-                  <span class="about-link-label">{link.label}</span>
-                </a>
-              ))}
-            </nav>
-          )
-        }
+        {socialLinks.length > 0 && (
+          <nav class="about-links" aria-label="Profile links">
+            {socialLinks.map((link) => (
+              <a
+                href={link.href}
+                data-icon={link.icon}
+                aria-label={link.label}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+              >
+                <span class="about-link-label">{link.label}</span>
+              </a>
+            ))}
+          </nav>
+        )}
       </div>
     </div>
   </header>
-  <div class="about-content">
-    <div class="profile-copy" set:html={profileHtml} />
+  <div class="cv-toolbar">
+    <span class="eyebrow">{PROFILE.data.eyebrow}</span>
+    <div class="cv-print-actions">
+      <button type="button" data-print-page>CV · PDF 저장</button>
+      <span>Ctrl+P / ⌘P</span>
+    </div>
   </div>
+  <article class="cv-document" data-print-title={`${name} - ${PROFILE.data.eyebrow}`}>
+    <header class="cv-header">
+      <h1>{name}</h1>
+      {PROFILE.data.subtitle && <p class="cv-subtitle">{PROFILE.data.subtitle}</p>}
+      <ul class="cv-contacts" aria-label="Contact and profile links">
+        {email && (
+          <li>
+            <span class="cv-email">
+              <span class="cv-link-label">Email</span>
+              <span class="cv-link-url" data-profile-email>{email.replace("@", " (at) ")}</span>
+            </span>
+          </li>
+        )}
+        {profileLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              data-icon={link.icon}
+              target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+              rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+            >
+              <span class="cv-link-label">{link.label}</span>
+              <span class="cv-link-url">{link.href.replace(/^(https?:\/\/|mailto:)/u, "").replace(/\/$/u, "")}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </header>
+    <div class="profile-copy" data-profile-body set:html={profileHtml} />
+  </article>
 </BaseLayout>

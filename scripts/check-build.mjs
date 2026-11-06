@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import matter from "gray-matter";
+import { postCategoriesSchema } from "../src/lib/content/postCategories.ts";
+import { slugifyTermValue } from "../src/lib/content/termSlugs.ts";
 import {
   APPEARANCE,
   FEATURES,
@@ -429,14 +431,43 @@ if (fs.statSync(path.join(distRoot, "pagefind/pagefind.js")).size === 0) {
 }
 
 const aboutHtml = fs.readFileSync(path.join(distRoot, "about/index.html"), "utf8");
-if (!aboutHtml.includes(`>${SITE.author.displayName}</h1>`)) {
-  errors.push("about/index.html: configured author display name is missing");
+const screenProfile =
+  aboutHtml.match(
+    /<header\b[^>]*class="page-heading about-screen-header"[^>]*>([\s\S]*?)<\/header>/u
+  )?.[1] ?? "";
+if (
+  !screenProfile.includes(`>${SITE.author.displayName}</h1>`)
+  || !screenProfile.includes(`src="${SITE.author.profileImage}"`)
+) {
+  errors.push(
+    "about/index.html: the screen profile must retain the configured display name and image"
+  );
+}
+for (const [icon, href] of [
+  ["github", SOCIAL.github],
+  ["linkedin", SOCIAL.linkedin]
+]) {
+  if (
+    href
+    && (!screenProfile.includes(`data-icon="${icon}"`) || !screenProfile.includes(`href="${href}"`))
+  ) {
+    errors.push(`about/index.html: the screen profile is missing its ${icon} icon link`);
+  }
+}
+if (!aboutHtml.includes(`>${PROFILE.data.name ?? SITE.author.displayName}</h1>`)) {
+  errors.push("about/index.html: configured profile name is missing");
 }
 if (!PROFILE.body || !aboutHtml.includes('class="profile-copy"')) {
   errors.push("about/index.html: configured profile Markdown is missing");
 }
-if (!aboutHtml.includes(`src="${SITE.author.profileImage}"`)) {
-  errors.push(`about/index.html: configured profile image is missing: ${SITE.author.profileImage}`);
+if ((aboutHtml.match(/data-profile-body(?:\s|=|>)/gu) ?? []).length !== 1) {
+  errors.push("about/index.html: screen and print must share exactly one profile body");
+}
+const profileEmail = PROFILE.data.email ?? SOCIAL.email;
+const cvContacts =
+  aboutHtml.match(/<ul\b[^>]*class="cv-contacts"[^>]*>([\s\S]*?)<\/ul>/u)?.[1] ?? "";
+if (profileEmail && !cvContacts.includes(profileEmail.replace("@", " (at) "))) {
+  errors.push("about/index.html: CV email must display (at) in place of @");
 }
 const profileLinkChecks = [
   ["github", SOCIAL.github, SOCIAL.github],
@@ -485,6 +516,7 @@ const contentEntries = walk(contentRoot, (file) => file.endsWith(".md"))
       file,
       filename: path.basename(file),
       slug: data.slug,
+      categories: postCategoriesSchema.parse(data).categories,
       lang: data.lang ?? defaultLanguage,
       translationKey: data.translationKey ?? data.slug,
       publishedAt: new Date(data.publishedAt),
@@ -663,6 +695,17 @@ for (const entry of contentEntries) {
 
   const html = fs.readFileSync(outputFile, "utf8");
   const relativeOutput = path.relative(distRoot, outputFile);
+  const printCategories =
+    html.match(/<p\b[^>]*class="print-categories"[^>]*>([\s\S]*?)<\/p>/u)?.[1] ?? "";
+  const categoryLinks = [...printCategories.matchAll(/<a\b[^>]*href="([^"]+)"/gu)].map(
+    (match) => match[1]
+  );
+  const expectedCategoryLinks = entry.categories.map(
+    (category) => `/categories/${slugifyTermValue(category)}/`
+  );
+  if (JSON.stringify(categoryLinks) !== JSON.stringify(expectedCategoryLinks)) {
+    errors.push(`${relativeOutput}: every post category must be present in print metadata`);
+  }
   const classes = layoutClasses(html);
   if (
     html.includes("data-sidebar")

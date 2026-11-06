@@ -12,7 +12,7 @@ import {
   siteFileSchema,
   socialFileSchema
 } from "./schema.ts";
-import type { ProfileConfig, UserConfig } from "./types.ts";
+import type { UserConfig } from "./types.ts";
 
 const DEFAULT_CONFIG_DIRECTORY = fileURLToPath(new URL("../../../config/", import.meta.url));
 const DEFAULT_PUBLIC_DIRECTORY = fileURLToPath(new URL("../../../public/", import.meta.url));
@@ -86,8 +86,11 @@ function loadYaml<T extends z.ZodType>(
   return parsed.data;
 }
 
-function loadProfile(configDirectory: string): ProfileConfig {
-  const filename = "profile.md";
+function loadMarkdownConfig<T extends z.ZodType>(
+  configDirectory: string,
+  filename: string,
+  schema: T
+): { data: z.output<T>; body: string } {
   const filePath = path.join(configDirectory, filename);
   const fileLabel = relativeConfigPath(configDirectory, filePath);
   const source = readConfigFile(configDirectory, filename);
@@ -99,14 +102,14 @@ function loadProfile(configDirectory: string): ProfileConfig {
     throw new SiteConfigError(`${fileLabel}: invalid Markdown frontmatter`, { cause: error });
   }
 
-  const parsedData = profileFrontmatterSchema.safeParse(parsedMatter.data);
+  const parsedData = schema.safeParse(parsedMatter.data);
   if (!parsedData.success) {
     throw new SiteConfigError(formatSchemaIssues(fileLabel, parsedData.error));
   }
 
   const body = parsedMatter.content.trim();
-  if (!body) {
-    throw new SiteConfigError(`${fileLabel}: body: must contain the About page introduction`);
+  if (!body.replace(/<!--[\s\S]*?-->/gu, "").trim()) {
+    throw new SiteConfigError(`${fileLabel}: body: must contain document text`);
   }
 
   return {
@@ -119,6 +122,12 @@ function validateCombinedConfig(config: UserConfig, publicDirectory: string): vo
   const errors: string[] = [];
   const { language, timeZone } = config.site;
   const languageEntries = Object.entries(config.languages);
+
+  if (config.profile.data.language && !config.languages[config.profile.data.language]) {
+    errors.push(
+      "config/profile.md: language: must match a configured language in config/site.yaml"
+    );
+  }
 
   if (!config.languages[language]) {
     errors.push(`config/site.yaml: site.language: no matching languages.${language} entry`);
@@ -202,7 +211,7 @@ export function loadSiteConfig(options: LoadSiteConfigOptions = {}): UserConfig 
   const navigation = loadYaml(configDirectory, "navigation.yaml", navigationFileSchema);
   const social = loadYaml(configDirectory, "social.yaml", socialFileSchema);
   const features = loadYaml(configDirectory, "features.yaml", featuresFileSchema);
-  const profile = loadProfile(configDirectory);
+  const profile = loadMarkdownConfig(configDirectory, "profile.md", profileFrontmatterSchema);
   const config: UserConfig = {
     ...site,
     categories: loadYaml(configDirectory, "categories.yaml", categoriesFileSchema),

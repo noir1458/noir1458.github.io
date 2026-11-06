@@ -245,6 +245,9 @@ export const profileFrontmatterSchema = z
   .object({
     title: nonEmptyString,
     eyebrow: nonEmptyString.default("About"),
-    subtitle: nonEmptyString.optional()
+    name: optionalString,
+    subtitle: optionalString,
+    email: optionalEmail,
+    language: languageCode.optional()
   })
   .strict();

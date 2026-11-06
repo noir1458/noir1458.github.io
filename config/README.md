@@ -9,11 +9,22 @@ This folder is the user-facing source for site settings.
    links. Empty values are hidden.
 4. Edit `features.yaml` to enable or disable search, RSS, sitemap, dark mode,
    article tables of contents, Mermaid diagrams, projects, and comments.
-5. Write the About page introduction and the project summaries below it in
-   `profile.md`. Both use ordinary Markdown. Add each project under `## Projects`
-   with a `###` heading, a short description, and repository or related-post links.
-   Replace the empty-list message when adding the first project; a commented
-   example is included in the file.
+5. The top of About retains the profile image and display name from `site.yaml`
+   and icon links from `social.yaml`. This top profile is omitted when printing.
+   Edit `profile.md` for the document below it and its printable CV. Both render
+   the same Markdown body. Set `name`, `email`, an optional `subtitle`, and `language`
+   in its frontmatter. Blank name/email values fall back to the site display
+   name and social email. `language` must match a language in `site.yaml`;
+   omitting it uses the default site language. The top profile's icon links
+   use `social.yaml`; the CV below shows only email and GitHub. Keep a valid
+   email address in the settings; it is displayed as `(at)` instead of `@`
+   in the page and printed document.
+   Use `##` for sections, `###` for entries, and an italic date at the end of
+   an entry heading: `### Institution or project *Date range*`. Ordinary lists,
+   bold text, and links work as usual. There is no second print-only body.
+   Ctrl+P, ⌘P, or the PDF button prints the same content in a compact A4 layout.
+   All profile content is public. Update this file instead of maintaining
+   separate LaTeX and blog copies of the CV.
 
 The standalone Projects feature is disabled on this blog, and its header link has
 been removed. Keep project write-ups in ordinary posts with a `project` category.

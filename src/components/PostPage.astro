@@ -128,6 +128,14 @@ const schema = {
           </span>
         )}
       </div>
+      <p class="print-categories" data-pagefind-ignore>
+        Categories: {post.data.categories.map((category, index) => (
+          <Fragment>
+            {index > 0 && <span aria-hidden="true"> · </span>}
+            <a href={`/categories/${slugifyTerm(category)}/`}><TermLabel name={category} /></a>
+          </Fragment>
+        ))}
+      </p>
       <p class="print-source" data-pagefind-ignore>
         {SITE.author.name} · <a href={canonical}>{canonical}</a>
       </p>
