@@ -748,6 +748,16 @@ for (const entry of contentEntries) {
       `${relativeOutput}: expected canonical ${expectedCanonical}, found ${canonical ?? "none"}`
     );
   }
+  const printQrTag = findTag(html, "a", "class", "print-qr");
+  const printQr = html.match(/<a\b[^>]*class="print-qr"[^>]*>([\s\S]*?)<\/a>/u)?.[1] ?? "";
+  if (tagAttribute(printQrTag ?? "", "href") !== expectedCanonical || !printQr.includes("<svg")) {
+    errors.push(`${relativeOutput}: a printable QR link to the canonical post URL is required`);
+  }
+  if (html.includes('class="print-source"')) {
+    errors.push(
+      `${relativeOutput}: the former author and URL line must be replaced by the QR link`
+    );
+  }
 
   const description = html
     .match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i)?.[1]

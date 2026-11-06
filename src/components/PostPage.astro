@@ -1,5 +1,6 @@
 ---
 import { render } from "astro:content";
+import { renderSVG } from "uqr";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Icon from "@/components/Icon.astro";
 import TermLabel from "@/components/TermLabel.astro";
@@ -33,6 +34,7 @@ const translations = getPostTranslations(post, allPosts);
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const canonical = new URL(postUrl(post), SITE.url).toString();
+const printQr = renderSVG(canonical, { ecc: "M", border: 4, pixelSize: 1 });
 const cover = postCover(post);
 const description = postDescription(post);
 const coverUrl = cover
@@ -99,6 +101,14 @@ const schema = {
     </nav>
 
     <header class="article-header">
+      <a
+        class="print-qr"
+        href={canonical}
+        aria-label={`Open original article: ${canonical}`}
+        data-pagefind-ignore
+      >
+        <Fragment set:html={printQr} />
+      </a>
       <p class="print-categories" data-pagefind-ignore>
         {post.data.categories.map((category, index) => (
           <Fragment>
@@ -136,9 +146,6 @@ const schema = {
           </span>
         )}
       </div>
-      <p class="print-source" data-pagefind-ignore>
-        {SITE.author.name} · <a href={canonical}>{canonical}</a>
-      </p>
     </header>
 
     <div class="article-content" data-pagefind-body data-reading-article>

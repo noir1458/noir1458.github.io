@@ -1,5 +1,5 @@
 /* These additions are absent from screen layout and the accessibility tree. */
-.print-source, .print-reference, .print-references, .print-comments, .print-categories { display: none; }
+.print-qr, .print-reference, .print-references, .print-comments, .print-categories { display: none; }
 
 @media print {
   @page { margin: 18mm; }
@@ -52,11 +52,13 @@
     padding: 0;
   }
 
-  .article-header { margin: 0 0 1.25rem; padding: 0 0 0.75rem; border-bottom: 1pt solid #777; }
+  .article-header { display: grid; grid-template-columns: minmax(0, 1fr) 24mm; column-gap: 5mm; margin: 0 0 1.25rem; padding: 0 0 0.75rem; border-bottom: 1pt solid #777; }
+  .article-header > :is(.print-categories, h1, .article-meta) { grid-column: 1; }
+  .print-qr { display: block; grid-column: 2; grid-row: 1 / span 3; align-self: start; width: 24mm; height: 24mm; break-inside: avoid; }
+  .print-qr svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; }
   .article-header h1, .page-heading h1 { font-size: 1.65rem; line-height: 1.3; }
   .article-meta { margin-top: 0.6rem; font-size: 0.8rem; }
   .print-categories { display: block; margin: 0 0 0.6rem; font-size: 0.8rem; break-after: avoid; break-inside: avoid; }
-  .print-source { display: block; margin: 0.6rem 0 0; font-size: 0.8rem; overflow-wrap: anywhere; }
 
   :root .article-content { width: 100%; max-width: none; padding: 0; font-size: 10.5pt; line-height: 1.55; letter-spacing: normal; }
   .article-content p { margin: 0 0 0.85em; orphans: 3; widows: 3; }
