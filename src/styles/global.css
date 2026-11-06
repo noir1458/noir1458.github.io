@@ -1647,47 +1647,43 @@ body.has-hero-background[data-banner-title-tone="dark"] {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  margin: 2.3em 0;
-}
-
-.mermaid-diagram {
-  --mermaid-diagram-max-height: min(72svh, 760px);
-  --mermaid-diagram-padding: clamp(18px, 4vw, 30px);
-
-  display: grid;
-  width: 100%;
-  max-width: 100%;
-  max-height: var(--mermaid-diagram-max-height);
-  min-height: 120px;
-  place-items: start center;
-  overflow: auto;
-  overscroll-behavior: auto;
-  padding: var(--mermaid-diagram-padding);
+  margin: 1.5em 0;
+  padding-top: 54px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+}
+
+.mermaid-diagram {
+  --mermaid-diagram-padding: 12px;
+
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: auto;
+  padding: var(--mermaid-diagram-padding);
+  border: 0;
+  font-size: 0.95em;
   scrollbar-color: color-mix(in srgb, var(--muted) 48%, transparent) transparent;
 }
 
 .mermaid-theme-images {
   display: grid;
-  width: 100%;
-  max-width: 100%;
+  width: max-content;
+  min-width: 100%;
   place-items: start center;
 }
 
 .article-content .mermaid-diagram-image {
   display: block;
-  width: auto;
-  max-width: 100%;
-  max-height: calc(
-    var(--mermaid-diagram-max-height)
-    - var(--mermaid-diagram-padding)
-    - var(--mermaid-diagram-padding)
-    - 2px
-  );
+  width: var(--mermaid-width, auto);
+  max-width: none;
+  max-height: none;
   height: auto;
-  margin: 0;
+  margin: 0 auto;
   border: 0;
   border-radius: 0;
 }
@@ -1698,7 +1694,7 @@ body.has-hero-background[data-banner-title-tone="dark"] {
 
 @media (max-width: 720px) {
   .mermaid-diagram {
-    --mermaid-diagram-max-height: min(52svh, 480px);
+    --mermaid-diagram-padding: 10px;
   }
 }
 
@@ -1738,6 +1734,19 @@ body.has-hero-background[data-banner-title-tone="dark"] {
     color 150ms ease,
   background-color 150ms ease;
 }
+
+.mermaid-scroll-hint {
+  position: absolute;
+  top: 18px;
+  left: 12px;
+  max-width: calc(100% - 76px);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+
+.mermaid-scroll-hint[hidden] { display: none; }
 
 .mermaid-source svg {
   width: 17px;

@@ -147,11 +147,11 @@ flowchart LR
 ## 4. AWS Global Infrastructure
 
 ```mermaid
-flowchart TD
-    G[AWS Global Infrastructure] --> R[Region]
-    R --> A1[Availability Zone A]
-    R --> A2[Availability Zone B]
-    R --> A3[Availability Zone C]
+flowchart LR
+    G[AWS Global<br/>Infrastructure] --> R[Region]
+    R --> A1[Availability<br/>Zone A]
+    R --> A2[Availability<br/>Zone B]
+    R --> A3[Availability<br/>Zone C]
     G --> E[Edge Locations]
     R --> L[Local Zone]
 ```
@@ -219,7 +219,7 @@ Well-Architected = 개별 workload를 잘 설계·운영하는 기준
 ## 7. Migration — 평가에서 개선까지
 
 ```mermaid
-flowchart LR
+flowchart TD
     G[Business Goal] --> C[CAF / Readiness]
     C --> A[Assessment]
     A --> S[7R Strategy]
@@ -381,7 +381,7 @@ AWS가 수많은 고객의 수요를 모아 대규모로 인프라를 운영하�
 보안 문제는 서비스 이름부터 외우지 말고 먼저 질문을 분류한다.
 
 ```mermaid
-flowchart TD
+flowchart LR
     Q[보안 요구] --> R[누구의 책임인가?]
     Q --> I[누가 접근하는가?]
     Q --> D[무엇을 암호화·보관하는가?]
@@ -490,7 +490,7 @@ JSON 문법을 작성하는 시험은 아니지만 다음 의미는 알아야 �
 ### IAM Role과 AWS STS
 
 ```mermaid
-flowchart LR
+flowchart TD
     E[EC2] -->|Assume role| STS[AWS STS]
     STS --> T[Temporary credentials]
     T --> S3[Amazon S3]
@@ -756,9 +756,17 @@ flowchart LR
     C[실행할 것] --> VM[VM<br/>EC2]
     C --> FN[Function<br/>Lambda]
     C --> CT[Container<br/>ECS/EKS + EC2/Fargate]
+```
+
+```mermaid
+flowchart LR
     S[저장할 것] --> O[Object<br/>S3]
     S --> B[Block<br/>EBS]
     S --> F[File<br/>EFS/FSx]
+```
+
+```mermaid
+flowchart LR
     D[데이터 모델] --> R[Relational<br/>RDS/Aurora]
     D --> N[NoSQL<br/>DynamoDB]
     D --> A[Analytics<br/>Redshift]
@@ -912,7 +920,7 @@ Fargate를 “Lambda의 container 버전”이라고 외우면 안 된다. Lambd
 ### ECR / ECS / EKS / Fargate
 
 ```mermaid
-flowchart LR
+flowchart TD
     I[Container Image] --> ECR[Amazon ECR]
     ECR --> ECS[Amazon ECS]
     ECR --> EKS[Amazon EKS]
@@ -991,7 +999,7 @@ Bucket
 시간이 지나며 덜 쓰는 데이터를 자동으로 저렴한 class로 이동하거나 만료한다.
 
 ```mermaid
-flowchart LR
+flowchart TD
     S[S3 Standard] --> IA[Standard-IA]
     IA --> G[Glacier Flexible Retrieval]
     G --> D[Deep Archive]
@@ -1026,7 +1034,7 @@ On-Premises 애플리케이션이 표준 storage protocol을 사용하면서 AWS
 먼저 데이터 모델과 사용 목적을 묻는다.
 
 ```mermaid
-flowchart TD
+flowchart LR
     Q[데이터 요구] --> R[관계·SQL<br/>RDS/Aurora]
     Q --> N[Key-value/document<br/>DynamoDB]
     Q --> C[메모리 cache<br/>ElastiCache]
@@ -1212,20 +1220,35 @@ data 이동:    DMS
 
 ## 1. VPC 전체 그림
 
+### 인터넷 진입 서비스
+
 ```mermaid
 flowchart TD
     I((Internet)) --> R53[Route 53<br/>DNS]
     I --> CF[CloudFront<br/>CDN]
     I <--> IGW[Internet Gateway]
+```
+
+### 서브넷과 인터넷 경로
+
+```mermaid
+flowchart TD
+    I((Internet)) <--> IGW[Internet Gateway]
     IGW <--> PUB[Public Subnet<br/>ALB / public EC2]
     PRIV[Private Subnet<br/>App / DB] -->|outbound| NAT[NAT Gateway<br/>in public subnet]
     NAT --> IGW
-    RT[Route Tables] -.경로 결정.-> PUB
-    RT -.경로 결정.-> PRIV
-    SG[Security Groups] -.resource traffic.-> PUB
-    SG -.resource traffic.-> PRIV
-    NACL[Network ACL] -.subnet traffic.-> PUB
-    NACL -.subnet traffic.-> PRIV
+```
+
+### 경로와 트래픽 제어
+
+```mermaid
+flowchart LR
+    RT[Route Tables<br/>경로 결정] -.-> PUB[Public Subnet<br/>ALB / public EC2]
+    RT -.-> PRIV[Private Subnet<br/>App / DB]
+    SG[Security Groups<br/>resource traffic] -.-> PUB
+    SG -.-> PRIV
+    NACL[Network ACL<br/>subnet traffic] -.-> PUB
+    NACL -.-> PRIV
 ```
 
 이 그림은 역할 관계를 보여 줄 뿐 모든 요청이 Route 53 → CloudFront → IGW 순서로 지나야 한다는 뜻은 아니다.

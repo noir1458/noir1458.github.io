@@ -25,8 +25,9 @@
     "check:content": "node --test scripts/post-categories.test.mjs scripts/project-content.test.mjs scripts/archive-pagination.test.mjs scripts/print-references.test.mjs scripts/print-comments.test.mjs && node scripts/check-content.mjs",
     "check:service-worker": "node --test scripts/service-worker.test.mjs",
     "check:build": "node scripts/check-build.mjs",
+    "check:diagrams": "node scripts/check-diagrams.mjs",
     "check:features": "node scripts/check-feature-build.mjs",
-    "check": "npm run check:workflow && npm run lint && npm run format:check && npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build && npm run check:service-worker && npm run check:features",
+    "check": "npm run check:workflow && npm run lint && npm run format:check && npm run check:config && npm run check:translation && npm run check:content && astro check && npm run build && npm run check:build && npm run check:diagrams && npm run check:service-worker && npm run check:features",
     "publish": "node scripts/publish.mjs",
     "comments:sync": "node scripts/sync-print-comments.mjs"
   },

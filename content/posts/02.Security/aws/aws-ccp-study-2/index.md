@@ -76,7 +76,7 @@ math: false
     - 대표적인 서비스 : Gmail, Dropbox, Notion, Zoom
 
 ```mermaid
-flowchart LR
+flowchart TD
     ON[On-Premise<br/>사용자가 대부분 관리] --> I[IaaS<br/>Infrastructure 제공]
     I --> P[PaaS<br/>Platform까지 관리]
     P --> S[SaaS<br/>완성된 Software 사용]
@@ -140,7 +140,7 @@ flowchart TD
     - AWS CLI / SDK : Access Key
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[IAM User]
     U -->|Username + Password| C[AWS Console]
     U -->|Access Key| CLI[AWS CLI / SDK]
@@ -156,7 +156,7 @@ flowchart LR
   - Group에는 User만 포함할 수 있으며 **다른 Group을 포함하거나 중첩할 수 없음**
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[AWS Account] --> AD[Admins Group]
     A --> DV[Developers Group]
     A --> TS[Test Group]
@@ -231,7 +231,7 @@ flowchart TD
     - Lambda → 다른 AWS 서비스 접근
 
 ```mermaid
-flowchart LR
+flowchart TD
     EC2[EC2 / User] -->|Assume Role| R[IAM Role]
     R -->|AWS STS<br/>Temporary Credentials| S3[Amazon S3]
 ```
@@ -449,7 +449,7 @@ flowchart LR
 - IAM Role의 권한은 Policy로 정의
 
 ```mermaid
-flowchart LR
+flowchart TD
     EC2[EC2 Instance] -->|Assume Role| R[IAM Role]
     R -->|Temporary Credentials| S3[Amazon S3]
 ```
@@ -616,7 +616,7 @@ flowchart LR
 - 기본 AWS Resource 사용 비용을 제외하면 **EC2 Image Builder 자체는 추가 비용 없이 제공**
 
 ```mermaid
-flowchart LR
+flowchart TD
     S[Source Image] --> B[EC2 Image Builder]
     B --> C[Software / 설정 적용]
     C --> SEC[Security 강화]
@@ -814,7 +814,7 @@ flowchart LR
 - Target이 처리한 Response는 ELB를 거쳐 Client에게 반환
 
 ```mermaid
-flowchart LR
+flowchart TD
     C[Client] --> L[ELB Listener<br/>Port / Protocol]
     L -->|Listener Rule| TG1[Target Group 1]
     L -->|Listener Rule| TG2[Target Group 2]
@@ -880,7 +880,7 @@ flowchart LR
     - **정해진 시간이나 일정에 맞춰** Instance 수 조절
 
 ```mermaid
-flowchart LR
+flowchart TD
     LT[Launch Template<br/>어떻게 만들까] --> ASG[Auto Scaling Group<br/>몇 개 유지할까]
     SP[Scaling 방식<br/>언제 늘리고 줄일까] --> ASG
     ASG --> EC2[EC2 Instances]
@@ -910,7 +910,7 @@ flowchart LR
 - Environment Variable, Version, Container Image 등 다양한 실행 설정 지원
 
 ```mermaid
-flowchart LR
+flowchart TD
     E[Event / Request] --> L[AWS Lambda]
     L --> C[Code 실행]
     C --> R[AWS Service / Response]
@@ -947,7 +947,7 @@ flowchart LR
 - 반복 작업이 필요하면 별도의 Scheduling과 연동 가능
 
 ```mermaid
-flowchart LR
+flowchart TD
     J[Batch Job 제출] --> Q[Job Queue]
     Q --> B[AWS Batch]
     B --> C[EC2 / Fargate<br/>Compute Resource]
@@ -1038,7 +1038,7 @@ flowchart TB
     - 외부 사용자도 공개된 Image에 접근 가능
 
 ```mermaid
-flowchart LR
+flowchart TD
     D[Container Image] -->|Push| ECR[Amazon ECR]
     ECR -->|Pull| ECS[Amazon ECS]
     ECR -->|Pull| EKS[Amazon EKS]
@@ -1299,7 +1299,7 @@ Object Name : my_file.txt
 - Bucket 전체 또는 특정 Prefix / Tag 등의 Object에 Lifecycle Rule 적용 가능
 
 ```mermaid
-flowchart LR
+flowchart TD
     S[Standard] -->|Transition| IA[Standard-IA]
     IA -->|Transition| G[Glacier 계열]
     S -.->|Expiration Rule| D[삭제]
@@ -1356,7 +1356,7 @@ flowchart LR
 - 추가 비용이 발생할 수 있음
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[User] --> E[가까운 Edge Location]
     E -->|AWS Global Network| S3[S3 Bucket]
 ```
@@ -1564,16 +1564,31 @@ flowchart LR
 
 ## Data Analysis
 
+### 스트리밍 수집
+
 ```mermaid
-flowchart LR
+flowchart TD
     SD[Streaming Data] --> K[Kinesis<br/>수집 / 처리]
+```
+
+### 데이터 준비·처리와 웨어하우스
+
+```mermaid
+flowchart TD
+    S3[S3 Data] --> G[AWS Glue<br/>Data 준비 / Catalog]
+    S3 --> E[Amazon EMR<br/>Hadoop / Spark Processing]
+    G --> R[Amazon Redshift<br/>Data Warehouse / Analytics]
+    R --> Q[Amazon QuickSight<br/>Visualization]
+```
+
+### SQL 조회와 시각화
+
+```mermaid
+flowchart TD
     S3[S3 Data] --> G[AWS Glue<br/>Data 준비 / Catalog]
     S3 --> A[Amazon Athena<br/>S3 SQL Query]
-    S3 --> E[Amazon EMR<br/>Hadoop / Spark Processing]
     G -.Data Catalog.-> A
-    G --> R[Amazon Redshift<br/>Data Warehouse / Analytics]
     A --> Q[Amazon QuickSight<br/>Visualization]
-    R --> Q
 ```
 
 ### AWS DMS : Database Migration Service
@@ -1828,7 +1843,7 @@ flowchart LR
   - npm, Maven, pip, NuGet 등의 Package 저장 및 공유
 
 ```mermaid
-flowchart LR
+flowchart TD
     C[CodeCommit<br/>Source] --> B[CodeBuild<br/>Build / Test]
     B --> D[CodeDeploy<br/>Deploy]
     P[CodePipeline<br/>CI/CD Orchestration] -.Orchestrate.-> C
@@ -1850,7 +1865,7 @@ flowchart LR
 - AWS의 대표적인 Managed DNS Service는 **Amazon Route 53**
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[User] --> R[DNS Resolver]
     R --> Root[Root Name Server]
     Root --> TLD[TLD Name Server]
@@ -1913,7 +1928,7 @@ flowchart LR
 - **AWS WAF / AWS Shield**와 연동하여 Web Application을 보호할 수 있음
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[User] --> E[CloudFront Edge Location]
     E -->|Cache Hit| U
     E -->|Cache Miss| O[Origin<br/>S3 / ALB / EC2]
@@ -1936,7 +1951,7 @@ flowchart LR
 - Global Application의 **Latency 감소와 Availability 향상**에 적합
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[Global User] --> E[Nearest AWS Edge Location]
     E -->|AWS Global Network| A[Healthy Endpoint A]
     E -->|Failover| B[Healthy Endpoint B]
@@ -2055,7 +2070,7 @@ flowchart LR
   - 쉽게 말해 **“인증된 사용자가 AWS에서 무엇을 할 수 있는지 연결”**
 
 ```mermaid
-flowchart LR
+flowchart TD
     U[Application User] --> UP[Cognito User Pool]
     UP -->|Login / Authentication| T[Token]
     T --> IP[Cognito Identity Pool]
@@ -2082,7 +2097,7 @@ flowchart LR
   - Event 발생 → SQS Queue로 Message 전달
 
 ```mermaid
-flowchart LR
+flowchart TD
     S[AWS Services / Application] --> E[Amazon EventBridge]
     E --> R[Rule / Event Pattern]
     R --> L[Lambda]
@@ -2109,7 +2124,7 @@ flowchart LR
 - 대표적인 사용 사례 : Microservice Orchestration, ETL Workflow, 대규모 병렬 처리
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Start] --> L1[Lambda 작업 1]
     L1 --> C{조건 확인}
     C -->|성공| L2[Lambda 작업 2]

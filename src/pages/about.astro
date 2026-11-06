@@ -1,5 +1,6 @@
 ---
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import Icon from "@/components/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PROFILE, SITE, SOCIAL } from "@/config";
 import "@/styles/cv.css";
@@ -68,7 +69,9 @@ const { code: profileHtml } = await markdown.render(PROFILE.body, {
   <div class="cv-toolbar">
     <span class="eyebrow">{PROFILE.data.eyebrow}</span>
     <div class="cv-print-actions">
-      <button type="button" data-print-page>CV · PDF 저장</button>
+      <button type="button" data-print-page aria-label="CV 인쇄 및 PDF 저장" title="CV 인쇄 및 PDF 저장">
+        <Icon name="printer" />
+      </button>
       <span>Ctrl+P / ⌘P</span>
     </div>
   </div>

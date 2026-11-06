@@ -24,7 +24,7 @@ math: false
 최종적으로 완성된 흐름은 이렇다.
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[macOS 단축어 실행] --> B{집 LAN인가?}
     B -->|Yes| C[macOS에서 직접 wakeonlan]
     B -->|No| D[L2TP VPN 연결]

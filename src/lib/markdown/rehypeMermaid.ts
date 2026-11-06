@@ -18,12 +18,29 @@ const SOURCE_LABELS = {
   ko: "Mermaid 소스 보기"
 } as const;
 
+const MERMAID_FONT_SIZE = 16;
+
 export const MERMAID_LIGHT_CONFIG = {
   theme: "base",
   securityLevel: "strict",
   fontFamily: "Arial, sans-serif",
-  flowchart: { useMaxWidth: true },
+  fontSize: MERMAID_FONT_SIZE,
+  flowchart: { useMaxWidth: true, nodeSpacing: 24, rankSpacing: 30, wrappingWidth: 160 },
+  er: {
+    fontSize: MERMAID_FONT_SIZE,
+    entityPadding: 10,
+    diagramPadding: 8,
+    nodeSpacing: 24,
+    rankSpacing: 30
+  },
+  sequence: {
+    actorFontSize: MERMAID_FONT_SIZE,
+    messageFontSize: MERMAID_FONT_SIZE,
+    noteFontSize: MERMAID_FONT_SIZE,
+    wrap: true
+  },
   themeVariables: {
+    fontSize: `${MERMAID_FONT_SIZE}px`,
     background: "#ffffff",
     primaryColor: "#f7f9f7",
     primaryTextColor: "#28332d",
@@ -39,6 +56,7 @@ export const MERMAID_DARK_CONFIG = {
   ...MERMAID_LIGHT_CONFIG,
   theme: "dark",
   themeVariables: {
+    fontSize: `${MERMAID_FONT_SIZE}px`,
     darkMode: true,
     background: "#111827",
     primaryColor: "#172d59",
@@ -204,6 +222,31 @@ function themedImage(
   fallback: Element["properties"],
   theme: "light" | "dark"
 ): Element {
+  const src = dataUri(source, "src") ?? dataUri(source, "srcSet") ?? dataUri(source, "srcset");
+  let svg = "";
+  if (src?.startsWith("data:image/svg+xml")) {
+    const separator = src.indexOf(",");
+    const data = src.slice(separator + 1);
+    svg = src.slice(0, separator).includes(";base64")
+      ? Buffer.from(data, "base64").toString("utf8")
+      : decodeURIComponent(data);
+  }
+  const viewBox = svg
+    .match(/\bviewBox=["']([^"']+)["']/u)?.[1]
+    .trim()
+    .split(/\s+/u)
+    .map(Number);
+  const width = viewBox?.[2] ?? Number(source.width ?? fallback.width);
+  const height = viewBox?.[3] ?? Number(source.height ?? fallback.height);
+  const fontSize = Number(svg.match(/font-size:\s*([\d.]+)px\b/u)?.[1] ?? MERMAID_FONT_SIZE);
+  const sizing = [width, height, fontSize].every((value) => Number.isFinite(value) && value > 0)
+    ? {
+        dataMermaidWidth: width,
+        dataMermaidHeight: height,
+        dataMermaidFontSize: fontSize,
+        style: `--mermaid-width: ${(width / fontSize).toFixed(4)}em; --mermaid-aspect-ratio: ${(width / height).toFixed(6)};`
+      }
+    : {};
   return {
     type: "element",
     tagName: "img",
@@ -212,10 +255,11 @@ function themedImage(
       decoding: "async",
       height: source.height ?? fallback.height,
       loading: "lazy",
-      src: dataUri(source, "src") ?? dataUri(source, "srcSet") ?? dataUri(source, "srcset"),
+      src,
       title: fallback.title,
       width: source.width ?? fallback.width,
-      className: ["mermaid-diagram-image", `mermaid-diagram-${theme}`]
+      className: ["mermaid-diagram-image", `mermaid-diagram-${theme}`],
+      ...sizing
     },
     children: []
   };

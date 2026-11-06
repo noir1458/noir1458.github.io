@@ -212,14 +212,27 @@ function initArticleTools() {
 `;
 
   const mermaidSourceLabels = {
-    en: { copy: "Copy", copied: "Copied", failed: "Copy failed; retry", title: "Mermaid source" },
+    en: {
+      copy: "Copy",
+      copied: "Copied",
+      failed: "Copy failed; retry",
+      title: "Mermaid source",
+      scroll: "Scroll horizontally"
+    },
     ja: {
       copy: "コピー",
       copied: "コピーしました",
       failed: "コピー失敗・再試行",
-      title: "Mermaid ソース"
+      title: "Mermaid ソース",
+      scroll: "左右にスクロール"
     },
-    ko: { copy: "복사", copied: "복사됨", failed: "복사 실패 · 다시 시도", title: "Mermaid 소스" }
+    ko: {
+      copy: "복사",
+      copied: "복사됨",
+      failed: "복사 실패 · 다시 시도",
+      title: "Mermaid 소스",
+      scroll: "좌우로 스크롤"
+    }
   } as const;
 
   const mermaidSourceButtons = document.querySelectorAll<HTMLButtonElement>(".mermaid-source");
@@ -294,6 +307,39 @@ function initArticleTools() {
         sourceCopy.focus();
       });
     });
+
+    const diagramFrames = document.querySelectorAll<HTMLElement>(".mermaid-diagram");
+    function syncDiagramScroll(frame: HTMLElement) {
+      const block = frame.closest<HTMLElement>(".mermaid-block");
+      if (!block) return;
+      let hint = block.querySelector<HTMLSpanElement>(".mermaid-scroll-hint");
+      if (!hint) {
+        hint = document.createElement("span");
+        hint.className = "mermaid-scroll-hint";
+        hint.setAttribute("aria-hidden", "true");
+        block.append(hint);
+      }
+      const scrolls = frame.scrollWidth > frame.clientWidth + 1;
+      hint.textContent = labels.scroll;
+      hint.hidden = !scrolls;
+      if (scrolls) {
+        frame.tabIndex = 0;
+        frame.setAttribute("role", "group");
+        frame.setAttribute("aria-label", labels.scroll);
+      } else {
+        frame.removeAttribute("tabindex");
+        frame.removeAttribute("role");
+        frame.removeAttribute("aria-label");
+      }
+    }
+    const diagramObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) syncDiagramScroll(entry.target as HTMLElement);
+    });
+    diagramFrames.forEach((frame) => {
+      syncDiagramScroll(frame);
+      diagramObserver.observe(frame);
+    });
+    signal.addEventListener("abort", () => diagramObserver.disconnect(), { once: true });
   }
 
   document.querySelectorAll<HTMLElement>(".article-content pre").forEach((pre) => {

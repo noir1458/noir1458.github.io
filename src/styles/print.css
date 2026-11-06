@@ -39,7 +39,7 @@
   .site-header, .site-footer, .hero-banner, .skip-link,
   .breadcrumbs, .reading-progress, .article-floating-tools,
   .post-navigation, .comments, .giscus, dialog, dialog::backdrop,
-  .code-copy, .code-language, .mermaid-source, .pagination {
+  .code-copy, .code-language, .mermaid-source, .mermaid-scroll-hint, .pagination {
     display: none !important;
   }
 
@@ -130,17 +130,19 @@
   .article-content :is(img, svg) { max-width: 100%; max-height: 220mm; object-fit: contain; break-inside: avoid; }
   .article-content img { height: auto; margin-inline: auto; }
   .article-content figure { margin: 1em 0; break-inside: avoid; }
+  .article-content .mermaid-block { display: block; width: 100%; margin: 1em 0; padding: 0; border: 0; background: #fff; }
   .article-content .mermaid-diagram {
     display: block;
     min-height: 0;
     max-height: none;
-    padding: 0.5em;
+    padding: 0.35em 0;
+    border: 0;
     overflow: visible;
     background: #fff;
     break-inside: avoid;
   }
-  .article-content .mermaid-theme-images { display: block; }
-  .article-content .mermaid-diagram-image { max-height: 180mm; margin-inline: auto; }
+  .article-content .mermaid-theme-images { display: block; width: 100%; min-width: 0; }
+  .article-content .mermaid-diagram-image { width: min(var(--mermaid-width, 100%), 100%, calc(230mm * var(--mermaid-aspect-ratio, 1))); max-width: 100%; max-height: none; margin-inline: auto; }
   :root .article-content .mermaid-diagram-light { display: block !important; }
   :root .article-content .mermaid-diagram-dark { display: none !important; }
   .article-content .katex-display { overflow: visible; padding: 0.3em 0; break-inside: avoid; }

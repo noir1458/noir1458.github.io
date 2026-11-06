@@ -283,7 +283,6 @@ button, summary { cursor: pointer; }
 .code-language { top: 8px; right: 62px; height: 44px; border: 0; background: var(--surface); font-size: 13px; }
 .code-copy:hover, .mermaid-source:hover { transform: none; }
 .article-content .code-block > :is(.code-language, .code-copy), .article-content .mermaid-block > .mermaid-source { opacity: 1; pointer-events: auto; }
-.mermaid-diagram { padding-top: 65px; background: var(--surface); }
 .article-content th { background: var(--surface-strong); text-align: left; }
 .article-content :is(th, td) { padding: 15px; border: 1px solid var(--line); font-size: 16px; }
 .article-content img { border: 0; }
