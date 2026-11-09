@@ -167,6 +167,13 @@ button {
   }
 }
 
+/* Keep the browser from morphing scrolled lists into differently sized articles. */
+::view-transition-group(root),
+::view-transition-group(page-shell),
+::view-transition-group(page-content) {
+  animation: none;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(page-shell),
