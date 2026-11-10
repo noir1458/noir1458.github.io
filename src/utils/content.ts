@@ -1,6 +1,12 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
-import { LANGUAGES, SITE, SUPPORTED_LANGUAGE_CODES, type SupportedLanguage } from "@/config";
+import {
+  LANGUAGES,
+  SITE,
+  SUPPORTED_LANGUAGE_CODES,
+  USER_CONFIG,
+  type SupportedLanguage
+} from "@/config";
 import { slugifyTermValue } from "@/lib/content/termSlugs";
 
 export type PostEntry = CollectionEntry<"posts">;
@@ -179,6 +185,24 @@ export function countTerms(
   return [...counts]
     .map(([slug, value]) => ({ slug, ...value }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, SITE.locale));
+}
+
+export function groupCategories(categories: ReturnType<typeof countTerms>) {
+  const remaining = new Map(categories.map((category) => [category.slug, category]));
+  const groups = USER_CONFIG.categories.groups
+    .map(({ title, categories: slugs }) => ({
+      title,
+      categories: slugs.flatMap((slug) => {
+        const category = remaining.get(slug);
+        remaining.delete(slug);
+        return category ? [category] : [];
+      })
+    }))
+    .filter((group) => group.categories.length > 0);
+  if (remaining.size > 0) {
+    groups.push({ title: "More categories", categories: [...remaining.values()] });
+  }
+  return groups;
 }
 
 export function groupPostsByYear(posts: PostEntry[]) {

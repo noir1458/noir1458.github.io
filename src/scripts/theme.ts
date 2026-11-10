@@ -1,5 +1,3 @@
-import { announceHeaderPanelOpen, onHeaderPanelOpen } from "@/scripts/header-panels";
-
 const root = document.documentElement;
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 const supportedThemes = ["system", "light", "dark"] as const;
@@ -62,25 +60,9 @@ function applyStoredAppearance(targetRoot: HTMLElement) {
 const getThemeButtons = () => [
   ...document.querySelectorAll<HTMLButtonElement>("[data-theme-value]")
 ];
-const getAppearancePicker = () => document.querySelector<HTMLElement>("[data-appearance-picker]");
-const getAppearanceToggle = () =>
-  document.querySelector<HTMLButtonElement>("[data-appearance-toggle]");
-const getAppearanceMenu = () => document.querySelector<HTMLElement>("[data-appearance-menu]");
-const getThemeIcons = () => [...document.querySelectorAll<HTMLElement>("[data-theme-icon]")];
 const getAccentHueInput = () => document.querySelector<HTMLInputElement>("[data-accent-hue]");
 const getAccentHueOutput = () =>
   document.querySelector<HTMLOutputElement>("[data-accent-hue-output]");
-
-function closeAppearanceMenu({ restoreFocus = false } = {}) {
-  getAppearanceMenu()?.classList.remove("open");
-  const toggle = getAppearanceToggle();
-  toggle?.setAttribute("aria-expanded", "false");
-  if (restoreFocus) toggle?.focus();
-}
-
-onHeaderPanelOpen((panel) => {
-  if (panel !== "appearance") closeAppearanceMenu();
-});
 
 function resolvedTheme() {
   return root.dataset.theme === "system" ? (media.matches ? "dark" : "light") : root.dataset.theme;
@@ -96,15 +78,6 @@ function syncTheme({ broadcast = true } = {}) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  getThemeIcons().forEach((icon) => {
-    icon.hidden = icon.dataset.themeIcon !== selected;
-  });
-  const selectedLabel =
-    selected === "system" ? "Auto" : selected.charAt(0).toUpperCase() + selected.slice(1);
-  getAppearanceToggle()?.setAttribute(
-    "aria-label",
-    `Choose appearance, current theme: ${selectedLabel}`
-  );
   if (broadcast) {
     const frame = document.querySelector<HTMLIFrameElement>(".giscus-frame")?.contentWindow;
     const theme = root.dataset.resolvedTheme === "dark" ? "dark_dimmed" : "light";
@@ -154,42 +127,7 @@ document.addEventListener("click", (event) => {
     root.dataset.theme = theme;
     storeValue("color-theme", theme);
     syncTheme();
-    closeAppearanceMenu({ restoreFocus: true });
     return;
-  }
-
-  const toggle = event.target.closest<HTMLButtonElement>("[data-appearance-toggle]");
-  if (!toggle) return;
-  const menu = getAppearanceMenu();
-  const open = !menu?.classList.contains("open");
-  if (open) announceHeaderPanelOpen("appearance");
-  menu?.classList.toggle("open", open);
-  toggle.setAttribute("aria-expanded", String(open));
-  if (open) {
-    window.requestAnimationFrame(() => {
-      if (!menu?.isConnected || !menu.classList.contains("open")) return;
-      getThemeButtons()
-        .find((button) => button.classList.contains("active"))
-        ?.focus();
-    });
-  }
-});
-
-document.addEventListener("pointerdown", (event) => {
-  const picker = getAppearancePicker();
-  if (picker && !picker.contains(event.target as Node)) closeAppearanceMenu();
-});
-
-document.addEventListener("focusin", (event) => {
-  const picker = getAppearancePicker();
-  if (getAppearanceMenu()?.classList.contains("open") && !picker?.contains(event.target as Node)) {
-    closeAppearanceMenu();
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && getAppearanceMenu()?.classList.contains("open")) {
-    closeAppearanceMenu({ restoreFocus: true });
   }
 });
 
@@ -203,7 +141,6 @@ document.addEventListener("astro:before-swap", (event) => {
 });
 document.addEventListener("astro:page-load", () => {
   applyStoredAppearance(root);
-  closeAppearanceMenu();
   syncTheme({ broadcast: false });
   syncAccentHue();
 });

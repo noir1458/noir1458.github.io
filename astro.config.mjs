@@ -36,11 +36,12 @@ export default defineConfig({
   cacheDir: process.env.ASTRO_BLOG_CACHE_DIR ?? "./node_modules/.astro",
   output: "static",
   trailingSlash: "always",
+  redirects: { "/categories/": "/#categories" },
   prefetch: false,
   integrations: FEATURES.sitemap
     ? [
         sitemap({
-          filter: (page) => new URL(page).pathname !== "/search/"
+          filter: (page) => !["/search/", "/categories/"].includes(new URL(page).pathname)
         })
       ]
     : [],

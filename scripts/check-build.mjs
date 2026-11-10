@@ -207,6 +207,17 @@ for (const publicPath of configuredPublicAssets) {
 }
 
 const indexHtml = fs.readFileSync(path.join(distRoot, "index.html"), "utf8");
+const categoryRedirectPath = path.join(distRoot, "categories/index.html");
+const categoryRedirectHtml = fs.readFileSync(categoryRedirectPath, "utf8");
+const categoryRefresh = findTag(categoryRedirectHtml, "meta", "http-equiv", "refresh");
+if (!tagAttribute(categoryRefresh ?? "", "content")?.endsWith("/#categories")) {
+  errors.push("categories/index.html: the retired index must redirect to the menu categories");
+}
+if (indexHtml.includes('href="/categories/"')) {
+  errors.push(
+    "index.html: the menu must show categories directly instead of linking to their index"
+  );
+}
 const buildCss = walk(distRoot, (file) => file.endsWith(".css"))
   .map((file) => fs.readFileSync(file, "utf8"))
   .join("\n");
@@ -220,8 +231,10 @@ for (const link of visibleNavigationLinks) {
   }
 }
 
-const collectionFiles = htmlFiles.filter((file) =>
-  /^(?:categories|tags)\//u.test(path.relative(distRoot, file).replaceAll(path.sep, "/"))
+const collectionFiles = htmlFiles.filter(
+  (file) =>
+    file !== categoryRedirectPath
+    && /^(?:categories|tags)\//u.test(path.relative(distRoot, file).replaceAll(path.sep, "/"))
 );
 for (const file of collectionFiles) {
   const html = fs.readFileSync(file, "utf8");
@@ -303,6 +316,7 @@ const expectedBannerCount = APPEARANCE.banner.enabled ? 1 : 0;
 const expectedBannerSource = `src="${sitePath(APPEARANCE.banner.image)}"`;
 const expectedBannerTitleTone = `data-banner-title-tone="${APPEARANCE.banner.titleTone}"`;
 for (const file of htmlFiles) {
+  if (file === categoryRedirectPath) continue;
   const html = fs.readFileSync(file, "utf8");
   const label = path.relative(distRoot, file);
   const bannerCount = countOccurrences(html, 'class="hero-banner"');
@@ -820,7 +834,7 @@ for (const entry of contentEntries) {
     if (!xDefaultTag) {
       errors.push(`${relativeOutput}: missing hreflang x-default`);
     }
-    if (!html.includes('class="language-menu"')) {
+    if (!html.includes('class="menu-languages"')) {
       errors.push(`${relativeOutput}: missing article language selector`);
     }
   }

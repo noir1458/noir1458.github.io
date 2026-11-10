@@ -2,7 +2,8 @@
 import { FEATURES, NAVIGATION, SITE } from "@/config";
 import Icon from "@/components/Icon.astro";
 import ThemeControls from "@/components/ThemeControls.astro";
-import LanguageControls from "@/components/LanguageControls.astro";
+import TermLabel from "@/components/TermLabel.astro";
+import { countTerms, getPublishedPosts, groupCategories } from "@/utils/content";
 import type { SupportedLanguage } from "@/config";
 import type { PostTranslation } from "@/utils/content";
 
@@ -12,75 +13,94 @@ interface Props {
 }
 
 const { language = SITE.language, translations = [] } = Astro.props;
-const headerLinks = NAVIGATION.header.filter(
-  (link) => !link.requiresFeature || FEATURES[link.requiresFeature]
-);
+const links = NAVIGATION.header.filter((link) => !link.requiresFeature || FEATURES[link.requiresFeature]);
+const secondaryPaths = new Set(["/tags/", "/archives/"]);
+const primaryLinks = links.filter((link) => !secondaryPaths.has(link.href));
+const secondaryLinks = links.filter((link) => secondaryPaths.has(link.href));
+const groups = groupCategories(countTerms(await getPublishedPosts(), "categories"));
 const currentPath = Astro.url.pathname;
 const isCurrent = (href: string) => href === "/"
-  ? currentPath === "/" || currentPath.startsWith("/page/") || /\/posts\/[^/]+\/$/u.test(currentPath)
+  ? currentPath === "/" || currentPath.startsWith("/page/")
   : currentPath === href || currentPath.startsWith(`${href.replace(/\/$/u, "")}/`);
 ---
 
 <header class="site-header">
-  <div class="title-row">
+  <div class="title-row unified-header">
     <a class="site-title" href="/" aria-label={SITE.title} title={SITE.title}>
       <span class="site-title-text">{SITE.title}</span>
       <span class="brand-square" aria-hidden="true"></span>
     </a>
-    <nav
-      id="primary-navigation"
-      class="primary-nav"
-      data-primary-nav
-      aria-label="Primary navigation"
-    >
-      {headerLinks.map((link) => (
-        <a
-          href={link.href}
-          rel={link.external ? "noopener noreferrer" : undefined}
-          target={link.external ? "_blank" : undefined}
-          aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}
-        >
-          {link.label}
-        </a>
-      ))}
-    </nav>
-    <div class="header-actions">
-      <LanguageControls currentLanguage={language} translations={translations} />
-      {FEATURES.search && (
-        <div class="search-shell" data-search-shell>
-          <form action="/search/" class="header-search" role="search">
-            <button
-              class="search-toggle icon-button"
-              data-search-toggle
-              type="button"
-              aria-controls="header-search-field"
-              aria-expanded="false"
-              aria-label="Open search"
-            >
-              <Icon name="search" />
-            </button>
-            <div id="header-search-field" class="header-search-field" inert>
-              <label class="sr-only" for="site-search">Search the blog</label>
-              <input id="site-search" name="q" placeholder="Search posts" type="search" />
-              <button class="header-search-submit" type="submit" aria-label="Search" title="Search">
-                <Icon name="search" />
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-      {FEATURES.darkMode && <ThemeControls />}
-      <button
-        class="nav-toggle icon-button"
-        data-nav-toggle
-        type="button"
-        aria-controls="primary-navigation"
-        aria-expanded="false"
-        aria-label="Open navigation"
-      >
-        <span class="nav-toggle-menu"><Icon name="menu" /></span>
-        <span class="nav-toggle-close"><Icon name="close" /></span>
-      </button>
-    </div>
+    <button class="site-menu-toggle" data-nav-toggle type="button" aria-controls="site-menu" aria-expanded="false" aria-haspopup="dialog" aria-label="Open menu">
+      <Icon name="menu" />
+    </button>
   </div>
+  <dialog id="site-menu" class="site-menu" data-site-menu aria-label="Site navigation">
+    <div class="menu-topbar">
+      <div class="title-row unified-header menu-topbar-inner">
+        <a class="site-title" href="/" aria-label={SITE.title}>
+          <span class="site-title-text">{SITE.title}</span>
+          <span class="brand-square" aria-hidden="true"></span>
+        </a>
+        <button class="site-menu-close" data-menu-close type="button" aria-label="Close menu" autofocus>
+          <Icon name="close" />
+        </button>
+      </div>
+    </div>
+    <div class="menu-scroll" data-menu-scroll>
+      <div class="menu-content">
+        {FEATURES.search && (
+          <form action="/search/" class="menu-search" data-search-shell role="search">
+            <label class="sr-only" for="site-search">Search the blog</label>
+            <input id="site-search" name="q" placeholder="Search posts…" type="search" />
+            <button type="submit" aria-label="Search"><Icon name="search" /></button>
+          </form>
+        )}
+        <nav class="menu-links" aria-label="Browse the blog">
+          <div class="menu-primary-links">
+            {primaryLinks.map((link) => (
+              <a href={link.href} rel={link.external ? "noopener noreferrer" : undefined} target={link.external ? "_blank" : undefined} aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+          <section id="categories" class="menu-categories" aria-labelledby="menu-categories-title">
+            <h2 id="menu-categories-title" class="menu-section-label">Categories</h2>
+            <div class="menu-category-grid">
+              {groups.map((group) => (
+                <section class="menu-category-group" aria-label={group.title}>
+                  <h3>{group.title}</h3>
+                  <ul>
+                    {group.categories.map((category) => (
+                      <li>
+                        <a href={`/categories/${category.slug}/`} aria-current={isCurrent(`/categories/${category.slug}/`) ? "page" : undefined}>
+                          <TermLabel name={category.name} />
+                          <span class="menu-post-count">{category.count}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </section>
+          <div class="menu-secondary-links">
+            {secondaryLinks.map((link) => (
+              <a href={link.href} rel={link.external ? "noopener noreferrer" : undefined} target={link.external ? "_blank" : undefined} aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+        {translations.length > 1 && (
+          <nav class="menu-languages" aria-label="Article language">
+            <span class="menu-section-label">Article language</span>
+            {translations.map((translation) => (
+              <a href={translation.href} hreflang={translation.lang} lang={translation.lang} aria-current={translation.lang === language ? "page" : undefined}>{translation.label}</a>
+            ))}
+          </nav>
+        )}
+        {FEATURES.darkMode && <ThemeControls />}
+      </div>
+    </div>
+  </dialog>
 </header>

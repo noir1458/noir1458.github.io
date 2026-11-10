@@ -1,81 +1,27 @@
 ---
 import Icon from "@/components/Icon.astro";
 import { APPEARANCE } from "@/config";
-const defaultTheme = APPEARANCE.defaultTheme;
-const defaultLabel = defaultTheme === "system" ? "Auto" : defaultTheme === "light" ? "Light" : "Dark";
+const themes = [
+  { value: "system", label: "Auto", icon: "system" },
+  { value: "light", label: "Light", icon: "sun" },
+  { value: "dark", label: "Dark", icon: "moon" }
+] as const;
 ---
 
-<div class="appearance-picker" data-appearance-picker>
-  <button
-    class="appearance-picker-toggle icon-button"
-    data-appearance-toggle
-    type="button"
-    aria-controls="appearance-menu"
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    aria-label={`Choose appearance, current theme: ${defaultLabel}`}
-  >
-    <span data-theme-icon="system" hidden={defaultTheme !== "system"}><Icon name="system" /></span>
-    <span data-theme-icon="light" hidden={defaultTheme !== "light"}><Icon name="sun" /></span>
-    <span data-theme-icon="dark" hidden={defaultTheme !== "dark"}><Icon name="moon" /></span>
-  </button>
-
-  <div
-    id="appearance-menu"
-    class="appearance-menu"
-    data-appearance-menu
-    role="dialog"
-    aria-label="Appearance"
-  >
-    <div class="appearance-section">
-      <span class="sr-only">Theme</span>
-      <div class="theme-options" role="group" aria-label="Color theme">
-        <button
-          data-theme-value="system"
-          class:list={{ active: defaultTheme === "system" }}
-          type="button"
-          aria-label="Auto theme"
-          title="Auto"
-          aria-pressed={defaultTheme === "system" ? "true" : "false"}
-        >
-          <Icon name="system" />
+<section class="menu-appearance" data-appearance-picker aria-labelledby="menu-appearance-title">
+  <h2 id="menu-appearance-title" class="menu-section-label">Appearance</h2>
+  <div class="menu-appearance-controls" data-appearance-menu>
+    <div class="menu-theme-options" role="group" aria-label="Color theme">
+      {themes.map((theme) => (
+        <button data-theme-value={theme.value} class:list={{ active: APPEARANCE.defaultTheme === theme.value }} type="button" aria-label={theme.label} title={theme.label} aria-pressed={APPEARANCE.defaultTheme === theme.value}>
+          <Icon name={theme.icon} />
         </button>
-        <button
-          data-theme-value="light"
-          class:list={{ active: defaultTheme === "light" }}
-          type="button"
-          aria-label="Light theme"
-          title="Light"
-          aria-pressed={defaultTheme === "light" ? "true" : "false"}
-        >
-          <Icon name="sun" />
-        </button>
-        <button
-          data-theme-value="dark"
-          class:list={{ active: defaultTheme === "dark" }}
-          type="button"
-          aria-label="Dark theme"
-          title="Dark"
-          aria-pressed={defaultTheme === "dark" ? "true" : "false"}
-        >
-          <Icon name="moon" />
-        </button>
-      </div>
+      ))}
     </div>
-
-    <label class="accent-hue-control" for="accent-hue">
-      <span class="sr-only">Accent hue</span>
-      <input
-        id="accent-hue"
-        data-accent-hue
-        type="range"
-        min="0"
-        max="360"
-        step="1"
-        value={APPEARANCE.accentHue}
-        aria-label="Accent hue"
-      />
+    <label class="menu-accent-control" for="accent-hue">
+      <span class="sr-only">Accent color</span>
+      <input id="accent-hue" data-accent-hue type="range" min="0" max="360" step="1" value={APPEARANCE.accentHue} />
       <output data-accent-hue-output for="accent-hue">{APPEARANCE.accentHue}°</output>
     </label>
   </div>
-</div>
+</section>
