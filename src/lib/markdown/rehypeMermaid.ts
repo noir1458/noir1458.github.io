@@ -1,15 +1,7 @@
 import type { Element, ElementContent, Root } from "hast";
 
 interface RehypeMermaidSourceOptions {
-  defaultLanguage: string;
-}
-
-interface MarkdownVFile {
-  data?: {
-    astro?: {
-      frontmatter?: Record<string, unknown>;
-    };
-  };
+  language: string;
 }
 
 const SOURCE_LABELS = {
@@ -167,10 +159,8 @@ function createSourceButton(source: string, language: unknown): Element {
   };
 }
 
-export function rehypeMermaidSource({ defaultLanguage }: RehypeMermaidSourceOptions) {
-  return (tree: Root, file: MarkdownVFile) => {
-    const language = file.data?.astro?.frontmatter?.lang ?? defaultLanguage;
-
+export function rehypeMermaidSource({ language }: RehypeMermaidSourceOptions) {
+  return (tree: Root) => {
     function visit(parent: Root | Element): void {
       parent.children.forEach((child, index) => {
         if (!isElement(child)) return;

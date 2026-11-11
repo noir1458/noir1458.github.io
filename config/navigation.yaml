@@ -1,6 +1,4 @@
 header:
-  - label: All posts
-    href: /
   - label: About
     href: /about/
   - label: Tags

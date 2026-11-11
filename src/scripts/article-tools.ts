@@ -6,6 +6,8 @@ function initArticleTools() {
   articleToolsController = new AbortController();
   const { signal } = articleToolsController;
   if (articleToolsFrame) window.cancelAnimationFrame(articleToolsFrame);
+  // A cancelled frame never clears itself, which would block every later sync.
+  articleToolsFrame = 0;
 
   const scrollTopButton = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
   const articleTocToggle = document.querySelector<HTMLButtonElement>("[data-article-toc-toggle]");
@@ -37,7 +39,22 @@ function initArticleTools() {
   const articleImageClose = articleImageDialog?.querySelector<HTMLButtonElement>(
     "[data-article-image-close]"
   );
+  const floatingTools = document.querySelector<HTMLElement>(".article-floating-tools");
+  let lastScrollY = window.scrollY;
+
+  function syncFloatingTools() {
+    if (!floatingTools) return;
+    const scrollY = window.scrollY;
+    const delta = scrollY - lastScrollY;
+    // Ignore jitter; hide while reading downwards, return on the way up or at either end.
+    if (Math.abs(delta) < 8) return;
+    lastScrollY = scrollY;
+    const atEnd = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+    floatingTools.toggleAttribute("data-hidden", delta > 0 && scrollY > 160 && !atEnd);
+  }
+
   function syncArticleTools() {
+    syncFloatingTools();
     if (readingProgress && readingProgressBar && readingArticle) {
       const bounds = readingArticle.getBoundingClientRect();
       const articleStart = window.scrollY + bounds.top;
@@ -151,6 +168,11 @@ function initArticleTools() {
   );
 
   document.querySelectorAll<HTMLImageElement>(".article-content img").forEach((image) => {
+    // Lets the stylesheet size a height-capped image to its picture instead of letterboxing it.
+    const ratio = Number(image.getAttribute("width")) / Number(image.getAttribute("height"));
+    if (Number.isFinite(ratio) && ratio > 0)
+      image.style.setProperty("--image-ratio", String(ratio));
+
     if (image.closest("a, button, .mermaid-diagram")) return;
 
     image.classList.add("lightbox-ready");
@@ -361,6 +383,7 @@ function initArticleTools() {
       const languageLabel = document.createElement("span");
       languageLabel.className = "code-language";
       languageLabel.textContent = language;
+      wrapper.style.setProperty("--code-language-chars", String(language.length));
       wrapper.append(languageLabel);
     }
     wrapper.append(button);

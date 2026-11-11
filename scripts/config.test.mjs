@@ -5,6 +5,7 @@ import path from "node:path";
 import { afterEach, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { loadSiteConfig, SiteConfigError } from "../src/lib/config/index.ts";
+import { localeTags } from "../src/lib/config/locale.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const sourceConfigDirectory = path.join(projectRoot, "config");
@@ -33,7 +34,8 @@ afterEach(() => {
 test("the repository configuration is valid", () => {
   const config = loadSiteConfig();
   assert.match(config.site.url, /^https:\/\//u);
-  assert.deepEqual(config.supportedLanguageCodes, ["ko", "en", "ja"]);
+  assert.equal(config.site.language, "ko");
+  assert.equal("languages" in config, false);
   assert.equal(config.social.x, undefined);
   assert.equal(config.social.facebook, undefined);
   assert.equal(config.social.email, undefined);
@@ -84,7 +86,7 @@ test("invalid profile metadata and a comments-only body report the profile file"
     () => loadSiteConfig({ configDirectory: directory }),
     /config\/profile\.md: email:/u
   );
-  fs.writeFileSync(file, "---\ntitle: About\nlanguage: fr\n---\nBody\n");
+  fs.writeFileSync(file, "---\ntitle: About\nlanguage: French\n---\nBody\n");
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
     /config\/profile\.md: language:/u
@@ -193,7 +195,12 @@ test("accent hue rejects fractional values", () => {
 
 test("a missing appearance section uses light and the default hue", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", /\nappearance:\n(?: {2,}[^\n]*\n)+(?=\nlanguages:)/u, "");
+  replaceInFile(
+    directory,
+    "site.yaml",
+    /\nappearance:\n(?: {2,}[^\n]*\n)+(?=\nintegrations:)/u,
+    ""
+  );
 
   const appearance = loadSiteConfig({ configDirectory: directory }).appearance;
   assert.equal(appearance.defaultTheme, "light");
@@ -382,16 +389,24 @@ test("a navigation item without href reports its exact field", () => {
   );
 });
 
-test("duplicate language path prefixes are rejected", () => {
+test("the retired per-language settings are rejected instead of silently ignored", () => {
   const directory = configFixture();
-  replaceInFile(directory, "site.yaml", "pathPrefix: /ja", "pathPrefix: /en");
+  fs.appendFileSync(
+    path.join(directory, "site.yaml"),
+    "\nlanguages:\n  en:\n    label: English\n    pathPrefix: /en\n"
+  );
 
   assert.throws(
     () => loadSiteConfig({ configDirectory: directory }),
-    (error) =>
-      error instanceof SiteConfigError
-      && /languages\.ja\.pathPrefix: duplicates languages\.en\.pathPrefix/u.test(error.message)
+    (error) => error instanceof SiteConfigError && /config\/site\.yaml:/u.test(error.message)
   );
+});
+
+test("regional locale tags are derived from the language code", () => {
+  assert.deepEqual(localeTags("ko"), { locale: "ko-KR", ogLocale: "ko_KR" });
+  assert.deepEqual(localeTags("en"), { locale: "en-US", ogLocale: "en_US" });
+  assert.deepEqual(localeTags("pt-br"), { locale: "pt-BR", ogLocale: "pt_BR" });
+  assert.deepEqual(localeTags("xx"), { locale: "xx", ogLocale: "xx" });
 });
 
 test("broken YAML reports the configuration filename", () => {

@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { SUPPORTED_LANGUAGE_CODES } from "@/config";
-import { getAllPublishedPosts, postDescription, postUrl } from "@/utils/content";
+import Icon from "@/components/Icon.astro";
+import { getPublishedPosts, postDescription, postUrl } from "@/utils/content";
 
-const fallbackPosts = (await getAllPublishedPosts()).map((post) => ({
+const fallbackPosts = (await getPublishedPosts()).map((post) => ({
   title: post.data.title,
   description: postDescription(post),
   url: postUrl(post),
-  terms: `${post.data.lang} ${post.data.categories.join(" ")}`,
+  terms: post.data.categories.join(" "),
   body: post.body
 }));
 const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003c");
@@ -22,12 +22,13 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
   <form
     class="search-page-form"
     data-search-page-form
-    data-supported-languages={SUPPORTED_LANGUAGE_CODES.join(",")}
     role="search"
   >
     <label class="sr-only" for="search-query">Search posts</label>
     <input id="search-query" name="q" type="search" placeholder="Type a keyword" autocomplete="off" />
-    <button class="primary-button" type="submit">Search</button>
+    <button class="primary-button search-page-submit" type="submit" aria-label="Search" title="Search">
+      <Icon name="search" />
+    </button>
   </form>
   <p class="search-status" data-search-status>Enter a keyword to begin.</p>
   <div class="search-results" data-search-results aria-live="polite"></div>
@@ -47,6 +48,32 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     set:html={fallbackSearchData}
   ></script>
   <script>
+    type PagefindResult = { data: () => Promise<unknown> };
+    type PagefindModule = {
+      options: (options: { excerptLength: number }) => Promise<void>;
+      search: (query: string) => Promise<{ results: PagefindResult[] }>;
+    };
+
+    // Pagefind always serves the index that matches this page's <html lang> and has no
+    // option to pick another, so one shared instance is all a search needs.
+    let pagefindReady: Promise<PagefindModule> | undefined;
+
+    function loadPagefind() {
+      if (pagefindReady) return pagefindReady;
+      const loading = (async () => {
+        const pagefindUrl = "/pagefind/pagefind.js";
+        const pagefind = (await import(/* @vite-ignore */ pagefindUrl)) as PagefindModule;
+        await pagefind.options({ excerptLength: 24 });
+        return pagefind;
+      })();
+      pagefindReady = loading;
+      // A failed load must not be remembered, or search could never recover.
+      loading.catch(() => {
+        if (pagefindReady === loading) pagefindReady = undefined;
+      });
+      return loading;
+    }
+
     function initSearchPage() {
     const form = document.querySelector<HTMLFormElement>("[data-search-page-form]");
     if (!form || form.dataset.searchReady === "true") return;
@@ -60,9 +87,6 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
     const params = new URLSearchParams(location.search);
     const initialQuery = params.get("q") ?? "";
     const resultsPerPage = 6;
-    const supportedLanguageCodes = form?.dataset.supportedLanguages
-      ?.split(",")
-      .filter(Boolean) ?? [];
     let currentQuery = initialQuery;
     let currentPage = Math.max(1, Number(params.get("page")) || 1);
     let resultCount = 0;
@@ -216,22 +240,8 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
       if (pagination) pagination.hidden = true;
 
       try {
-        const pagefindUrl = "/pagefind/pagefind.js";
-        const pagefind = await import(/* @vite-ignore */ pagefindUrl);
-        const responses = await Promise.allSettled(
-          supportedLanguageCodes.map(async (language) => {
-            const instance = pagefind.createInstance({ language });
-            await instance.options({ excerptLength: 24 });
-            return instance.search(normalizedQuery);
-          })
-        );
-        const responseResults = responses
-          .filter((response) => response.status === "fulfilled")
-          .flatMap((response) => response.value.results)
-          .sort((a, b) => b.score - a.score);
-        if (responses.every((response) => response.status === "rejected")) {
-          throw new Error("No Pagefind language index could be loaded.");
-        }
+        const pagefind = await loadPagefind();
+        const responseResults = (await pagefind.search(normalizedQuery)).results;
         if (sequence !== searchSequence) return;
         resultCount = responseResults.length;
         loadPageResults = async (page) => {
@@ -239,7 +249,7 @@ const fallbackSearchData = JSON.stringify(fallbackPosts).replaceAll("<", "\\u003
           const pageResults = await Promise.all(
             responseResults
               .slice(start, start + resultsPerPage)
-              .map((result: { data: () => Promise<unknown> }) => result.data())
+              .map((result) => result.data())
           ) as Array<{ url: string; meta: { title?: string }; excerpt: string }>;
 
           return pageResults.map((result) => ({

@@ -2,8 +2,8 @@
 
 This folder is the user-facing source for site settings.
 
-1. Edit `site.yaml` for the site identity, author, branding, accent color,
-   languages, and public service integrations.
+1. Edit `site.yaml` for the site identity, language, author, branding, accent
+   color, and public service integrations.
 2. Edit `navigation.yaml` to change visible links and their order.
 3. Edit `social.yaml` to add GitHub, LinkedIn, X, Facebook, or email profile
    links. Empty values are hidden.
@@ -14,8 +14,8 @@ This folder is the user-facing source for site settings.
    Edit `profile.md` for the document below it and its printable CV. Both render
    the same Markdown body. Set `name`, `email`, an optional `subtitle`, and `language`
    in its frontmatter. Blank name/email values fall back to the site display
-   name and social email. `language` must match a language in `site.yaml`;
-   omitting it uses the default site language. The top profile's icon links
+   name and social email. `language` is a lowercase language code such as `en`;
+   omitting it uses the site language. The top profile's icon links
    use `social.yaml`; the CV below shows only email and GitHub. Keep a valid
    email address in the settings; it is displayed as `(at)` instead of `@`
    in the page and printed document.

@@ -1,10 +1,8 @@
 ---
-import { SITE, type SupportedLanguage } from "@/config";
+import { SITE } from "@/config";
 import { giscusPathHash, readCommentSnapshot } from "@/lib/comments/snapshot";
 import { renderPrintComment } from "@/lib/comments/render";
 
-interface Props { language?: SupportedLanguage }
-const { language = SITE.language } = Astro.props;
 const giscus = SITE.giscus!;
 const snapshot = readCommentSnapshot();
 const available = snapshot?.repo === giscus.repo && snapshot?.categoryId === giscus.categoryId;
@@ -18,7 +16,7 @@ const comments = await Promise.all((discussion?.comments ?? []).map(async (comme
     ...reply, html: await renderPrintComment(reply.bodyHTML)
   })))
 })));
-const locale = language;
+const locale = SITE.language;
 const copy = locale === "ja"
   ? { title: "コメント", snapshot: "取得日時", empty: "取得時点で公開コメントはありません。", unavailable: "印刷用コメントを取得していません。原文で確認してください。", removed: "削除または非表示のコメント", latest: "最新のコメント", replies: "返信" }
   : locale === "en"

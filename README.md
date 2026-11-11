@@ -1,7 +1,7 @@
 # noir1458 Astro Blog
 
-`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 현재 112개 논리 글과
-번역을 포함한 114개 글 경로를 제공하며 `/posts/<slug>/` 주소를 유지합니다.
+`noir1458.github.io`를 위한 Astro 정적 블로그입니다. 글은
+`/posts/<slug>/` 주소로 제공하며 이미 공개된 주소를 유지합니다.
 Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을 지원합니다.
 
 화면은 개인 디자인 저장소의 **Orange Square 0.1.2**를 적용합니다.
@@ -41,7 +41,6 @@ Markdown, 수식, 검색, 태그, 카테고리, 아카이브와 Giscus 댓글을
 - 안정적인 `/posts/<slug>/` 주소를 사용하는 Markdown 게시물
 - 카테고리, 태그, 아카이브, 페이지네이션과 Pagefind 검색
 - RSS, sitemap, robots.txt, canonical, Open Graph, JSON-LD
-- 한국어·영어·일본어 번역 경로와 `hreflang`
 - 다크 모드, 수식, admonition, Mermaid 다이어그램, 코드 하이라이팅, 목차와 Giscus 댓글
 - Markdown 한 파일로 관리하는 About / CV와 A4 인쇄 형식
 
@@ -124,7 +123,7 @@ npm run new
 ```
 
 질문에 답하면 `content/posts/<번호-큰분류>/<대표-category>/<slug>/` 아래에
-한국어는 `index.md`, 영어는 `en.md`, 일본어는 `ja.md`로 생성됩니다.
+`index.md`가 생성됩니다.
 기존 카테고리는 해당 큰 분류를 자동으로 재사용하고, 새 카테고리일 때만
 큰 분류를 묻습니다. 이 폴더 구조는 소스 정리용입니다. Categories 페이지와
 각 카테고리의 글 목록은 게시글의 `categories` 값에서 자동으로 생성되며,
@@ -176,7 +175,7 @@ flowchart LR
 ```
 ````
 
-글 전용 이미지는 언어 파일과 같은 글 폴더에 둡니다. 본문에서 처음 사용한
+글 전용 이미지는 `index.md`와 같은 글 폴더에 둡니다. 본문에서 처음 사용한
 로컬 이미지가 글 목록과 공유 메타데이터의 대표 이미지로 자동 선택됩니다.
 다른 이미지를 대표로 지정하고 싶을 때만 `cover`를 추가합니다. Astro는
 빌드할 때 파일 존재 여부와 이미지 정보를 검사하고 최적화합니다.
@@ -246,7 +245,7 @@ PR 검증은 댓글 수집 없이 실행되며 실제 배포는 항상 새로 �
 파일 위쪽의 `name`, `email`, `eyebrow`, `language`로 이름, 연락처, 문서 종류와 언어를
 정합니다. `name`을 비워두면 사이트 표시 이름을, `email`을 비워두면 `social.yaml`의
 이메일을 사용합니다. `subtitle`은 선택 항목입니다. `language`를 생략하면 사이트
-기본 언어를 사용하고, 입력할 때는 `site.yaml`에 등록된 언어 코드여야 합니다.
+언어를 사용하고, 입력할 때는 `en`이나 `pt-br` 같은 소문자 언어 코드를 씁니다.
 상단 소셜 아이콘 링크는 `social.yaml`에서 가져옵니다. 아래쪽 CV 연락처에는
 이메일과 GitHub만 표시합니다. 이메일은 설정 파일에 원래 주소로 입력하고,
 화면과 인쇄에서는 `@` 대신 `(at)`으로 표시합니다.
@@ -289,11 +288,10 @@ About의 `## Projects` 아래에 프로젝트 요약과
 전용 Projects 목록·상세 페이지는 `config/features.yaml`의 `projects: false`로
 비활성화되어 있고 상단 메뉴에서도 제거되어 있습니다.
 
-## 글 언어와 번역본
+## 글 언어
 
-지원 언어는 한국어(`ko`), 영어(`en`), 일본어(`ja`)입니다. 기존 글처럼
-`lang`을 생략하면 한국어로 처리되므로 기존 `index.md`와 공개 URL은 바뀌지
-않습니다.
+모든 글은 `config/site.yaml`의 `site.language` 한 가지 언어로 발행됩니다. 글은
+자기 폴더의 `index.md`에 작성하고 `/posts/<slug>/` 주소로 공개됩니다.
 
 ```yaml
 ---
@@ -304,93 +302,14 @@ categories: blog
 ---
 ```
 
-파일명은 언어 슬롯을 나타냅니다. 한국어는 기존 호환성을 위해 `index.md`,
-영어는 `en.md`, 일본어는 `ja.md`를 사용합니다. `npm run new`에서 처음 작성할
-언어를 선택하면 해당 파일을 생성합니다.
+`html lang`, Open Graph locale, JSON-LD `inLanguage`, 댓글과 인쇄 문구의 언어는
+`site.language`를 따릅니다. `ko_KR` 같은 지역 표기는 언어 코드에서 자동으로
+만들어지므로 따로 적지 않습니다.
 
-```yaml
----
-title: An English Post
-slug: english-post
-translationKey: english-post
-lang: en
-publishedAt: '2026-08-02'
-categories: blog
----
-```
-
-번역본은 원문과 이미지 폴더를 공유하도록 같은 글 폴더에 언어 코드 파일로
-추가합니다. 원문과 모든 번역본은 같은 `slug`와 논리적 번역 식별자를
-사용해야 합니다.
-
-```text
-content/posts/00.blog/blog/sample-post/
-├── index.md  # 한국어, lang 생략 시 ko
-├── en.md     # 영어, lang: en
-├── ja.md     # 일본어, lang: ja
-└── diagram.png
-```
-
-```yaml
----
-title: English Translation
-slug: sample-post
-translationKey: sample-post
-lang: en
-publishedAt: '2026-08-02'
-categories: blog
----
-```
-
-처음 작성한 언어 파일에 `translationKey`가 있으면 다른 언어 파일도 같은 값을
-사용합니다. 생략한 경우에는 `slug`가 논리적 글 식별자가 됩니다. 어느 언어를
-먼저 작성했는지는 라우팅에 영향을 주지 않습니다. 한국어 기본 글은 `/posts/<slug>/`, 영어는
-`/en/posts/<slug>/`, 일본어는 `/ja/posts/<slug>/`에 생성됩니다. 실제 번역본이
-두 개 이상 있는 글에서만 우상단 테마 버튼 왼쪽에 언어 선택기가 나타나며,
-존재하지 않는 번역 언어는 표시하지 않습니다.
-
-### Codex로 글 번역하기
-
-글을 완성한 뒤 Codex에 다음처럼 요청합니다.
-
-> 이 글 블로그 번역 스크립트대로 번역해줘:
-> `content/posts/.../글-slug/ja.md`
-
-Codex는 지정한 파일을 원문으로 보고 현재 폴더에 없는 나머지 두 언어 슬롯을
-바로 생성합니다. 예를 들어 `ja.md`로 시작했다면 `index.md`와 `en.md`를
-만듭니다. 작업 전에 원문 해시를 기록하고, 생성 후 코드 블록·인라인 코드·
-수식·링크·이미지 경로·front matter와 원문 해시를 검사합니다. 이어서 전체
-`npm run check`를 실행하고 번역 diff와 로컬 확인 URL을 알려줍니다.
-
-이 과정은 번역 파일을 커밋 직전 상태까지 준비하지만 `git add`, 커밋, push,
-배포는 실행하지 않습니다. 안내받은 한국어·영어·일본어 페이지를 로컬에서 직접
-읽어본 다음 사용자가 커밋합니다. 기존 번역 파일은 사용자가 갱신을 명시적으로
-요청하지 않는 한 덮어쓰지 않습니다.
-
-수동으로 안전 검사를 실행할 때는 먼저 원문 해시를 얻고, 번역 후 그 값을 다시
-전달합니다.
-
-```bash
-npm run translate:snapshot -- content/posts/.../ja.md
-npm run translate:verify -- content/posts/.../ja.md --source-hash <출력된 해시>
-npm run check
-npm run check:security
-```
-
-각 언어 페이지는 자기 URL을 canonical로 사용하고 `html lang`, Open Graph,
-Twitter, JSON-LD `inLanguage`, Pagefind 색인 언어를 해당 글에 맞게 생성합니다.
-같은 글의 페이지들은 `hreflang`과 `x-default`로 서로 연결됩니다. 사이트맵은
-Astro가 생성된 언어별 URL을 자동으로 포함합니다.
-
-기본 홈페이지·카테고리·아카이브와 `/rss.xml`은 기존 동작을 보존하기 위해
-한국어 글만 표시합니다. 번역 페이지는 언어별 Pagefind 색인에 포함됩니다.
-Giscus는 기존 댓글을 보존하기 위해 pathname 매핑을 유지하므로 번역 URL의
-댓글은 한국어 원문과 분리됩니다.
-
-지원 언어를 늘릴 때는 `config/site.yaml`의 `languages`에 언어 코드, 표시 이름,
-locale, OG locale, URL prefix를 추가합니다. 라우트와 콘텐츠 스키마는 이 설정을
-공통으로 사용합니다. 기본 언어만 `index.md`를 사용하고 다른 언어 파일명은 언어
-코드와 같아야 합니다.
+글 번역 기능은 제거되었습니다. 예전에 공개된 번역 주소
+(`/en/posts/<slug>/`, `/ja/posts/<slug>/`)는 원문 `/posts/<slug>/`로 이동합니다.
+이 이동은 `tests/baselines/published-post-routes.txt`에 남아 있는 언어 접두사
+경로를 기준으로 빌드할 때 자동으로 만들어집니다.
 
 ## 검사
 
@@ -401,14 +320,13 @@ npm run check:security
 
 다음을 한 번에 검사합니다.
 
-- front matter, 언어별 중복 slug와 지원하지 않는 lang
-- 언어 파일명, 번역본 중복, translationKey·slug와 draft 상태 불일치
+- front matter, 중복 slug와 글 파일명(`index.md`)
 - 로컬 이미지 누락
 - 수식 렌더링 실패
 - 도식 글자 크기, 테마와 화면·인쇄 배치
 - Astro/TypeScript
 - 프로덕션 빌드와 Pagefind 색인
-- 생성된 내부 링크, 언어별 페이지와 상호 hreflang
+- 생성된 내부 링크와 옛 번역 주소의 원문 이동
 - canonical, html lang과 기본 Open Graph 이미지
 - RSS, sitemap, search, archive, 404와 게시물 페이지
 - 공개 게시물 URL 기준선 보존
@@ -470,7 +388,7 @@ GitHub Actions 방식에서는 저장소의 `CNAME` 파일이 필요하지 않�
 - `public asset does not exist`: `config/site.yaml`의 이미지 경로와
   `public/images/`의 실제 파일명 일치 여부 확인
 - 게시물 날짜 오류: `publishedAt: 'YYYY-MM-DD'` 형식 사용
-- 중복 slug 오류: 같은 언어의 게시물마다 고유한 `slug` 사용
+- 중복 slug 오류: 게시물마다 고유한 `slug` 사용
 - 빈 프로젝트 경고: `content/projects/`가 비어 있고 projects 기능이 꺼진 운영
   블로그에서는 정상이며 build 실패가 아님
 
@@ -498,7 +416,7 @@ Search Console verification 문자열, Giscus repository/category ID는 공개
 - `src/styles/orange-square.css` — Orange Square 스킨과 반응형 적용 규칙
 - `src/styles/orange-square-tokens.css` — 디자인 저장소에서 복사한 원본 토큰
 - `src/styles/global.css` — 기존 기능의 기반 스타일 (`legacy` layer)
-- `scripts/` — 새 글·번역·검증·배포 안내
+- `scripts/` — 새 글·검증·배포 안내
 - `tests/baselines/published-post-routes.txt` — 공개 게시물 URL 보존 기준선
 
 ## 고급 사용자와 라이선스

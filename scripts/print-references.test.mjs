@@ -4,11 +4,7 @@ import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import rehypeRaw from "rehype-raw";
 import { rehypePrint } from "../src/lib/markdown/rehypePrint.ts";
 
-const options = {
-  siteUrl: "https://example.com/",
-  defaultLanguage: "ko",
-  languagePrefixes: { ko: "", en: "/en", ja: "/ja" }
-};
+const options = { siteUrl: "https://example.com/", language: "ko" };
 const transform = rehypePrint(options);
 const link = (href) => ({
   type: "element",
@@ -16,7 +12,7 @@ const link = (href) => ({
   properties: { href },
   children: [{ type: "text", value: "Link" }]
 });
-const file = (lang = "ko") => ({ data: { astro: { frontmatter: { slug: "sample", lang } } } });
+const file = () => ({ data: { astro: { frontmatter: { slug: "sample" } } } });
 const list = (tree) => tree.children.at(-1).children[1].children;
 
 test("deduplicates resolved links while preserving their original destinations", () => {
@@ -64,13 +60,13 @@ test("ignores fragments, unsupported schemes, credentials and code examples", ()
   assert.deepEqual(tree, original);
 });
 
-test("localizes labels and resolves relative URLs against the translated post", () => {
+test("localizes labels to the site language and resolves relative URLs against the post", () => {
   const tree = { type: "root", children: [link("attachment.pdf")] };
-  transform(tree, file("ja"));
+  rehypePrint({ ...options, language: "ja" })(tree, file());
   assert.equal(tree.children.at(-1).children[0].children[0].value, "参考リンク");
   assert.equal(
     list(tree)[0].children[0].properties.href,
-    "https://example.com/ja/posts/sample/attachment.pdf"
+    "https://example.com/posts/sample/attachment.pdf"
   );
 });
 
@@ -118,7 +114,7 @@ test("processes authored HTML images and links inside collapsible Markdown", asy
   });
   const { code } = await processor.render(
     '<details><summary>Notes</summary><a href="https://example.org/">Source</a><img src="/notes.webp" alt="Notes" loading="lazy"></details>',
-    { frontmatter: { slug: "sample", lang: "ko" } }
+    { frontmatter: { slug: "sample" } }
   );
   assert.match(code, /loading="eager"/u);
   assert.match(code, /class="print-reference"/u);

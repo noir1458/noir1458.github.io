@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import { render } from "astro:content";
 import { renderSVG } from "uqr";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -8,8 +9,6 @@ import Giscus from "@/components/Giscus.astro";
 import { FEATURES, SITE } from "@/config";
 import {
   formatDate,
-  getAllPublishedPosts,
-  getPostTranslations,
   getPublishedPosts,
   postCover,
   postDescription,
@@ -23,29 +22,36 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const allPosts = await getAllPublishedPosts();
-const languagePosts = await getPublishedPosts(post.data.lang);
-const index = languagePosts.findIndex((entry) => entry.id === post.id);
-const newer = index > 0 ? languagePosts[index - 1] : undefined;
-const older = index >= 0 && index < languagePosts.length - 1
-  ? languagePosts[index + 1]
+const posts = await getPublishedPosts();
+const index = posts.findIndex((entry) => entry.id === post.id);
+const newer = index > 0 ? posts[index - 1] : undefined;
+const older = index >= 0 && index < posts.length - 1
+  ? posts[index + 1]
   : undefined;
-const translations = getPostTranslations(post, allPosts);
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const canonical = new URL(postUrl(post), SITE.url).toString();
 const printQr = renderSVG(canonical, { ecc: "M", border: 4, pixelSize: 1 });
 const cover = postCover(post);
 const description = postDescription(post);
-const coverUrl = cover
-  ? new URL(cover.src, SITE.url).toString()
+// Link previews get a resized JPEG; the original upload can be several megabytes.
+const socialCover = cover
+  ? await getImage({
+      src: cover,
+      width: Math.min(cover.width, 1200),
+      format: "jpeg",
+      background: "#ffffff"
+    })
+  : undefined;
+const coverUrl = socialCover
+  ? new URL(socialCover.src, SITE.url).toString()
   : undefined;
 const schema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: post.data.title,
   description,
-  inLanguage: post.data.lang,
+  inLanguage: SITE.language,
   datePublished: post.data.publishedAt.toISOString(),
   dateModified: (post.data.updatedAt ?? post.data.publishedAt).toISOString(),
   mainEntityOfPage: canonical,
@@ -68,8 +74,6 @@ const schema = {
   title={post.data.title}
   description={description}
   image={coverUrl}
-  language={post.data.lang}
-  translations={translations}
   ogType="article"
   pagefindBody
   schema={schema}
@@ -166,7 +170,7 @@ const schema = {
       ) : <span></span>}
     </nav>
 
-    {FEATURES.comments && SITE.giscus && <Giscus language={post.data.lang} />}
+    {FEATURES.comments && SITE.giscus && <Giscus />}
   </article>
 
   {FEATURES.tableOfContents && tocHeadings.length > 0 && (

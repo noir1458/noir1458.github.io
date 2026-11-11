@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { SITE, SUPPORTED_LANGUAGE_CODES, USER_CONFIG } from "../src/config.ts";
+import { USER_CONFIG } from "../src/config.ts";
 import { postCategoriesSchema } from "../src/lib/content/postCategories.ts";
 import { projectFrontmatterSchema } from "../src/lib/content/projectSchema.ts";
 import { slugifyTermValue } from "../src/lib/content/termSlugs.ts";
@@ -9,8 +9,6 @@ import { slugifyTermValue } from "../src/lib/content/termSlugs.ts";
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const contentRoot = path.join(projectRoot, "content/posts");
 const projectContentRoot = path.join(projectRoot, "content/projects");
-const supportedLanguages = [...SUPPORTED_LANGUAGE_CODES];
-const defaultLanguage = SITE.language;
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -39,26 +37,13 @@ for (const file of files) {
     continue;
   }
 
-  const { title, slug, description, publishedAt, tags, translationKey } = parsed.data;
-  const lang = parsed.data.lang ?? defaultLanguage;
+  const { title, slug, description, publishedAt, tags } = parsed.data;
   const filename = path.basename(file);
-  const expectedFilename = lang === defaultLanguage ? "index.md" : `${lang}.md`;
 
   if (!title || typeof title !== "string") errors.push(`${relative}: title is required`);
   if (!slug || typeof slug !== "string") errors.push(`${relative}: slug is required`);
-  if (!supportedLanguages.includes(lang)) {
-    errors.push(`${relative}: unsupported lang "${lang}"`);
-  }
-  if (
-    translationKey !== undefined
-    && (typeof translationKey !== "string"
-      || !translationKey.trim()
-      || /[/\\?#\s]/u.test(translationKey))
-  ) {
-    errors.push(`${relative}: translationKey must be a non-empty URL-safe identifier`);
-  }
-  if (filename !== expectedFilename) {
-    errors.push(`${relative}: filename must match lang (${expectedFilename})`);
+  if (filename !== "index.md") {
+    errors.push(`${relative}: a post must be named index.md inside its own folder`);
   }
   if (description !== undefined && (typeof description !== "string" || !description.trim())) {
     errors.push(`${relative}: description must be a non-empty string when provided`);
@@ -77,23 +62,16 @@ for (const file of files) {
     errors.push(`${relative}: unsupported Jekyll/Liquid syntax`);
   }
 
-  const routeKey = `${lang}:${slug}`;
-  if (routes.has(routeKey)) {
-    errors.push(
-      `${relative}: duplicate ${lang} slug "${slug}" also used by ${routes.get(routeKey)}`
-    );
+  if (routes.has(slug)) {
+    errors.push(`${relative}: duplicate slug "${slug}" also used by ${routes.get(slug)}`);
   } else {
-    routes.set(routeKey, relative);
+    routes.set(slug, relative);
   }
 
   entries.push({
     file,
     relative,
-    directory: path.dirname(file),
-    filename,
-    lang,
     slug,
-    translationKey: translationKey ?? slug,
     draft: parsed.data.draft === true,
     categories: categoryResult.success ? categoryResult.data.categories : []
   });
@@ -116,48 +94,10 @@ for (const file of files) {
   }
 }
 
-const groups = new Map();
-for (const entry of entries) {
-  const group = groups.get(entry.translationKey) ?? [];
-  group.push(entry);
-  groups.set(entry.translationKey, group);
-}
-
-for (const [translationKey, group] of groups) {
-  const directories = new Set(group.map((entry) => entry.directory));
-  const slugs = new Set(group.map((entry) => entry.slug));
-  const draftStates = new Set(group.map((entry) => entry.draft));
-  const languages = new Map();
-
-  for (const entry of group) {
-    const existing = languages.get(entry.lang);
-    if (existing) {
-      errors.push(
-        `${entry.relative}: duplicate ${entry.lang} translation for "${translationKey}" also used by ${existing.relative}`
-      );
-    } else {
-      languages.set(entry.lang, entry);
-    }
-  }
-
-  if (directories.size > 1) {
-    errors.push(`translationKey "${translationKey}" must be colocated in one post directory`);
-  }
-  if (slugs.size > 1) {
-    errors.push(
-      `translationKey "${translationKey}" has mismatched slugs: ${[...slugs].join(", ")}`
-    );
-  }
-  if (draftStates.size > 1) {
-    errors.push(`translationKey "${translationKey}" has inconsistent draft states`);
-  }
-}
-
-const translations = entries.length - groups.size;
 const configuredCategories = new Set(USER_CONFIG.categories.groups.flatMap((g) => g.categories));
 const ungroupedCategories = new Set();
 for (const entry of entries) {
-  if (entry.draft || entry.lang !== defaultLanguage) continue;
+  if (entry.draft) continue;
   for (const category of entry.categories) {
     const slug = slugifyTermValue(category);
     if (!configuredCategories.has(slug)) ungroupedCategories.add(slug);
@@ -225,8 +165,6 @@ for (const file of projectFiles) {
 }
 
 const result = {
-  logicalPosts: groups.size,
-  translations,
   contentEntries: entries.length,
   uniqueRoutes: routes.size,
   projectEntries: projectFiles.length,

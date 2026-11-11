@@ -67,20 +67,6 @@ const languageCode = z
     "must be a lowercase language code such as ko, en, or pt-br"
   );
 
-const languageDefinition = z
-  .object({
-    label: nonEmptyString,
-    locale: nonEmptyString,
-    ogLocale: z.string().regex(/^[A-Za-z]{2,3}_[A-Za-z]{2,4}$/u, "must look like ko_KR or en_US"),
-    pathPrefix: z
-      .string()
-      .refine(
-        (value) => value === "" || /^\/[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(value),
-        "must be empty or a path such as /en"
-      )
-  })
-  .strict();
-
 const giscusSchema = z
   .object({
     repo: nonEmptyString.regex(/^[^/\s]+\/[^/\s]+$/u, "must look like owner/repository"),
@@ -124,12 +110,6 @@ export const siteFileSchema = z
       })
       .strict()
       .default({ defaultTheme: "light", accentHue: 0, banner: bannerDefaults }),
-    languages: z
-      .record(languageCode, languageDefinition)
-      .refine(
-        (languages) => Object.keys(languages).length > 0,
-        "must define at least one language"
-      ),
     integrations: z
       .object({
         analyticsId: optionalString,

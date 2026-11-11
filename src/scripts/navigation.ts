@@ -50,7 +50,12 @@ function initNavigation() {
         }
       }
     });
-    closeButton?.focus({ preventScroll: true });
+    // With a keyboard at hand, opening the menu is usually the first step of a search.
+    const searchInput = menu.querySelector<HTMLInputElement>('input[type="search"]');
+    const typingExpected =
+      location.hash !== "#categories"
+      && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    (typingExpected && searchInput ? searchInput : closeButton)?.focus({ preventScroll: true });
   }
 
   function closeMenu() {

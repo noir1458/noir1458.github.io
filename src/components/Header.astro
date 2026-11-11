@@ -4,19 +4,8 @@ import Icon from "@/components/Icon.astro";
 import ThemeControls from "@/components/ThemeControls.astro";
 import TermLabel from "@/components/TermLabel.astro";
 import { countTerms, getPublishedPosts, groupCategories } from "@/utils/content";
-import type { SupportedLanguage } from "@/config";
-import type { PostTranslation } from "@/utils/content";
 
-interface Props {
-  language?: SupportedLanguage;
-  translations?: PostTranslation[];
-}
-
-const { language = SITE.language, translations = [] } = Astro.props;
 const links = NAVIGATION.header.filter((link) => !link.requiresFeature || FEATURES[link.requiresFeature]);
-const secondaryPaths = new Set(["/tags/", "/archives/"]);
-const primaryLinks = links.filter((link) => !secondaryPaths.has(link.href));
-const secondaryLinks = links.filter((link) => secondaryPaths.has(link.href));
 const groups = groupCategories(countTerms(await getPublishedPosts(), "categories"));
 const currentPath = Astro.url.pathname;
 const isCurrent = (href: string) => href === "/"
@@ -57,7 +46,7 @@ const isCurrent = (href: string) => href === "/"
         )}
         <nav class="menu-links" aria-label="Browse the blog">
           <div class="menu-primary-links">
-            {primaryLinks.map((link) => (
+            {links.map((link) => (
               <a href={link.href} rel={link.external ? "noopener noreferrer" : undefined} target={link.external ? "_blank" : undefined} aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}>
                 {link.label}
               </a>
@@ -83,24 +72,9 @@ const isCurrent = (href: string) => href === "/"
               ))}
             </div>
           </section>
-          <div class="menu-secondary-links">
-            {secondaryLinks.map((link) => (
-              <a href={link.href} rel={link.external ? "noopener noreferrer" : undefined} target={link.external ? "_blank" : undefined} aria-current={!link.external && isCurrent(link.href) ? "page" : undefined}>
-                {link.label}
-              </a>
-            ))}
-          </div>
         </nav>
-        {translations.length > 1 && (
-          <nav class="menu-languages" aria-label="Article language">
-            <span class="menu-section-label">Article language</span>
-            {translations.map((translation) => (
-              <a href={translation.href} hreflang={translation.lang} lang={translation.lang} aria-current={translation.lang === language ? "page" : undefined}>{translation.label}</a>
-            ))}
-          </nav>
-        )}
-        {FEATURES.darkMode && <ThemeControls />}
       </div>
     </div>
+    {FEATURES.darkMode && <ThemeControls />}
   </dialog>
 </header>

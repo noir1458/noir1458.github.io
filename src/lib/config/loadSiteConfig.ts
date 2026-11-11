@@ -120,34 +120,7 @@ function loadMarkdownConfig<T extends z.ZodType>(
 
 function validateCombinedConfig(config: UserConfig, publicDirectory: string): void {
   const errors: string[] = [];
-  const { language, timeZone } = config.site;
-  const languageEntries = Object.entries(config.languages);
-
-  if (config.profile.data.language && !config.languages[config.profile.data.language]) {
-    errors.push(
-      "config/profile.md: language: must match a configured language in config/site.yaml"
-    );
-  }
-
-  if (!config.languages[language]) {
-    errors.push(`config/site.yaml: site.language: no matching languages.${language} entry`);
-  } else if (config.languages[language].pathPrefix !== "") {
-    errors.push(
-      `config/site.yaml: languages.${language}.pathPrefix: default language must use an empty pathPrefix`
-    );
-  }
-
-  const prefixes = new Map<string, string>();
-  for (const [code, definition] of languageEntries) {
-    const existing = prefixes.get(definition.pathPrefix);
-    if (existing) {
-      errors.push(
-        `config/site.yaml: languages.${code}.pathPrefix: duplicates languages.${existing}.pathPrefix`
-      );
-    } else {
-      prefixes.set(definition.pathPrefix, code);
-    }
-  }
+  const { timeZone } = config.site;
 
   try {
     new Intl.DateTimeFormat("en", { timeZone }).format();
@@ -218,8 +191,7 @@ export function loadSiteConfig(options: LoadSiteConfigOptions = {}): UserConfig 
     navigation,
     social,
     features,
-    profile,
-    supportedLanguageCodes: Object.keys(site.languages)
+    profile
   };
 
   validateCombinedConfig(config, publicDirectory);

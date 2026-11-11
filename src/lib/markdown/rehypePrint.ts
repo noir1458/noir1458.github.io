@@ -2,8 +2,7 @@ import type { Element, Root } from "hast";
 
 interface Options {
   siteUrl: string;
-  defaultLanguage: string;
-  languagePrefixes: Record<string, string>;
+  language: string;
 }
 
 interface MarkdownFile {
@@ -21,9 +20,8 @@ export function rehypePrint(options: Options) {
   return (tree: Root, file: MarkdownFile) => {
     const frontmatter = file.data?.astro?.frontmatter;
     if (typeof frontmatter?.slug !== "string") return;
-    const language = String(frontmatter.lang ?? options.defaultLanguage);
-    const prefix = options.languagePrefixes[language] ?? "";
-    const base = new URL(`${prefix}/posts/${frontmatter.slug}/`, options.siteUrl);
+    const { language } = options;
+    const base = new URL(`/posts/${frontmatter.slug}/`, options.siteUrl);
     const references = new Map<string, number>();
 
     function visit(parent: Root | Element): void {

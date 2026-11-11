@@ -1,32 +1,23 @@
 import { loadSiteConfig } from "./lib/config/index.ts";
+import { localeTags } from "./lib/config/locale.ts";
 import { prefixSitePath, siteBasePath } from "./lib/config/sitePaths.ts";
 
 export const USER_CONFIG = loadSiteConfig();
 
-export const SUPPORTED_LANGUAGE_CODES = USER_CONFIG.supportedLanguageCodes;
-
-export type SupportedLanguage = string;
-
-export const LANGUAGES = USER_CONFIG.languages;
 export const NAVIGATION = USER_CONFIG.navigation;
 export const SOCIAL = USER_CONFIG.social;
 export const FEATURES = USER_CONFIG.features;
 export const PROFILE = USER_CONFIG.profile;
 export const APPEARANCE = USER_CONFIG.appearance;
 
-const defaultLanguage = LANGUAGES[USER_CONFIG.site.language];
 const basePath = siteBasePath(USER_CONFIG.site.url);
-
-if (!defaultLanguage) {
-  throw new Error(`No language configuration found for ${USER_CONFIG.site.language}.`);
-}
 
 export const SITE = {
   title: USER_CONFIG.site.title,
   description: USER_CONFIG.site.description,
   url: USER_CONFIG.site.url,
   basePath,
-  locale: defaultLanguage.locale,
+  locale: localeTags(USER_CONFIG.site.language).locale,
   language: USER_CONFIG.site.language,
   timeZone: USER_CONFIG.site.timeZone,
   socialImage: USER_CONFIG.branding.defaultOgImage,
@@ -43,6 +34,11 @@ export const SITE = {
   googleVerification: USER_CONFIG.integrations.googleSiteVerification,
   giscus: USER_CONFIG.integrations.giscus
 } as const;
+
+/** Open Graph locale for a page language; the About page may differ from the site language. */
+export function ogLocale(language: string = SITE.language): string {
+  return localeTags(language).ogLocale;
+}
 
 export function sitePath(value: string): string {
   return prefixSitePath(value, SITE.basePath);

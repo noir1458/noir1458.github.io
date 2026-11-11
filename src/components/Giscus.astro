@@ -1,12 +1,7 @@
 ---
-import { APPEARANCE, FEATURES, SITE, type SupportedLanguage } from "@/config";
+import { APPEARANCE, FEATURES, SITE } from "@/config";
 import PrintComments from "./PrintComments.astro";
 
-interface Props {
-  language?: SupportedLanguage;
-}
-
-const { language = SITE.language } = Astro.props;
 const giscus = SITE.giscus;
 const defaultTheme = FEATURES.darkMode ? APPEARANCE.defaultTheme : "light";
 const commentTheme = defaultTheme === "system" ? "preferred_color_scheme" : defaultTheme === "dark" ? "dark_dimmed" : "light";
@@ -32,11 +27,11 @@ const commentTheme = defaultTheme === "system" ? "preferred_color_scheme" : defa
         data-emit-metadata="0"
         data-input-position="top"
         data-theme={commentTheme}
-        data-lang={language}
+        data-lang={SITE.language}
         crossorigin="anonymous"
         async
       ></script>
     </div>
   </section>
 )}
-{giscus && <PrintComments language={language} />}
+{giscus && <PrintComments />}

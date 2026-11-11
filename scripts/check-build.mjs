@@ -19,7 +19,6 @@ const distRoot = path.join(projectRoot, "dist");
 const contentRoot = path.join(projectRoot, "content/posts");
 const publishedPostRoutesPath = path.join(projectRoot, "tests/baselines/published-post-routes.txt");
 const siteOrigin = SITE.url;
-const defaultLanguage = SITE.language;
 
 function walk(directory, predicate = () => true) {
   if (!fs.existsSync(directory)) return [];
@@ -41,8 +40,7 @@ function resolvesPublicPath(urlPath) {
 }
 
 function postPath(entry) {
-  const prefix = entry.lang === defaultLanguage ? "" : `/${entry.lang}`;
-  return `${prefix}/posts/${entry.slug}/`;
+  return `/posts/${entry.slug}/`;
 }
 
 function outputFileForPath(urlPath) {
@@ -152,6 +150,28 @@ for (const route of publishedPostRoutes) {
     errors.push(`published post route baseline contains an invalid route: ${route}`);
   }
 }
+// Translations were retired; their published addresses must keep redirecting to the original post.
+const retiredTranslationRoutes = new Map(
+  publishedPostRoutes
+    .map((route) => [route, route.match(/^\/[a-z][a-z0-9-]*(\/posts\/[^/?#]+\/)$/u)?.[1]])
+    .filter(([, original]) => original)
+);
+const redirectFiles = new Set([path.join(distRoot, "categories/index.html")]);
+for (const [route, original] of retiredTranslationRoutes) {
+  const redirectFile = outputFileForPath(route);
+  redirectFiles.add(redirectFile);
+  if (!uniquePublishedPostRoutes.has(original)) {
+    errors.push(`${route}: retired translation has no original post route ${original}`);
+  }
+  if (!fs.existsSync(redirectFile)) {
+    errors.push(`${route}: retired translation route is missing its redirect page`);
+    continue;
+  }
+  const refresh = findTag(fs.readFileSync(redirectFile, "utf8"), "meta", "http-equiv", "refresh");
+  if (!tagAttribute(refresh ?? "", "content")?.endsWith(original)) {
+    errors.push(`${route}: retired translation must redirect to ${original}`);
+  }
+}
 
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");
@@ -233,7 +253,7 @@ for (const link of visibleNavigationLinks) {
 
 const collectionFiles = htmlFiles.filter(
   (file) =>
-    file !== categoryRedirectPath
+    !redirectFiles.has(file)
     && /^(?:categories|tags)\//u.test(path.relative(distRoot, file).replaceAll(path.sep, "/"))
 );
 for (const file of collectionFiles) {
@@ -316,7 +336,7 @@ const expectedBannerCount = APPEARANCE.banner.enabled ? 1 : 0;
 const expectedBannerSource = `src="${sitePath(APPEARANCE.banner.image)}"`;
 const expectedBannerTitleTone = `data-banner-title-tone="${APPEARANCE.banner.titleTone}"`;
 for (const file of htmlFiles) {
-  if (file === categoryRedirectPath) continue;
+  if (redirectFiles.has(file)) continue;
   const html = fs.readFileSync(file, "utf8");
   const label = path.relative(distRoot, file);
   const bannerCount = countOccurrences(html, 'class="hero-banner"');
@@ -354,7 +374,7 @@ if (APPEARANCE.banner.enabled) {
 
 if (
   !buildCss.includes("--accent-hue")
-  || !buildCss.includes(".accent-hue-control input[type=range]")
+  || !buildCss.includes(".menu-accent-control input")
   || !buildCss.includes("width:100%")
 ) {
   errors.push("build CSS: Hue palette or horizontal slider is missing");
@@ -429,7 +449,7 @@ if (FEATURES.rss) {
   }
   const expectedRssItems = walk(contentRoot, (file) => file.endsWith(".md"))
     .map((file) => matter(fs.readFileSync(file, "utf8")).data)
-    .filter((data) => !data.draft && (data.lang ?? defaultLanguage) === defaultLanguage).length;
+    .filter((data) => !data.draft).length;
   const rssItems = [...rssFeed.matchAll(/<item>/gu)].length;
   if (rssItems !== expectedRssItems) {
     errors.push(`rss.xml: expected ${expectedRssItems} items, found ${rssItems}`);
@@ -531,8 +551,6 @@ const contentEntries = walk(contentRoot, (file) => file.endsWith(".md"))
       filename: path.basename(file),
       slug: data.slug,
       categories: postCategoriesSchema.parse(data).categories,
-      lang: data.lang ?? defaultLanguage,
-      translationKey: data.translationKey ?? data.slug,
       publishedAt: new Date(data.publishedAt),
       mermaidBlocks: (parsed.content.match(/^```mermaid\s*$/gmu) ?? []).length,
       draft: data.draft === true
@@ -546,9 +564,7 @@ const archiveYearFormatter = new Intl.DateTimeFormat("en", {
   year: "numeric",
   timeZone: SITE.timeZone
 });
-for (const entry of contentEntries
-  .filter((entry) => entry.lang === defaultLanguage)
-  .sort((a, b) => b.publishedAt - a.publishedAt)) {
+for (const entry of [...contentEntries].sort((a, b) => b.publishedAt - a.publishedAt)) {
   const year = Number(archiveYearFormatter.format(entry.publishedAt));
   if (!archiveYears.has(year)) archiveYears.set(year, []);
   archiveYears.get(year).push(entry);
@@ -664,24 +680,15 @@ for (const { route, year, page, pageCount, count, expected } of archiveCases) {
     }
   }
 }
-const expectedArchiveLinks = contentEntries
-  .filter((entry) => entry.lang === defaultLanguage)
-  .map(postPath);
+const expectedArchiveLinks = contentEntries.map(postPath);
 if (JSON.stringify(archivePostLinks.sort()) !== JSON.stringify(expectedArchiveLinks.sort())) {
-  errors.push("archive year pages must contain every published default-language post exactly once");
+  errors.push("archive year pages must contain every published post exactly once");
 }
 const archiveFiles = htmlFiles.filter((file) =>
   path.relative(distRoot, file).replaceAll(path.sep, "/").startsWith("archives/")
 );
 if (archiveFiles.length !== archiveCases.length) {
   errors.push(`expected ${archiveCases.length} archive pages, found ${archiveFiles.length}`);
-}
-
-const groups = new Map();
-for (const entry of contentEntries) {
-  const group = groups.get(entry.translationKey) ?? [];
-  group.push(entry);
-  groups.set(entry.translationKey, group);
 }
 
 if (FEATURES.sitemap) {
@@ -697,7 +704,6 @@ if (FEATURES.sitemap) {
 }
 
 let postDescriptions = 0;
-let multilingualPostPages = 0;
 let renderedMermaidBlocks = 0;
 for (const entry of contentEntries) {
   const urlPath = postPath(entry);
@@ -751,9 +757,9 @@ for (const entry of contentEntries) {
     errors.push(`${relativeOutput}: rendered Mermaid while features.mermaid is disabled`);
   }
   const htmlLanguage = html.match(/<html\b[^>]*\slang=["']([^"']+)["']/i)?.[1];
-  if (htmlLanguage !== entry.lang) {
+  if (htmlLanguage !== SITE.language) {
     errors.push(
-      `${relativeOutput}: expected html lang ${entry.lang}, found ${htmlLanguage ?? "none"}`
+      `${relativeOutput}: expected html lang ${SITE.language}, found ${htmlLanguage ?? "none"}`
     );
   }
 
@@ -804,39 +810,13 @@ for (const entry of contentEntries) {
     if (postSchema.author?.name !== SITE.author.name) {
       errors.push(`${relativeOutput}: JSON-LD author does not match configuration`);
     }
-    if (postSchema.inLanguage !== entry.lang) {
-      errors.push(`${relativeOutput}: JSON-LD language does not match ${entry.lang}`);
+    if (postSchema.inLanguage !== SITE.language) {
+      errors.push(`${relativeOutput}: JSON-LD language does not match ${SITE.language}`);
     }
   }
 
-  const group = groups.get(entry.translationKey) ?? [];
-  if (group.length > 1) {
-    multilingualPostPages += 1;
-    for (const translation of group) {
-      const alternateTag = [...html.matchAll(/<link\b[^>]*>/gi)]
-        .map((match) => match[0])
-        .find(
-          (tag) =>
-            tagAttribute(tag, "rel") === "alternate"
-            && tagAttribute(tag, "hreflang") === translation.lang
-        );
-      const expectedHref = `${siteOrigin}${postPath(translation)}`;
-      if (!alternateTag || tagAttribute(alternateTag, "href") !== expectedHref) {
-        errors.push(`${relativeOutput}: missing reciprocal hreflang ${translation.lang}`);
-      }
-    }
-    const xDefaultTag = [...html.matchAll(/<link\b[^>]*>/gi)]
-      .map((match) => match[0])
-      .find(
-        (tag) =>
-          tagAttribute(tag, "rel") === "alternate" && tagAttribute(tag, "hreflang") === "x-default"
-      );
-    if (!xDefaultTag) {
-      errors.push(`${relativeOutput}: missing hreflang x-default`);
-    }
-    if (!html.includes('class="menu-languages"')) {
-      errors.push(`${relativeOutput}: missing article language selector`);
-    }
+  if (/\shreflang=/u.test(html) || html.includes('class="menu-languages"')) {
+    errors.push(`${relativeOutput}: retired translation links are still rendered`);
   }
 }
 
@@ -852,7 +832,10 @@ if (markdownGuide) {
 
 const generatedPostPages = walk(
   distRoot,
-  (file) => file.endsWith("/index.html") && /(?:^|\/)posts\//u.test(path.relative(distRoot, file))
+  (file) =>
+    file.endsWith("/index.html")
+    && /(?:^|\/)posts\//u.test(path.relative(distRoot, file))
+    && !redirectFiles.has(file)
 );
 const generatedPostRoutes = new Set(
   generatedPostPages.map(
@@ -864,7 +847,7 @@ const generatedPostRoutes = new Set(
   )
 );
 for (const route of publishedPostRoutes) {
-  if (!generatedPostRoutes.has(route)) {
+  if (!generatedPostRoutes.has(route) && !retiredTranslationRoutes.has(route)) {
     errors.push(`missing required published post route: ${route}`);
   }
 }
@@ -879,12 +862,12 @@ console.log(
       archivePages: archiveFiles.length,
       expectedPostPages: contentEntries.length,
       postPages: generatedPostPages.length,
-      multilingualPostPages,
+      retiredTranslationRedirects: retiredTranslationRoutes.size,
       postDescriptions,
       renderedMermaidBlocks,
       requiredPublishedPostRoutes: publishedPostRoutes.length,
-      preservedPublishedPostRoutes: publishedPostRoutes.filter((route) =>
-        generatedPostRoutes.has(route)
+      preservedPublishedPostRoutes: publishedPostRoutes.filter(
+        (route) => generatedPostRoutes.has(route) || fs.existsSync(outputFileForPath(route))
       ).length,
       publishedPostRoutesSha256: crypto
         .createHash("sha256")

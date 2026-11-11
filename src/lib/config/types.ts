@@ -25,5 +25,4 @@ export interface UserConfig extends SiteFileConfig {
   social: SocialConfig;
   features: FeatureConfig;
   profile: ProfileConfig;
-  supportedLanguageCodes: string[];
 }

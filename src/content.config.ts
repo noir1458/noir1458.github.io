@@ -1,7 +1,7 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
-import { FEATURES, SITE, SUPPORTED_LANGUAGE_CODES } from "@/config";
+import { FEATURES } from "@/config";
 import { postCategoriesSchema } from "@/lib/content/postCategories";
 import { projectSchema } from "@/lib/content/projectSchema";
 
@@ -15,11 +15,6 @@ const posts = defineCollection({
     postCategoriesSchema.safeExtend({
       title: z.string().min(1),
       slug: z.string().regex(/^[^/\\?#\s]+$/u),
-      lang: z.enum(SUPPORTED_LANGUAGE_CODES).default(SITE.language),
-      translationKey: z
-        .string()
-        .regex(/^[^/\\?#\s]+$/u)
-        .optional(),
       description: z.string().min(1).max(220).optional(),
       publishedAt: z.coerce.date(),
       updatedAt: z.coerce.date().optional(),

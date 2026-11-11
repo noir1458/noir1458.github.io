@@ -12,8 +12,7 @@ console.log(
       site: config.site.title,
       origin: config.site.url,
       accentHue: config.appearance.accentHue,
-      defaultLanguage: config.site.language,
-      supportedLanguages: config.supportedLanguageCodes,
+      language: config.site.language,
       navigationLinks: config.navigation.header.length + config.navigation.footer.length,
       configuredSocialLinks,
       enabledFeatures
