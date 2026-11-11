@@ -48,10 +48,10 @@ Choose the site's default theme (`light`, `dark`, or `system`) and accent hue
 ```yaml
 appearance:
   defaultTheme: system
-  accentHue: 0
+  accentHue: 250
 ```
 
-This blog defaults to the system theme and hue 0. A hue of 18 preserves the original Orange
+This blog defaults to the system theme and hue 250. A hue of 18 preserves the original Orange
 Square 0.1.2 light and dark accent colors. Other values rotate that palette's hue.
 Visitor choices override these defaults and persist in their browser. The system
 theme follows the operating system. The hue choice is stored under

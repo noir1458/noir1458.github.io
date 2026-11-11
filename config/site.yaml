@@ -18,7 +18,7 @@ branding:
 
 appearance:
   defaultTheme: system # light, dark, or system
-  accentHue: 0 # 0-360; 18 preserves the original Orange Square palette
+  accentHue: 250 # 0-360; 18 preserves the original Orange Square palette
   banner:
     enabled: false
     image: /images/site/banner.webp

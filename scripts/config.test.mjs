@@ -41,7 +41,7 @@ test("the repository configuration is valid", () => {
   assert.equal(config.social.email, undefined);
   assert.equal("resume" in config.social, false);
   assert.equal(config.appearance.defaultTheme, "system");
-  assert.equal(config.appearance.accentHue, 0);
+  assert.equal(config.appearance.accentHue, 250);
   assert.deepEqual(config.appearance.banner, {
     enabled: false,
     image: "/images/site/banner.webp",
