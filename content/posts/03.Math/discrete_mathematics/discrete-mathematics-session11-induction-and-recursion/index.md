@@ -2,6 +2,7 @@
 title: '11차시. 수학적 귀납법, 강한 귀납법과 재귀적 정의'
 slug: discrete-mathematics-session11-induction-and-recursion
 publishedAt: '2026-11-17'
+updatedAt: '2026-11-18'
 categories: discrete_mathematics
 tags: [이산수학, 귀납법, 재귀, 피보나치, 구조적귀납법]
 description: '귀납 가정을 사용하는 증명, 강한 귀납법과 정렬성, 피보나치와 라메의 정리, 재귀적 집합과 문자열·트리의 구조적 귀납법을 정리한다.'
@@ -384,7 +385,9 @@ $$
 
 이진 트리에서는 왼쪽과 오른쪽 자리를 구분한다. 강의의 **full binary tree**는 정점 하나에서 시작하고, 두 개의 비어 있지 않은 full binary tree를 새 루트의 두 자식으로 붙여 만든다. 따라서 **모든 내부 정점의 자식이 정확히 두 개**다.
 
-강의는 이를 “완전 이진 트리”라고 번역하지만, 여기서는 혼동을 피하려고 영문 *full*과 정의를 함께 쓴다. 레벨을 왼쪽부터 채우는 *complete* 조건이나 모든 잎의 깊이가 같은 *perfect* 조건까지 요구하는 것은 아니다.
+강의 44쪽의 **extended binary tree**는 기초에 빈 트리 $\varnothing$를 허용하고, 새 루트 아래의 왼쪽·오른쪽 부분 트리에도 빈 트리를 쓸 수 있게 정의한다. 따라서 한쪽만 비어 있는 트리도 만들 수 있다. 이 자료에서 full과 extended의 차이는 **빈 부분 트리를 허용하는가**이며, 앞의 full 트리에 관한 잎 수 공식을 자식 하나인 정점이 있는 트리에 그대로 적용하면 안 된다.
+
+강의는 full binary tree를 “완전 이진 트리”라고 번역하지만, 여기서는 혼동을 피하려고 영문 *full*과 정의를 함께 쓴다. 레벨을 왼쪽부터 채우는 *complete* 조건이나 모든 잎의 깊이가 같은 *perfect* 조건까지 요구하는 것은 아니다.
 
 ```text
        ●
@@ -508,9 +511,46 @@ $b_0=2<4$, $b_1=3<8$을 확인한다. $k\ge1$에서 앞의 두 항에 대한 가
 </details>
 
 <details>
-<summary>6. 문자열의 0 개수를 세는 함수 zero를 재귀적으로 정의하면?</summary>
+<summary>6. 0과 1로 이루어진 문자열에서 0 개수를 세는 zero를 재귀적으로 정의하고, zero(st) = zero(s) + zero(t)를 구조적 귀납법으로 증명하라.</summary>
 
-$\operatorname{zero}(\lambda)=0$이고, $\operatorname{zero}(w0)=\operatorname{zero}(w)+1$, $\operatorname{zero}(w1)=\operatorname{zero}(w)$로 둔다. 따라서 $\operatorname{zero}(10100)=3$이다. 빈 문자열과 두 가지 생성 경우를 모두 정의했다.
+먼저 $\operatorname{zero}(\lambda)=0$이고, $\operatorname{zero}(w0)=\operatorname{zero}(w)+1$, $\operatorname{zero}(w1)=\operatorname{zero}(w)$로 정의한다. 예를 들어 $\operatorname{zero}(10100)=3$이다.
+
+이제 $s$를 임의의 문자열로 고정하고 **$t$의 생성 구조**에 대해 귀납한다.
+
+**기초 단계:** $t=\lambda$이면 $s\lambda=s$이고 $\operatorname{zero}(\lambda)=0$이므로
+
+$$
+\operatorname{zero}(s\lambda)=\operatorname{zero}(s)
+=\operatorname{zero}(s)+\operatorname{zero}(\lambda).
+$$
+
+**귀납 가정:** 어떤 문자열 $t$에 대해 $\operatorname{zero}(st)=\operatorname{zero}(s)+\operatorname{zero}(t)$라고 가정한다.
+
+**생성 규칙 1:** $t$ 뒤에 0을 붙이면
+
+$$
+\begin{aligned}
+\operatorname{zero}(s(t0))
+&=\operatorname{zero}((st)0)\\
+&=\operatorname{zero}(st)+1\\
+&=\operatorname{zero}(s)+\operatorname{zero}(t)+1 &&\text{(귀납 가정)}\\
+&=\operatorname{zero}(s)+\operatorname{zero}(t0).
+\end{aligned}
+$$
+
+**생성 규칙 2:** $t$ 뒤에 1을 붙이면
+
+$$
+\begin{aligned}
+\operatorname{zero}(s(t1))
+&=\operatorname{zero}((st)1)\\
+&=\operatorname{zero}(st)\\
+&=\operatorname{zero}(s)+\operatorname{zero}(t) &&\text{(귀납 가정)}\\
+&=\operatorname{zero}(s)+\operatorname{zero}(t1).
+\end{aligned}
+$$
+
+빈 문자열에서 참이고 **두 생성 규칙을 모두** 보였으므로 모든 $t$에 대해 성립한다. $s$도 임의로 고정했으므로 모든 문자열 $s,t$에 대해 증명이 끝난다. 정의만 쓰거나 예시 몇 개를 계산하는 것과, 모든 문자열에 대한 이 명제를 증명하는 것은 구분한다.
 
 </details>
 

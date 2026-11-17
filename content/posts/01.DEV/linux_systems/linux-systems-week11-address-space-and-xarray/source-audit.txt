@@ -58,3 +58,21 @@
 - 사용자 요청과 기존 e7ae166/d58e16e 배치 규칙에 따라, 새 글 묶음을 과목별로 2026-11-17부터 하루씩 역산.
 - 이 글의 publishedAt: 2026-11-17. 기존 배포 글의 발행일은 유지.
 - 작성·자료 대조일과 목록 정렬용 발행일을 구별한다.
+
+학습자료 충분성 재검토 및 보완: 2026-11-18 (Asia/Seoul)
+- Address Space 8-10쪽의 비트 분할과 15쪽 테이블 크기 산술을 재검토.
+  7절에 shift/mask 인덱스 계산과 offset이 0이 아닌 설명용 주소 예시 추가.
+- Practical10 20-41쪽의 정의/선언/콜백/출력/해제 및 43-45쪽 과제 요구를 재검토.
+  기존 13절은 결과 해석과 fio 조건은 있었지만 두 실험의 적용/실행 순서와 제출물은
+  빠져 있었음. printk와 ds_monitoring의 두 실험, file.c와 super.c의 연결,
+  빌드/마운트→fio→언마운트/모듈 제거→dmesg, PDF 제출물 설명을 보완.
+- 보조 Google Doc의 pxt4 file.c/super.c 및 ds_monitoring.o 링크 설명을 참고하고,
+  모듈 안의 DEFINE/DECLARE 관계는 Practical10 33-41쪽과 대조.
+- fio 예제는 원문44쪽을 RAM4GiB/CPU4개에 대입한 가상 설정. size=3G/job,
+  numjobs=4로 전체12GiB. directory는 이미 PXT4로 마운트한 실습용 경로가 전제.
+  원본 블록장치 포맷/직접쓰기 명령은 추가하지 않음.
+- https://fio.readthedocs.io/en/latest/fio_doc.html#verification
+  verify=meta의 deprecated 상태와 검증/readback 구분을 확인. 원문 옵션은 표시하되
+  사용 버전과 옵션 변경 여부를 기록하도록 설명. 최신 옵션을 수업 조건으로 주장하지 않음.
+- 모듈 종료 함수의 출력 시점을 확인하는 복습문제11 추가.
+- publishedAt/slug 유지, updatedAt=2026-11-18. 커널/모듈/fio 실험과 결과 검증은 미수행.

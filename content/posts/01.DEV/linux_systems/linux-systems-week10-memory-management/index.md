@@ -2,7 +2,7 @@
 title: 'week10 : Memory Management와 CFS vruntime 실습'
 slug: linux-systems-week10-memory-management
 publishedAt: '2026-11-04'
-updatedAt: '2026-11-17'
+updatedAt: '2026-11-18'
 categories: Linux Systems
 tags: [Linux, Memory, NUMA, Buddy, CFS, vruntime, 리눅스응용설계]
 description: '메모리 계층·NUMA·buddy allocator를 정리하고, 과제 9의 CFS vruntime 동결, 같은 CPU에서의 태스크 경쟁, CPU 시간과 누적 점유율 해석을 살펴본다.'
@@ -516,11 +516,13 @@ wait
 
 VIP가 살아 있는 동안 `/proc/<pid>/sched`에서 다음 세 값을 **서로 다른 두 시점**에 확인한다. 자료는 이 파일을 관찰하기 위한 `CONFIG_SCHED_DEBUG`도 언급한다.
 
-| 관측값 | 예상되는 관계와 확인할 점 |
-|---|---|
-| `se.vruntime` | VIP가 계속 실행되는 구간에서 증가가 생략되는지 확인 |
-| `se.sum_exec_runtime` | 같은 구간에서 실제 실행 시간은 증가하는지 확인 |
-| `nr_switches` | 실제 태스크 교체 횟수의 변화 확인; tick 수와 구별 |
+| 관측값 | v5.15의 표시 단위 | 예상되는 관계와 확인할 점 |
+|---|---|---|
+| `se.vruntime` | ms로 환산한 가상 실행 시간 | VIP가 계속 실행되는 구간에서 증가가 생략되는지 확인 |
+| `se.sum_exec_runtime` | ms | 같은 구간에서 실제 실행 시간은 증가하는지 확인 |
+| `nr_switches` | 횟수 | 실제 태스크 교체 횟수의 변화 확인; tick 수와 구별 |
+
+**출력 단위를 먼저 맞춘다.** 제공 `cpu_hog.c`의 `wall`·`cpu`는 초(s)다. 반면 Linux v5.15의 `/proc/<pid>/sched`는 내부 ns 값을 `SPLIT_NS`로 나누어 위 두 시간 필드를 ms 단위의 소수로 출력한다. 예를 들어 `1500.000000`은 1500초가 아니라 1500ms, 즉 1.5초다. `vruntime`은 같은 단위로 표시되어도 weight로 보정한 값이므로 그대로 실제 CPU 시간으로 해석하지 않는다. [v5.15의 출력 코드](https://github.com/torvalds/linux/blob/v5.15/kernel/sched/debug.c)
 
 같은 PID를 두 번 읽어야 하며 첫 화면과 둘째 화면의 관측 시각도 기록해야 한다. 프로세스가 이미 종료했거나 동일 이름의 다른 프로세스를 읽었다면 비교가 성립하지 않는다. 이 과제는 CPU를 고정하고 연속 실행 구간을 관찰한다. 다른 조건의 wakeup·migration에서 생기는 `vruntime` 조정까지 모두 없앴다고 단정하는 실험은 아니다.
 
@@ -533,6 +535,8 @@ VIP가 살아 있는 동안 `/proc/<pid>/sched`에서 다음 세 값을 **서로
 예를 들어 일반 태스크가 VIP보다 먼저 시작했다면, VIP가 나타나기 전에 얻은 CPU 시간도 최종 누적값에 남는다. VIP가 종료한 뒤 일반 태스크가 다시 실행한 시간도 포함될 수 있다. 따라서 일반 태스크의 최종 share가 0%가 아니라는 이유만으로 VIP가 실행되는 동안의 starvation을 곧바로 부정할 수 없다.
 
 **보충 관측 방법:** 두 태스크가 모두 살아 있는 공통 구간에서 CPU 시간과 wall time을 각각 두 번 측정하고 `CPU 시간의 증가량 / wall time의 증가량`을 비교하면, 시작·종료 시점 차이를 줄여 해석할 수 있다. 이는 과제의 누적 출력과 별도로 해석을 돕는 방법이다. 측정 프로그램 자체의 초기 실행 비용도 있어 제공 코드의 비율을 엄밀한 동일 구간의 차분 측정과 같은 것으로 보지는 않는다.
+
+**설명용 계산:** 같은 PID의 `se.sum_exec_runtime`이 두 관측 사이에 1500ms 증가하고 경과 시간은 2초라면, 단위를 맞춘 구간 비율은 `(1500 / 1000) / 2 × 100 = 75%`다. 이 숫자는 측정값이 아니라 계산 예제이며, 시작·끝의 누적값 자체가 아닌 두 값의 차이를 사용한다.
 
 ### 과제 제출물의 범위
 
@@ -638,6 +642,12 @@ Buddy의 페이지 단위를 작은 커널 객체 여러 개에 나눠 활용하
 <details><summary>15. 프로그램에 6초를 줬는데 DONE 출력이 더 늦게 나올 수 있는 이유는?</summary>
 
 종료 조건도 프로그램이 CPU를 받아 실행할 때 검사하기 때문이다. 오래 스케줄되지 못했다면 다음 실행 시점의 wall time이 이미 6초를 넘을 수 있다.
+
+</details>
+
+<details><summary>16. /proc의 sum_exec_runtime이 800 증가하고 wall time은 2초 지났다면 구간 CPU 비율은?</summary>
+
+이 실습의 v5.15 출력은 ms이므로 800ms = 0.8초다. `0.8 / 2 × 100 = 40%`다. vruntime의 증가량으로 대신 계산하면 실제 CPU 사용 시간을 구한 것이 아니다.
 
 </details>
 

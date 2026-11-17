@@ -45,3 +45,21 @@
 - 보충 차분 측정은 원문 요구와 구별.
 - 사용자 과거 실측 수치나 제출 여부를 기억으로 보충하지 않음.
 - 커널 빌드, 설치, 부팅, 실제 CPU 실험, 과제 제출은 이번 보완에서 수행하지 않음.
+
+학습자료 충분성 재검토 및 보완: 2026-11-18 (Asia/Seoul)
+- 이전 보완과 달리 이번에는 Memory Management [Overview].pdf와 _note.pdf의
+  1-30쪽 추출 텍스트를 확보하여 기존 메모리 관리 절의 범위와 필기 해석을 대조.
+  원문/필기 추출물: /private/tmp/linux-week10-overview-review.txt,
+  /private/tmp/linux-week10-overview-note-review.txt.
+  기존 첨부 s2-p14.webp, s2-p24.webp, s2-p30.webp의 watermark, buddyinfo,
+  migration type 그림도 시각 대조. 새로 PDF 전 페이지를 렌더링했다고 주장하지 않음.
+- Practical9 9-12쪽, 제공 cpu_hog.c 전체 및 앞선 week9의 CFS/tick/현재 엔티티
+  설명과 연결을 재검토. 핵심 과제 요구는 15절에 포함되어 있음을 확인.
+- 발견한 학습 빈틈: /proc/<pid>/sched 시간과 cpu_hog 출력의 단위 구별 누락.
+- https://github.com/torvalds/linux/blob/v5.15/kernel/sched/debug.c
+  nsec_high/nsec_low의 1,000,000 나눗셈, SPLIT_NS 및 PN 출력,
+  proc_sched_show_task의 se.vruntime/se.sum_exec_runtime 출력 경로를 확인.
+- 15절 관측 표에 ms/횟수 구별, 프로그램 출력 s와의 환산, 동일 구간 차분 예시 추가.
+  vruntime은 ms 표기여도 실제 CPU 시간이 아님을 명시. 복습문제16 추가.
+- 산술 예시는 가상 입력이며 사용자 측정이나 실제 실행 결과가 아님.
+- publishedAt/slug 유지, updatedAt=2026-11-18. 커널 빌드/부팅/실습은 미수행.
