@@ -1,0 +1,124 @@
+Linux 기존 글 학습 충분성 검토 기록
+검토일: 2026-11-18 (Asia/Seoul)
+범위: 기존 week2, week3, week4, week5, week6, week7, week9의 index.md 전체.
+week10·week11은 앞선 보완 범위이므로 이번 편집에서 제외했다.
+
+검토 기준
+- 강의의 개념·예제·필기와 실습/과제 요구를 기존 글 전체에 대조했다.
+- 설명용 계산, 원문 결과 화면, 사용자 자신의 수행 기록을 구별했다.
+- 실습은 수정 위치→빌드/실행 조건→관찰→제출 요구의 연결을 확인했다.
+- 의미 있는 빈틈만 보완했으며 모든 글을 일괄 재작성하지 않았다.
+- title, slug, publishedAt과 주차 순서를 유지했다. 본문을 수정한 4·5·6·7주차만 updatedAt을 2026-11-18로 추가했다.
+
+원자료 접근 및 읽기 범위
+Drive 2026-2/리눅스응용설계의 해당 주차 폴더에서 아래 26개 자료를 확인했다.
+전체 텍스트를 읽고 각 글의 설명·표·코드·과제 요구와 대조했다. 그림 속 코드와 필기에서 확인이 필요한 부분은 원본 PDF를 별도로 렌더링했다.
+아래 쪽수는 기본적으로 강의의 표시 쪽수다. fio+calclock은 표시 번호와 실제 PDF 페이지가 달라 별도로 기록했다.
+이 기록의 '읽음'은 전체 페이지의 추출 텍스트를 읽었다는 뜻이며, 모든 페이지를 이미지로 하나씩 검수했다는 뜻은 아니다.
+추출 목록/파일 ID/파일명: /private/tmp/linux-old-review/manifest.json
+전체 추출 텍스트: 같은 폴더의 week02-01.txt부터 week09-03.txt까지(아래 별칭 참조).
+만료될 수 있는 다운로드 URL은 이 기록에 저장하지 않았다.
+
+2주차: 유지, 학습·제출 범위 충분
+글: linux-systems-week2-introduction/index.md
+읽은 자료:
+  week02-01 [Practical Class 1-b] Linux Installation on UTM.pdf, 1~20쪽
+  week02-02 About Assignment.pdf, 1~5쪽
+  week02-03 Assignment-1.pdf, 1~4쪽
+  week02-04 [Practical Class 1] Linux Installation on VirtualBox.pdf, 1~23쪽
+  week02-05 2. Introduction.pdf, 1~30쪽
+확인: 운영체제/커널 역할, 시스템 계층, Linux 배포판과 소스 탐색, VM 설치의 CPU 아키텍처 조건, 배포판/커널 버전 구별, 과제1 설치 증거와 제출 요구가 포함되어 있다.
+개인 수행 주장: 글의 VirtualBox/Ubuntu 20.04.6 LTS 설치 기록은 Drive Assignment 폴더의 실제 과제1 보고서와 맞는다. 이번 검토가 설치 성공을 새로 재현했다는 뜻은 아니다. 보고서의 개인 식별 정보는 새로 복제하지 않았다.
+판정: 근거 없는 새 수행 주장은 없고 필수 설명·과제 항목 누락을 찾지 못했다. 본문/날짜 유지.
+한계: 설치 프로그램의 최신 UI, 현재 호스트와 VM 호환성, 실제 부팅을 새로 확인하지 않았다. 강의의 당시 환경을 설명한다.
+
+3주차: 유지, 학습·제출 범위 충분
+글: linux-systems-week3-system-call/index.md
+읽은 자료:
+  week03-01 note.pdf, 전체 5쪽
+  week03-02 3. System call.pdf, 1~25쪽
+  week03-03 [Practical Class 3] Kernel Compile.pdf, 1~33쪽
+  week03-04 Assignment-2.pdf, 1~2쪽
+  week03-05 [Practical Class 2] linux commands and tools.pdf, 1~37쪽
+확인: API/라이브러리/시스템 콜 구별, user/kernel 경계, 파일 계층과 VFS, 명령·편집기·소스 탐색, 커널 5.4.214 실습 설정과 빌드/부팅/버전 확인, Git 증거와 과제2 제출 요구가 연결되어 있다.
+필기: note.pdf는 수학과 Linux 필기가 섞여 있고 OCR이 많이 깨져 있어 원본 전체 5쪽을 렌더링해 읽었다. Linux 경계·VFS·module 관련 3~4쪽을 3주차에, process/thread 관련 4~5쪽을 4주차와 대조했다. 수학 필기를 Linux 설명으로 편입하지 않았다.
+판정: 필수 내용 누락이나 수정할 핵심 오개념을 찾지 못했다. 본문/날짜 유지.
+한계: 실제 커널 재빌드·재부팅·Git 원격 제출을 수행하지 않았다. 강의 버전과 최신 커널의 차이를 일괄 이식하지 않았다.
+
+4주차: 최소 보완, syscall 실습 연결 명확화
+글: linux-systems-week4-process-and-thread/index.md
+읽은 자료:
+  week04-01 5. Process and Thread.pdf, 1~47쪽
+  week04-02 Assignment-3.pdf, 1~3쪽
+  week04-03 [Practical Class 4] Linux System Call.pdf, 1~12쪽
+  위 note.pdf의 Linux 관련 4~5쪽
+기존 내용 확인: fork/COW와 CLONE_* 자원 공유, 실행/대기 상태, signal handler 제약, pthread 반환·join, kthread 종료·수명, 모듈 Makefile, syscall 추가와 과제3 요구가 포함되어 있다. 기존 글이 이미 원문 pthread 오류 검사·반환 포인터와 journald 용어를 바로잡고 있어 다시 고치지 않았다.
+보완 이유/근거:
+  P3(실습 연결): Practical4 7쪽은 ARM64 번호 정의·__SYSCALL 연결뿐 아니라 __NR_syscalls 갱신을 요구한다. 기존 그림에만 있던 관계를 본문에 명시했다. 기존 최대 번호를 낮추지 않는 조건과 아키텍처/버전별 규칙을 유지했다.
+  P3(실습 연결): Practical4 11~12쪽의 사용자 프로그램 컴파일·호출 단계를 기존 MYCALL_NR 예제와 연결했다. 검증한 번호를 명시적으로 정의하고 사용자 프로그램 빌드와 커널 빌드가 별도임을 설명했다.
+한계: syscall 번호를 임의로 확정하지 않았고 VM/커널/사용자 테스트 프로그램을 실행하지 않았다. 새 설명은 절차 예시이며 성공 결과가 아니다.
+
+5주차: 최소 보완, 과제5의 simple module 단계 연결
+글: linux-systems-week5-synchronization/index.md
+읽은 자료:
+  week05-01 6. synchronization (2).pdf, 1~25쪽
+  week05-02 6. Synchronization (1).pdf, 1~14쪽
+  week05-03 [Practical Class 5-b] Creating a new virtual hard disk for VirtualBox.pdf, 1~10쪽
+  week05-04 [Practical Class 5] Making a File System Module.pdf, 1~35쪽
+기존 내용 확인: 경쟁·atomic/TAS/CAS·spinlock 조건, PXT4/JBD3 치환과 설정/헤더 예외, JBD3 선빌드 및 Module.symvers 전달, 적재 순서, 장치/파일시스템 형식과 마운트 구별, 함수 포인터/수명, 과제5의 세 제출 화면이 포함되어 있다.
+보완 이유/근거:
+  P3(실습 연결): Practical5 33~35쪽의 첫 과제는 simple module 메시지 출력이다. 기존 글은 요구를 명시하지만 구현 시작점이 PXT4 절에 비해 짧았다. 4주차 강의 44~47쪽 외부 모듈 골격과 연결해 파일·초기화/종료 등록·Makefile 대상·적재/로그 확인 순서를 덧붙였다.
+  이 구현 순서는 보충 설명으로 표시했다. 전체 C 소스나 새로운 실험 결과는 만들지 않았다.
+한계: 모듈 빌드/적재나 디스크 포맷·마운트는 실행하지 않았다. 기존 과제 조건과 버전/장치 확인 조건을 유지했다.
+
+6주차: 최소 보완, 스레드별 순서와 측정 해석 구별
+글: linux-systems-week6-synchronization/index.md
+읽은 자료:
+  week06-01 [Practical Class 6] Linked list.pdf, 1~40쪽
+  week06-02 6. synchronization (4).pdf, 1~27쪽
+  week06-03 6. synchronization (3).pdf, 1~35쪽
+기존 내용 확인: IRQ/preemption/lock 조합, ticket lock, mutex/semaphore/RW semaphore 차이, 리스트 sentinel/container_of/padding, safe 순회의 제한, 객체 제거·해제 구별, 과제6의 4 threads×250,000개 및 세 락/세 연산, PDF+소스 제출 요구가 포함되어 있다.
+보완 이유/근거:
+  P3(측정 조건): Practical6 36쪽 worker는 각자 insert→search→delete를 수행하며 전원 공통 barrier가 없다. 전체 작업량 1,000,000과 순간 리스트 개수를 구별하고, 단계 barrier를 추가했다면 비교 조건 변화로 기록하도록 했다.
+  P2(측정 해석): Practical6 37~38쪽의 calclock 누적값은 전체 wall-clock이나 순수 CPU 시간이 아니다. 락 대기·할당 포함 여부, 호출당 평균, 겹친 worker 구간, 최종 완료 후 집계와 정리 확인을 추가했다. 의미 설명은 Practical8 실제 PDF 16~31쪽 calclock 원리 및 기존 9주차 정리와 교차 대조했다.
+  원문 38쪽 결과를 새 측정으로 제시하지 않았다. 작은 규모 정확성 확인→과제 규모의 순서는 보충 학습 절차다.
+한계: 멀티스레드 코드·락 성능·노드 수를 실제 커널에서 검증하지 않았다. 원문 예제의 출력 수치를 사용자 결과로 바꾸지 않았다.
+
+7주차: 원문 예제의 구현 오류 안내 및 소수 반올림 수정
+글: linux-systems-week7-scheduler/index.md
+읽은 자료:
+  week07-01 [Practical Class 7] LinkedList_LockFree.pdf, 1~34쪽
+  week07-02 7. Scheduler (2).pdf, 1~23쪽
+  week07-03 7. Scheduler (1).pdf, 1~56쪽
+기존 내용 확인: RR 지표/도착 처리, O(N) credit와 동점 규칙, O(1) active/expired, 실제 priority 표현과 강의 예시 구별, traditional CFS와 최신 EEVDF 구별, weight/vruntime/period 단위, tail 예약과 링크 공개 차이, 논리 삭제/참조 수명, 동일 조건 비교와 과제7 제출 요구가 포함되어 있다.
+보완 이유/근거:
+  P2(실습 구현): Practical7 21쪽의 entry는 list_head*이므로 entry->removed는 존재하지 않는 멤버 접근이다. Sentinel 제외 후 gc_entry로 cat을 복원하여 atomic_read(&cur->removed)를 사용하도록 원문 오류를 설명했다.
+  P2(실습 구현): 같은 자료 13쪽 두 번째 노드 초기화의 c1 오기를 확인하고 c2의 gc_entry/removed가 초기화되어야 함을 덧붙였다.
+  P3(측정 시점): 31쪽 cleanup 예제는 통계 출력을 스레드 종료 대기보다 앞에 둔다. 갱신이 끝난 뒤 최종 집계를 읽도록 기존 수명 설명과 연결했다.
+  P3(산술): Scheduler(2) 23쪽의 18ms, 1024/1991/3121을 정확히 계산하면 3.0039113429/5.8406127771/9.1554758801ms다. 기존 보충 수치의 5.840·9.156을 소수 셋째 자리 반올림 5.841·9.155로 수정하고 분모 6136 및 계산식을 명시했다. 원문의 3·6·9는 단순 1:2:3 예시로 유지했다.
+한계: 원문 골격의 타입·초기화 오류를 바로잡는 설명이지 lock-free 알고리즘 전체의 진행성/메모리 순서 증명이나 검증된 완성 구현이 아니다. 실제 비교 실험은 수행하지 않았다.
+
+9주차: 유지, 계산·과제·측정 의미 충분
+글: linux-systems-week9-scheduler/index.md
+읽은 자료:
+  week09-01 7. Scheduler (4).pdf, 1~31쪽
+  week09-02 7. Scheduler (3).pdf, 1~21쪽
+  week09-03 [Practical Class 8] fio+calclock.pdf, 실제 PDF 1~46쪽 전체
+  주의: 마지막 슬라이드에는 48이라고 표시되지만 실제 파일은 46페이지다. calclock은 PDF15쪽에서 시작하고 과제는 PDF40~46쪽(슬라이드42~48)에 있다. 기존 글의 PDF 기준 참조가 맞아 유지했다.
+확인: group/runnable/tree/current 구별, tick 요청과 switch 분리, update_curr 회계, enqueue/dequeue 상대 vruntime, 33ms까지의 CFS 예제, fio job별 size×numjobs, sequential 과제와 random 예제 구별, calclock 단위/대기/겹침/inclusive time, PXT4 wrapper의 반환값 보존·출력·unmount 및 제출 요구가 포함되어 있다.
+판정: 기존 상세 내용과 복습 문항이 범위에 맞으며 새 본문 보완 필요를 찾지 못했다. 본문/날짜 유지. fio verify=meta와 최신 timekeeping API에 대한 기존 설명도 강의 조건과의 차이를 명시하고 있다.
+한계: 강의의 CFS 발췌 코드가 하나의 최신 커널 버전 전체와 정확히 같다는 주장은 하지 않는다. fio/PXT4 실행·성능·실제 저장 완료는 검증하지 않았다.
+
+원문 시각 확인 파일
+- note.pdf 전체 5쪽: /private/tmp/linux-old-review/week03-note.pdf 및 week03-note-1.jpg~5.jpg
+- Practical4 7쪽 syscall 번호/개수: week04-03.pdf, week04-syscall-07.jpg
+- Practical6 36~40쪽 worker·골격·결과 예·제출: week06-01.pdf, week06-assignment-36.jpg~40.jpg
+- Practical7 13쪽 초기화, 21쪽 GC: week07practical.pdf, week07-init-13.jpg, week07-gc-21.jpg
+- Practical8 실제 PDF 페이지 수/순서: week09practical.pdf의 pdftotext -layout 페이지 경계를 확인했다.
+
+검증
+- /private/tmp/linux-old-review/verify_review.py로 RR 완료/turnaround, O(N) 첫 epoch, O(1) 전체 실행 순서, 9주차 CFS 33ms 타임라인 및 vruntime, 18ms 가중치 분배, calclock 초 경계 계산을 독립 재계산했다. 수정 후 통과했다.
+- 같은 스크립트로 7편 title/slug/publishedAt 불변, 2·3·9 본문 불변, 수정 4편 updatedAt, 새 내부 글 링크의 대상 slug 존재를 확인했다.
+- Linux 담당 범위 git diff --check 통과.
+- VM 설치/부팅, 커널·모듈 빌드/적재, syscall 실행, 동시성/성능 측정, fio, 디스크 작업은 수행하지 않았다.
+- 전체 npm run check 및 배포는 통합 담당이 수행한다. 이 기록은 해당 전체 검사 통과를 대신하지 않는다.

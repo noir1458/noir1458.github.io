@@ -2,6 +2,7 @@
 title: "02. 술어 논리, 한정 기호, 논리회로"
 slug: discrete-mathematics-predicates-quantifiers-circuits
 publishedAt: '2026-10-15'
+updatedAt: '2026-11-18'
 categories: discrete_mathematics
 math: true
 
@@ -553,7 +554,7 @@ $$
 
 정의역은 실수다.
 
-1. “모든 실수보다 더 큰 실수가 있다”를 한정 기호로 쓰자.
+1. “모든 실수는 그보다 큰 실수가 존재한다”를 중첩된 한정 기호로 나타내시오. (2차시 자료 PDF 46쪽의 문장)
 2. $\forall x\exists y(xy=0)$, $\exists x\forall y(xy=0)$를 판정하자.
 3. $\forall x\exists y(x/y=1)$을 판정하되 나눗셈의 정의 조건도 명시하자.
 4. $\forall x\exists y(x+y=0)$을 말로 옮기고 $\exists y\forall x(x+y=0)$과 비교하자.
@@ -561,7 +562,7 @@ $$
 <details>
 <summary>해설 보기</summary>
 
-1. $\forall x\exists y(y>x)$이며 $y=x+1$로 고르면 된다.
+1. $\forall x\exists y(y>x)$이며 $y=x+1$로 고르면 된다. 먼저 고른 $x$마다 $y$가 달라도 된다. **보충 비교:** “모든 실수보다 큰 하나의 실수가 있다”는 $\exists y\forall x(y>x)$로 다른 주장이다. 어떤 $y$를 고르더라도 $x=y$에서 실패하므로 거짓이다.
 2. 둘 다 참이다. 첫 식은 각 $x$에 대해 $y=0$, 둘째는 먼저 $x=0$을 고르면 된다.
 3. 엄밀히는 $y\ne0$인 경우에만 $x/y$를 쓴다. $\forall x\exists y(y\ne0\land x=y)$로 표현하면 거짓이다. $x=0$에는 조건을 만족하는 $y$가 없다.
 4. “모든 실수에는 더해서 0이 되는 실수가 있다.” $y=-x$이므로 참이다. 순서를 바꾼 식은 모든 실수에 공통인 역원 하나를 요구한다. $x=0$에는 $y=0$, $x=1$에는 $y=-1$이 필요하므로 거짓이다.
@@ -667,3 +668,5 @@ $$
 4. $Y=(\neg p\land\neg q)\lor(p\land r)$. $p=0$이면 $\neg q$, $p=1$이면 $r$을 출력한다. 입력이 갈라지는 곳에서도 같은 신호 $p$라는 점을 유지한다.
 
 </details>
+
+**자료 연결:** `2차시_명제와논리2.pdf`(63쪽), `2차시_논리회로.pdf`(2쪽), `이산수학 1차 과제.pdf` 2쪽 문제 5~6을 대조했다. 연습은 주제별로 묶었으며, 연습 08의 첫 문장은 강의자료 PDF 46쪽 문장을 유지했다. 여기에 덧붙인 순서 비교는 보충 설명이다.

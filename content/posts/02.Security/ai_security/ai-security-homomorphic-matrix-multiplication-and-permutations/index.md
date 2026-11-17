@@ -3,6 +3,7 @@ title: "11. Homomorphic Matrix Multiplication via Slot Permutations"
 slug: ai-security-homomorphic-matrix-multiplication-and-permutations
 description: "두 암호화된 행렬의 곱을 데이터 재배치와 슬롯별 곱의 합으로 유도한다. σ·τ·φ·ψ, 경계 마스크와 BSGS 회전 수를 원문과 대조하고 4×4 예제를 검산한다."
 publishedAt: '2026-10-28'
+updatedAt: '2026-11-18'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption
@@ -795,5 +796,53 @@ $$
 특히 행렬곱 항등식의 합은 $d$개 항이다. 상한을 $d$로 두면 항이 하나 더 생기고, 첫 회전 인자를 상수 $1$로 두면 같은 입력 원소만 반복해서 곱하게 된다. 음수 마스크의 끝 열도 실제 슬롯 인덱스에서 유도해 바로잡았다.
 
 원문의 $R_k,C_k,U_0,U_1$는 평문 위치 선택 마스크이며, $A,B$는 암호화된 데이터다. 그림의 배열, 공개 마스크, 암호문 평가를 구별해 읽는다. 이상적인 $0/1$ 마스크의 항등식과 실제 CKKS 인코딩·키 전환·재선형화·rescaling 오차도 구별한다.
+
+## 12. 복습문제: 재배치부터 결과까지
+
+아래는 원문의 방법을 다른 숫자에 적용하는 **보충 문제**다. 암호 연산의 잡음을 제외한 정확한 행렬 계산부터 확인한다.
+
+<details>
+<summary>1. A=((1,2),(3,4)), B=((5,6),(7,8))에서 σ(A), τ(B)와 두 곱의 합을 구하라.</summary>
+
+$$
+U=\sigma(A)=\begin{pmatrix}1&2\\4&3\end{pmatrix},\qquad
+V=\tau(B)=\begin{pmatrix}5&8\\7&6\end{pmatrix}.
+$$
+
+첫 곱은 $U\odot V=\begin{pmatrix}5&16\\28&18\end{pmatrix}$다. 행·열을 각각 한 칸 돌린 두 행렬은
+
+$$
+\phi(U)=\begin{pmatrix}2&1\\3&4\end{pmatrix},\qquad
+\psi(V)=\begin{pmatrix}7&6\\5&8\end{pmatrix}.
+$$
+
+따라서
+
+$$
+U\odot V+\phi(U)\odot\psi(V)
+=\begin{pmatrix}5&16\\28&18\end{pmatrix}
++\begin{pmatrix}14&6\\15&32\end{pmatrix}
+=\begin{pmatrix}19&22\\43&50\end{pmatrix}=AB.
+$$
+
+원본 $A,B$를 바로 회전한 결과가 아니라 **재배치한 $U,V$**를 회전해야 한다.
+
+</details>
+
+<details>
+<summary>2. 1번 A를 8슬롯의 앞 네 칸에만 넣었다. 두 칸 회전으로 ψ(A)를 얻을 수 있는가?</summary>
+
+$(1,2,3,4,0,0,0,0)$을 두 칸 왼쪽 회전하면 $(3,4,0,0,0,0,1,2)$다. 앞 네 칸은 원하는 $(3,4,1,2)$와 다르다.
+
+같은 행렬 블록을 $(1,2,3,4,1,2,3,4)$로 반복하고 마스크도 같은 주기로 반복하면 두 칸 회전은 $(3,4,1,2,3,4,1,2)$가 된다. 입력 크기보다 슬롯이 많을 때 단순한 뒤쪽 0 패딩과 반복 배치를 구별해야 한다.
+
+</details>
+
+<details>
+<summary>3. d개의 암호문 곱을 더하는 마지막 단계의 곱셈 깊이는 d인가? 전체 레벨 소비도 같은가?</summary>
+
+각 곱이 서로의 결과를 사용하지 않으므로 마지막 단계의 암호문·암호문 곱 깊이는 $1$이다. 하지만 그 전에 $\sigma,\tau,\phi^k$의 평문 마스크 곱과 스케일 정렬이 있다. 마지막 단계의 깊이만으로 전체 CKKS 법 체인이 한 단계면 충분하다고 결론 내릴 수는 없다.
+
+</details>
 
 원문에 있는 네 연산의 정의와 구현, BSGS 준비, 최종 $O(d)$ 회전 구성을 여기까지 옮겼다. 다음 범위는 **46쪽 Activation Functions와 Polynomial Approximation**부터다.

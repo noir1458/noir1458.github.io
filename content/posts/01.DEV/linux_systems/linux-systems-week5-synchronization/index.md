@@ -2,6 +2,7 @@
 title: 'week5 : Synchronization'
 slug: linux-systems-week5-synchronization
 publishedAt: '2026-10-31'
+updatedAt: '2026-11-18'
 categories: Linux Systems
 tags: [Linux, 동기화, Atomic, 커널모듈, 리눅스응용설계]
 description: '경쟁 조건과 임계 구역, 선점·인터럽트 제어, atomic 연산과 CAS, ticket lock을 이해하고 PXT4 파일시스템 모듈 제작과 함수 포인터를 정리한다.'
@@ -389,6 +390,15 @@ generic_perform_write(file, ...)
 *Practical Class 5, 32~35쪽*
 
 과제는 두 부분이다. 첫째는 “simple module” 메시지를 출력하는 간단한 모듈, 둘째는 JBD3·PXT4 파일시스템 모듈을 만들고 실제 장치에 마운트하는 작업이다.
+
+간단한 모듈은 [4주차의 외부 모듈 골격](/posts/linux-systems-week4-process-and-thread/)에서 스레드 생성 부분 없이 시작할 수 있다. 아래는 과제 요구를 구현 단계에 연결한 보충이며 실행 결과가 아니다.
+
+1. `simple_module.c`에 모듈·초기화용 헤더를 포함하고, `int`를 반환하는 초기화 함수와 `void` 종료 함수를 작성한다. 초기화 함수에서 `pr_info("simple module\n")`로 메시지를 남기고 성공 시 0을 반환한다.
+2. `module_init()`·`module_exit()`로 두 함수를 등록하고 모듈의 라이선스 정보를 선언한다. 종료 함수에는 필요하면 해제 메시지를 둔다.
+3. 외부 모듈 Makefile의 대상을 `obj-m := simple_module.o`로 바꾼다. 4주차처럼 실행 커널의 `/lib/modules/$(uname -r)/build`를 사용해 빌드한다.
+4. 실습 VM에서 `make` → `sudo insmod simple_module.ko` → `sudo dmesg` 순서로 초기화 메시지를 확인하고, 끝나면 `sudo rmmod simple_module`로 제거한다.
+
+`insmod` 성공과 메시지 출력까지 확인하는 것이 첫 부분이고, 아래의 파일시스템 적재·마운트는 두 번째 부분의 증거다. 모듈의 `printk`·`pr_info` 출력은 사용자 프로그램의 터미널 표준 출력과 구별한다.
 
 제출 PDF에는 최소 다음 세 화면이 필요하다.
 

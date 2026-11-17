@@ -2,6 +2,7 @@
 title: "04. 집합과 집합의 연산, 함수의 기초"
 slug: discrete-mathematics-sets-and-functions
 publishedAt: '2026-10-17'
+updatedAt: '2026-11-18'
 categories: discrete_mathematics
 math: true
 
@@ -254,7 +255,7 @@ $$
 \bigcap_{i\in I}A_i=\{x\mid\forall i\in I, x\in A_i\}.
 $$
 
-$A_i=\{i,i+1,i+2,\ldots\}$라면 유한한 $n$에 대해 합집합은 $\mathbb Z^+$, 교집합은 $A_n$이다. 무한히 모두 교집합하면 공집합이 된다. 어떤 양의 정수 $k$도 $A_{k+1}$에는 들어 있지 않기 때문이다.
+$i=1,2,\ldots$에 대해 $A_i=\{i,i+1,i+2,\ldots\}$라고 하자. $n\ge1$일 때 $\bigcup_{i=1}^{n}A_i=\mathbb Z^+$, $\bigcap_{i=1}^{n}A_i=A_n$이다. 무한히 모두 교집합하면 $\bigcap_{i=1}^{\infty}A_i=\varnothing$가 된다. 어떤 양의 정수 $k$도 $A_{k+1}$에는 들어 있지 않기 때문이다. 유한 교집합마다 원소가 남는다는 사실이 무한 교집합에도 원소가 남는다는 뜻은 아니다.
 
 ### 비트 문자열
 
@@ -398,7 +399,7 @@ $$
 
 ### 01. 집합의 표현과 공집합
 
-1. 10보다 작은 양의 짝수 집합을 원소나열법으로, 양의 홀수 집합을 조건제시법으로 쓰자.
+1. “10보다 작은 양의 짝수 전체의 집합”을 원소나열법으로, “10보다 작은 홀수인 양의 정수 전체의 집합”을 조건제시법으로 쓰자. 두 범위는 4차시 자료 PDF 8쪽 연습문제와 같다.
 2. $\{a,b,c,b,a\}$와 $\{c,b,a\}$는 같은가?
 3. $\varnothing$와 $\{\varnothing\}$는 같은가?
 4. $A=\{1,2\},B=\{1,2,3\}$이면 $A\subseteq B$와 $A\subsetneq B$는 성립하는가?
@@ -730,3 +731,5 @@ $$
 $f(f^{-1}(y))=a(y-b)/a+b=y$, $f^{-1}(f(x))=(ax+b-b)/a=x$로 확인된다.
 
 </details>
+
+**자료 연결:** `4차시_기본구조1_집합_함수.pdf`(61쪽)의 집합·집합 연산·함수 기초와 `이산수학 2차과제.pdf` 1~2쪽의 관련 문항을 정리했다. 4차시 자료 후반의 바닥·천장함수, 계승·부분함수와 무한집합은 다음 글 [05. 함수, 수열과 합, 행렬](/posts/discrete-mathematics-functions-sequences-matrices/)에서 이어 다룬다.

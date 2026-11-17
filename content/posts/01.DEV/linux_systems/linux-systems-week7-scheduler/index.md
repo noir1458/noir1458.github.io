@@ -2,6 +2,7 @@
 title: 'week7 : Scheduler'
 slug: linux-systems-week7-scheduler
 publishedAt: '2026-11-02'
+updatedAt: '2026-11-18'
 categories: Linux Systems
 tags: [Linux, Scheduler, CFS, Lock-free, 리눅스응용설계]
 description: 'Round Robin·O(N)·O(1)에서 CFS까지 스케줄러의 선택 기준과 계산 예제를 정리하고, lock-free 연결 리스트의 삽입·논리적 삭제·메모리 회수를 살펴본다.'
@@ -328,7 +329,7 @@ ideal_slice_i = period × weight_i / Σweight
 
 ![시간과 태스크 수를 구분하는 CFS 설정 예](./s2-p21.webp)
 
-다른 예로 period를 18ms라고 가정하면 weight 1:2:3의 비례 몫은 3·6·9ms다. 실제 표의 1024·1991·3121을 그대로 넣으면 약 3.004·5.840·9.156ms로, 슬라이드의 3·6·9는 비율을 단순화한 값이다.
+다른 예로 period를 18ms라고 가정하면 weight 1:2:3의 비례 몫은 3·6·9ms다. 실제 표의 1024·1991·3121을 그대로 넣으면 합은 6136이고, `18 × weight / 6136`으로 약 3.004·5.841·9.155ms가 된다. 슬라이드의 3·6·9는 비율을 단순화한 값이다.
 
 ![서로 다른 가중치의 비례 slice](./s2-p23.webp)
 
@@ -419,6 +420,10 @@ RCU는 읽기가 많은 커널 자료구조에서 제거와 해제를 분리하�
 검색 실패는 예제의 실제 반환 코드처럼 `-ENODATA`로 처리한다. 실패했는데 검색 결과 포인터를 사용해 삭제하지 않는다.
 
 GC에서는 다음 위치를 먼저 저장하고, 일반 리스트와 GC 리스트 양쪽에서 노드를 떼어 낸 다음 메모리를 반환한다. Tail 삭제는 head가 가진 tail 정보까지 고쳐야 한다. 살아 있는 노드와 이미 GC로 해제한 노드를 다시 함께 해제하지 않도록 한다.
+
+원문 21쪽의 `entry->removed`는 그대로 컴파일할 수 있는 표현이 아니다. `entry`는 연결 필드만 가진 `struct list_head *`이고 `removed`는 바깥 `struct cat`의 멤버다. Sentinel을 제외한 GC 노드에서 먼저 `list_entry(entry, struct cat, gc_entry)`로 `cur`를 얻고 `atomic_read(&cur->removed)`로 표시를 읽어야 한다. 일반 리스트에서는 `entry`, GC 리스트에서는 `gc_entry`를 기준으로 바깥 객체를 복원한다는 차이도 중요하다.
+
+삽입 예제 13쪽의 두 번째 노드에서는 초기화 대상이 모두 새 노드 `c2`인지 확인한다. 일부 줄의 `c1`을 그대로 복사하면 새 노드의 GC 연결과 `removed` 초기화를 빠뜨린다. 종료 예제 31쪽도 최종 통계를 먼저 출력하기보다 worker가 더 이상 갱신하지 않는 시점에 읽도록 연결한다. 이들은 원문 골격을 구현할 때 바로잡을 부분이며, 이런 수정만으로 전체 알고리즘의 메모리 순서·진행성까지 검증된 것은 아니다.
 
 ### 비교 결과를 읽는 기준
 

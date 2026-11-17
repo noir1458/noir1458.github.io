@@ -3,6 +3,7 @@ title: "12. Polynomial Approximation and Evaluation: Chebyshev and Paterson-Stoc
 slug: ai-security-polynomial-approximation-chebyshev-and-paterson-stockmeyer
 description: "활성함수를 다항식으로 근사하는 과정과 암호문에서 평가하는 과정을 구별한다. 교대 정리·Remez·Chebyshev 기저·재귀 PS 평가를 옮기고, 곱셈 횟수와 깊이를 검산한다."
 publishedAt: '2026-10-29'
+updatedAt: '2026-11-18'
 categories: Modern Cryptography
 tags:
   - Homomorphic Encryption
@@ -694,5 +695,45 @@ $$
 5. **45번의 결합 횟수.** 구조적 결합 노드와 암호문·암호문 곱을 구별했다. 상수 몫의 평문 곱을 별도로 세어 원문의 천장 함수가 나오는 조건을 설명했다.
 
 6. **최소 횟수·깊이의 범위.** 기저 생성의 순서와 계수의 형태에 따른 차이를 확인했다. 원문의 근사 비용과 깊이 상한을 모든 다항식의 정확한 최적값으로 바꾸어 쓰지 않았다.
+
+## 12. 복습문제: 구간·분해·오차를 바꾸어 보기
+
+아래는 원문 과제가 아닌 **보충 문제**다. 계수를 정하는 문제와 암호문에서 값을 평가하는 문제를 나누어 답하자.
+
+<details>
+<summary>1. 3절의 ReLU 근사를 [-2,2]로 옮기려 한다. t=x/2만 대입하면 되는가?</summary>
+
+목표가 $\operatorname{ReLU}(x)$라면 $\operatorname{ReLU}(x)=2\operatorname{ReLU}(x/2)$라는 출력 크기도 반영해야 한다. 따라서
+
+$$
+\widetilde p(x)=2p(x/2)
+=\frac{x^2}{4}+\frac{x}{2}+\frac18
+$$
+
+을 사용한다. 최대오차는 $2\cdot(1/16)=1/8$이다. $p(x/2)$만 쓰면 $\operatorname{ReLU}(x)/2$를 근사하게 된다. 예를 들어 $x=2$에서 올바른 목표값은 $2$이고, $2p(1)=17/8$이다. 이 구간 변환은 2차 다항식 공간 사이의 전단사이므로 최소최대 성질도 유지된다.
+
+</details>
+
+<details>
+<summary>2. T₅를 T₄로 나눌 때 몫과 나머지는? 높은 차수 계수만 잘라 내면 안 되는 이유는?</summary>
+
+곱 공식에서 $2T_1T_4=T_5+T_3$이므로
+
+$$
+T_5=(2T_1)T_4-T_3.
+$$
+
+몫은 $2T_1$, 나머지는 $-T_3$다. 예를 들어 $x=1/2$에서는 $2(1/2)(-1/2)-(-1)=1/2=T_5(1/2)$다. Chebyshev 기저의 곱은 높은 차수 항과 낮은 차수 항을 함께 만들기 때문에, 단순히 계수 배열을 나누는 것으로 다항식 나눗셈을 대신할 수 없다.
+
+</details>
+
+<details>
+<summary>3. [-1,1]에서 근사 오차가 1/16, 입력·계수 인코딩까지 포함한 CKKS 평가 오차가 0.001 이하라면 전체 오차는? 입력이 2면?</summary>
+
+같은 입력 $x\in[-1,1]$에 대한 두 상한이므로 전체 절대오차는 $1/16+0.001=0.0635$ 이하다.
+
+$x=2$에는 첫 근사 구간의 보장을 사용할 수 없다. 실제로 기존 $p(2)=49/16$이고 $\operatorname{ReLU}(2)=2$여서, 암호 계산 오차가 없어도 근사 오차만 $17/16$이다. 새 구간에 맞는 계수를 정하거나 1번처럼 함수와 구간을 함께 변환해야 한다.
+
+</details>
 
 원문의 활성함수 근사부터 재귀 평가와 비용 계산까지를 여기서 마친다. 다음은 **47쪽 Week 6 Zero Knowledge Proof의 고전적 증명·검증자·NP 증명**부터다.

@@ -2,6 +2,7 @@
 title: "01. 명제 논리, 응용, 명제의 동치"
 slug: discrete-mathematics-propositional-logic
 publishedAt: '2026-10-14'
+updatedAt: '2026-11-18'
 categories: discrete_mathematics
 math: true
 
@@ -566,7 +567,21 @@ $$
 \neg(\neg p\lor\neg q)\equiv p\land q.
 $$
 
-2. 분배와 멱등법칙으로 $(p\land q)\lor(p\land p)\equiv(p\land q)\lor p\equiv p$다. 마지막은 흡수법칙이다. $p$가 참이면 전체가 참이고 거짓이면 전체가 거짓임으로도 확인된다.
+2. 분배법칙으로 시작하고, 마지막에도 흡수법칙을 그대로 인용하지 않고 끝까지 줄여 보자.
+
+$$
+\begin{aligned}
+p\land(q\lor p)
+&\equiv(p\land q)\lor(p\land p)\\
+&\equiv(p\land q)\lor p\\
+&\equiv(p\land q)\lor(p\land T)\\
+&\equiv p\land(q\lor T)\\
+&\equiv p\land T\equiv p.
+\end{aligned}
+$$
+
+분배, 멱등, 항등, 역방향 분배, 지배·항등 법칙을 사용했다. 결과가 흡수법칙이지만, 그 결과 자체를 중간 근거로 쓰지는 않았다.
+
 3. 결합법칙으로 괄호를 풀고 교환법칙으로 $p,\neg p$를 붙이면 $(p\lor\neg p)\lor q\lor r\equiv T$다.
 4. “Miguel은 휴대폰이 없거나 노트북이 없다.” / “Heather도 Steve도 공연에 가지 않는다.” AND의 부정은 OR, OR의 부정은 AND로 바뀐다.
 
@@ -683,3 +698,5 @@ $$
 세 번째 줄의 $(p\land\neg q)\lor\neg p$는 $(p\lor\neg p)\land(\neg q\lor\neg p)\equiv\neg p\lor\neg q$다. $(q\land\neg r)\lor r$도 같은 방식으로 $q\lor r$로 줄어든다.
 
 </details>
+
+**자료 연결:** `1차시_명제와논리.pdf`(73쪽)의 1.1~1.3절과 `이산수학 1차 과제.pdf` 1쪽 문제 1~4를 주제별로 정리했다. 연습문제의 번호와 문장은 글의 흐름에 맞춰 묶었으며, 교재 전체 연습문제의 전사는 아니다. 쪽수는 PDF 페이지 기준이다.

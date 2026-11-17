@@ -2,6 +2,7 @@
 title: 'week4 : Process and Thread'
 slug: linux-systems-week4-process-and-thread
 publishedAt: '2026-10-30'
+updatedAt: '2026-11-18'
 categories: Linux Systems
 tags: [Linux, 프로세스, 스레드, COW, 리눅스응용설계]
 description: '프로세스 상태와 task_struct, fork·clone의 자원 복사와 공유, COW, 시그널, pthread·커널 스레드를 정리하고 시스템 콜 추가 실습을 연결한다.'
@@ -348,6 +349,8 @@ obj-y += my_syscall.o
 
 ![ARM64 예시의 번호 정의와 시스템 콜 개수 갱신](./s3-p07.webp)
 
+ARM64 자료의 등록은 번호를 정의하는 것에서 끝나지 않는다. `__NR_mycall`의 번호와 `__SYSCALL(__NR_mycall, sys_mycall)`을 연결하고, 마지막 번호 뒤에 추가했다면 `__NR_syscalls`도 그 마지막 번호보다 1 큰 값으로 갱신한다. 자료의 460→461은 이 관계를 보여 준다. 기존에 더 큰 번호가 있으면 개수를 낮추지 말고 해당 소스의 실제 마지막 번호와 등록 규칙을 따른다.
+
 헤더에는 해당 버전의 규칙에 맞게 `asmlinkage long sys_mycall(void);` 같은 선언을 추가한다. `SYSCALL_DEFINE0`로 생성되는 이름, 테이블 entry의 이름, 아키텍처별 wrapper를 함께 확인해야 한다.
 
 **중요:** 자료의 x86 번호 436과 ARM64 번호 460은 실습 당시의 예시다. 새 버전에서도 비어 있는 번호라고 가정하면 안 된다. 번호 충돌이 없는지 **선택한 소스의 테이블**에서 확인하고, 사용자 프로그램에 같은 번호를 사용한다. 등록 파일과 생성 방식도 버전별로 달라질 수 있다. [커널의 시스템 콜 추가 문서](https://docs.kernel.org/process/adding-syscalls.html)
@@ -384,6 +387,8 @@ int main(void)
 ```
 
 반환값이 0인지와 `sudo dmesg`에 지정한 메시지가 있는지 확인한다. 선언이 없다는 컴파일 경고를 무시하는 대신 필요한 헤더와 feature macro 조건을 확인한다. 호출 번호가 없으면 `ENOSYS`가 나타날 수 있지만, **다른 실제 시스템 콜과 번호가 충돌한 경우에는 단순히 ENOSYS로 끝나지 않을 수 있다.**
+
+실행까지 연결하려면 위 코드를 `mycall_test.c`로 저장하고, 파일 상단에 `#define MYCALL_NR` 뒤로 검증한 정수 번호를 넣는다. 실습 VM에서 `cc -std=gnu11 -Wall -Wextra mycall_test.c -o mycall_test`로 사용자 프로그램을 빌드한 뒤 `./mycall_test`를 실행한다. 이 사용자 프로그램의 컴파일과 앞의 커널 빌드는 별도 단계다. 여기의 코드는 절차 설명용이며, 이 정리를 보완하면서 커널을 다시 빌드하거나 호출 성공을 측정한 것은 아니다.
 
 ## 11. 과제 3: 시스템 콜 호출 증명
 
