@@ -1,0 +1,120 @@
+작성·자료 대조: 2026-11-17
+문서: 17. Week 9: KZG Commitments and Polynomial IOPs
+범위: 새 주차 정리 글 작성. 기존 글의 URL·slug·본문은 수정하지 않음.
+발행일은 과목별 글 순서를 위한 배치 날짜이며 실제 수업일을 추정한 날짜가 아님.
+
+원본 및 주차 판단
+- Drive 2026-2/인공지능보안에서 직접 조회한 Week 9 Introduction to SNARK(2).pdf.
+- 58쪽, SHA-256: a76d4d2e62ea27e6c65337da9d0cc952b4db75d618ee2f1e868120aeab6f064c
+- 표지에 Week 9. Introduction to SNARK가 적혀 있다. 본문 바닥글의 Week 6 표기는 주차 근거로 사용하지 않았다.
+- Week 8 Introduction to SNARK_2.pdf도 표지가 Week 9이고 앞 47쪽 주제가 겹쳐 최신 Week 9 자료로 통합했다. 동일 바이트 파일이라고 주장하지 않는다.
+- 기존 ai-security-introduction-to-snark는 기존 8쪽 도입 자료 기반이다. 이번 글은 산술회로 이후의 후속 내용까지 다룬다.
+- 과목 루트 및 필기없는 원본, 통합 전 원본 (Week 7·8) 하위폴더 목록 확인. 별도 Week 10 자료는 목록에서 확인되지 않았다.
+
+읽기 및 시각 대조
+- Drive readable text로 1–58쪽 전체의 제목·본문을 읽고 원본 PDF를 내려받아 대조했다.
+- pdftotext -layout은 수식 폰트를 상당 부분 누락하므로 수식의 유일한 근거로 사용하지 않았다.
+- 35–58쪽 전체를 PNG로 렌더링해 도식과 필기를 시각 대조했다.
+- 특히 35 setup, 37 몫 항등식과 손글씨, 38–39 pairing, 42 equality protocol, 46 Fiat-Shamir, 50–51 IOP oracle, 54 집합 포함, 58 AGM의 그림을 확인했다.
+- PDF 원본이나 페이지 이미지는 새 게시 파일에 넣지 않았다. 본문 도식은 Mermaid로 새로 작성했다.
+
+원문 대응
+- 2–11쪽 → 도입 및 §1: 산술회로, 체 계산, statement/witness, 비트 제약.
+- 12–21쪽 → §2: NARK 알고리즘, proof/argument, 지식 건전성, succinctness.
+- 22–25쪽 → §3: commitment, binding/hiding, 난수와 해시 가정.
+- 26–29쪽 → §4: functional/다항식 commitment와 평가 증명.
+- 30–31쪽 → §5: 근의 개수, 무작위 다항식 동일성 검사.
+- 32–36쪽 → §6: 군·타원곡선 예, KZG setup, commitment, hiding 부재.
+- 37–38쪽 → §7: f(u)=v, 몫 다항식 q 및 평가 증명.
+- 39–40쪽 → §8: pairing 검사와 비용.
+- 41–44쪽 → §9: PCS+equality test, 합과 곱 commitment 구별.
+- 45–47쪽 → §10: Fiat-Shamir, transcript, grinding.
+- 48–52쪽 → §11: oracle, IOP, 회로 전처리.
+- 53–56쪽 → §12: 집합 포함을 나눗셈으로 옮기는 교육용 예제.
+- 57–58쪽 → §13: 실제 commitment와 IOP 추출기의 차이, AGM.
+- §14·15: 정리표와 새로 만든 복습문제. 기출문제로 표시하지 않음.
+
+보충·정확성 조건
+- 산술회로의 게이트 입력 수 모델, 체 등식과 정수 인수분해의 차이, 비트 제약 필요성을 명시.
+- NARK 전처리 모형을 모든 SNARK의 회로별 trusted setup 요구로 일반화하지 않음.
+- 고정된 비영 다항식의 잘못된 수락 확률과 수락 후 사후확률을 구분.
+- KZG의 결정성과 비-hiding, 수학적 비단사성과 계산적 binding을 구분.
+- 비대칭 pairing 표기는 강의의 대칭 표기에 대한 구현상 보충으로 표시.
+- Fiat-Shamir를 모든 public-coin 프로토콜에 대한 자동 영지식·지식 건전성 변환으로 주장하지 않음.
+- 집합 예제는 contrived 범위로 설명. f=gq만으로 집합 인코딩을 인증할 수 없음을 f=q=0 반례로 보완.
+- AGM 추출기의 표현 계수를 일반 검증자의 다항식 복원 기능과 구분.
+- 복습문제의 tau 공개 공격은 u != tau 조건에서 계산한 보충 예제.
+
+외부 대조 자료
+- Dan Boneh 외, ZKP MOOC Lecture 2: Introduction to Modern SNARKs.
+  https://rdi.berkeley.edu/zkp-course/assets/Lecture2-2023.pdf
+- Dan Boneh 외, ZKP MOOC Lecture 5: The Plonk SNARK.
+  https://rdi.berkeley.edu/zkp-course/assets/lecture5-2023.pdf
+- 공식 강의 페이지에서 링크를 확인하고 PDF 내용을 읽어 PCS·IOP·KZG·Fiat-Shamir 구성을 대조했다.
+
+검증
+- 새 본문의 수식 41개 display / 151개 inline를 KaTeX throwOnError로 렌더링해 오류 없음.
+- 부모 에이전트가 F7 회로 출력 3, F17 곡선의 점 수 19 및 7G=(0,6), F11 집합 예제 출력 7을 독립 계산했다.
+- git diff --check 통과. 전체 npm run check와 배포 상태는 통합 작업 기록을 따른다.
+- 실제 보안 라이브러리 실행·페어링 벤치마크·사용자 학습 성취를 검증했다고 주장하지 않았다.
+
+번호·통합본 후속 대조 (2026-11-17, 사용자 질문에 따른 검토)
+
+실제 파일 목록과 관계
+1. 통합 전 원본 (Week 7·8)/Week 8 Introduction to SNARK.pdf — 8쪽.
+   SHA-256: 1de9df7c8845d6fa79c2a8569e5693446528709640a65d692ad3433b3872bce7
+   기존 16번 Introduction to SNARK 글의 source-audit에 기록된 원본과 해시가 같다.
+2. 통합 전 원본 (Week 7·8)/Week 8 Introduction to SNARK 2.pdf — 31쪽.
+   SHA-256: 801b0e7b5cc91e6b55cb55fb2e4b4f99726594a53fa3eb1fd78bda48c311eace
+   파일명은 Week 8이지만 표지는 Week 9. 본문 2–5쪽은 SNARK 도입, 6–31쪽은 산술회로·NARK·commitment·다항식 검사다.
+3. 과목 루트/Week 8 Introduction to SNARK_note.pdf — 34쪽.
+   SHA-256: c3ddff8c7c5d17dc6b66556495e0794085db6a94d0e0cf80eee20daf10165a49
+   1–8쪽은 원본 8쪽의 흐름을 유지하며 2·3·5쪽에 필기가 있다.
+   9–34쪽은 31쪽 번호2 파일의 6–31쪽에 대응한다. 이 26쪽은 pypdf 추출 본문이 26/26쪽 일치한다.
+   추출 본문 일치는 PDF 바이트나 모든 렌더링 픽셀의 일치라는 뜻이 아니다.
+4. 과목 루트/Week 8 Introduction to SNARK_2.pdf — 47쪽.
+   SHA-256: ce01697750c23e0560ae2ffeac2c2ede88639cae5d4c5326842cda3bd50a4a44
+   표지는 Week 9. 1–31쪽은 31쪽 번호2 파일과 같은 인쇄 강의 순서이며 필기는 다르다.
+   32–40쪽은 타원곡선·KZG·pairing, 41–47쪽은 equality test·Fiat-Shamir를 추가한다.
+5. 과목 루트/Week 9 Introduction to SNARK(2).pdf — 58쪽.
+   SHA-256: a76d4d2e62ea27e6c65337da9d0cc952b4db75d618ee2f1e868120aeab6f064c
+   1–47쪽은 위 47쪽 파일과 같은 페이지 순서로 대응한다. 페이지별 대조에서 빠진 인쇄 본문·예제·수식 항목은 발견하지 못했다.
+   삽입 그림 12개도 이미지 해시가 모두 같다. 글꼴·수식 서식과 46·47쪽 제목 등이 변경됐고 필기 구성은 다르다.
+   46쪽 제목은 Making It Non-Interactive: Fiat–Shamir에서 A SNARK for Polynomial Equality Testing으로,
+   47쪽 제목은 Making It Non-Interactive: Fiat–Shamir에서 When Is This a SNARK?로 바뀌었다. 프로토콜과 조건 설명은 유지된다.
+   48–58쪽에 IOP oracle·회로 전처리·집합 포함 예제·추출·AGM을 추가한다.
+6. 과목 루트/Week 11 Plonk SNARK.pdf — 17쪽.
+   위 Introduction to SNARK 파일들의 단순 번호 버전이 아니라 후속 proof gadgets 강의다. 별도 18번 글로 정리했다.
+
+페이지 범위와 게시글 대응
+- 원본8쪽 및 note34쪽의 2–5쪽: SNARK 도입 → 기존16번 글 §1–7, 새17번 글 도입·§2에서 필요한 부분 복습.
+- 원본8쪽 및 note34쪽의 6–8쪽: rollup·bridge·프라이버시·AI 추론·모델 평가·콘텐츠 출처 응용 → 기존16번 글 §8–12에 유지.
+  이 응용 세 쪽은 31·47·58쪽 자료에서는 빠져 있다. 따라서 최신58쪽 파일 하나가 모든 파일의 전체 내용을 포괄한다고 주장하지 않는다.
+- note34쪽의 9–14쪽 = 번호2/47쪽/58쪽의 6–11쪽 → 새17번 글 §1 산술회로와 비트.
+- note34쪽의 15–24쪽 = 번호2/47쪽/58쪽의 12–21쪽 → 새17번 글 §2 NARK·proof/argument·간결성.
+- note34쪽의 25–28쪽 = 번호2/47쪽/58쪽의 22–25쪽 → 새17번 글 §3 commitment.
+- note34쪽의 29–32쪽 = 번호2/47쪽/58쪽의 26–29쪽 → 새17번 글 §4 함수·다항식 commitment.
+- note34쪽의 33–34쪽 = 번호2/47쪽/58쪽의 30–31쪽 → 새17번 글 §5 다항식 검사.
+- 47쪽/58쪽 자료의 32–36쪽 → 새17번 글 §6 군·타원곡선 예·KZG setup.
+- 47쪽/58쪽 자료의 37–40쪽 → 새17번 글 §7–8 몫·평가 증명·pairing·비용.
+- 47쪽/58쪽 자료의 41–44쪽 → 새17번 글 §9 동일성·곱 관계 검사.
+- 47쪽/58쪽 자료의 45–47쪽 → 새17번 글 §10 Fiat-Shamir·grinding.
+- 최신58쪽의 48–52쪽 → 새17번 글 §11 IOP. 53–56쪽 → §12 집합 포함. 57–58쪽 → §13 추출·AGM.
+
+고유 필기와 검토 한계
+- 번호2(31쪽) 파일과 47쪽 파일의 2·3·5쪽 필기는 서로 다르며, 47쪽에는 7–20·22–32·35–37쪽에 추가 필기·밑줄 등이 있다.
+- 47쪽 파일의 초기 필기 다수는 최신58쪽 파일의 같은 쪽에 없다. 최신 파일은 35쪽 이후에 다른/확장된 필기를 포함한다.
+- 47쪽 PDF 전체를 렌더링하고 필기·프로토콜 도식을 확인했다. 31쪽의 초기 필기와 최신58쪽 35–58쪽의 필기도 대조했다.
+- 오래된 필기의 핵심인 회로 노드/게이트, public parameter, proof/argument, binding/hiding, randomness, 다항식 사전 고정, tau 비공개, KZG 비-hiding은 새17번 글의 관련 절에서 설명한다.
+- 최신 PDF를 기준으로 정리했으므로 예전 파일의 손글씨를 한 줄씩 전사하거나 모든 그림을 재현한 상태는 아니다. 판독하기 어려운 짧은 메모도 있어 모든 개별 필기를 전수 포함했다고 주장하지 않는다.
+- 주 강의 단원 기준으로 기존16번+새17번+새18번이 도입·응용·구성·후속 도구를 이어 다룬다. 파일 하나당 글 하나를 만드는 방식이 아니다.
+- 세부 축약 검토 뒤 공통30쪽의 다변수 SZDL/총차수 확장을 §5에, 이전47쪽 판13쪽 필기의 실제 해시와 random oracle 구별을 §10에 각각 한 문단 보완했다.
+- SZDL은 다항식을 사전 고정하고 각 좌표를 독립 균등 추출한다는 조건을 명시. Random oracle은 새 입력의 독립 균등 응답과 재질의의 동일 응답을 구분했다.
+- 32쪽의 타원곡선 직선-반사 덧셈·역원 그림, 20쪽의 sqrt(n) sublinear 예는 선택적인 세부 설명으로 축약 상태를 유지했다.
+- 따라서 주 강의 범위의 통합 정리이며, 원문의 모든 문장·예시·필기를 빠짐없이 전사했다고 설명해서는 안 된다.
+- 보완 후 수식 41개 display / 159개 inline을 KaTeX throwOnError로 다시 검사해 통과했고 git diff --check도 통과했다.
+
+게시일 배치 확인 (2026-11-18)
+- 사용자 요청과 기존 e7ae166/d58e16e 배치 규칙에 따라, 새 글 묶음을 과목별로 2026-11-17부터 하루씩 역산.
+- 이 글의 publishedAt: 2026-11-16. 기존 배포 글의 발행일은 유지.
+- 작성·자료 대조일과 목록 정렬용 발행일을 구별한다.

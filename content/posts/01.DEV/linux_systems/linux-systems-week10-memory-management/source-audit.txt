@@ -1,0 +1,47 @@
+보완 검토일: 2026-11-17 (Asia/Seoul)
+대상: linux-systems-week10-memory-management
+
+사용자 요청과 범위
+- 사용자 지적에 따라 기존 마지막 주차 글의 과제 내용 누락 여부를 확인.
+- Drive 2026-2/리눅스응용설계/week10의 파일 목록과 기존 본문을 대조.
+- 기존 글은 Memory Management [Overview].pdf 및 _note.pdf를 참고 자료로 들고
+  메모리 관리만 설명했으며, Practical Class 9/Assignment-9와 cpu_hog.c의 내용은 없었음.
+- 기존 메모리 관리 1-14절과 복습문제 1-10은 유지.
+- 제목/description/tags에 vruntime 실습 추가, updatedAt=2026-11-17 추가.
+- slug와 publishedAt=2026-11-04 유지.
+- 새 15절 실습 및 과제 원리/절차/해석, 복습문제 11-15, 참고 자료 추가.
+- 기존 복습문제 절 번호만 15에서 16으로 이동.
+
+이번 보완에서 실제 읽은 자료
+1. [Practical Class 9] vruntime_practice.pdf, 12쪽 전체.
+   커넥터 텍스트 추출 및 12쪽 전체 렌더링 대조.
+   1-4쪽: CFS의 실제 실행 시간과 vruntime, 예상 CPU 편향.
+   5-7쪽: comm 식별, update_curr 변경, 재스케줄링과 실제 switch 구별.
+   8쪽: v5.15 빌드/부팅 절차와 환경별 주의사항.
+   9쪽: cpu_hog.c, 실행파일 준비와 CPU/wall time.
+   10쪽: taskset 기반 Test A/B, /proc sched 두 시점 관찰.
+   11-12쪽: Assignment-9 실제 화면과 PDF 제출 요구.
+2. 별도 제공 cpu_hog.c 전체(1118바이트 파일).
+   pthread 생성이 없는 단일 스레드 프로세스.
+   CLOCK_PROCESS_CPUTIME_ID의 누적 CPU 시간과 내부 start 기준 wall의 비율.
+   next += 1.0 출력 로직과 CPU를 받은 뒤에야 수행되는 종료 조건 확인.
+3. https://raw.githubusercontent.com/torvalds/linux/v5.15/kernel/sched/fair.c
+4. https://www.kernel.org/doc/html/v5.15/scheduler/sched-design-CFS.html
+   CFS 회계와 현재 엔티티/왼쪽 후보 비교의 코드·설명 대조.
+
+이전 본문과 검토 범위의 구별
+- Memory Management [Overview].pdf 및 _note.pdf는 폴더 존재와 기존 본문의 출처 표기만
+  이번 보완에서 확인. 이번에 해당 PDF 전체를 재검토했다고 주장하지 않음.
+- 실습 PDF에는 별도 _note 버전이 없었음.
+- week11의 XArray/DS_monitoring 및 과제10과 주차·실습 번호·측정값을 구별.
+
+해석 원칙
+- 자료8쪽의 v5.15를 이번 실습 기준으로 명시. 다른 주차 5.4.214와 혼합하지 않음.
+- curr(sched_entity)와 current(task_struct)를 구별. 실제 회계 대상과 실행 문맥 확인 필요.
+- entity_is_task는 태스크/그룹 구별이며 이름 동일성이나 current와의 동일성을 증명하지 않음.
+- CPU-bound 루프에 명시적 sleep은 없지만 printf/fflush 등 대기 가능성을 인정.
+- affinity와 nice/그룹 조건, 시작 시점 차이, 누적 share와 공통 경쟁 구간의 차이를 명시.
+- CPU 시간과 vruntime 두 값을 함께 관측. 높은 share 하나만으로 메커니즘을 입증하지 않음.
+- 보충 차분 측정은 원문 요구와 구별.
+- 사용자 과거 실측 수치나 제출 여부를 기억으로 보충하지 않음.
+- 커널 빌드, 설치, 부팅, 실제 CPU 실험, 과제 제출은 이번 보완에서 수행하지 않음.

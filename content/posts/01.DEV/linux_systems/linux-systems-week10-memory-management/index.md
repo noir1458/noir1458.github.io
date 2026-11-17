@@ -1,14 +1,17 @@
 ---
-title: 'week10 : Memory Management'
+title: 'week10 : Memory Management와 CFS vruntime 실습'
 slug: linux-systems-week10-memory-management
 publishedAt: '2026-11-04'
+updatedAt: '2026-11-17'
 categories: Linux Systems
-tags: [Linux, Memory, NUMA, Buddy, 리눅스응용설계]
-description: '메모리 계층과 UMA·NUMA, node·zone·page, watermark와 zonelist, buddyinfo 해석, 단편화와 buddy·slab allocator의 관계를 정리한다.'
+tags: [Linux, Memory, NUMA, Buddy, CFS, vruntime, 리눅스응용설계]
+description: '메모리 계층·NUMA·buddy allocator를 정리하고, 과제 9의 CFS vruntime 동결, 같은 CPU에서의 태스크 경쟁, CPU 시간과 누적 점유율 해석을 살펴본다.'
 math: false
 ---
 
 메모리가 남아 있는데도 큰 메모리 요청이 실패할 수 있다. 남은 양뿐 아니라 **어느 node와 zone에 있는지, 어떤 크기의 연속 블록으로 남았는지**가 중요하기 때문이다. 메모리 관리를 하드웨어의 접근 거리에서 시작해 커널의 할당 단위까지 내려가며 살펴본다.
+
+같은 10주차에 진행한 실습은 앞서 배운 CFS의 `vruntime`을 직접 바꿔 보는 **Practical Class 9·Assignment-9**다. 메모리 강의 뒤에 실습 원리와 측정 방법을 함께 정리한다. 실습 번호 9와 수업 주차 10을 구별한다.
 
 ## 1. Memory hierarchy
 
@@ -381,7 +384,170 @@ Compaction은 이동 가능한 사용 중 페이지를 옮겨 free 공간을 모
 
 할당 문맥은 메모리를 구하는 동안 무엇을 해도 되는지를 제한한다. 앞선 동기화 주차에서 spinlock을 가진 채 `GFP_KERNEL` 할당을 피해야 했던 이유도 이 경로가 잠들거나 회수 작업을 기다릴 수 있기 때문이다. 잠들 수 없는 요청에서는 같은 회수 경로를 마음대로 사용할 수 없다. 그래서 메모리 총량이 같아도 요청의 조건과 실행 문맥에 따라 성공 여부와 지연이 달라진다. [커널 메모리 할당과 GFP 조건](https://docs.kernel.org/core-api/memory-allocation.html)
 
-## 15. 복습문제
+## 15. 실습·과제 9: vruntime을 멈추면 공정성은 어떻게 되는가?
+
+*Practical Class 9, 1~7쪽*
+
+이번 실습은 특정 태스크가 CPU를 계속 받도록 **공정성의 기준을 의도적으로 바꾸는 실험**이다. [9주차의 CFS 흐름](/posts/linux-systems-week9-scheduler/)에서 `update_curr()`가 기록하는 두 값을 구분하는 것이 출발점이다.
+
+| 값 | 무엇을 기록하는가 | 과제의 변경 |
+|---|---|---|
+| `sum_exec_runtime` | 실제로 CPU에서 실행한 시간 | 계속 증가시킨다. |
+| `vruntime` | 실행 시간을 weight로 보정한 공정성 기준 | `vip_task`에 대해서만 증가를 건너뛴다. |
+
+보통 실행한 태스크의 `vruntime`이 커지면 상대적으로 덜 실행한 태스크가 선택될 기회를 얻는다. 그런데 VIP의 값만 그대로 두면 실제로는 오래 실행했어도 스케줄러의 비교에서는 계속 적게 실행한 것처럼 보일 수 있다.
+
+강의의 약 50:50, VIP 약 100% 그림은 **같은 CPU에서 같은 조건으로 경쟁하는 CPU-bound 태스크의 예상 동작**이다. 실제 측정값이나 모든 태스크·스케줄링 클래스에 대한 보장은 아니다. 별도 그룹의 몫, 더 높은 우선순위 클래스, 인터럽트, 출력에 따른 대기 등의 조건은 결과에 영향을 줄 수 있다.
+
+### 이름으로 태스크를 구별하기
+
+*Practical Class 9, 5~6쪽*
+
+자료는 `task_struct`의 `comm`을 `"vip_task"`와 비교한다. `comm`은 경로 전체가 아니라 태스크 이름이며, 실습에서는 같은 소스를 서로 다른 실행파일 이름으로 빌드해 구별한다. 자료의 버퍼 길이 16바이트에는 문자열 끝의 NUL도 포함된다.
+
+`/proc/<pid>/comm`이나 제공 프로그램의 `prctl(PR_GET_NAME, ...)`으로 실제 이름을 확인할 수 있다. 이름은 바뀔 수 있고 같은 이름의 태스크도 여러 개일 수 있으므로, 이 이름 비교는 실습용 선택 기준이다.
+
+자료 6쪽의 변경 핵심을 발췌하면 다음과 같다. `update_curr()` 전체가 아니라 기존 함수 안의 해당 부분이다.
+
+```c
+curr->sum_exec_runtime += delta_exec;
+
+if (entity_is_task(curr) &&
+    strcmp(current->comm, "vip_task") == 0) {
+    /* vip_task는 vruntime 증가를 건너뛴다. */
+} else {
+    curr->vruntime += calc_delta_fair(delta_exec, curr);
+}
+update_min_vruntime(cfs_rq);
+```
+
+`curr`와 `current`는 이름이 비슷하지만 다르다. 여기서 `curr`는 `cfs_rq->curr`인 **스케줄링 엔티티**이고, `current`는 이 코드를 실행하는 **현재 태스크**다. `entity_is_task(curr)`는 해당 엔티티가 그룹인지 실제 태스크인지를 구별한다. 그룹 엔티티의 실행 회계까지 무조건 동결하지 않도록 조건을 둔 것이다.
+
+자료는 실행 중인 태스크의 회계를 갱신하는 실습 문맥에서 `current->comm`을 사용한다. 다른 run queue나 다른 태스크의 엔티티를 다루는 코드로 확장할 때까지 `curr`와 `current`가 같은 대상을 뜻한다고 일반화하면 안 된다. 그때는 실제 회계 대상 엔티티에서 태스크를 얻는 관계를 확인해야 한다.
+
+### 재스케줄링 요청과 context switch는 다르다
+
+*Practical Class 9, 3~4쪽, 7쪽*
+
+VIP의 실제 실행 시간은 계속 증가하므로 tick 검사에서 재스케줄링을 요청할 수 있다. 그러나 다시 선택할 때 **방금 실행하던 VIP를 또 선택**할 수 있다.
+
+```text
+VIP 실행
+  → 실행 시간 회계 갱신, VIP의 vruntime은 증가 생략
+  → tick 검사에서 재스케줄링 요청 가능
+  → 현재 엔티티와 RB tree의 후보 비교
+  → VIP가 여전히 유리하면 VIP를 다시 선택
+  → 이전 태스크와 다음 태스크가 같으면 실제 태스크 교체는 없음
+```
+
+따라서 `nr_switches`는 scheduler tick 수나 재스케줄링 요청 수가 아니다. 실행 중인 엔티티는 RB tree의 왼쪽 항목과 별도로 비교될 수 있으므로, “다음 태스크는 무조건 tree의 왼쪽 노드”라고만 기억해도 이 실험을 설명하기 어렵다. 수업의 경로는 [Linux v5.15의 `fair.c`](https://github.com/torvalds/linux/blob/v5.15/kernel/sched/fair.c)와 [해당 버전의 CFS 문서](https://www.kernel.org/doc/html/v5.15/scheduler/sched-design-CFS.html)를 기준으로 읽는다.
+
+### 빌드 기준은 이 실습 자료의 v5.15
+
+*Practical Class 9, 8쪽*
+
+자료 8쪽은 **Linux 태그 `v5.15`**를 받아 `kernel/sched/fair.c`의 `update_curr()`를 수정한다. 다른 주차에서 사용한 `5.4.214`나 현재 배포판 커널을 자동으로 같은 기준으로 놓지 않는다.
+
+자료의 준비 절차는 다음 순서다.
+
+1. `v5.15` 소스와 현재 VM 설정을 준비한다.
+2. `update_curr()`의 변경을 적용하고 diff를 확인한다.
+3. 설정을 갱신한 뒤 커널과 모듈을 빌드·설치한다.
+4. 새 커널로 부팅하고 `uname -r`로 실제 실행 중인 버전을 확인한다.
+5. 기존 커널로 돌아갈 부팅 항목을 유지한 상태에서 짧은 실험을 진행한다.
+
+`localmodconfig`는 현재 로드된 모듈을 바탕으로 설정을 줄이는 방법이다. 지금 로드하지 않은 모듈도 부팅이나 장치 사용에 필요할 수 있으므로 단순한 “모든 환경에서 안전한 빠른 빌드 옵션”은 아니다.
+
+자료에는 배포판 인증서 설정과 GCC 버전에 따른 `objtool` 빌드 문제도 나온다. 이는 실습 환경별 빌드 조건이다. 다른 환경에서 오류가 났을 때 원인을 확인하지 않고 모든 경고를 비활성화하거나 커널 소스의 특정 줄 번호를 그대로 바꾸는 절차로 일반화하지 않는다.
+
+### cpu_hog.c는 무엇을 측정하는가?
+
+*Practical Class 9, 9쪽 및 별도 제공 `cpu_hog.c`*
+
+제공 프로그램은 `pthread`로 여러 스레드를 만드는 프로그램이 아니다. **한 프로세스에서 단일 스레드로 카운터를 계속 증가**시키고, 같은 소스로 만든 실행파일 두 개를 별도 프로세스로 실행한다.
+
+| 코드의 시계 | 측정 대상 |
+|---|---|
+| `CLOCK_MONOTONIC` | 실행 여부와 무관하게 흐르는 경과 시간, wall time |
+| `CLOCK_PROCESS_CPUTIME_ID` | 해당 프로세스가 실제 소비한 CPU 시간 |
+| `100 × cpu / wall` | 프로그램이 출력하는 누적 CPU 점유 비율 |
+
+현재 코드는 단일 스레드라 프로세스 CPU 시간을 이 작업의 CPU 사용량으로 볼 수 있다. 여러 스레드가 있는 프로그램에서는 process CPU time이 스레드들의 사용량을 합산한다는 차이를 고려해야 한다.
+
+루프에는 명시적인 `sleep()`이 없다. 다만 출력 시의 `printf()`·`fflush()`나 실행 환경에 따라 대기가 생길 수 있으므로 “어떤 순간에도 절대 block하지 않는다”는 뜻은 아니다.
+
+또한 1초마다 출력하도록 **의도한** 코드이지, CPU를 받지 못하는 중에도 정확히 1초마다 출력해 주는 장치가 아니다. 시간을 확인하고 종료 여부를 판단하는 코드도 CPU를 받아야 실행된다. 인자로 6초를 줘도 오래 기다린 태스크가 실제로 `DONE`을 출력하는 wall time은 6초보다 길 수 있다.
+
+### 같은 CPU에서 Test A와 Test B 비교하기
+
+*Practical Class 9, 9~10쪽*
+
+아래는 강의의 실행 절차를 정리한 명령이다. **이 글에서 실행한 결과는 아니며**, 제공 `cpu_hog.c`와 변경한 Linux VM을 전제로 한다.
+
+```bash
+gcc -O2 -o vip_task cpu_hog.c
+gcc -O2 -o normal_task cpu_hog.c
+cp normal_task normal_task2
+```
+
+Test A에서는 이름만 다른 두 일반 태스크를 비교한다.
+
+```bash
+taskset -c 0 ./normal_task 6 &
+taskset -c 0 ./normal_task2 6 &
+wait
+```
+
+Test A가 끝난 뒤 Test B에서 일반 태스크와 VIP를 비교한다.
+
+```bash
+taskset -c 0 ./normal_task 6 &
+taskset -c 0 ./vip_task 6 &
+wait
+```
+
+`taskset -c 0`은 두 태스크의 affinity를 같은 논리 CPU에 제한한다. 서로 다른 CPU에서 각각 실행되면 두 작업 모두 높은 점유율을 보여, 한 CPU의 공정성을 깨뜨리는 효과를 관찰하기 어렵다. VM에서 허용된 CPU 번호를 사용하고, 비교하는 태스크의 nice 값·스케줄링 정책·그룹 조건도 같게 둔다.
+
+`&`로 연속 실행해도 두 프로세스의 시작 시점이 완전히 같지는 않다. 가능하면 같은 터미널에서 두 명령을 실행하고, 관측은 다른 터미널·다른 CPU에서 수행해 실험 중인 CPU의 경쟁에 덜 영향을 주도록 한다.
+
+### 무엇을 두 번 읽어 비교할까?
+
+*Practical Class 9, 10쪽, 12쪽*
+
+VIP가 살아 있는 동안 `/proc/<pid>/sched`에서 다음 세 값을 **서로 다른 두 시점**에 확인한다. 자료는 이 파일을 관찰하기 위한 `CONFIG_SCHED_DEBUG`도 언급한다.
+
+| 관측값 | 예상되는 관계와 확인할 점 |
+|---|---|
+| `se.vruntime` | VIP가 계속 실행되는 구간에서 증가가 생략되는지 확인 |
+| `se.sum_exec_runtime` | 같은 구간에서 실제 실행 시간은 증가하는지 확인 |
+| `nr_switches` | 실제 태스크 교체 횟수의 변화 확인; tick 수와 구별 |
+
+같은 PID를 두 번 읽어야 하며 첫 화면과 둘째 화면의 관측 시각도 기록해야 한다. 프로세스가 이미 종료했거나 동일 이름의 다른 프로세스를 읽었다면 비교가 성립하지 않는다. 이 과제는 CPU를 고정하고 연속 실행 구간을 관찰한다. 다른 조건의 wakeup·migration에서 생기는 `vruntime` 조정까지 모두 없앴다고 단정하는 실험은 아니다.
+
+**두 값의 관계가 핵심이다.** CPU 시간이 늘어나는데도 VIP의 `vruntime`이 정체되어야 “실행은 했지만 공정성 회계에 반영하지 않았다”는 설명과 연결된다. CPU share가 높다는 화면 하나만으로 코드 변경의 메커니즘을 확인했다고 할 수는 없다.
+
+### 누적 share와 동시 실행 구간을 혼동하지 않기
+
+제공 코드의 `cpu`는 프로세스 시작 이후의 CPU 시간이며 `wall`은 프로그램 내부에서 정한 시작 시각부터의 경과 시간이다. 출력된 `share`는 그 시점까지의 **누적 비율**이다. `top`의 갱신 구간별 비율이나 두 태스크가 동시에 경쟁한 구간만의 비율과 정확히 같지 않다.
+
+예를 들어 일반 태스크가 VIP보다 먼저 시작했다면, VIP가 나타나기 전에 얻은 CPU 시간도 최종 누적값에 남는다. VIP가 종료한 뒤 일반 태스크가 다시 실행한 시간도 포함될 수 있다. 따라서 일반 태스크의 최종 share가 0%가 아니라는 이유만으로 VIP가 실행되는 동안의 starvation을 곧바로 부정할 수 없다.
+
+**보충 관측 방법:** 두 태스크가 모두 살아 있는 공통 구간에서 CPU 시간과 wall time을 각각 두 번 측정하고 `CPU 시간의 증가량 / wall time의 증가량`을 비교하면, 시작·종료 시점 차이를 줄여 해석할 수 있다. 이는 과제의 누적 출력과 별도로 해석을 돕는 방법이다. 측정 프로그램 자체의 초기 실행 비용도 있어 제공 코드의 비율을 엄밀한 동일 구간의 차분 측정과 같은 것으로 보지는 않는다.
+
+### 과제 제출물의 범위
+
+*Practical Class 9, 11~12쪽*
+
+자료가 요구하는 것은 변경한 커널에서 얻은 **실제 실험 화면**이다.
+
+- Test A: 두 일반 태스크의 wall time·CPU time·share 출력
+- Test B: 일반 태스크와 VIP의 wall time·CPU time·share 출력
+- VIP의 `/proc/<pid>/sched`: 두 시점의 `se.vruntime`, `se.sum_exec_runtime`, `nr_switches`
+- 위 화면을 합친 PDF와 자료에서 요구하는 제출자 식별 정보
+
+이 정리는 실습 원리·절차·해석을 설명한 것이다. 커널 빌드·부팅 성공, 실제 측정값, 제출 완료 여부를 여기서 새로 확인한 것은 아니다. 다음 [11주차 XArray 실습](/posts/linux-systems-week11-address-space-and-xarray/)의 CPU별 **함수 호출 횟수 비율**과도 구분한다. 이번 과제의 CPU share는 실행 시간에 관한 비율이다.
+
+## 16. 복습문제
 
 해설을 보기 전에 각 질문에 짧게 답해 보자.
 
@@ -445,9 +611,42 @@ Buddy의 페이지 단위를 작은 커널 객체 여러 개에 나눠 활용하
 
 </details>
 
+<details><summary>11. VIP의 sum_exec_runtime까지 멈추면 과제의 의도와 무엇이 달라지는가?</summary>
+
+실제 사용한 CPU 시간의 회계도 틀어지게 된다. 과제는 실제 실행 시간은 기록하면서 공정성 판단에 쓰는 vruntime의 증가만 건너뛰어 두 역할의 차이를 관찰한다.
+
+</details>
+
+<details><summary>12. 재스케줄링이 요청됐는데 nr_switches가 그만큼 증가하지 않을 수 있는가?</summary>
+
+가능하다. 다시 선택한 태스크가 이전과 같으면 실제 태스크 교체가 일어나지 않을 수 있다. 요청 횟수와 context switch 횟수는 다르다.
+
+</details>
+
+<details><summary>13. 두 태스크의 CPU affinity를 같은 CPU에 묶는 이유는?</summary>
+
+같은 CPU의 실행 시간을 두고 경쟁하게 하기 위해서다. 서로 다른 CPU에서 실행되면 각자 CPU를 받아 VIP 편향을 관찰하기 어렵다.
+
+</details>
+
+<details><summary>14. 일반 태스크의 최종 share가 0%보다 크면 starvation이 없었다고 결론 내릴 수 있는가?</summary>
+
+그럴 수 없다. VIP 시작 전이나 종료 후에 얻은 CPU 시간이 누적값에 들어갈 수 있다. 두 태스크가 동시에 실행 가능한 공통 구간과 누적 측정 구간을 구분해야 한다.
+
+</details>
+
+<details><summary>15. 프로그램에 6초를 줬는데 DONE 출력이 더 늦게 나올 수 있는 이유는?</summary>
+
+종료 조건도 프로그램이 CPU를 받아 실행할 때 검사하기 때문이다. 오래 스케줄되지 못했다면 다음 실행 시점의 wall time이 이미 6초를 넘을 수 있다.
+
+</details>
+
 ## 참고 자료
 
 중앙대학교 리눅스 시스템 응용 설계, 손용석 교수, Systems and Storage Lab.
 
 - 수업 자료: `Memory Management [Overview].pdf`.
 - 수업 필기: `Memory Management [Overview]_note.pdf`.
+- 10주차 실습·과제: `[Practical Class 9] vruntime_practice.pdf`, 1~12쪽.
+- 제공 실습 프로그램: `cpu_hog.c`.
+- 실습 코드 대조: [Linux v5.15 `kernel/sched/fair.c`](https://github.com/torvalds/linux/blob/v5.15/kernel/sched/fair.c), [Linux v5.15 CFS 설계 문서](https://www.kernel.org/doc/html/v5.15/scheduler/sched-design-CFS.html).
